@@ -16,7 +16,6 @@ var BaseApplicationPage = (function () {
            To customise modes, change '/Scripts/Lib/ckeditor_config.js' file
            */
         this.DEFAULT_HTML_EDITOR_MODE = "Medium";
-        this.DEFAULT_MODAL_BACKDROP = "static";
         this._initializeActions = [];
         this._preInitializeActions = [];
         //#region "Events"
@@ -30,7 +29,6 @@ var BaseApplicationPage = (function () {
         this.isAwaitingAjaxResponse = false;
         this.dynamicallyLoadedScriptFiles = [];
         $(function () {
-            $.fn.modal.Constructor.DEFAULTS.backdrop = _this.DEFAULT_MODAL_BACKDROP;
             _this.enableAlert();
             _this.configureValidation();
             _this.pageLoad();

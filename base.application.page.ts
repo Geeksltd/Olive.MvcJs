@@ -17,11 +17,9 @@ class BaseApplicationPage {
        To customise modes, change '/Scripts/Lib/ckeditor_config.js' file
        */
     DEFAULT_HTML_EDITOR_MODE = "Medium";
-    DEFAULT_MODAL_BACKDROP = "static";
 
     constructor() {
         $(() => {
-            $.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
             this.enableAlert();
             this.configureValidation();
             this.pageLoad();
