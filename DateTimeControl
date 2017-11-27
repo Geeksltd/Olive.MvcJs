@@ -1,5 +1,7 @@
 
-export class DateTimeControl{
+namespace Olive{
+  
+  export class DateTimeControl{
    
    targetControl : any;
    
@@ -36,4 +38,7 @@ export class DateTimeControl{
         }).data("DateTimePicker").keyBinds().clear = null;
 
         targetControl.parent().find(".fa-calendar").click(function () { input.focus(); });
+}
+
+  
 }
