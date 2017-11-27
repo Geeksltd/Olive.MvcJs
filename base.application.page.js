@@ -119,12 +119,7 @@ var BaseApplicationPage = (function () {
         this._initializeActions.forEach(function (action) { return action(); });
     };
     BaseApplicationPage.prototype.changeItToChosen = function (selectControl) {
-        var options = { disable_search_threshold: 10 };
-        var size = selectControl.attr("size");
-        if (!!size) {
-            selectControl.attr("multiple", "multiple");
-            options = $.extend(options, { max_selected_options: parseInt(size) });
-        }
+        var options = { disable_search_threshold: 5 };
         selectControl.chosen(options);
     };
     BaseApplicationPage.prototype.skipNewWindows = function () {

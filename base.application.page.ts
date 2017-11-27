@@ -122,16 +122,7 @@ class BaseApplicationPage {
     }
     
     changeItToChosen(selectControl: JQuery) {
-        let options = { disable_search_threshold: 10 }
-
-        let size = selectControl.attr("size");
-
-        if (!!size)
-        {
-            selectControl.attr("multiple", "multiple");
-            options = $.extend(options, { max_selected_options: parseInt(size) });
-        }
-
+        let options = { disable_search_threshold: 5 }
         selectControl.chosen(options);
     }
 
