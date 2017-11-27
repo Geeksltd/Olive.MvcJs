@@ -1,5 +1,6 @@
-
-export class FileUploader{
+namespace Olive{
+  
+    export class FileUploader{
 
        var control = input;
 
@@ -138,4 +139,7 @@ export class FileUploader{
 
         });
       
+}
+
+    
 }
