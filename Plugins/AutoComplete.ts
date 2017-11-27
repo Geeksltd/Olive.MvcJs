@@ -1,44 +1,54 @@
-BaseApplicationPage.prototype.handleAutoComplete = function (input) {
+namespace Olive{
+ 
+   export class AutoComplete{
+        
+        targetControl:any;
+        awaitingAutocompleteResponses: number = 0;
+        constructor(input:any){
+            this.targetControl = input;
+         }
 
-        var _this = this;
+        if (targetControl.is('[data-typeahead-enabled=true]')) return;
 
-        if (input.is('[data-typeahead-enabled=true]'))
+        else targetControl.attr('data-typeahead-enabled', true);
 
-            return;
+        var valueField = $("[name='" + targetControl.attr("name").slice(0, -5) + "']");
 
-        else
+        if (valueField.length == 0) console.log('Could not find the value field for auto-complete.');
 
-            input.attr('data-typeahead-enabled', true);
 
-        var valueField = $("[name='" + input.attr("name").slice(0, -5) + "']");
 
-        if (valueField.length == 0)
+        var dataSource = (query, callback) => {
 
-            console.log('Could not find the value field for auto-complete.');
+            this.awaitingAutocompleteResponses++;
 
-        var dataSource = function (query, callback) {
 
-            _this.awaitingAutocompleteResponses++;
 
-            var url = input.attr("autocomplete-source");
+            var url = targetControl.attr("autocomplete-source");
 
-            url = urlHelper.removeQuery(url, input.attr('name')); // Remove old text.
+            url = urlHelper.removeQuery(url, targetControl.attr('name')); // Remove old text.
 
-            var data = _this.getPostData(input);
+            var data = DataHandler.getPostData(targetControl);
 
-            setTimeout(function () {
 
-                if (_this.awaitingAutocompleteResponses > 1) {
 
-                    _this.awaitingAutocompleteResponses--;
+            setTimeout(() => {
+
+                if (this.awaitingAutocompleteResponses > 1) {
+
+                    this.awaitingAutocompleteResponses--
 
                     return;
 
                 }
 
-                $.post(url, data).fail(_this.handleAjaxResponseError).done(function (result) {
 
-                    result = result.map(function (i) {
+
+                $.post(url, data).fail(this.handleAjaxResponseError).done((result) => {
+
+
+
+                    result = result.map((i) => {
 
                         return {
 
@@ -52,27 +62,29 @@ BaseApplicationPage.prototype.handleAutoComplete = function (input) {
 
                     });
 
+
+
                     return callback(result);
 
-                }).always(function () { return _this.awaitingAutocompleteResponses--; });
+                }).always(() => this.awaitingAutocompleteResponses--);
 
-            }, _this.AUTOCOMPLETE_INPUT_DELAY);
-
-        };
-
-        var clearValue = function (e) {
-
-            if (input.val() === "")
-
-                valueField.val("");
-
-            if (input.val() !== input.data("selected-text"))
-
-                valueField.val("");
+            }, this.AUTOCOMPLETE_INPUT_DELAY);
 
         };
 
-        var itemSelected = function (e, item) {
+
+
+        var clearValue = (e) => {
+
+            if (targetControl.val() === "") valueField.val("");
+
+            if (targetControl.val() !== targetControl.data("selected-text")) valueField.val("");
+
+        };
+
+
+
+        var itemSelected = (e, item) => {
 
             if (item != undefined) {
 
@@ -80,7 +92,7 @@ BaseApplicationPage.prototype.handleAutoComplete = function (input) {
 
                 valueField.val(item.Value);
 
-                input.data("selected-text", item.Display);
+                targetControl.data("selected-text", item.Display);
 
             }
 
@@ -88,35 +100,43 @@ BaseApplicationPage.prototype.handleAutoComplete = function (input) {
 
                 console.log("Clearing text, item is undefined");
 
-                input.data("selected-text", "");
+                targetControl.data("selected-text", "");
 
             }
 
+
+
             // This will invoke RunOnLoad M# method as typeahead does not fire textbox change event when it sets its value from drop down
 
-            input.trigger('change');
+            targetControl.trigger('change');
 
         };
 
-        var itemBlured = function (e, item) {
 
-            if (valueField.val() == "" && input.val() != "") {
+
+        var itemBlured = (e, item) => {
+
+            if (valueField.val() == "" && targetControl.val() != "") {
 
                 // this hack is so when you paste something a focus out, it should set the hidden field
 
-                var suggested = input.closest(".twitter-typeahead").find(".tt-suggestion");
+                var suggested = targetControl.closest(".twitter-typeahead").find(".tt-suggestion");
 
-                var filtered = suggested.filter(function (e, obj) { return (obj.innerText === input.val()); });
+                var filtered = suggested.filter((e, obj) => (obj.innerText === targetControl.val()));
+
+
 
                 if (filtered.length === 0 && suggested.length === 0) {
 
                     // the suggestion list has never been shown
 
+
+
                     // make typeahead aware of this change otherwise during blur it will clear the text
 
-                    input.typeahead('val', input.val());
+                    targetControl.typeahead('val', targetControl.val());
 
-                    dataSource(input.val(), function (data) {
+                    dataSource(targetControl.val(), data => {
 
                         if (data && data.length === 1) {
 
@@ -124,9 +144,7 @@ BaseApplicationPage.prototype.handleAutoComplete = function (input) {
 
                             console.log('match text to suggestion finished');
 
-                        }
-
-                        else {
+                        } else {
 
                             console.warn("There is none or more than one items in the autocomplete data-source to match the given text. Cannot set the value.");
 
@@ -154,14 +172,19 @@ BaseApplicationPage.prototype.handleAutoComplete = function (input) {
 
         };
 
+
+
         var dataset = {
 
             displayKey: 'Text', source: dataSource,
 
-            templates: { suggestion: function (item) { return item.Display; }, empty: "<div class='tt-suggestion'>Not found</div>" }
+            templates: { suggestion: (item) => item.Display, empty: "<div class='tt-suggestion'>Not found</div>" }
 
         };
 
-        input.data("selected-text", "").on('input', clearValue).on('blur', itemBlured).on('typeahead:selected', itemSelected).typeahead({ minLength: 0 }, dataset);
 
-    };
+
+        targetControl.data("selected-text", "").on('input', clearValue).on('blur', itemBlured).on('typeahead:selected', itemSelected).typeahead({ minLength: 0
+   }
+        
+}
