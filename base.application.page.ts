@@ -1,5 +1,5 @@
 ﻿// For ckeditor plug-ins to work, this should be globally defined.
-var CKEDITOR_BASEPATH = '/bower_components/ckeditor/';
+var CKEDITOR_BASEPATH = '/lib/ckeditor/';
 
 class BaseApplicationPage {
 
@@ -120,14 +120,13 @@ class BaseApplicationPage {
 
         this._initializeActions.forEach((action) => action());
     }
-    
+
     changeItToChosen(selectControl: JQuery) {
         let options = { disable_search_threshold: 10 }
 
         let size = selectControl.attr("size");
 
-        if (!!size)
-        {
+        if (!!size) {
             selectControl.attr("multiple", "multiple");
             options = $.extend(options, { max_selected_options: parseInt(size) });
         }

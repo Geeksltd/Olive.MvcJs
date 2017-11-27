@@ -1,5 +1,5 @@
 // For ckeditor plug-ins to work, this should be globally defined.
-var CKEDITOR_BASEPATH = '/bower_components/ckeditor/';
+var CKEDITOR_BASEPATH = '/lib/ckeditor/';
 var BaseApplicationPage = (function () {
     function BaseApplicationPage() {
         var _this = this;
