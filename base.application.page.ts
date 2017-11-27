@@ -21,7 +21,8 @@ class BaseApplicationPage {
 
     constructor() {
         $(() => {
-            $.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
+            $.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: this.DEFAULT_MODAL_BACKDROP });
+            //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
             this.enableAlert();
             this.configureValidation();
             this.pageLoad();

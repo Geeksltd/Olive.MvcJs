@@ -30,7 +30,8 @@ var BaseApplicationPage = (function () {
         this.isAwaitingAjaxResponse = false;
         this.dynamicallyLoadedScriptFiles = [];
         $(function () {
-            $.fn.modal.Constructor.DEFAULTS.backdrop = _this.DEFAULT_MODAL_BACKDROP;
+            $.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: _this.DEFAULT_MODAL_BACKDROP });
+            //$.fn.modal.Constructor.DEFAULTS.backdrop = _this.DEFAULT_MODAL_BACKDROP;
             _this.enableAlert();
             _this.configureValidation();
             _this.pageLoad();
