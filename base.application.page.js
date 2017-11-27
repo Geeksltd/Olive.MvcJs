@@ -31,7 +31,7 @@ var BaseApplicationPage = (function () {
         this.dynamicallyLoadedScriptFiles = [];
         $(function () {
             $.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: _this.DEFAULT_MODAL_BACKDROP });
-            //$.fn.modal.Constructor.DEFAULTS.backdrop = _this.DEFAULT_MODAL_BACKDROP;
+            //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
             _this.enableAlert();
             _this.configureValidation();
             _this.pageLoad();
@@ -91,6 +91,7 @@ var BaseApplicationPage = (function () {
         $("th[data-sort]").each(function (i, e) { return _this.setSortHeaderClass($(e)); });
         $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", function (e) { return _this.cleanUpNumberField($(e.currentTarget)); });
         $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", function () { return _this.ensureModalResize(); });
+        $("select.form-control").each(function (i, e) { return _this.changeItToChosen($(e)); });
         $.validator.unobtrusive.parse('form');
         // =================== Plug-ins ====================
         $("input[autocomplete-source]").each(function (i, e) { return _this.handleAutoComplete($(e)); });
@@ -116,6 +117,15 @@ var BaseApplicationPage = (function () {
         this.updateSubFormStates();
         this.adjustModalHeight();
         this._initializeActions.forEach(function (action) { return action(); });
+    };
+    BaseApplicationPage.prototype.changeItToChosen = function (selectControl) {
+        var options = { disable_search_threshold: 10 };
+        var size = selectControl.attr("size");
+        if (!!size) {
+            selectControl.attr("multiple", "multiple");
+            options = $.extend(options, { max_selected_options: parseInt(size) });
+        }
+        selectControl.chosen(options);
     };
     BaseApplicationPage.prototype.skipNewWindows = function () {
         // Remove the target attribute from links:
@@ -184,7 +194,7 @@ var BaseApplicationPage = (function () {
                     "Medium",
                     "<span class='fa fa-thumbs-up'></span> Strong",
                     "<span class='fa fa-thumbs-up'></span> Very Strong"
-                ]
+                ],
             }
         };
         var password = formGroup.find(":password");
@@ -334,10 +344,9 @@ var BaseApplicationPage = (function () {
         input.spinedit({
             minimum: parseFloat(min),
             maximum: parseFloat(max),
-            step: 1
+            step: 1,
         });
     };
-
     BaseApplicationPage.prototype.enableFileUpload = function (input) {
         var _this = this;
         var control = input;
@@ -1178,3 +1187,4 @@ var BaseApplicationPage = (function () {
     };
     return BaseApplicationPage;
 }());
+//# sourceMappingURL=base.application.page.js.map

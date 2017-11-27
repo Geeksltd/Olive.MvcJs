@@ -89,6 +89,7 @@ class BaseApplicationPage {
         $("th[data-sort]").each((i, e) => this.setSortHeaderClass($(e)));
         $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", (e) => this.cleanUpNumberField($(e.currentTarget)));
         $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => this.ensureModalResize());
+        $("select.form-control").each((i, e) => this.changeItToChosen($(e)));
         $.validator.unobtrusive.parse('form');
 
         // =================== Plug-ins ====================
@@ -118,6 +119,20 @@ class BaseApplicationPage {
         this.adjustModalHeight();
 
         this._initializeActions.forEach((action) => action());
+    }
+    
+    changeItToChosen(selectControl: JQuery) {
+        let options = { disable_search_threshold: 10 }
+
+        let size = selectControl.attr("size");
+
+        if (!!size)
+        {
+            selectControl.attr("multiple", "multiple");
+            options = $.extend(options, { max_selected_options: parseInt(size) });
+        }
+
+        selectControl.chosen(options);
     }
 
     skipNewWindows() {
