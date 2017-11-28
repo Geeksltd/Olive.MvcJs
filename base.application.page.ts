@@ -1,5 +1,7 @@
 ﻿// For ckeditor plug-ins to work, this should be globally defined.
+///<reference path="require.config.ts"/>
 var CKEDITOR_BASEPATH = '/lib/ckeditor/';
+import olive = require("plugins/TimeControl");
 
 class BaseApplicationPage {
 
@@ -96,7 +98,7 @@ class BaseApplicationPage {
         $("input[autocomplete-source]").each((i, e) => this.handleAutoComplete($(e)));
         $("[data-control=date-picker],[data-control=calendar]").each((i, e) => this.enableDateControl($(e)));
         $("[data-control='date-picker|time-picker']").each((i, e) => this.enableDateAndTimeControl($(e)));
-        $("[data-control=time-picker]").each((i, e) => this.enableTimeControl($(e)));
+        $("[data-control=time-picker]").each((i, e) => olive.TimeControl($(e)));
         $("[data-control=date-drop-downs]").each((i, e) => this.enableDateDropdown($(e)));
         $("[data-control=html-editor]").each((i, e) => this.enableHtmlEditor($(e)));
         $("[data-control=numeric-up-down]").each((i, e) => this.enableNumericUpDown($(e)));
