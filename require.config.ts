@@ -3,15 +3,10 @@
 require.config(
 
 	{
-
 		baseUrl: "",
-
 		paths: {
-
 			"jquery": "jquery.enhancements.ts",
-
-			"plugins":"Plugins"
-
+			"plugins":"/Plugins",
+			"component":"/Component"
 		}
-    
 	});
