@@ -3,14 +3,14 @@
 
 import $ =require('jquery');
 export namespace Olive{
-    export class Helper{
+    export class WindowContext{
          private static instance: Singleton;
 
          static getInstance() {
-            if (!Singleton.instance) {
-                Singleton.instance = new Singleton();
+            if (!WindowContext.instance) {
+                WindowContext.instance = new WindowContext();
             }
-            return Singleton.instance;
+            return WindowContext.instance;
          }
 
          public isWindowModal() {
