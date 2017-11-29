@@ -1,7 +1,7 @@
 
 ///<reference path="../require.config.ts"/>
 
-import helper = require("/Component/Helper");
+import helper = require("/Component/WindowContext");
 
 export namespace Olive {
    export class TimeControl{
