@@ -468,8 +468,8 @@ class BaseApplicationPage {
                     fileLabel.val('');
                 }
                 else {
-                    if (input.is("[multiple]")) idInput.val(idInput.val() + "|file:" + response.ID);
-                    else idInput.val("file:" + response.ID);
+                    if (input.is("[multiple]")) idInput.val(idInput.val() + "|file:" + response.Result.ID);
+                    else idInput.val("file:" + response.Result.ID);
                     del.show();
                 }
             }
