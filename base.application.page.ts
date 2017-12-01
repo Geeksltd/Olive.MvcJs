@@ -1,5 +1,5 @@
 ﻿// For ckeditor plug-ins to work, this should be globally defined.
-var CKEDITOR_BASEPATH = '/bower_components/ckeditor/';
+var CKEDITOR_BASEPATH = '/lib/ckeditor/';
 
 class BaseApplicationPage {
 
@@ -120,7 +120,7 @@ class BaseApplicationPage {
 
         this._initializeActions.forEach((action) => action());
     }
-    
+
     changeItToChosen(selectControl: JQuery) {
         let options = { disable_search_threshold: 5 }
         selectControl.chosen(options);
@@ -460,8 +460,8 @@ class BaseApplicationPage {
                     fileLabel.val('');
                 }
                 else {
-                    if (input.is("[multiple]")) idInput.val(idInput.val() + "|file:" + response.ID);
-                    else idInput.val("file:" + response.ID);
+                    if (input.is("[multiple]")) idInput.val(idInput.val() + "|file:" + response.Result.ID);
+                    else idInput.val("file:" + response.Result.ID);
                     del.show();
                 }
             }

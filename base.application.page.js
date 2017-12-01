@@ -1,5 +1,5 @@
 // For ckeditor plug-ins to work, this should be globally defined.
-var CKEDITOR_BASEPATH = '/bower_components/ckeditor/';
+var CKEDITOR_BASEPATH = '/lib/ckeditor/';
 var BaseApplicationPage = (function () {
     function BaseApplicationPage() {
         var _this = this;
@@ -402,9 +402,9 @@ var BaseApplicationPage = (function () {
                 }
                 else {
                     if (input.is("[multiple]"))
-                        idInput.val(idInput.val() + "|file:" + response.ID);
+                        idInput.val(idInput.val() + "|file:" + response.Result.ID);
                     else
-                        idInput.val("file:" + response.ID);
+                        idInput.val("file:" + response.Result.ID);
                     del.show();
                 }
             }
