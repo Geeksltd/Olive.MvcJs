@@ -1,7 +1,10 @@
-﻿// For ckeditor plug-ins to work, this should be globally defined.
+///<reference path="jquery.enhancements.ts"/>
 ///<reference path="require.config.ts"/>
-var CKEDITOR_BASEPATH = '/lib/ckeditor/';
+
+var CKEDITOR_BASEPATH = '/lib/ckeditor/'; // For ckeditor plug-ins to work, this should be globally defined.
+
 import olive = require("plugins/TimeControl");
+import $ = require('jquery');
 
 class BaseApplicationPage {
 
@@ -124,15 +127,7 @@ class BaseApplicationPage {
     }
 
     changeItToChosen(selectControl: JQuery) {
-        let options = { disable_search_threshold: 10 }
-
-        let size = selectControl.attr("size");
-
-        if (!!size) {
-            selectControl.attr("multiple", "multiple");
-            options = $.extend(options, { max_selected_options: parseInt(size) });
-        }
-
+        let options = { disable_search_threshold: 5 }
         selectControl.chosen(options);
     }
 
@@ -470,8 +465,8 @@ class BaseApplicationPage {
                     fileLabel.val('');
                 }
                 else {
-                    if (input.is("[multiple]")) idInput.val(idInput.val() + "|file:" + response.ID);
-                    else idInput.val("file:" + response.ID);
+                    if (input.is("[multiple]")) idInput.val(idInput.val() + "|file:" + response.Result.ID);
+                    else idInput.val("file:" + response.Result.ID);
                     del.show();
                 }
             }
@@ -585,26 +580,6 @@ class BaseApplicationPage {
         }).data("DateTimePicker").keyBinds().clear = null;
 
         input.parent().find(".fa-calendar").click(function () { input.focus(); });
-    }
-
-    enableTimeControl(input: any) {
-
-        if (this.isWindowModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
-        }
-
-        input.attr("data-autofocus", "disabled");
-
-        input.datetimepicker({
-            format: this.TIME_FORMAT,
-            useCurrent: false,
-            stepping: parseInt(input.attr("data-minute-steps") || this.MINUTE_INTERVALS.toString()),
-            keepInvalid: input.closest("form").find("[data-change-action]").length == 0,
-            locale: this.DATE_LOCALE
-        }).data("DateTimePicker").keyBinds().clear = null;
-
-        input.parent().find(".fa-clock-o").parent(".input-group-addon").click(() => { input.focus(); });
     }
 
     awaitingAutocompleteResponses: number = 0;
