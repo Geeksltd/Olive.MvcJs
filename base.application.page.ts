@@ -1,8 +1,9 @@
-
 ///<reference path="jquery.enhancements.ts"/>
+///<reference path="require.config.ts"/>
 
-// For ckeditor plug-ins to work, this should be globally defined.
-var CKEDITOR_BASEPATH = '/lib/ckeditor/';
+var CKEDITOR_BASEPATH = '/lib/ckeditor/'; // For ckeditor plug-ins to work, this should be globally defined.
+
+import olive = require("plugins/TimeControl");
 import $ = require('jquery');
 
 class BaseApplicationPage {
@@ -100,7 +101,7 @@ class BaseApplicationPage {
         $("input[autocomplete-source]").each((i, e) => this.handleAutoComplete($(e)));
         $("[data-control=date-picker],[data-control=calendar]").each((i, e) => this.enableDateControl($(e)));
         $("[data-control='date-picker|time-picker']").each((i, e) => this.enableDateAndTimeControl($(e)));
-        $("[data-control=time-picker]").each((i, e) => this.enableTimeControl($(e)));
+        $("[data-control=time-picker]").each((i, e) => olive.TimeControl($(e)));
         $("[data-control=date-drop-downs]").each((i, e) => this.enableDateDropdown($(e)));
         $("[data-control=html-editor]").each((i, e) => this.enableHtmlEditor($(e)));
         $("[data-control=numeric-up-down]").each((i, e) => this.enableNumericUpDown($(e)));
