@@ -1,22 +1,15 @@
-// For ckeditor plug-ins to work, this should be globally defined.
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+// TODO: For ckeditor plug-ins to work, this is globally defined. Find a cleaner solution.
 var CKEDITOR_BASEPATH = '/lib/ckeditor/';
-var BaseApplicationPage = (function () {
-    function BaseApplicationPage() {
+var WindowContext_1 = require("./Component/WindowContext");
+var UrlHelper_1 = require("./Component/UrlHelper");
+var Config_1 = require("./Config");
+var TimeControl_1 = require("./Plugins/TimeControl");
+var OlivePage = (function () {
+    function OlivePage() {
         var _this = this;
-        // formats: http://momentjs.com/docs/#/displaying/format/
-        this.DATE_FORMAT = "DD/MM/YYYY";
-        this.TIME_FORMAT = "HH:mm";
-        this.DATE_TIME_FORMAT = "DD/MM/YYYY HH:mm";
-        this.MINUTE_INTERVALS = 5;
-        this.DISABLE_BUTTONS_DURING_AJAX = false;
-        this.DATE_LOCALE = "en-gb";
-        this.REDIRECT_SCROLLS_UP = true;
-        this.AUTOCOMPLETE_INPUT_DELAY = 500;
-        /* Possible values: Compact | Medium | Advance | Full
-           To customise modes, change '/Scripts/Lib/ckeditor_config.js' file
-           */
-        this.DEFAULT_HTML_EDITOR_MODE = "Medium";
-        this.DEFAULT_MODAL_BACKDROP = "static";
+        this.windowCtx = WindowContext_1.WindowContext.getInstance();
         this._initializeActions = [];
         this._preInitializeActions = [];
         //#region "Events"
@@ -30,21 +23,21 @@ var BaseApplicationPage = (function () {
         this.isAwaitingAjaxResponse = false;
         this.dynamicallyLoadedScriptFiles = [];
         $(function () {
-            $.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: _this.DEFAULT_MODAL_BACKDROP });
-            //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
+            $.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: Config_1.Config.DEFAULT_MODAL_BACKDROP });
+            // $.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
             _this.enableAlert();
             _this.configureValidation();
             _this.pageLoad();
         });
     }
-    BaseApplicationPage.prototype.onInit = function (action) { this._initializeActions.push(action); };
-    BaseApplicationPage.prototype.onPreInit = function (action) { this._preInitializeActions.push(action); };
-    BaseApplicationPage.prototype.on = function (event, handler) {
+    OlivePage.prototype.onInit = function (action) { this._initializeActions.push(action); };
+    OlivePage.prototype.onPreInit = function (action) { this._preInitializeActions.push(action); };
+    OlivePage.prototype.on = function (event, handler) {
         if (!this.events.hasOwnProperty(event))
             this.events[event] = [];
         this.events[event].push(handler);
     };
-    BaseApplicationPage.prototype.raise = function (event, data) {
+    OlivePage.prototype.raise = function (event, data) {
         var result = true;
         if (this.events.hasOwnProperty(event)) {
             this.events[event].forEach(function (handler) {
@@ -56,22 +49,22 @@ var BaseApplicationPage = (function () {
         return result;
     };
     //#endregion "Events"   
-    BaseApplicationPage.prototype.pageLoad = function (container, trigger) {
+    OlivePage.prototype.pageLoad = function (container, trigger) {
         if (container === void 0) { container = null; }
         if (trigger === void 0) { trigger = null; }
         $('[autofocus]:not([data-autofocus=disabled]):first').focus();
         this.initializeUpdatedPage(container, trigger);
-        if (this.REDIRECT_SCROLLS_UP)
+        if (Config_1.Config.REDIRECT_SCROLLS_UP)
             $(window).scrollTop(0);
     };
-    BaseApplicationPage.prototype.initializeUpdatedPage = function (container, trigger) {
+    OlivePage.prototype.initializeUpdatedPage = function (container, trigger) {
         if (container === void 0) { container = null; }
         if (trigger === void 0) { trigger = null; }
         this.runStartupActions(container, trigger, "PreInit");
         this.initialize();
         this.runStartupActions(container, trigger, "Init");
     };
-    BaseApplicationPage.prototype.initialize = function () {
+    OlivePage.prototype.initialize = function () {
         var _this = this;
         this._preInitializeActions.forEach(function (action) { return action(); });
         // =================== Standard Features ====================
@@ -97,7 +90,7 @@ var BaseApplicationPage = (function () {
         $("input[autocomplete-source]").each(function (i, e) { return _this.handleAutoComplete($(e)); });
         $("[data-control=date-picker],[data-control=calendar]").each(function (i, e) { return _this.enableDateControl($(e)); });
         $("[data-control='date-picker|time-picker']").each(function (i, e) { return _this.enableDateAndTimeControl($(e)); });
-        $("[data-control=time-picker]").each(function (i, e) { return _this.enableTimeControl($(e)); });
+        $("[data-control=time-picker]").each(function (i, e) { return new TimeControl_1.TimeControl($(e)); });
         $("[data-control=date-drop-downs]").each(function (i, e) { return _this.enableDateDropdown($(e)); });
         $("[data-control=html-editor]").each(function (i, e) { return _this.enableHtmlEditor($(e)); });
         $("[data-control=numeric-up-down]").each(function (i, e) { return _this.enableNumericUpDown($(e)); });
@@ -115,21 +108,21 @@ var BaseApplicationPage = (function () {
         $("[data-change-action]").off("change.data-action").on("change.data-action", function (e) { return _this.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action")); });
         $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", function (e) { return _this.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action")); });
         this.updateSubFormStates();
-        this.adjustModalHeight();
+        this.windowCtx.adjustModalHeight();
         this._initializeActions.forEach(function (action) { return action(); });
     };
-    BaseApplicationPage.prototype.changeItToChosen = function (selectControl) {
+    OlivePage.prototype.changeItToChosen = function (selectControl) {
         var options = { disable_search_threshold: 5 };
         selectControl.chosen(options);
     };
-    BaseApplicationPage.prototype.skipNewWindows = function () {
+    OlivePage.prototype.skipNewWindows = function () {
         // Remove the target attribute from links:
         $(window).off('click.SanityAdapter').on('click.SanityAdapter', function (e) {
             $(e.target).filter('a').removeAttr('target');
         });
         this.openWindow = function (url, target) { return location.replace(url); };
     };
-    BaseApplicationPage.prototype.enableDragSort = function (container) {
+    OlivePage.prototype.enableDragSort = function (container) {
         var _this = this;
         var isTable = container.is("tbody");
         var items = isTable ? "> tr" : "> li"; // TODO: Do we need to support any other markup?
@@ -147,12 +140,12 @@ var BaseApplicationPage = (function () {
                 var dropBefore = ui.item.next().find("[data-sort-item]").attr("data-sort-item") || "";
                 var handle = ui.item.find("[data-sort-item]");
                 var actionUrl = handle.attr("data-sort-action");
-                actionUrl = urlHelper.addQuery(actionUrl, "drop-before", dropBefore);
+                actionUrl = UrlHelper_1.UrlHelper.addQuery(actionUrl, "drop-before", dropBefore);
                 _this.invokeActionWithAjax({ currentTarget: handle.get(0) }, actionUrl);
             }
         });
     };
-    BaseApplicationPage.prototype.enableSubMenus = function (menu) {
+    OlivePage.prototype.enableSubMenus = function (menu) {
         // Many options are supported: http://www.smartmenus.org/docs/
         // To provide your custom options, set data-submenu-options attribute on the UL tag with a string json settings.
         if (!!menu.attr('data-smartmenus-id'))
@@ -166,7 +159,7 @@ var BaseApplicationPage = (function () {
             submenuOptions = this.toJson(options);
         menu.smartmenus(submenuOptions);
     };
-    BaseApplicationPage.prototype.enablePasswordStengthMeter = function (container) {
+    OlivePage.prototype.enablePasswordStengthMeter = function (container) {
         // for configuration options : https://github.com/ablanco/jquery.pwstrength.bootstrap/blob/master/OPTIONS.md
         if (container.find(".progress").length !== 0)
             return;
@@ -200,13 +193,13 @@ var BaseApplicationPage = (function () {
         else
             password.pwstrength(options);
     };
-    BaseApplicationPage.prototype.ensureModalResize = function () {
+    OlivePage.prototype.ensureModalResize = function () {
         var _this = this;
-        setTimeout(function () { return _this.adjustModalHeight(); }, 1);
+        setTimeout(function () { return _this.windowCtx.adjustModalHeight(); }, 1);
     };
-    BaseApplicationPage.prototype.configureValidation = function () {
+    OlivePage.prototype.configureValidation = function () {
         var methods = $.validator.methods;
-        var format = this.DATE_FORMAT;
+        var format = Config_1.Config.DATE_FORMAT;
         methods.date = function (value, element) {
             if (this.optional(element))
                 return true;
@@ -214,7 +207,7 @@ var BaseApplicationPage = (function () {
         };
         // TODO: datetime, time
     };
-    BaseApplicationPage.prototype.updateSubFormStates = function () {
+    OlivePage.prototype.updateSubFormStates = function () {
         var countItems = function (element) { return $(element).parent().find(".subform-item:visible").length; };
         // Hide removed items
         $("input[name*=MustBeDeleted][value=True]").closest('[data-subform]').hide();
@@ -233,14 +226,14 @@ var BaseApplicationPage = (function () {
             $(e).find("[data-delete-subform=" + $(e).attr("data-subform") + "]").css('visibility', (show) ? 'visible' : 'hidden');
         });
     };
-    BaseApplicationPage.prototype.enableDateDropdown = function (input) {
+    OlivePage.prototype.enableDateDropdown = function (input) {
         // TODO: Implement
     };
-    BaseApplicationPage.prototype.enableSelectAllToggle = function (event) {
+    OlivePage.prototype.enableSelectAllToggle = function (event) {
         var trigger = $(event.currentTarget);
         trigger.closest("table").find("td.select-row > input:checkbox").prop('checked', trigger.is(":checked"));
     };
-    BaseApplicationPage.prototype.enableInstantSearch = function (control) {
+    OlivePage.prototype.enableInstantSearch = function (control) {
         // TODO: Make it work with List render mode too.
         control.off("keyup.immediate-filter").on("keyup.immediate-filter", function (event) {
             var keywords = control.val().toLowerCase().split(' ');
@@ -260,7 +253,7 @@ var BaseApplicationPage = (function () {
                 e.preventDefault();
         });
     };
-    BaseApplicationPage.prototype.validateForm = function (trigger) {
+    OlivePage.prototype.validateForm = function (trigger) {
         if (trigger.is("[formnovalidate]"))
             return true;
         var form = trigger.closest("form");
@@ -274,7 +267,7 @@ var BaseApplicationPage = (function () {
         }
         return true;
     };
-    BaseApplicationPage.prototype.enableConfirmQuestion = function (button) {
+    OlivePage.prototype.enableConfirmQuestion = function (button) {
         var _this = this;
         button.off("click.confirm-question").bindFirst("click.confirm-question", function (e) {
             e.stopImmediatePropagation();
@@ -290,7 +283,7 @@ var BaseApplicationPage = (function () {
             return false;
         });
     };
-    BaseApplicationPage.prototype.showConfirm = function (text, yesCallback) {
+    OlivePage.prototype.showConfirm = function (text, yesCallback) {
         alertify.confirm(text.replace(/\r/g, "<br />"), function (e) {
             if (e)
                 yesCallback();
@@ -298,29 +291,29 @@ var BaseApplicationPage = (function () {
                 return false;
         });
     };
-    BaseApplicationPage.prototype.enableHtmlEditor = function (input) {
+    OlivePage.prototype.enableHtmlEditor = function (input) {
         var _this = this;
         $.getScript(CKEDITOR_BASEPATH + "ckeditor.js", function () {
             $.getScript(CKEDITOR_BASEPATH + "adapters/jquery.js", function () {
                 CKEDITOR.config.contentsCss = CKEDITOR_BASEPATH + 'contents.css';
                 var editor = CKEDITOR.replace($(input).attr('id'), {
-                    toolbar: $(input).attr('data-toolbar') || _this.DEFAULT_HTML_EDITOR_MODE,
+                    toolbar: $(input).attr('data-toolbar') || Config_1.Config.DEFAULT_HTML_EDITOR_MODE,
                     customConfig: '/Scripts/ckeditor_config.js'
                 });
                 editor.on('change', function (evt) { return evt.editor.updateElement(); });
-                editor.on("instanceReady", function (event) { return _this.adjustModalHeight(); });
+                editor.on("instanceReady", function (event) { return _this.windowCtx.adjustModalHeight(); });
             });
         });
     };
-    BaseApplicationPage.prototype.alertUnobtrusively = function (message, style) {
+    OlivePage.prototype.alertUnobtrusively = function (message, style) {
         alertify.log(message, style);
     };
-    BaseApplicationPage.prototype.enableAlert = function () {
+    OlivePage.prototype.enableAlert = function () {
         var _this = this;
         var w = window;
         w.alert = function (text, callback) { return _this.alert(text, null, callback); };
     };
-    BaseApplicationPage.prototype.alert = function (text, style, callback) {
+    OlivePage.prototype.alert = function (text, style, callback) {
         if (text == undefined)
             text = "";
         text = text.trim();
@@ -333,7 +326,7 @@ var BaseApplicationPage = (function () {
             $('.alertify-message').empty().append($.parseHTML(text));
         }
     };
-    BaseApplicationPage.prototype.enableNumericUpDown = function (input) {
+    OlivePage.prototype.enableNumericUpDown = function (input) {
         var min = input.attr("data-val-range-min");
         var max = input.attr("data-val-range-max");
         input.spinedit({
@@ -342,7 +335,7 @@ var BaseApplicationPage = (function () {
             step: 1,
         });
     };
-    BaseApplicationPage.prototype.enableFileUpload = function (input) {
+    OlivePage.prototype.enableFileUpload = function (input) {
         var _this = this;
         var control = input;
         var container = input.closest(".file-upload");
@@ -410,7 +403,7 @@ var BaseApplicationPage = (function () {
             }
         });
     };
-    BaseApplicationPage.prototype.openLinkModal = function (event) {
+    OlivePage.prototype.openLinkModal = function (event) {
         var target = $(event.currentTarget);
         var url = target.attr("href");
         var modalOptions = {};
@@ -420,7 +413,7 @@ var BaseApplicationPage = (function () {
         this.openModal(url, modalOptions);
         return false;
     };
-    BaseApplicationPage.prototype.toJson = function (data) {
+    OlivePage.prototype.toJson = function (data) {
         try {
             return JSON.parse(data);
         }
@@ -430,7 +423,7 @@ var BaseApplicationPage = (function () {
             console.log(data);
         }
     };
-    BaseApplicationPage.prototype.runStartupActions = function (container, trigger, stage) {
+    OlivePage.prototype.runStartupActions = function (container, trigger, stage) {
         if (container === void 0) { container = null; }
         if (trigger === void 0) { trigger = null; }
         if (stage === void 0) { stage = "Init"; }
@@ -450,27 +443,27 @@ var BaseApplicationPage = (function () {
                 this.executeActions(this.toJson(action), trigger);
         }
     };
-    BaseApplicationPage.prototype.canAutoFocus = function (input) {
+    OlivePage.prototype.canAutoFocus = function (input) {
         return input.attr("data-autofocus") !== "disabled";
     };
-    BaseApplicationPage.prototype.enableDateControl = function (input) {
+    OlivePage.prototype.enableDateControl = function (input) {
         var _this = this;
         if (this.isWindowModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", function (e) { return _this.adjustModalHeightForDataPicker(e); });
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", function (e) { return _this.adjustModalHeightForDataPicker(e); });
+            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", function (e) { return _this.windowCtx.adjustModalHeightForDataPicker(e); });
+            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", function (e) { return _this.windowCtx.adjustModalHeightForDataPicker(e); });
         }
         input.attr("data-autofocus", "disabled");
         var control = input.attr("data-control");
         var viewMode = input.attr("data-view-mode") || 'days';
         if (control == "date-picker") {
             input.datetimepicker({
-                format: this.DATE_FORMAT,
+                format: Config_1.Config.DATE_FORMAT,
                 useCurrent: false,
                 showTodayButton: true,
                 icons: { today: 'today' },
                 viewMode: viewMode,
                 keepInvalid: input.closest("form").find("[data-change-action]").length == 0,
-                locale: this.DATE_LOCALE
+                locale: Config_1.Config.DATE_LOCALE
             }).data("DateTimePicker").keyBinds().clear = null;
             // Now make calendar icon clickable as well             
             input.parent().find(".fa-calendar").parent(".input-group-addon").click(function () { input.focus(); });
@@ -478,51 +471,25 @@ var BaseApplicationPage = (function () {
         else
             alert("Don't know how to handle date control of " + control);
     };
-    BaseApplicationPage.prototype.adjustModalHeightForDataPicker = function (e) {
-        var datepicker = $(e.currentTarget).siblings('.bootstrap-datetimepicker-widget');
-        if (datepicker.length === 0) {
-            this.adjustModalHeight();
-            return;
-        }
-        var offset = Math.ceil(datepicker.offset().top + datepicker[0].offsetHeight) - document.body.offsetHeight + 6;
-        var overflow = Math.max(offset, 0);
-        this.adjustModalHeight(overflow);
-    };
-    BaseApplicationPage.prototype.enableDateAndTimeControl = function (input) {
+    OlivePage.prototype.enableDateAndTimeControl = function (input) {
         var _this = this;
         if (this.isWindowModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", function (e) { return _this.adjustModalHeightForDataPicker(e); });
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", function (e) { return _this.adjustModalHeightForDataPicker(e); });
+            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", function (e) { return _this.windowCtx.adjustModalHeightForDataPicker(e); });
+            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", function (e) { return _this.windowCtx.adjustModalHeightForDataPicker(e); });
         }
         input.attr("data-autofocus", "disabled");
         input.datetimepicker({
-            format: this.DATE_TIME_FORMAT,
+            format: Config_1.Config.DATE_TIME_FORMAT,
             useCurrent: false,
             showTodayButton: true,
             icons: { today: 'today' },
-            stepping: parseInt(input.attr("data-minute-steps") || this.MINUTE_INTERVALS.toString()),
+            stepping: parseInt(input.attr("data-minute-steps") || Config_1.Config.MINUTE_INTERVALS.toString()),
             keepInvalid: input.closest("form").find("[data-change-action]").length == 0,
-            locale: this.DATE_LOCALE
+            locale: Config_1.Config.DATE_LOCALE
         }).data("DateTimePicker").keyBinds().clear = null;
         input.parent().find(".fa-calendar").click(function () { input.focus(); });
     };
-    BaseApplicationPage.prototype.enableTimeControl = function (input) {
-        var _this = this;
-        if (this.isWindowModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", function (e) { return _this.adjustModalHeightForDataPicker(e); });
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", function (e) { return _this.adjustModalHeightForDataPicker(e); });
-        }
-        input.attr("data-autofocus", "disabled");
-        input.datetimepicker({
-            format: this.TIME_FORMAT,
-            useCurrent: false,
-            stepping: parseInt(input.attr("data-minute-steps") || this.MINUTE_INTERVALS.toString()),
-            keepInvalid: input.closest("form").find("[data-change-action]").length == 0,
-            locale: this.DATE_LOCALE
-        }).data("DateTimePicker").keyBinds().clear = null;
-        input.parent().find(".fa-clock-o").parent(".input-group-addon").click(function () { input.focus(); });
-    };
-    BaseApplicationPage.prototype.handleAutoComplete = function (input) {
+    OlivePage.prototype.handleAutoComplete = function (input) {
         var _this = this;
         if (input.is('[data-typeahead-enabled=true]'))
             return;
@@ -534,7 +501,7 @@ var BaseApplicationPage = (function () {
         var dataSource = function (query, callback) {
             _this.awaitingAutocompleteResponses++;
             var url = input.attr("autocomplete-source");
-            url = urlHelper.removeQuery(url, input.attr('name')); // Remove old text.
+            url = UrlHelper_1.UrlHelper.removeQuery(url, input.attr('name')); // Remove old text.
             var data = _this.getPostData(input);
             setTimeout(function () {
                 if (_this.awaitingAutocompleteResponses > 1) {
@@ -551,7 +518,7 @@ var BaseApplicationPage = (function () {
                     });
                     return callback(result);
                 }).always(function () { return _this.awaitingAutocompleteResponses--; });
-            }, _this.AUTOCOMPLETE_INPUT_DELAY);
+            }, Config_1.Config.AUTOCOMPLETE_INPUT_DELAY);
         };
         var clearValue = function (e) {
             if (input.val() === "")
@@ -606,7 +573,7 @@ var BaseApplicationPage = (function () {
         };
         input.data("selected-text", "").on('input', clearValue).on('blur', itemBlured).on('typeahead:selected', itemSelected).typeahead({ minLength: 0 }, dataset);
     };
-    BaseApplicationPage.prototype.handleDefaultButton = function (event) {
+    OlivePage.prototype.handleDefaultButton = function (event) {
         if (event.which === 13) {
             var target = $(event.currentTarget);
             var button = target.closest("[data-module]").find('[default-button]:first'); // Same module
@@ -618,7 +585,7 @@ var BaseApplicationPage = (function () {
         else
             return true;
     };
-    BaseApplicationPage.prototype.deleteSubForm = function (event) {
+    OlivePage.prototype.deleteSubForm = function (event) {
         var button = $(event.currentTarget);
         var container = button.parents(".subform-item");
         container.find("input[name*=MustBeDeleted]").val("true");
@@ -626,7 +593,7 @@ var BaseApplicationPage = (function () {
         this.updateSubFormStates();
         event.preventDefault();
     };
-    BaseApplicationPage.prototype.enableAjaxPaging = function (event) {
+    OlivePage.prototype.enableAjaxPaging = function (event) {
         var button = $(event.currentTarget);
         var page = button.attr("data-pagination");
         var key = "p";
@@ -642,7 +609,7 @@ var BaseApplicationPage = (function () {
             input.remove();
         }
     };
-    BaseApplicationPage.prototype.enableAjaxSorting = function (event) {
+    OlivePage.prototype.enableAjaxSorting = function (event) {
         var button = $(event.currentTarget);
         var sort = button.attr("data-sort");
         var key = "s";
@@ -655,7 +622,7 @@ var BaseApplicationPage = (function () {
             sort += ".DESC";
         input.val(sort);
     };
-    BaseApplicationPage.prototype.applyColumns = function (event) {
+    OlivePage.prototype.applyColumns = function (event) {
         var button = $(event.currentTarget);
         var checkboxes = button.closest(".select-cols").find(":checkbox");
         if (checkboxes.length === 0 || checkboxes.filter(":checked").length > 0)
@@ -663,7 +630,7 @@ var BaseApplicationPage = (function () {
         $("<input type='checkbox' checked='checked'/>").hide().attr("name", checkboxes.attr("name")).val("-")
             .appendTo(button.parent());
     };
-    BaseApplicationPage.prototype.enableAjaxRedirect = function (event) {
+    OlivePage.prototype.enableAjaxRedirect = function (event) {
         if (event.ctrlKey || event.button === 1)
             return true;
         var link = $(event.currentTarget);
@@ -671,7 +638,7 @@ var BaseApplicationPage = (function () {
         this.ajaxRedirect(url, link);
         return false;
     };
-    BaseApplicationPage.prototype.ajaxRedirect = function (url, trigger, isBack, keepScroll, addToHistory) {
+    OlivePage.prototype.ajaxRedirect = function (url, trigger, isBack, keepScroll, addToHistory) {
         var _this = this;
         if (trigger === void 0) { trigger = null; }
         if (isBack === void 0) { isBack = false; }
@@ -710,14 +677,14 @@ var BaseApplicationPage = (function () {
         });
         return false;
     };
-    BaseApplicationPage.prototype.ajaxRedirectBackClicked = function (event) {
+    OlivePage.prototype.ajaxRedirectBackClicked = function (event) {
         if (this.ajaxChangedUrl == 0)
             return;
         this.ajaxChangedUrl--;
         this.ajaxRedirect(location.href, null, true);
     };
-    BaseApplicationPage.prototype.returnToPreviousPage = function (target) {
-        var returnUrl = urlHelper.getQuery("ReturnUrl");
+    OlivePage.prototype.returnToPreviousPage = function (target) {
+        var returnUrl = UrlHelper_1.UrlHelper.getQuery("ReturnUrl");
         if (returnUrl) {
             if (target && $(target).is("[data-redirect=ajax]"))
                 this.ajaxRedirect(returnUrl, $(target));
@@ -728,21 +695,21 @@ var BaseApplicationPage = (function () {
             history.back();
         return false;
     };
-    BaseApplicationPage.prototype.cleanGetFormSubmit = function (event) {
+    OlivePage.prototype.cleanGetFormSubmit = function (event) {
         var form = $(event.currentTarget);
         if (this.validateForm(form) == false) {
             this.hidePleaseWait();
             return false;
         }
-        var formData = urlHelper.mergeFormData(form.serializeArray()).filter(function (item) { return item.name != "__RequestVerificationToken"; });
-        var url = urlHelper.removeEmptyQueries(form.attr('action'));
+        var formData = UrlHelper_1.UrlHelper.mergeFormData(form.serializeArray()).filter(function (item) { return item.name != "__RequestVerificationToken"; });
+        var url = UrlHelper_1.UrlHelper.removeEmptyQueries(form.attr('action'));
         try {
-            form.find("input:checkbox:unchecked").each(function (ind, e) { return url = urlHelper.removeQuery(url, $(e).attr("name")); });
+            form.find("input:checkbox:unchecked").each(function (ind, e) { return url = UrlHelper_1.UrlHelper.removeQuery(url, $(e).attr("name")); });
             for (var _i = 0, formData_1 = formData; _i < formData_1.length; _i++) {
                 var item = formData_1[_i];
-                url = urlHelper.updateQuery(url, item.name, item.value);
+                url = UrlHelper_1.UrlHelper.updateQuery(url, item.name, item.value);
             }
-            url = urlHelper.removeEmptyQueries(url);
+            url = UrlHelper_1.UrlHelper.removeEmptyQueries(url);
             if (form.is("[data-redirect=ajax]"))
                 this.ajaxRedirect(url, form);
             else
@@ -754,12 +721,12 @@ var BaseApplicationPage = (function () {
         }
         return false;
     };
-    BaseApplicationPage.prototype.enableUserHelp = function (element) {
+    OlivePage.prototype.enableUserHelp = function (element) {
         element.click(function () { return false; });
         var message = element.attr('data-user-help'); // todo: unescape message and conver to html
         element['popover']({ trigger: 'focus', content: message });
     };
-    BaseApplicationPage.prototype.executeActions = function (actions, trigger) {
+    OlivePage.prototype.executeActions = function (actions, trigger) {
         if (trigger === void 0) { trigger = null; }
         for (var _i = 0, actions_2 = actions; _i < actions_2.length; _i++) {
             var action = actions_2[_i];
@@ -767,7 +734,7 @@ var BaseApplicationPage = (function () {
                 return;
         }
     };
-    BaseApplicationPage.prototype.executeAction = function (action, trigger) {
+    OlivePage.prototype.executeAction = function (action, trigger) {
         if (action.Notify || action.Notify == "")
             this.executeNotifyAction(action, trigger);
         else if (action.Script)
@@ -793,16 +760,16 @@ var BaseApplicationPage = (function () {
         else if (action.Redirect)
             this.executeRedirectAction(action, trigger);
         else
-            alert("Don't know how to handle: " + urlHelper.htmlEncode(JSON.stringify(action)));
+            alert("Don't know how to handle: " + UrlHelper_1.UrlHelper.htmlEncode(JSON.stringify(action)));
         return true;
     };
-    BaseApplicationPage.prototype.executeNotifyAction = function (action, trigger) {
+    OlivePage.prototype.executeNotifyAction = function (action, trigger) {
         if (action.Obstruct == false)
             this.alertUnobtrusively(action.Notify, action.Style);
         else
             this.alert(action.Notify, action.Style);
     };
-    BaseApplicationPage.prototype.executeRedirectAction = function (action, trigger) {
+    OlivePage.prototype.executeRedirectAction = function (action, trigger) {
         if (action.Redirect.indexOf('/') != 0 && action.Redirect.indexOf('http') != 0)
             action.Redirect = '/' + action.Redirect;
         if (action.OutOfModal && this.isWindowModal())
@@ -818,7 +785,7 @@ var BaseApplicationPage = (function () {
         else
             location.replace(action.Redirect);
     };
-    BaseApplicationPage.prototype.replaceListControlSource = function (controlId, items) {
+    OlivePage.prototype.replaceListControlSource = function (controlId, items) {
         var $control = $('#' + controlId);
         if ($control.is("select")) {
             $control.empty();
@@ -830,7 +797,7 @@ var BaseApplicationPage = (function () {
             console.log("Unable to replace list items");
         }
     };
-    BaseApplicationPage.prototype.download = function (url) {
+    OlivePage.prototype.download = function (url) {
         if (this.isWindowModal()) {
             var page = window.parent["page"];
             if (page && page.download) {
@@ -840,13 +807,13 @@ var BaseApplicationPage = (function () {
         }
         $("<iframe style='visibility:hidden; width:1px; height:1px;'></iframe>").attr("src", url).appendTo("body");
     };
-    BaseApplicationPage.prototype.openWindow = function (url, target) {
+    OlivePage.prototype.openWindow = function (url, target) {
         window.open(url, target);
     };
-    BaseApplicationPage.prototype.hidePleaseWait = function () {
+    OlivePage.prototype.hidePleaseWait = function () {
         $(".wait-screen").remove();
     };
-    BaseApplicationPage.prototype.showPleaseWait = function (blockScreen) {
+    OlivePage.prototype.showPleaseWait = function (blockScreen) {
         if (blockScreen === void 0) { blockScreen = false; }
         if (!$(document.forms[0]).valid())
             return;
@@ -861,7 +828,7 @@ var BaseApplicationPage = (function () {
             .appendTo(screen)
             .fadeIn('slow');
     };
-    BaseApplicationPage.prototype.getModalTemplate = function (options) {
+    OlivePage.prototype.getModalTemplate = function (options) {
         var modalDialogStyle = "";
         var iframeStyle = "width:100%; border:0;";
         var iframeAttributes = "";
@@ -890,7 +857,7 @@ var BaseApplicationPage = (function () {
     </div>\
 </div></div></div>";
     };
-    BaseApplicationPage.prototype.openModal = function (url, options) {
+    OlivePage.prototype.openModal = function (url, options) {
         var _this = this;
         if (options === void 0) { options = {}; }
         this.isOpeningModal = true;
@@ -912,7 +879,7 @@ var BaseApplicationPage = (function () {
         });
         this.currentModal.appendTo("body").modal('show');
     };
-    BaseApplicationPage.prototype.closeModal = function (refreshParent) {
+    OlivePage.prototype.closeModal = function (refreshParent) {
         if (refreshParent === void 0) { refreshParent = false; }
         if (this.raise("modal:closing") === false)
             return false;
@@ -933,18 +900,18 @@ var BaseApplicationPage = (function () {
         this.isClosingModal = false;
         return true;
     };
-    BaseApplicationPage.prototype.refresh = function (keepScroll) {
+    OlivePage.prototype.refresh = function (keepScroll) {
         if (keepScroll === void 0) { keepScroll = false; }
         if ($("main").parent().is("body"))
             this.ajaxRedirect(location.href, null, false /*isBack*/, keepScroll, false /*addToHistory:*/);
         else
             location.reload();
     };
-    BaseApplicationPage.prototype.getPostData = function (trigger) {
+    OlivePage.prototype.getPostData = function (trigger) {
         var form = trigger.closest("[data-module]");
         if (!form.is("form"))
             form = $("<form />").append(form.clone(true));
-        var data = urlHelper.mergeFormData(form.serializeArray());
+        var data = UrlHelper_1.UrlHelper.mergeFormData(form.serializeArray());
         // If it's master-details, then we need the index.
         var subFormContainer = trigger.closest(".subform-item");
         if (subFormContainer != null) {
@@ -953,10 +920,10 @@ var BaseApplicationPage = (function () {
                 value: subFormContainer.closest(".horizontal-subform, .vertical-subform").find(".subform-item").index(subFormContainer).toString()
             });
         }
-        data.push({ name: "current.request.url", value: urlHelper.pathAndQuery() });
+        data.push({ name: "current.request.url", value: UrlHelper_1.UrlHelper.pathAndQuery() });
         return data;
     };
-    BaseApplicationPage.prototype.invokeActionWithAjax = function (event, actionUrl, syncCall) {
+    OlivePage.prototype.invokeActionWithAjax = function (event, actionUrl, syncCall) {
         var _this = this;
         if (syncCall === void 0) { syncCall = false; }
         var trigger = $(event.currentTarget);
@@ -967,7 +934,7 @@ var BaseApplicationPage = (function () {
             return false;
         }
         var data_before_disable = this.getPostData(trigger);
-        var disableToo = this.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
+        var disableToo = Config_1.Config.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
         if (disableToo)
             trigger.attr('disabled', 'disabled');
         trigger.addClass('loading-action-result');
@@ -991,12 +958,12 @@ var BaseApplicationPage = (function () {
         });
         return false;
     };
-    BaseApplicationPage.prototype.enableSelectColumns = function (container) {
+    OlivePage.prototype.enableSelectColumns = function (container) {
         var columns = container.find("div.select-cols");
         container.find("a.select-cols").click(function () { columns.show(); return false; });
         columns.find('.cancel').click(function () { return columns.hide(); });
     };
-    BaseApplicationPage.prototype.invokeActionWithPost = function (event) {
+    OlivePage.prototype.invokeActionWithPost = function (event) {
         var trigger = $(event.currentTarget);
         var containerModule = trigger.closest("[data-module]");
         if (containerModule.is("form") && this.validateForm(trigger) == false)
@@ -1011,7 +978,7 @@ var BaseApplicationPage = (function () {
         form.attr("action", url).submit();
         return false;
     };
-    BaseApplicationPage.prototype.handleAjaxResponseError = function (response) {
+    OlivePage.prototype.handleAjaxResponseError = function (response) {
         this.hidePleaseWait();
         console.log(response);
         var text = response.responseText;
@@ -1028,7 +995,7 @@ var BaseApplicationPage = (function () {
         else
             alert(text);
     };
-    BaseApplicationPage.prototype.replaceMain = function (element, trigger) {
+    OlivePage.prototype.replaceMain = function (element, trigger) {
         var _this = this;
         var referencedScripts = element.find("script[src]").map(function (i, s) { return $(s).attr("src"); });
         element.find("script[src]").remove();
@@ -1057,7 +1024,7 @@ var BaseApplicationPage = (function () {
             this.pageLoad(element, trigger);
         document.title = $("#page_meta_title").val();
     };
-    BaseApplicationPage.prototype.invokeAjaxActionResult = function (response, containerModule, trigger) {
+    OlivePage.prototype.invokeAjaxActionResult = function (response, containerModule, trigger) {
         var asElement = $(response);
         if (asElement.is("main")) {
             this.replaceMain(asElement, trigger);
@@ -1088,25 +1055,25 @@ var BaseApplicationPage = (function () {
             this.initialize();
         }
     };
-    BaseApplicationPage.prototype.ensureNonModal = function () {
+    OlivePage.prototype.ensureNonModal = function () {
         if (this.isWindowModal())
             parent.window.location.href = location.href;
     };
-    BaseApplicationPage.prototype.isWindowModal = function () {
+    OlivePage.prototype.isWindowModal = function () {
         if ($(this.getContainerIFrame()).closest(".modal").length === 0)
             return false;
         return true;
     };
-    BaseApplicationPage.prototype.getContainerIFrame = function () {
+    OlivePage.prototype.getContainerIFrame = function () {
         if (parent == null || parent == self)
             return null;
         return $(parent.document).find("iframe").filter(function (i, f) { return (f.contentDocument || f.contentWindow.document) == document; }).get(0);
     };
-    BaseApplicationPage.prototype.cleanJson = function (str) {
+    OlivePage.prototype.cleanJson = function (str) {
         return str.replace(/(\s*?{\s*?|\s*?,\s*?)(['"])?([a-zA-Z0-9]+)(['"])?:/g, '$1"$3":');
     };
     ;
-    BaseApplicationPage.prototype.enableSlider = function (input) {
+    OlivePage.prototype.enableSlider = function (input) {
         var options = { min: 0, max: 100, value: null, range: false, formatter: null, tooltip: 'always', upper: null, tooltip_split: false };
         var data_options = input.attr("data-options") ? JSON.parse(this.cleanJson(input.attr("data-options"))) : null;
         if (data_options)
@@ -1137,36 +1104,29 @@ var BaseApplicationPage = (function () {
             input.slider(options).on('change', function (ev) { input.val(ev.value.newValue); }); ///// Updated ***********
         }
     };
-    BaseApplicationPage.prototype.adjustModalHeight = function (overflow) {
-        if (this.isWindowModal()) {
-            var frame = $(this.getContainerIFrame());
-            if (frame.attr("data-has-explicit-height") != 'true')
-                frame.height(document.body.offsetHeight + (overflow || 0));
-        }
-    };
-    BaseApplicationPage.prototype.adjustIFrameHeightToContents = function (iframe) {
+    OlivePage.prototype.adjustIFrameHeightToContents = function (iframe) {
         $(iframe).height(iframe.contentWindow.document.body.scrollHeight);
     };
-    BaseApplicationPage.prototype.reloadValidationRules = function (form) {
+    OlivePage.prototype.reloadValidationRules = function (form) {
         form.removeData("validator").removeData("unobtrusiveValidation");
         $.validator.unobtrusive.parse(form);
     };
-    BaseApplicationPage.prototype.paginationSizeChanged = function (event) {
+    OlivePage.prototype.paginationSizeChanged = function (event) {
         $(event.currentTarget).closest("form").submit();
     };
-    BaseApplicationPage.prototype.highlightRow = function (element) {
+    OlivePage.prototype.highlightRow = function (element) {
         var target = $(element.closest("tr"));
         target.siblings('tr').removeClass('highlighted');
         target.addClass('highlighted');
     };
-    BaseApplicationPage.prototype.cleanUpNumberField = function (field) {
+    OlivePage.prototype.cleanUpNumberField = function (field) {
         var domElement = field.get(0);
         // var start = domElement.selectionStart;
         // var end = domElement.selectionEnd;
         field.val(field.val().replace(/[^\d.-]/g, ""));
         // domElement.setSelectionRange(start, end);
     };
-    BaseApplicationPage.prototype.setSortHeaderClass = function (thead) {
+    OlivePage.prototype.setSortHeaderClass = function (thead) {
         var currentSort = thead.closest("[data-module]").find("#Current-Sort").val() || "";
         if (currentSort == "")
             return;
@@ -1180,6 +1140,6 @@ var BaseApplicationPage = (function () {
             thead.append("<i />");
         }
     };
-    return BaseApplicationPage;
+    return OlivePage;
 }());
-//# sourceMappingURL=base.application.page.js.map
+//# sourceMappingURL=OlivePage.js.map

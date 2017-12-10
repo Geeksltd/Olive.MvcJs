@@ -1,16 +1,16 @@
-﻿class UrlHelper {
+﻿export class UrlHelper {
 
-    current(): string { return window.location.href; }
+    static current(): string { return window.location.href; }
 
-    goBack(): void {
-        var returnUrl = this.getQuery("ReturnUrl");
+    static goBack(): void {
+        var returnUrl = UrlHelper.getQuery("ReturnUrl");
         if (returnUrl) window.location.href = returnUrl;
         else history.back();
     }
 
-    pathAndQuery(): string { return window.location.pathname + window.location.search; }
+    static pathAndQuery(): string { return window.location.pathname + window.location.search; }
 
-    updateQuery(uri, key, value) {
+    static updateQuery(uri, key, value) {
 
         if (uri == null) uri = window.location.href;
 
@@ -24,7 +24,7 @@
         }
     }
 
-    removeQuery(url: string, parameter: string) {
+    static removeQuery(url: string, parameter: string) {
 
         //prefer to use l.search if you have a location/link object
         var urlParts = url.split('?');
@@ -47,9 +47,8 @@
         }
     }
 
-    getQuery(name: string, url: string = null): string {
-
-        if (url) url = this.fullQueryString(url); else url = location.search;
+    static getQuery(name: string, url: string = null): string {
+        if (url) url = UrlHelper.fullQueryString(url); else url = location.search;
 
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
         var regex = new RegExp("[\\?&]" + name + "=([^&#]*)", "i"),
@@ -57,20 +56,20 @@
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
-    fullQueryString(url: string): string {
+    static fullQueryString(url: string): string {
         if (url == undefined || url == null)
-            url = this.current();
+            url = UrlHelper.current();
 
         if (url.indexOf("?") == -1) return '';
 
         return url.substring(url.indexOf("?") + 1);
     }
 
-    addQuery(url: string, key: string, value) { return url + (url.indexOf("?") == -1 ? "?" : "&") + key + "=" + value; }
+    static addQuery(url: string, key: string, value) { return url + (url.indexOf("?") == -1 ? "?" : "&") + key + "=" + value; }
 
-    removeEmptyQueries(url: string): string {
+    static removeEmptyQueries(url: string): string {
 
-        var items = this.fullQueryString(url).split('&');
+        var items = UrlHelper.fullQueryString(url).split('&');
         var result = '';
 
         for (var i in items) {
@@ -89,7 +88,7 @@
         return result;
     }
 
-    mergeFormData(items: JQuerySerializeArrayElement[]): JQuerySerializeArrayElement[] {
+    static mergeFormData(items: JQuerySerializeArrayElement[]): JQuerySerializeArrayElement[] {
         var result: JQuerySerializeArrayElement[] = [];
 
         var a: any = Array;
@@ -116,19 +115,15 @@
         return result;
     }
 
-    htmlEncode(html) {
+    static htmlEncode(html) {
         var a: any = document.createElement('a');
         a.appendChild(document.createTextNode(html));
         return a.innerHTML;
     }
 
-    htmlDecode(html) {
+    static htmlDecode(html) {
         var a = document.createElement('a');
         a.innerHTML = html;
         return a.textContent;
     }
 }
-
-// Create a singleton instance:
-declare var urlHelper: UrlHelper;
-urlHelper = new UrlHelper();

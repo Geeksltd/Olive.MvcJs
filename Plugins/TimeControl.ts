@@ -1,28 +1,26 @@
+import { WindowContext } from "../Component/WindowContext";
+import { Config } from "../Config";
 
-///<reference path="../require.config.ts"/>
+export class TimeControl {
 
-import helper = require("/Component/WindowContext");
+    constructor(targetInput: any) {
+        let input = targetInput;
+        var windowCtx = WindowContext.getInstance();
 
-export namespace Olive {
-   export class TimeControl{
-       input:any;
-       
-       constructor(targetInput:any){
-           this.input=targetInput;
-       }
-       
-        if (helper.getInstance().isWindowModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
+        if (windowCtx.isWindowModal()) {
+            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => windowCtx.adjustModalHeightForDataPicker(e));
+            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => windowCtx.adjustModalHeightForDataPicker(e));
         }
+
         input.attr("data-autofocus", "disabled");
         input.datetimepicker({
-            format: this.TIME_FORMAT,
+            format: Config.TIME_FORMAT,
             useCurrent: false,
-            stepping: parseInt(input.attr("data-minute-steps") || this.MINUTE_INTERVALS.toString()),
+            stepping: parseInt(input.attr("data-minute-steps") || Config.MINUTE_INTERVALS.toString()),
             keepInvalid: input.closest("form").find("[data-change-action]").length == 0,
-            locale: this.DATE_LOCALE
+            locale: Config.DATE_LOCALE
         }).data("DateTimePicker").keyBinds().clear = null;
+
         input.parent().find(".fa-clock-o").parent(".input-group-addon").click(() => { input.focus(); });
-   }
+    }
 }

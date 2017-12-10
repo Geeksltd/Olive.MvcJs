@@ -1,33 +1,20 @@
-///<reference path="jquery.enhancements.ts"/>
-///<reference path="require.config.ts"/>
 
-var CKEDITOR_BASEPATH = '/lib/ckeditor/'; // For ckeditor plug-ins to work, this should be globally defined.
+// TODO: For ckeditor plug-ins to work, this is globally defined. Find a cleaner solution.
+var CKEDITOR_BASEPATH = '/lib/ckeditor/';
 
-import olive = require("plugins/TimeControl");
-import $ = require('jquery');
+import { WindowContext } from "./Component/WindowContext";
+import { UrlHelper } from "./Component/UrlHelper";
+import { Config } from "./Config";
+import { TimeControl } from "./Plugins/TimeControl";
 
-class BaseApplicationPage {
+class OlivePage {
 
-    // formats: http://momentjs.com/docs/#/displaying/format/
-    DATE_FORMAT = "DD/MM/YYYY";
-    TIME_FORMAT = "HH:mm";
-    DATE_TIME_FORMAT = "DD/MM/YYYY HH:mm";
-    MINUTE_INTERVALS = 5;
-    DISABLE_BUTTONS_DURING_AJAX = false;
-    DATE_LOCALE = "en-gb";
-    REDIRECT_SCROLLS_UP = true;
-    AUTOCOMPLETE_INPUT_DELAY = 500;
-
-    /* Possible values: Compact | Medium | Advance | Full
-       To customise modes, change '/Scripts/Lib/ckeditor_config.js' file
-       */
-    DEFAULT_HTML_EDITOR_MODE = "Medium";
-    DEFAULT_MODAL_BACKDROP = "static";
+    windowCtx = WindowContext.getInstance();
 
     constructor() {
         $(() => {
-            $.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: this.DEFAULT_MODAL_BACKDROP });
-            //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
+            $.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: Config.DEFAULT_MODAL_BACKDROP });
+            // $.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
             this.enableAlert();
             this.configureValidation();
             this.pageLoad();
@@ -64,7 +51,7 @@ class BaseApplicationPage {
     pageLoad(container: JQuery = null, trigger: any = null) {
         $('[autofocus]:not([data-autofocus=disabled]):first').focus();
         this.initializeUpdatedPage(container, trigger);
-        if (this.REDIRECT_SCROLLS_UP) $(window).scrollTop(0);
+        if (Config.REDIRECT_SCROLLS_UP) $(window).scrollTop(0);
     }
 
     initializeUpdatedPage(container: JQuery = null, trigger: any = null) {
@@ -101,7 +88,8 @@ class BaseApplicationPage {
         $("input[autocomplete-source]").each((i, e) => this.handleAutoComplete($(e)));
         $("[data-control=date-picker],[data-control=calendar]").each((i, e) => this.enableDateControl($(e)));
         $("[data-control='date-picker|time-picker']").each((i, e) => this.enableDateAndTimeControl($(e)));
-        $("[data-control=time-picker]").each((i, e) => olive.TimeControl($(e)));
+
+        $("[data-control=time-picker]").each((i, e) => new TimeControl($(e)));
         $("[data-control=date-drop-downs]").each((i, e) => this.enableDateDropdown($(e)));
         $("[data-control=html-editor]").each((i, e) => this.enableHtmlEditor($(e)));
         $("[data-control=numeric-up-down]").each((i, e) => this.enableNumericUpDown($(e)));
@@ -121,7 +109,7 @@ class BaseApplicationPage {
         $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => this.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action")));
 
         this.updateSubFormStates();
-        this.adjustModalHeight();
+        this.windowCtx.adjustModalHeight();
 
         this._initializeActions.forEach((action) => action());
     }
@@ -162,7 +150,7 @@ class BaseApplicationPage {
                 var handle = ui.item.find("[data-sort-item]");
 
                 var actionUrl = handle.attr("data-sort-action");
-                actionUrl = urlHelper.addQuery(actionUrl, "drop-before", dropBefore);
+                actionUrl = UrlHelper.addQuery(actionUrl, "drop-before", dropBefore);
 
                 this.invokeActionWithAjax({ currentTarget: handle.get(0) }, actionUrl);
             }
@@ -225,14 +213,14 @@ class BaseApplicationPage {
     }
 
     ensureModalResize() {
-        setTimeout(() => this.adjustModalHeight(), 1);
+        setTimeout(() => this.windowCtx.adjustModalHeight(), 1);
     }
 
     configureValidation() {
 
         var methods: any = $.validator.methods;
 
-        var format = this.DATE_FORMAT;
+        var format = Config.DATE_FORMAT;
 
         methods.date = function (value, element) {
             if (this.optional(element)) return true;
@@ -343,20 +331,19 @@ class BaseApplicationPage {
         });
     }
 
-
     enableHtmlEditor(input: any) {
         $.getScript(CKEDITOR_BASEPATH + "ckeditor.js", () => {
             $.getScript(CKEDITOR_BASEPATH + "adapters/jquery.js", () => {
                 CKEDITOR.config.contentsCss = CKEDITOR_BASEPATH + 'contents.css';
                 var editor = CKEDITOR.replace($(input).attr('id'),
                     {
-                        toolbar: $(input).attr('data-toolbar') || this.DEFAULT_HTML_EDITOR_MODE,
+                        toolbar: $(input).attr('data-toolbar') || Config.DEFAULT_HTML_EDITOR_MODE,
                         customConfig: '/Scripts/ckeditor_config.js'
                     });
 
                 editor.on('change', (evt) => evt.editor.updateElement());
 
-                editor.on("instanceReady", (event) => this.adjustModalHeight());
+                editor.on("instanceReady", (event) => this.windowCtx.adjustModalHeight());
             });
         });
     }
@@ -519,8 +506,8 @@ class BaseApplicationPage {
 
     enableDateControl(input: JQuery) {
         if (this.isWindowModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
+            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => this.windowCtx.adjustModalHeightForDataPicker(e));
+            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => this.windowCtx.adjustModalHeightForDataPicker(e));
         }
 
         input.attr("data-autofocus", "disabled");
@@ -530,13 +517,13 @@ class BaseApplicationPage {
 
         if (control == "date-picker") {
             (<any>input).datetimepicker({
-                format: this.DATE_FORMAT,
+                format: Config.DATE_FORMAT,
                 useCurrent: false,
                 showTodayButton: true,
                 icons: { today: 'today' },
                 viewMode: viewMode,
                 keepInvalid: input.closest("form").find("[data-change-action]").length == 0,
-                locale: this.DATE_LOCALE
+                locale: Config.DATE_LOCALE
             }).data("DateTimePicker").keyBinds().clear = null;
 
             // Now make calendar icon clickable as well             
@@ -546,37 +533,23 @@ class BaseApplicationPage {
         else alert("Don't know how to handle date control of " + control);
     }
 
-    adjustModalHeightForDataPicker(e) {
-
-        var datepicker = $(e.currentTarget).siblings('.bootstrap-datetimepicker-widget');
-
-        if (datepicker.length === 0) {
-            this.adjustModalHeight();
-            return;
-        }
-
-        var offset = Math.ceil(datepicker.offset().top + datepicker[0].offsetHeight) - document.body.offsetHeight + 6;
-        var overflow = Math.max(offset, 0);
-        this.adjustModalHeight(overflow);
-    }
-
     enableDateAndTimeControl(input: any) {
 
         if (this.isWindowModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
+            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => this.windowCtx.adjustModalHeightForDataPicker(e));
+            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => this.windowCtx.adjustModalHeightForDataPicker(e));
         }
 
         input.attr("data-autofocus", "disabled");
 
         input.datetimepicker({
-            format: this.DATE_TIME_FORMAT,
+            format: Config.DATE_TIME_FORMAT,
             useCurrent: false,
             showTodayButton: true,
             icons: { today: 'today' },
-            stepping: parseInt(input.attr("data-minute-steps") || this.MINUTE_INTERVALS.toString()),
+            stepping: parseInt(input.attr("data-minute-steps") || Config.MINUTE_INTERVALS.toString()),
             keepInvalid: input.closest("form").find("[data-change-action]").length == 0,
-            locale: this.DATE_LOCALE
+            locale: Config.DATE_LOCALE
         }).data("DateTimePicker").keyBinds().clear = null;
 
         input.parent().find(".fa-calendar").click(function () { input.focus(); });
@@ -595,7 +568,7 @@ class BaseApplicationPage {
             this.awaitingAutocompleteResponses++;
 
             var url = input.attr("autocomplete-source");
-            url = urlHelper.removeQuery(url, input.attr('name')); // Remove old text.
+            url = UrlHelper.removeQuery(url, input.attr('name')); // Remove old text.
             var data = this.getPostData(input);
 
             setTimeout(() => {
@@ -616,7 +589,7 @@ class BaseApplicationPage {
 
                     return callback(result);
                 }).always(() => this.awaitingAutocompleteResponses--);
-            }, this.AUTOCOMPLETE_INPUT_DELAY);
+            }, Config.AUTOCOMPLETE_INPUT_DELAY);
         };
 
         var clearValue = (e) => {
@@ -804,7 +777,7 @@ class BaseApplicationPage {
     }
 
     returnToPreviousPage(target) {
-        var returnUrl = urlHelper.getQuery("ReturnUrl");
+        var returnUrl = UrlHelper.getQuery("ReturnUrl");
 
         if (returnUrl) {
             if (target && $(target).is("[data-redirect=ajax]")) this.ajaxRedirect(returnUrl, $(target));
@@ -820,18 +793,18 @@ class BaseApplicationPage {
         var form = $(event.currentTarget);
         if (this.validateForm(form) == false) { this.hidePleaseWait(); return false; }
 
-        var formData = urlHelper.mergeFormData(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
+        var formData = UrlHelper.mergeFormData(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
 
-        var url = urlHelper.removeEmptyQueries(form.attr('action'));
+        var url = UrlHelper.removeEmptyQueries(form.attr('action'));
 
         try {
 
-            form.find("input:checkbox:unchecked").each((ind, e) => url = urlHelper.removeQuery(url, $(e).attr("name")));
+            form.find("input:checkbox:unchecked").each((ind, e) => url = UrlHelper.removeQuery(url, $(e).attr("name")));
 
             for (var item of formData)
-                url = urlHelper.updateQuery(url, item.name, item.value);
+                url = UrlHelper.updateQuery(url, item.name, item.value);
 
-            url = urlHelper.removeEmptyQueries(url);
+            url = UrlHelper.removeEmptyQueries(url);
 
             if (form.is("[data-redirect=ajax]")) this.ajaxRedirect(url, form);
             else location.href = url;
@@ -870,7 +843,7 @@ class BaseApplicationPage {
         else if (action.ReplaceSource) this.replaceListControlSource(action.ReplaceSource, action.Items);
         else if (action.Download) this.download(action.Download);
         else if (action.Redirect) this.executeRedirectAction(action, trigger);
-        else alert("Don't know how to handle: " + urlHelper.htmlEncode(JSON.stringify(action)));
+        else alert("Don't know how to handle: " + UrlHelper.htmlEncode(JSON.stringify(action)));
 
         return true;
     }
@@ -1049,7 +1022,7 @@ class BaseApplicationPage {
 
         if (!form.is("form")) form = $("<form />").append(form.clone(true));
 
-        var data = urlHelper.mergeFormData(form.serializeArray());
+        var data = UrlHelper.mergeFormData(form.serializeArray());
 
         // If it's master-details, then we need the index.
         var subFormContainer = trigger.closest(".subform-item");
@@ -1060,7 +1033,7 @@ class BaseApplicationPage {
             });
         }
 
-        data.push({ name: "current.request.url", value: urlHelper.pathAndQuery() });
+        data.push({ name: "current.request.url", value: UrlHelper.pathAndQuery() });
 
         return data;
     }
@@ -1076,7 +1049,7 @@ class BaseApplicationPage {
 
         var data_before_disable = this.getPostData(trigger);
 
-        var disableToo = this.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
+        var disableToo = Config.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
         if (disableToo) trigger.attr('disabled', 'disabled');
 
         trigger.addClass('loading-action-result');
@@ -1266,15 +1239,6 @@ class BaseApplicationPage {
         else {
             options.value = Number(input.val() || options.min);
             (<any>input).slider(options).on('change', ev => { input.val(ev.value.newValue); });  ///// Updated ***********
-        }
-    }
-
-    adjustModalHeight(overflow?: number) {
-        if (this.isWindowModal()) {
-
-            var frame = $(this.getContainerIFrame());
-            if (frame.attr("data-has-explicit-height") != 'true')
-                frame.height(document.body.offsetHeight + (overflow || 0));
         }
     }
 
