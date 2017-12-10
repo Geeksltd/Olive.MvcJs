@@ -1,5 +1,9 @@
-﻿// For ckeditor plug-ins to work, this should be globally defined.
+
+///<reference path="jquery.enhancements.ts"/>
+
+// For ckeditor plug-ins to work, this should be globally defined.
 var CKEDITOR_BASEPATH = '/lib/ckeditor/';
+import $ = require('jquery');
 
 class BaseApplicationPage {
 
