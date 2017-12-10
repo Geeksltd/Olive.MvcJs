@@ -1,3 +1,7 @@
+
+// TODO: Change these to be extension methods on the Window interface.
+// So for example we can call -> window.getContainerIFrame() or window.isModal()...
+
 export class WindowContext {
     private static instance: WindowContext;
 
@@ -37,5 +41,5 @@ export class WindowContext {
         var offset = Math.ceil(datepicker.offset().top + datepicker[0].offsetHeight) - document.body.offsetHeight + 6;
         var overflow = Math.max(offset, 0);
         this.adjustModalHeight(overflow);
-    }
+    }   
 }

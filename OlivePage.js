@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // TODO: For ckeditor plug-ins to work, this is globally defined. Find a cleaner solution.
 var CKEDITOR_BASEPATH = '/lib/ckeditor/';
 var WindowContext_1 = require("./Component/WindowContext");
-var UrlHelper_1 = require("./Component/UrlHelper");
+var Url_1 = require("./Component/Url");
 var Config_1 = require("./Config");
 var TimeControl_1 = require("./Plugins/TimeControl");
 var OlivePage = (function () {
@@ -140,7 +140,7 @@ var OlivePage = (function () {
                 var dropBefore = ui.item.next().find("[data-sort-item]").attr("data-sort-item") || "";
                 var handle = ui.item.find("[data-sort-item]");
                 var actionUrl = handle.attr("data-sort-action");
-                actionUrl = UrlHelper_1.UrlHelper.addQuery(actionUrl, "drop-before", dropBefore);
+                actionUrl = Url_1.Url.addQuery(actionUrl, "drop-before", dropBefore);
                 _this.invokeActionWithAjax({ currentTarget: handle.get(0) }, actionUrl);
             }
         });
@@ -501,7 +501,7 @@ var OlivePage = (function () {
         var dataSource = function (query, callback) {
             _this.awaitingAutocompleteResponses++;
             var url = input.attr("autocomplete-source");
-            url = UrlHelper_1.UrlHelper.removeQuery(url, input.attr('name')); // Remove old text.
+            url = Url_1.Url.removeQuery(url, input.attr('name')); // Remove old text.
             var data = _this.getPostData(input);
             setTimeout(function () {
                 if (_this.awaitingAutocompleteResponses > 1) {
@@ -684,7 +684,7 @@ var OlivePage = (function () {
         this.ajaxRedirect(location.href, null, true);
     };
     OlivePage.prototype.returnToPreviousPage = function (target) {
-        var returnUrl = UrlHelper_1.UrlHelper.getQuery("ReturnUrl");
+        var returnUrl = Url_1.Url.getQuery("ReturnUrl");
         if (returnUrl) {
             if (target && $(target).is("[data-redirect=ajax]"))
                 this.ajaxRedirect(returnUrl, $(target));
@@ -701,15 +701,15 @@ var OlivePage = (function () {
             this.hidePleaseWait();
             return false;
         }
-        var formData = UrlHelper_1.UrlHelper.mergeFormData(form.serializeArray()).filter(function (item) { return item.name != "__RequestVerificationToken"; });
-        var url = UrlHelper_1.UrlHelper.removeEmptyQueries(form.attr('action'));
+        var formData = Url_1.Url.mergeFormData(form.serializeArray()).filter(function (item) { return item.name != "__RequestVerificationToken"; });
+        var url = Url_1.Url.removeEmptyQueries(form.attr('action'));
         try {
-            form.find("input:checkbox:unchecked").each(function (ind, e) { return url = UrlHelper_1.UrlHelper.removeQuery(url, $(e).attr("name")); });
+            form.find("input:checkbox:unchecked").each(function (ind, e) { return url = Url_1.Url.removeQuery(url, $(e).attr("name")); });
             for (var _i = 0, formData_1 = formData; _i < formData_1.length; _i++) {
                 var item = formData_1[_i];
-                url = UrlHelper_1.UrlHelper.updateQuery(url, item.name, item.value);
+                url = Url_1.Url.updateQuery(url, item.name, item.value);
             }
-            url = UrlHelper_1.UrlHelper.removeEmptyQueries(url);
+            url = Url_1.Url.removeEmptyQueries(url);
             if (form.is("[data-redirect=ajax]"))
                 this.ajaxRedirect(url, form);
             else
@@ -760,7 +760,7 @@ var OlivePage = (function () {
         else if (action.Redirect)
             this.executeRedirectAction(action, trigger);
         else
-            alert("Don't know how to handle: " + UrlHelper_1.UrlHelper.htmlEncode(JSON.stringify(action)));
+            alert("Don't know how to handle: " + JSON.stringify(action).htmlEncode());
         return true;
     };
     OlivePage.prototype.executeNotifyAction = function (action, trigger) {
@@ -911,7 +911,7 @@ var OlivePage = (function () {
         var form = trigger.closest("[data-module]");
         if (!form.is("form"))
             form = $("<form />").append(form.clone(true));
-        var data = UrlHelper_1.UrlHelper.mergeFormData(form.serializeArray());
+        var data = Url_1.Url.mergeFormData(form.serializeArray());
         // If it's master-details, then we need the index.
         var subFormContainer = trigger.closest(".subform-item");
         if (subFormContainer != null) {
@@ -920,7 +920,7 @@ var OlivePage = (function () {
                 value: subFormContainer.closest(".horizontal-subform, .vertical-subform").find(".subform-item").index(subFormContainer).toString()
             });
         }
-        data.push({ name: "current.request.url", value: UrlHelper_1.UrlHelper.pathAndQuery() });
+        data.push({ name: "current.request.url", value: Url_1.Url.pathAndQuery() });
         return data;
     };
     OlivePage.prototype.invokeActionWithAjax = function (event, actionUrl, syncCall) {

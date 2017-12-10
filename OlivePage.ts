@@ -3,7 +3,8 @@
 var CKEDITOR_BASEPATH = '/lib/ckeditor/';
 
 import { WindowContext } from "./Component/WindowContext";
-import { UrlHelper } from "./Component/UrlHelper";
+import { Url } from "./Component/Url";
+import { Form } from "./Component/Form";
 import { Config } from "./Config";
 import { TimeControl } from "./Plugins/TimeControl";
 
@@ -150,7 +151,7 @@ class OlivePage {
                 var handle = ui.item.find("[data-sort-item]");
 
                 var actionUrl = handle.attr("data-sort-action");
-                actionUrl = UrlHelper.addQuery(actionUrl, "drop-before", dropBefore);
+                actionUrl = Url.addQuery(actionUrl, "drop-before", dropBefore);
 
                 this.invokeActionWithAjax({ currentTarget: handle.get(0) }, actionUrl);
             }
@@ -568,7 +569,7 @@ class OlivePage {
             this.awaitingAutocompleteResponses++;
 
             var url = input.attr("autocomplete-source");
-            url = UrlHelper.removeQuery(url, input.attr('name')); // Remove old text.
+            url = Url.removeQuery(url, input.attr('name')); // Remove old text.
             var data = this.getPostData(input);
 
             setTimeout(() => {
@@ -777,7 +778,7 @@ class OlivePage {
     }
 
     returnToPreviousPage(target) {
-        var returnUrl = UrlHelper.getQuery("ReturnUrl");
+        var returnUrl = Url.getQuery("ReturnUrl");
 
         if (returnUrl) {
             if (target && $(target).is("[data-redirect=ajax]")) this.ajaxRedirect(returnUrl, $(target));
@@ -793,18 +794,18 @@ class OlivePage {
         var form = $(event.currentTarget);
         if (this.validateForm(form) == false) { this.hidePleaseWait(); return false; }
 
-        var formData = UrlHelper.mergeFormData(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
+        var formData = Form.merge(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
 
-        var url = UrlHelper.removeEmptyQueries(form.attr('action'));
+        var url = Url.removeEmptyQueries(form.attr('action'));
 
         try {
 
-            form.find("input:checkbox:unchecked").each((ind, e) => url = UrlHelper.removeQuery(url, $(e).attr("name")));
+            form.find("input:checkbox:unchecked").each((ind, e) => url = Url.removeQuery(url, $(e).attr("name")));
 
             for (var item of formData)
-                url = UrlHelper.updateQuery(url, item.name, item.value);
+                url = Url.updateQuery(url, item.name, item.value);
 
-            url = UrlHelper.removeEmptyQueries(url);
+            url = Url.removeEmptyQueries(url);
 
             if (form.is("[data-redirect=ajax]")) this.ajaxRedirect(url, form);
             else location.href = url;
@@ -843,7 +844,7 @@ class OlivePage {
         else if (action.ReplaceSource) this.replaceListControlSource(action.ReplaceSource, action.Items);
         else if (action.Download) this.download(action.Download);
         else if (action.Redirect) this.executeRedirectAction(action, trigger);
-        else alert("Don't know how to handle: " + UrlHelper.htmlEncode(JSON.stringify(action)));
+        else alert("Don't know how to handle: " + JSON.stringify(action).htmlEncode());
 
         return true;
     }
@@ -1022,7 +1023,7 @@ class OlivePage {
 
         if (!form.is("form")) form = $("<form />").append(form.clone(true));
 
-        var data = UrlHelper.mergeFormData(form.serializeArray());
+        var data = Form.merge(form.serializeArray());
 
         // If it's master-details, then we need the index.
         var subFormContainer = trigger.closest(".subform-item");
@@ -1033,7 +1034,7 @@ class OlivePage {
             });
         }
 
-        data.push({ name: "current.request.url", value: UrlHelper.pathAndQuery() });
+        data.push({ name: "current.request.url", value: window.location.pathAndQuery() });
 
         return data;
     }
