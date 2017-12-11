@@ -18,8 +18,9 @@
 
 var CKEDITOR_BASEPATH = '/lib/ckeditor/';
 
-import { Olive as olive } from '../plugins/TimeControl'
-import { Olive as oliveAutoComplete} from '../plugins/AutoComplete'
+import { TimeControl  } from '../plugins/TimeControl'
+import { AutoComplete } from '../plugins/autoComplete'
+import { Slider } from '../plugins/slider'
  export class BaseApplicationPage {
     // formats: http://momentjs.com/docs/#/displaying/format/
     DATE_FORMAT = "DD/MM/YYYY";
@@ -110,19 +111,20 @@ import { Olive as oliveAutoComplete} from '../plugins/AutoComplete'
         $("select.form-control").each((i, e) => this.changeItToChosen($(e)));
         //$.validator.unobtrusive.parse('form');
 
-        // =================== Plug-ins ====================enableTimeControl
-        $("input[autocomplete-source]").each((i, e) => new oliveAutoComplete.AutoComplete($(e)).handle());
+      // =================== Plug-ins ====================enableTimeControl
+        $("input[autocomplete-source]").each((i, e) => new AutoComplete($(e)).handle());
         $("[data-control=date-picker],[data-control=calendar]").each((i, e) => this.enableDateControl($(e)));
-        $("[data-control='date-picker|time-picker']").each((i, e) => new olive.TimeControl($(e)).show());
-        $("[data-control=time-picker]").each((i, e) => new olive.TimeControl($(e)).show());
+        $("[data-control='date-picker|time-picker']").each((i, e) => new TimeControl($(e)).show());
+        $("[data-control=time-picker]").each((i, e) => new TimeControl($(e)).show());
         $("[data-control=date-drop-downs]").each((i, e) => this.enableDateDropdown($(e)));
         //$("[data-control=html-editor]").each((i, e) => this.enableHtmlEditor($(e)));
         $("[data-control=numeric-up-down]").each((i, e) => this.enableNumericUpDown($(e)));
-        $("[data-control=range-slider],[data-control=slider]").each((i, e) => this.enableSlider($(e)));
+        $("[data-control=range-slider],[data-control=slider]").each((i, e) => new Slider($(e)).enable());
         $(".file-upload input:file").each((i, e) => this.enableFileUpload($(e)));
         $("[data-confirm-question]").each((i, e) => this.enableConfirmQuestion($(e)));
         $(".password-strength").each((i, e) => this.enablePasswordStengthMeter($(e)));
         $(".with-submenu").each((i, e) => this.enableSubMenus($(e)));
+
 
         // =================== Request lifecycle ====================
         $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => this.ajaxRedirectBackClicked(e));
