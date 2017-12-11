@@ -1,21 +1,46 @@
+// For ckeditor plug-ins to work, this should be globally defined.
 
-// TODO: For ckeditor plug-ins to work, this is globally defined. Find a cleaner solution.
+///<reference path="../typings/jquery/index.d.ts"/>
+///<reference path="../typings/jqueryui/index.d.ts"/>
+///<reference path="../typings/jquery-sortable/index.d.ts"/>
+///<reference path="../typings/jquery-validation-unobtrusive/index.d.ts"/>
+///<reference path="../typings/jquery/jquery.validation.d.ts"/>
+///<reference path="../typings/popper.js/popper.d.ts"/>
+///<reference path="../typings/bootstrap/index.d.ts"/>
+///<reference path="../typings/alertify/alertify.d.ts"/>
+///<reference path="../typings/typeahead/index.d.ts"/>
+///<reference path="../typings/moment/moment.d.ts"/>
+///<reference path="../typings/bootstrap-datepicker/index.d.ts"/>
+///<reference path="../typings/jquery.fileupload/index.d.ts"/>
+///<reference path="../typings/bootstrap-slider/index.d.ts"/>
+///<reference path="../typings/chosen-js/index.d.ts"/>
+///<reference path="../application.urlhelper.ts"/>
+
 var CKEDITOR_BASEPATH = '/lib/ckeditor/';
 
-import { WindowContext } from "./Component/WindowContext";
-import { Url } from "./Component/Url";
-import { Form } from "./Component/Form";
-import { Config } from "./Config";
-import { TimeControl } from "./Plugins/TimeControl";
+import { Olive as olive } from '../plugins/TimeControl'
+import { Olive as oliveAutoComplete} from '../plugins/AutoComplete'
+ export class BaseApplicationPage {
+    // formats: http://momentjs.com/docs/#/displaying/format/
+    DATE_FORMAT = "DD/MM/YYYY";
+    TIME_FORMAT = "HH:mm";
+    DATE_TIME_FORMAT = "DD/MM/YYYY HH:mm";
+    MINUTE_INTERVALS = 5;
+    DISABLE_BUTTONS_DURING_AJAX = false;
+    DATE_LOCALE = "en-gb";
+    REDIRECT_SCROLLS_UP = true;
+    AUTOCOMPLETE_INPUT_DELAY = 500;
 
-class OlivePage {
-
-    windowCtx = WindowContext.getInstance();
+    /* Possible values: Compact | Medium | Advance | Full
+       To customise modes, change '/Scripts/Lib/ckeditor_config.js' file
+       */
+    DEFAULT_HTML_EDITOR_MODE = "Medium";
+    DEFAULT_MODAL_BACKDROP = "static";
 
     constructor() {
         $(() => {
-            $.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: Config.DEFAULT_MODAL_BACKDROP });
-            // $.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
+            //$.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: this.DEFAULT_MODAL_BACKDROP });
+            //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
             this.enableAlert();
             this.configureValidation();
             this.pageLoad();
@@ -52,7 +77,7 @@ class OlivePage {
     pageLoad(container: JQuery = null, trigger: any = null) {
         $('[autofocus]:not([data-autofocus=disabled]):first').focus();
         this.initializeUpdatedPage(container, trigger);
-        if (Config.REDIRECT_SCROLLS_UP) $(window).scrollTop(0);
+        if (this.REDIRECT_SCROLLS_UP) $(window).scrollTop(0);
     }
 
     initializeUpdatedPage(container: JQuery = null, trigger: any = null) {
@@ -83,16 +108,15 @@ class OlivePage {
         $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", (e) => this.cleanUpNumberField($(e.currentTarget)));
         $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => this.ensureModalResize());
         $("select.form-control").each((i, e) => this.changeItToChosen($(e)));
-        $.validator.unobtrusive.parse('form');
+        //$.validator.unobtrusive.parse('form');
 
-        // =================== Plug-ins ====================
-        $("input[autocomplete-source]").each((i, e) => this.handleAutoComplete($(e)));
+        // =================== Plug-ins ====================enableTimeControl
+        $("input[autocomplete-source]").each((i, e) => new oliveAutoComplete.AutoComplete($(e)).handle());
         $("[data-control=date-picker],[data-control=calendar]").each((i, e) => this.enableDateControl($(e)));
-        $("[data-control='date-picker|time-picker']").each((i, e) => this.enableDateAndTimeControl($(e)));
-
-        $("[data-control=time-picker]").each((i, e) => new TimeControl($(e)));
+        $("[data-control='date-picker|time-picker']").each((i, e) => new olive.TimeControl($(e)).show());
+        $("[data-control=time-picker]").each((i, e) => new olive.TimeControl($(e)).show());
         $("[data-control=date-drop-downs]").each((i, e) => this.enableDateDropdown($(e)));
-        $("[data-control=html-editor]").each((i, e) => this.enableHtmlEditor($(e)));
+        //$("[data-control=html-editor]").each((i, e) => this.enableHtmlEditor($(e)));
         $("[data-control=numeric-up-down]").each((i, e) => this.enableNumericUpDown($(e)));
         $("[data-control=range-slider],[data-control=slider]").each((i, e) => this.enableSlider($(e)));
         $(".file-upload input:file").each((i, e) => this.enableFileUpload($(e)));
@@ -110,7 +134,7 @@ class OlivePage {
         $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => this.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action")));
 
         this.updateSubFormStates();
-        this.windowCtx.adjustModalHeight();
+        this.adjustModalHeight();
 
         this._initializeActions.forEach((action) => action());
     }
@@ -151,7 +175,7 @@ class OlivePage {
                 var handle = ui.item.find("[data-sort-item]");
 
                 var actionUrl = handle.attr("data-sort-action");
-                actionUrl = Url.addQuery(actionUrl, "drop-before", dropBefore);
+                actionUrl = urlHelper.addQuery(actionUrl, "drop-before", dropBefore);
 
                 this.invokeActionWithAjax({ currentTarget: handle.get(0) }, actionUrl);
             }
@@ -214,14 +238,14 @@ class OlivePage {
     }
 
     ensureModalResize() {
-        setTimeout(() => this.windowCtx.adjustModalHeight(), 1);
+        setTimeout(() => this.adjustModalHeight(), 1);
     }
 
     configureValidation() {
 
         var methods: any = $.validator.methods;
 
-        var format = Config.DATE_FORMAT;
+        var format = this.DATE_FORMAT;
 
         methods.date = function (value, element) {
             if (this.optional(element)) return true;
@@ -332,22 +356,23 @@ class OlivePage {
         });
     }
 
-    enableHtmlEditor(input: any) {
-        $.getScript(CKEDITOR_BASEPATH + "ckeditor.js", () => {
-            $.getScript(CKEDITOR_BASEPATH + "adapters/jquery.js", () => {
-                CKEDITOR.config.contentsCss = CKEDITOR_BASEPATH + 'contents.css';
-                var editor = CKEDITOR.replace($(input).attr('id'),
-                    {
-                        toolbar: $(input).attr('data-toolbar') || Config.DEFAULT_HTML_EDITOR_MODE,
-                        customConfig: '/Scripts/ckeditor_config.js'
-                    });
 
-                editor.on('change', (evt) => evt.editor.updateElement());
+    //enableHtmlEditor(input: any) {
+    //    $.getScript(CKEDITOR_BASEPATH + "ckeditor.js", () => {
+    //        $.getScript(CKEDITOR_BASEPATH + "adapters/jquery.js", () => {
+    //            CKEDITOR.config.contentsCss = CKEDITOR_BASEPATH + 'contents.css';
+    //            var editor = CKEDITOR.replace($(input).attr('id'),
+    //                {
+    //                    toolbar: $(input).attr('data-toolbar') || this.DEFAULT_HTML_EDITOR_MODE,
+    //                    customConfig: '/Scripts/ckeditor_config.js'
+    //                });
 
-                editor.on("instanceReady", (event) => this.windowCtx.adjustModalHeight());
-            });
-        });
-    }
+    //            editor.on('change', (evt) => evt.editor.updateElement());
+
+    //            editor.on("instanceReady", (event) => this.adjustModalHeight());
+    //        });
+    //    });
+    //}
 
     alertUnobtrusively(message: string, style?: string) {
         alertify.log(message, style);
@@ -507,8 +532,8 @@ class OlivePage {
 
     enableDateControl(input: JQuery) {
         if (this.isWindowModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => this.windowCtx.adjustModalHeightForDataPicker(e));
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => this.windowCtx.adjustModalHeightForDataPicker(e));
+            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
+            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
         }
 
         input.attr("data-autofocus", "disabled");
@@ -518,13 +543,13 @@ class OlivePage {
 
         if (control == "date-picker") {
             (<any>input).datetimepicker({
-                format: Config.DATE_FORMAT,
+                format: this.DATE_FORMAT,
                 useCurrent: false,
                 showTodayButton: true,
                 icons: { today: 'today' },
                 viewMode: viewMode,
                 keepInvalid: input.closest("form").find("[data-change-action]").length == 0,
-                locale: Config.DATE_LOCALE
+                locale: this.DATE_LOCALE
             }).data("DateTimePicker").keyBinds().clear = null;
 
             // Now make calendar icon clickable as well             
@@ -534,122 +559,21 @@ class OlivePage {
         else alert("Don't know how to handle date control of " + control);
     }
 
-    enableDateAndTimeControl(input: any) {
+    adjustModalHeightForDataPicker(e) {
 
-        if (this.isWindowModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => this.windowCtx.adjustModalHeightForDataPicker(e));
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => this.windowCtx.adjustModalHeightForDataPicker(e));
+        var datepicker = $(e.currentTarget).siblings('.bootstrap-datetimepicker-widget');
+
+        if (datepicker.length === 0) {
+            this.adjustModalHeight();
+            return;
         }
 
-        input.attr("data-autofocus", "disabled");
-
-        input.datetimepicker({
-            format: Config.DATE_TIME_FORMAT,
-            useCurrent: false,
-            showTodayButton: true,
-            icons: { today: 'today' },
-            stepping: parseInt(input.attr("data-minute-steps") || Config.MINUTE_INTERVALS.toString()),
-            keepInvalid: input.closest("form").find("[data-change-action]").length == 0,
-            locale: Config.DATE_LOCALE
-        }).data("DateTimePicker").keyBinds().clear = null;
-
-        input.parent().find(".fa-calendar").click(function () { input.focus(); });
+        var offset = Math.ceil(datepicker.offset().top + datepicker[0].offsetHeight) - document.body.offsetHeight + 6;
+        var overflow = Math.max(offset, 0);
+        this.adjustModalHeight(overflow);
     }
 
     awaitingAutocompleteResponses: number = 0;
-    handleAutoComplete(input) {
-        if (input.is('[data-typeahead-enabled=true]')) return;
-        else input.attr('data-typeahead-enabled', true);
-
-        var valueField = $("[name='" + input.attr("name").slice(0, -5) + "']");
-
-        if (valueField.length == 0) console.log('Could not find the value field for auto-complete.');
-
-        var dataSource = (query, callback) => {
-            this.awaitingAutocompleteResponses++;
-
-            var url = input.attr("autocomplete-source");
-            url = Url.removeQuery(url, input.attr('name')); // Remove old text.
-            var data = this.getPostData(input);
-
-            setTimeout(() => {
-                if (this.awaitingAutocompleteResponses > 1) {
-                    this.awaitingAutocompleteResponses--
-                    return;
-                }
-
-                $.post(url, data).fail(this.handleAjaxResponseError).done((result) => {
-
-                    result = result.map((i) => {
-                        return {
-                            Display: i.Display || i.Text || i.Value,
-                            Value: i.Value || i.Text || i.Display,
-                            Text: i.Text || $("<div/>").append($(i.Display)).text() || i.Value
-                        };
-                    });
-
-                    return callback(result);
-                }).always(() => this.awaitingAutocompleteResponses--);
-            }, Config.AUTOCOMPLETE_INPUT_DELAY);
-        };
-
-        var clearValue = (e) => {
-            if (input.val() === "") valueField.val("");
-            if (input.val() !== input.data("selected-text")) valueField.val("");
-        };
-
-        var itemSelected = (e, item) => {
-            if (item != undefined) {
-                console.log('setting ' + item.Value);
-                valueField.val(item.Value);
-                input.data("selected-text", item.Display);
-            }
-            else {
-                console.log("Clearing text, item is undefined");
-                input.data("selected-text", "");
-            }
-
-            // This will invoke RunOnLoad M# method as typeahead does not fire textbox change event when it sets its value from drop down
-            input.trigger('change');
-        };
-
-        var itemBlured = (e, item) => {
-            if (valueField.val() == "" && input.val() != "") {
-                // this hack is so when you paste something a focus out, it should set the hidden field
-                var suggested = input.closest(".twitter-typeahead").find(".tt-suggestion");
-                var filtered = suggested.filter((e, obj) => (obj.innerText === input.val()));
-
-                if (filtered.length === 0 && suggested.length === 0) {
-                    // the suggestion list has never been shown
-
-                    // make typeahead aware of this change otherwise during blur it will clear the text
-                    input.typeahead('val', input.val());
-                    dataSource(input.val(), data => {
-                        if (data && data.length === 1) {
-                            itemSelected(null, data[0]);
-                            console.log('match text to suggestion finished');
-                        } else {
-                            console.warn("There is none or more than one items in the autocomplete data-source to match the given text. Cannot set the value.");
-                        }
-                    });
-                }
-                else {
-                    // the suggestion list has been displayed
-                    if (filtered.length === 0)
-                        suggested.first().trigger("click");
-                    else
-                        filtered.first().trigger("click");
-                }
-            }
-        };
-
-        var dataset = {
-            displayKey: 'Text', source: dataSource,
-            templates: { suggestion: (item) => item.Display, empty: "<div class='tt-suggestion'>Not found</div>" }
-        };
-
-        input.data("selected-text", "").on('input', clearValue).on('blur', itemBlured).on('typeahead:selected', itemSelected).typeahead({ minLength: 0 }, dataset);
-    }
 
     handleDefaultButton(event: JQueryEventObject): boolean {
         if (event.which === 13) {
@@ -778,7 +702,7 @@ class OlivePage {
     }
 
     returnToPreviousPage(target) {
-        var returnUrl = Url.getQuery("ReturnUrl");
+        var returnUrl = urlHelper.getQuery("ReturnUrl");
 
         if (returnUrl) {
             if (target && $(target).is("[data-redirect=ajax]")) this.ajaxRedirect(returnUrl, $(target));
@@ -794,18 +718,18 @@ class OlivePage {
         var form = $(event.currentTarget);
         if (this.validateForm(form) == false) { this.hidePleaseWait(); return false; }
 
-        var formData = Form.merge(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
+        var formData = urlHelper.mergeFormData(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
 
-        var url = Url.removeEmptyQueries(form.attr('action'));
+        var url = urlHelper.removeEmptyQueries(form.attr('action'));
 
         try {
 
-            form.find("input:checkbox:unchecked").each((ind, e) => url = Url.removeQuery(url, $(e).attr("name")));
+            form.find("input:checkbox:unchecked").each((ind, e) => url = urlHelper.removeQuery(url, $(e).attr("name")));
 
             for (var item of formData)
-                url = Url.updateQuery(url, item.name, item.value);
+                url = urlHelper.updateQuery(url, item.name, item.value);
 
-            url = Url.removeEmptyQueries(url);
+            url = urlHelper.removeEmptyQueries(url);
 
             if (form.is("[data-redirect=ajax]")) this.ajaxRedirect(url, form);
             else location.href = url;
@@ -844,7 +768,7 @@ class OlivePage {
         else if (action.ReplaceSource) this.replaceListControlSource(action.ReplaceSource, action.Items);
         else if (action.Download) this.download(action.Download);
         else if (action.Redirect) this.executeRedirectAction(action, trigger);
-        else alert("Don't know how to handle: " + JSON.stringify(action).htmlEncode());
+        else alert("Don't know how to handle: " + urlHelper.htmlEncode(JSON.stringify(action)));
 
         return true;
     }
@@ -898,9 +822,7 @@ class OlivePage {
         window.open(url, target);
     }
 
-    hidePleaseWait() {
-        $(".wait-screen").remove();
-    }
+ 
 
     showPleaseWait(blockScreen: boolean = false) {
 
@@ -1017,28 +939,6 @@ class OlivePage {
         else location.reload();
     }
 
-    getPostData(trigger: JQuery): JQuerySerializeArrayElement[] {
-
-        var form = trigger.closest("[data-module]");
-
-        if (!form.is("form")) form = $("<form />").append(form.clone(true));
-
-        var data = Form.merge(form.serializeArray());
-
-        // If it's master-details, then we need the index.
-        var subFormContainer = trigger.closest(".subform-item");
-        if (subFormContainer != null) {
-            data.push({
-                name: "subFormIndex",
-                value: subFormContainer.closest(".horizontal-subform, .vertical-subform").find(".subform-item").index(subFormContainer).toString()
-            });
-        }
-
-        data.push({ name: "current.request.url", value: window.location.pathAndQuery() });
-
-        return data;
-    }
-
     isAwaitingAjaxResponse = false;
     invokeActionWithAjax(event, actionUrl, syncCall = false) {
 
@@ -1050,7 +950,7 @@ class OlivePage {
 
         var data_before_disable = this.getPostData(trigger);
 
-        var disableToo = Config.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
+        var disableToo = this.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
         if (disableToo) trigger.attr('disabled', 'disabled');
 
         trigger.addClass('loading-action-result');
@@ -1101,22 +1001,7 @@ class OlivePage {
         return false;
     }
 
-    handleAjaxResponseError(response) {
-        this.hidePleaseWait();
-        console.log(response);
 
-        var text = response.responseText;
-
-        if (text.indexOf("<html") > -1) {
-            document.write(text);
-        }
-        else if (text.indexOf("<form") > -1) {
-            var form = $("form", document);
-            if (form.length) form.replaceWith($(text));
-            else document.write(text);
-        }
-        else alert(text);
-    }
 
     dynamicallyLoadedScriptFiles = [];
 
@@ -1243,13 +1128,22 @@ class OlivePage {
         }
     }
 
+    adjustModalHeight(overflow?: number) {
+        if (this.isWindowModal()) {
+
+            var frame = $(this.getContainerIFrame());
+            if (frame.attr("data-has-explicit-height") != 'true')
+                frame.height(document.body.offsetHeight + (overflow || 0));
+        }
+    }
+
     adjustIFrameHeightToContents(iframe) {
         $(iframe).height(iframe.contentWindow.document.body.scrollHeight);
     }
 
     reloadValidationRules(form: JQuery) {
         form.removeData("validator").removeData("unobtrusiveValidation");
-        $.validator.unobtrusive.parse(form);
+        //$.validator.unobtrusive.parse(form);
     }
 
     paginationSizeChanged(event: Event) {
