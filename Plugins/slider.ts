@@ -2,8 +2,7 @@
 
 import { WindowContext as windowContext } from "../components/windowContext"
 
-export namespace Olive {
-       export class Slider {
+    export class Slider {
            input:any;
            options; 
            constructor(targetInput:any) {
@@ -43,7 +42,6 @@ export namespace Olive {
                }
            }
        }
-}
 
 
 
