@@ -1,1 +1,0 @@
-{"version":3,"file":"require.config.js","sourceRoot":"","sources":["require.config.ts"],"names":[],"mappings":"AAAA,OAAO,CAAC,MAAM,CACV;IACI,OAAO,EAAE,EAAE;IACX,KAAK,EAAE;QACH,QAAQ,EAAE,wBAAwB;QAClC,SAAS,EAAE,UAAU;QACrB,WAAW,EAAE,YAAY;KAC5B;CACJ,CAAC,CAAC"}

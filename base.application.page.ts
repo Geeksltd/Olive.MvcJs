@@ -1,27 +1,8 @@
-// For ckeditor plug-ins to work, this should be globally defined.
-
-///<reference path="../typings/jquery/index.d.ts"/>
-///<reference path="../typings/jqueryui/index.d.ts"/>
-///<reference path="../typings/jquery-sortable/index.d.ts"/>
-///<reference path="../typings/jquery-validation-unobtrusive/index.d.ts"/>
-///<reference path="../typings/jquery/jquery.validation.d.ts"/>
-///<reference path="../typings/popper.js/popper.d.ts"/>
-///<reference path="../typings/bootstrap/index.d.ts"/>
-///<reference path="../typings/alertify/alertify.d.ts"/>
-///<reference path="../typings/typeahead/index.d.ts"/>
-///<reference path="../typings/moment/moment.d.ts"/>
-///<reference path="../typings/bootstrap-datepicker/index.d.ts"/>
-///<reference path="../typings/jquery.fileupload/index.d.ts"/>
-///<reference path="../typings/bootstrap-slider/index.d.ts"/>
-///<reference path="../typings/chosen-js/index.d.ts"/>
-///<reference path="../application.urlhelper.ts"/>
-
+﻿// For ckeditor plug-ins to work, this should be globally defined.
 var CKEDITOR_BASEPATH = '/lib/ckeditor/';
 
-import { TimeControl  } from '../plugins/TimeControl'
-import { AutoComplete } from '../plugins/autoComplete'
-import { Slider } from '../plugins/slider'
- export class BaseApplicationPage {
+class BaseApplicationPage {
+
     // formats: http://momentjs.com/docs/#/displaying/format/
     DATE_FORMAT = "DD/MM/YYYY";
     TIME_FORMAT = "HH:mm";
@@ -40,7 +21,7 @@ import { Slider } from '../plugins/slider'
 
     constructor() {
         $(() => {
-            //$.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: this.DEFAULT_MODAL_BACKDROP });
+            $.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: this.DEFAULT_MODAL_BACKDROP });
             //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
             this.enableAlert();
             this.configureValidation();
@@ -109,22 +90,21 @@ import { Slider } from '../plugins/slider'
         $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", (e) => this.cleanUpNumberField($(e.currentTarget)));
         $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => this.ensureModalResize());
         $("select.form-control").each((i, e) => this.changeItToChosen($(e)));
-        //$.validator.unobtrusive.parse('form');
+        $.validator.unobtrusive.parse('form');
 
-      // =================== Plug-ins ====================enableTimeControl
-        $("input[autocomplete-source]").each((i, e) => new AutoComplete($(e)).handle());
+        // =================== Plug-ins ====================
+        $("input[autocomplete-source]").each((i, e) => this.handleAutoComplete($(e)));
         $("[data-control=date-picker],[data-control=calendar]").each((i, e) => this.enableDateControl($(e)));
-        $("[data-control='date-picker|time-picker']").each((i, e) => new TimeControl($(e)).show());
-        $("[data-control=time-picker]").each((i, e) => new TimeControl($(e)).show());
+        $("[data-control='date-picker|time-picker']").each((i, e) => this.enableDateAndTimeControl($(e)));
+        $("[data-control=time-picker]").each((i, e) => this.enableTimeControl($(e)));
         $("[data-control=date-drop-downs]").each((i, e) => this.enableDateDropdown($(e)));
-        //$("[data-control=html-editor]").each((i, e) => this.enableHtmlEditor($(e)));
+        $("[data-control=html-editor]").each((i, e) => this.enableHtmlEditor($(e)));
         $("[data-control=numeric-up-down]").each((i, e) => this.enableNumericUpDown($(e)));
-        $("[data-control=range-slider],[data-control=slider]").each((i, e) => new Slider($(e)).enable());
+        $("[data-control=range-slider],[data-control=slider]").each((i, e) => this.enableSlider($(e)));
         $(".file-upload input:file").each((i, e) => this.enableFileUpload($(e)));
         $("[data-confirm-question]").each((i, e) => this.enableConfirmQuestion($(e)));
         $(".password-strength").each((i, e) => this.enablePasswordStengthMeter($(e)));
         $(".with-submenu").each((i, e) => this.enableSubMenus($(e)));
-
 
         // =================== Request lifecycle ====================
         $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => this.ajaxRedirectBackClicked(e));
@@ -142,7 +122,15 @@ import { Slider } from '../plugins/slider'
     }
 
     changeItToChosen(selectControl: JQuery) {
-        let options = { disable_search_threshold: 5 }
+        let options = { disable_search_threshold: 10 }
+
+        let size = selectControl.attr("size");
+
+        if (!!size) {
+            selectControl.attr("multiple", "multiple");
+            options = $.extend(options, { max_selected_options: parseInt(size) });
+        }
+
         selectControl.chosen(options);
     }
 
@@ -359,22 +347,22 @@ import { Slider } from '../plugins/slider'
     }
 
 
-    //enableHtmlEditor(input: any) {
-    //    $.getScript(CKEDITOR_BASEPATH + "ckeditor.js", () => {
-    //        $.getScript(CKEDITOR_BASEPATH + "adapters/jquery.js", () => {
-    //            CKEDITOR.config.contentsCss = CKEDITOR_BASEPATH + 'contents.css';
-    //            var editor = CKEDITOR.replace($(input).attr('id'),
-    //                {
-    //                    toolbar: $(input).attr('data-toolbar') || this.DEFAULT_HTML_EDITOR_MODE,
-    //                    customConfig: '/Scripts/ckeditor_config.js'
-    //                });
+    enableHtmlEditor(input: any) {
+        $.getScript(CKEDITOR_BASEPATH + "ckeditor.js", () => {
+            $.getScript(CKEDITOR_BASEPATH + "adapters/jquery.js", () => {
+                CKEDITOR.config.contentsCss = CKEDITOR_BASEPATH + 'contents.css';
+                var editor = CKEDITOR.replace($(input).attr('id'),
+                    {
+                        toolbar: $(input).attr('data-toolbar') || this.DEFAULT_HTML_EDITOR_MODE,
+                        customConfig: '/Scripts/ckeditor_config.js'
+                    });
 
-    //            editor.on('change', (evt) => evt.editor.updateElement());
+                editor.on('change', (evt) => evt.editor.updateElement());
 
-    //            editor.on("instanceReady", (event) => this.adjustModalHeight());
-    //        });
-    //    });
-    //}
+                editor.on("instanceReady", (event) => this.adjustModalHeight());
+            });
+        });
+    }
 
     alertUnobtrusively(message: string, style?: string) {
         alertify.log(message, style);
@@ -480,8 +468,8 @@ import { Slider } from '../plugins/slider'
                     fileLabel.val('');
                 }
                 else {
-                    if (input.is("[multiple]")) idInput.val(idInput.val() + "|file:" + response.Result.ID);
-                    else idInput.val("file:" + response.Result.ID);
+                    if (input.is("[multiple]")) idInput.val(idInput.val() + "|file:" + response.ID);
+                    else idInput.val("file:" + response.ID);
                     del.show();
                 }
             }
@@ -575,7 +563,142 @@ import { Slider } from '../plugins/slider'
         this.adjustModalHeight(overflow);
     }
 
+    enableDateAndTimeControl(input: any) {
+
+        if (this.isWindowModal()) {
+            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
+            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
+        }
+
+        input.attr("data-autofocus", "disabled");
+
+        input.datetimepicker({
+            format: this.DATE_TIME_FORMAT,
+            useCurrent: false,
+            showTodayButton: true,
+            icons: { today: 'today' },
+            stepping: parseInt(input.attr("data-minute-steps") || this.MINUTE_INTERVALS.toString()),
+            keepInvalid: input.closest("form").find("[data-change-action]").length == 0,
+            locale: this.DATE_LOCALE
+        }).data("DateTimePicker").keyBinds().clear = null;
+
+        input.parent().find(".fa-calendar").click(function () { input.focus(); });
+    }
+
+    enableTimeControl(input: any) {
+
+        if (this.isWindowModal()) {
+            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
+            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
+        }
+
+        input.attr("data-autofocus", "disabled");
+
+        input.datetimepicker({
+            format: this.TIME_FORMAT,
+            useCurrent: false,
+            stepping: parseInt(input.attr("data-minute-steps") || this.MINUTE_INTERVALS.toString()),
+            keepInvalid: input.closest("form").find("[data-change-action]").length == 0,
+            locale: this.DATE_LOCALE
+        }).data("DateTimePicker").keyBinds().clear = null;
+
+        input.parent().find(".fa-clock-o").parent(".input-group-addon").click(() => { input.focus(); });
+    }
+
     awaitingAutocompleteResponses: number = 0;
+    handleAutoComplete(input) {
+        if (input.is('[data-typeahead-enabled=true]')) return;
+        else input.attr('data-typeahead-enabled', true);
+
+        var valueField = $("[name='" + input.attr("name").slice(0, -5) + "']");
+
+        if (valueField.length == 0) console.log('Could not find the value field for auto-complete.');
+
+        var dataSource = (query, callback) => {
+            this.awaitingAutocompleteResponses++;
+
+            var url = input.attr("autocomplete-source");
+            url = urlHelper.removeQuery(url, input.attr('name')); // Remove old text.
+            var data = this.getPostData(input);
+
+            setTimeout(() => {
+                if (this.awaitingAutocompleteResponses > 1) {
+                    this.awaitingAutocompleteResponses--
+                    return;
+                }
+
+                $.post(url, data).fail(this.handleAjaxResponseError).done((result) => {
+
+                    result = result.map((i) => {
+                        return {
+                            Display: i.Display || i.Text || i.Value,
+                            Value: i.Value || i.Text || i.Display,
+                            Text: i.Text || $("<div/>").append($(i.Display)).text() || i.Value
+                        };
+                    });
+
+                    return callback(result);
+                }).always(() => this.awaitingAutocompleteResponses--);
+            }, this.AUTOCOMPLETE_INPUT_DELAY);
+        };
+
+        var clearValue = (e) => {
+            if (input.val() === "") valueField.val("");
+            if (input.val() !== input.data("selected-text")) valueField.val("");
+        };
+
+        var itemSelected = (e, item) => {
+            if (item != undefined) {
+                console.log('setting ' + item.Value);
+                valueField.val(item.Value);
+                input.data("selected-text", item.Display);
+            }
+            else {
+                console.log("Clearing text, item is undefined");
+                input.data("selected-text", "");
+            }
+
+            // This will invoke RunOnLoad M# method as typeahead does not fire textbox change event when it sets its value from drop down
+            input.trigger('change');
+        };
+
+        var itemBlured = (e, item) => {
+            if (valueField.val() == "" && input.val() != "") {
+                // this hack is so when you paste something a focus out, it should set the hidden field
+                var suggested = input.closest(".twitter-typeahead").find(".tt-suggestion");
+                var filtered = suggested.filter((e, obj) => (obj.innerText === input.val()));
+
+                if (filtered.length === 0 && suggested.length === 0) {
+                    // the suggestion list has never been shown
+
+                    // make typeahead aware of this change otherwise during blur it will clear the text
+                    input.typeahead('val', input.val());
+                    dataSource(input.val(), data => {
+                        if (data && data.length === 1) {
+                            itemSelected(null, data[0]);
+                            console.log('match text to suggestion finished');
+                        } else {
+                            console.warn("There is none or more than one items in the autocomplete data-source to match the given text. Cannot set the value.");
+                        }
+                    });
+                }
+                else {
+                    // the suggestion list has been displayed
+                    if (filtered.length === 0)
+                        suggested.first().trigger("click");
+                    else
+                        filtered.first().trigger("click");
+                }
+            }
+        };
+
+        var dataset = {
+            displayKey: 'Text', source: dataSource,
+            templates: { suggestion: (item) => item.Display, empty: "<div class='tt-suggestion'>Not found</div>" }
+        };
+
+        input.data("selected-text", "").on('input', clearValue).on('blur', itemBlured).on('typeahead:selected', itemSelected).typeahead({ minLength: 0 }, dataset);
+    }
 
     handleDefaultButton(event: JQueryEventObject): boolean {
         if (event.which === 13) {
@@ -824,7 +947,9 @@ import { Slider } from '../plugins/slider'
         window.open(url, target);
     }
 
- 
+    hidePleaseWait() {
+        $(".wait-screen").remove();
+    }
 
     showPleaseWait(blockScreen: boolean = false) {
 
@@ -941,6 +1066,28 @@ import { Slider } from '../plugins/slider'
         else location.reload();
     }
 
+    getPostData(trigger: JQuery): JQuerySerializeArrayElement[] {
+
+        var form = trigger.closest("[data-module]");
+
+        if (!form.is("form")) form = $("<form />").append(form.clone(true));
+
+        var data = urlHelper.mergeFormData(form.serializeArray());
+
+        // If it's master-details, then we need the index.
+        var subFormContainer = trigger.closest(".subform-item");
+        if (subFormContainer != null) {
+            data.push({
+                name: "subFormIndex",
+                value: subFormContainer.closest(".horizontal-subform, .vertical-subform").find(".subform-item").index(subFormContainer).toString()
+            });
+        }
+
+        data.push({ name: "current.request.url", value: urlHelper.pathAndQuery() });
+
+        return data;
+    }
+
     isAwaitingAjaxResponse = false;
     invokeActionWithAjax(event, actionUrl, syncCall = false) {
 
@@ -1003,7 +1150,22 @@ import { Slider } from '../plugins/slider'
         return false;
     }
 
+    handleAjaxResponseError(response) {
+        this.hidePleaseWait();
+        console.log(response);
 
+        var text = response.responseText;
+
+        if (text.indexOf("<html") > -1) {
+            document.write(text);
+        }
+        else if (text.indexOf("<form") > -1) {
+            var form = $("form", document);
+            if (form.length) form.replaceWith($(text));
+            else document.write(text);
+        }
+        else alert(text);
+    }
 
     dynamicallyLoadedScriptFiles = [];
 
@@ -1145,7 +1307,7 @@ import { Slider } from '../plugins/slider'
 
     reloadValidationRules(form: JQuery) {
         form.removeData("validator").removeData("unobtrusiveValidation");
-        //$.validator.unobtrusive.parse(form);
+        $.validator.unobtrusive.parse(form);
     }
 
     paginationSizeChanged(event: Event) {
