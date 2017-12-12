@@ -16,7 +16,8 @@
     "node_modules",
     "test",
     "tests",
-    "tsconfig.json"
+    "tsconfig.json",
+    "Build.bat"
   ],
   "private": false,
   "homepage": "https://github.com/Geeksltd/Olive.MvcJs"

@@ -991,8 +991,6 @@ export class OlivePage {
         return false;
     }
 
-
-
     dynamicallyLoadedScriptFiles = [];
 
     replaceMain(element: JQuery, trigger) {
