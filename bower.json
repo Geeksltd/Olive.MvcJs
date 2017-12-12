@@ -1,6 +1,6 @@
 {
   "name": "olive.mvc",
-  "version": "0.0.1",
+  "version": "0.1.4",
   "description": "Used js files in the Olive MVC projects.",
   "keywords": [
     "olive",
@@ -15,7 +15,8 @@
     "**/.*",
     "node_modules",
     "test",
-    "tests"
+    "tests",
+    "tsconfig.json"
   ],
   "private": false,
   "homepage": "https://github.com/Geeksltd/Olive.MvcJs"

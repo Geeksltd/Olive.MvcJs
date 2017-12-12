@@ -1,8 +1,27 @@
+"use strict";
 // For ckeditor plug-ins to work, this should be globally defined.
+Object.defineProperty(exports, "__esModule", { value: true });
+///<reference path="../typings/jquery/index.d.ts"/>
+///<reference path="../typings/jqueryui/index.d.ts"/>
+///<reference path="../typings/jquery-sortable/index.d.ts"/>
+///<reference path="../typings/jquery-validation-unobtrusive/index.d.ts"/>
+///<reference path="../typings/jquery/jquery.validation.d.ts"/>
+///<reference path="../typings/popper.js/popper.d.ts"/>
+///<reference path="../typings/bootstrap/index.d.ts"/>
+///<reference path="../typings/alertify/alertify.d.ts"/>
+///<reference path="../typings/typeahead/index.d.ts"/>
+///<reference path="../typings/moment/moment.d.ts"/>
+///<reference path="../typings/bootstrap-datepicker/index.d.ts"/>
+///<reference path="../typings/jquery.fileupload/index.d.ts"/>
+///<reference path="../typings/bootstrap-slider/index.d.ts"/>
+///<reference path="../typings/chosen-js/index.d.ts"/>
+///<reference path="../application.urlhelper.ts"/>
 var CKEDITOR_BASEPATH = '/lib/ckeditor/';
-var BaseApplicationPage = (function () {
-    function BaseApplicationPage() {
-        var _this = this;
+const TimeControl_1 = require("../plugins/TimeControl");
+const autoComplete_1 = require("../plugins/autoComplete");
+const slider_1 = require("../plugins/slider");
+class BaseApplicationPage {
+    constructor() {
         // formats: http://momentjs.com/docs/#/displaying/format/
         this.DATE_FORMAT = "DD/MM/YYYY";
         this.TIME_FORMAT = "HH:mm";
@@ -29,113 +48,102 @@ var BaseApplicationPage = (function () {
         this.isClosingModal = false;
         this.isAwaitingAjaxResponse = false;
         this.dynamicallyLoadedScriptFiles = [];
-        $(function () {
-            $.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: _this.DEFAULT_MODAL_BACKDROP });
+        $(() => {
+            //$.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: this.DEFAULT_MODAL_BACKDROP });
             //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
-            _this.enableAlert();
-            _this.configureValidation();
-            _this.pageLoad();
+            this.enableAlert();
+            this.configureValidation();
+            this.pageLoad();
         });
     }
-    BaseApplicationPage.prototype.onInit = function (action) { this._initializeActions.push(action); };
-    BaseApplicationPage.prototype.onPreInit = function (action) { this._preInitializeActions.push(action); };
-    BaseApplicationPage.prototype.on = function (event, handler) {
+    onInit(action) { this._initializeActions.push(action); }
+    onPreInit(action) { this._preInitializeActions.push(action); }
+    on(event, handler) {
         if (!this.events.hasOwnProperty(event))
             this.events[event] = [];
         this.events[event].push(handler);
-    };
-    BaseApplicationPage.prototype.raise = function (event, data) {
-        var result = true;
+    }
+    raise(event, data) {
+        let result = true;
         if (this.events.hasOwnProperty(event)) {
-            this.events[event].forEach(function (handler) {
-                var res = handler(data || {});
+            this.events[event].forEach(handler => {
+                let res = handler(data || {});
                 if (res === false)
                     result = false;
             });
         }
         return result;
-    };
+    }
     //#endregion "Events"   
-    BaseApplicationPage.prototype.pageLoad = function (container, trigger) {
-        if (container === void 0) { container = null; }
-        if (trigger === void 0) { trigger = null; }
+    pageLoad(container = null, trigger = null) {
         $('[autofocus]:not([data-autofocus=disabled]):first').focus();
         this.initializeUpdatedPage(container, trigger);
         if (this.REDIRECT_SCROLLS_UP)
             $(window).scrollTop(0);
-    };
-    BaseApplicationPage.prototype.initializeUpdatedPage = function (container, trigger) {
-        if (container === void 0) { container = null; }
-        if (trigger === void 0) { trigger = null; }
+    }
+    initializeUpdatedPage(container = null, trigger = null) {
         this.runStartupActions(container, trigger, "PreInit");
         this.initialize();
         this.runStartupActions(container, trigger, "Init");
-    };
-    BaseApplicationPage.prototype.initialize = function () {
-        var _this = this;
-        this._preInitializeActions.forEach(function (action) { return action(); });
+    }
+    initialize() {
+        this._preInitializeActions.forEach((action) => action());
         // =================== Standard Features ====================
-        $(".select-cols .apply").off("click.apply-columns").on("click.apply-columns", function (e) { return _this.applyColumns(e); });
-        $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", function (e) { return _this.deleteSubForm(e); });
-        $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", function (e) { return _this.openLinkModal(e); });
-        $(".select-grid-cols .group-control").each(function (i, e) { return _this.enableSelectColumns($(e)); });
-        $("[name=InstantSearch]").each(function (i, e) { return _this.enableInstantSearch($(e)); });
-        $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", function (e) { return _this.enableSelectAllToggle(e); });
-        $("[data-user-help]").each(function (i, e) { return _this.enableUserHelp($(e)); });
-        $("form input, form select").off("keypress.default-button").on("keypress.default-button", function (e) { return _this.handleDefaultButton(e); });
-        $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", function (e) { return _this.paginationSizeChanged(e); });
-        $("[data-sort-item]").parents("tbody").each(function (i, e) { return _this.enableDragSort($(e)); });
-        $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", function (e) { return _this.enableAjaxPaging(e); });
-        $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", function (e) { return _this.enableAjaxSorting(e); });
-        $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", function (e) { return _this.adjustIFrameHeightToContents(e.currentTarget); });
-        $("th[data-sort]").each(function (i, e) { return _this.setSortHeaderClass($(e)); });
-        $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", function (e) { return _this.cleanUpNumberField($(e.currentTarget)); });
-        $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", function () { return _this.ensureModalResize(); });
-        $("select.form-control").each(function (i, e) { return _this.changeItToChosen($(e)); });
-        $.validator.unobtrusive.parse('form');
-        // =================== Plug-ins ====================
-        $("input[autocomplete-source]").each(function (i, e) { return _this.handleAutoComplete($(e)); });
-        $("[data-control=date-picker],[data-control=calendar]").each(function (i, e) { return _this.enableDateControl($(e)); });
-        $("[data-control='date-picker|time-picker']").each(function (i, e) { return _this.enableDateAndTimeControl($(e)); });
-        $("[data-control=time-picker]").each(function (i, e) { return _this.enableTimeControl($(e)); });
-        $("[data-control=date-drop-downs]").each(function (i, e) { return _this.enableDateDropdown($(e)); });
-        $("[data-control=html-editor]").each(function (i, e) { return _this.enableHtmlEditor($(e)); });
-        $("[data-control=numeric-up-down]").each(function (i, e) { return _this.enableNumericUpDown($(e)); });
-        $("[data-control=range-slider],[data-control=slider]").each(function (i, e) { return _this.enableSlider($(e)); });
-        $(".file-upload input:file").each(function (i, e) { return _this.enableFileUpload($(e)); });
-        $("[data-confirm-question]").each(function (i, e) { return _this.enableConfirmQuestion($(e)); });
-        $(".password-strength").each(function (i, e) { return _this.enablePasswordStengthMeter($(e)); });
-        $(".with-submenu").each(function (i, e) { return _this.enableSubMenus($(e)); });
+        $(".select-cols .apply").off("click.apply-columns").on("click.apply-columns", (e) => this.applyColumns(e));
+        $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", (e) => this.deleteSubForm(e));
+        $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
+        $(".select-grid-cols .group-control").each((i, e) => this.enableSelectColumns($(e)));
+        $("[name=InstantSearch]").each((i, e) => this.enableInstantSearch($(e)));
+        $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", (e) => this.enableSelectAllToggle(e));
+        $("[data-user-help]").each((i, e) => this.enableUserHelp($(e)));
+        $("form input, form select").off("keypress.default-button").on("keypress.default-button", (e) => this.handleDefaultButton(e));
+        $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", (e) => this.paginationSizeChanged(e));
+        $("[data-sort-item]").parents("tbody").each((i, e) => this.enableDragSort($(e)));
+        $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", (e) => this.enableAjaxPaging(e));
+        $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", (e) => this.enableAjaxSorting(e));
+        $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", (e) => this.adjustIFrameHeightToContents(e.currentTarget));
+        $("th[data-sort]").each((i, e) => this.setSortHeaderClass($(e)));
+        $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", (e) => this.cleanUpNumberField($(e.currentTarget)));
+        $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => this.ensureModalResize());
+        $("select.form-control").each((i, e) => this.changeItToChosen($(e)));
+        //$.validator.unobtrusive.parse('form');
+        // =================== Plug-ins ====================enableTimeControl
+        $("input[autocomplete-source]").each((i, e) => new autoComplete_1.AutoComplete($(e)).handle());
+        $("[data-control=date-picker],[data-control=calendar]").each((i, e) => this.enableDateControl($(e)));
+        $("[data-control='date-picker|time-picker']").each((i, e) => new TimeControl_1.TimeControl($(e)).show());
+        $("[data-control=time-picker]").each((i, e) => new TimeControl_1.TimeControl($(e)).show());
+        $("[data-control=date-drop-downs]").each((i, e) => this.enableDateDropdown($(e)));
+        //$("[data-control=html-editor]").each((i, e) => this.enableHtmlEditor($(e)));
+        $("[data-control=numeric-up-down]").each((i, e) => this.enableNumericUpDown($(e)));
+        $("[data-control=range-slider],[data-control=slider]").each((i, e) => new slider_1.Slider($(e)).enable());
+        $(".file-upload input:file").each((i, e) => this.enableFileUpload($(e)));
+        $("[data-confirm-question]").each((i, e) => this.enableConfirmQuestion($(e)));
+        $(".password-strength").each((i, e) => this.enablePasswordStengthMeter($(e)));
+        $(".with-submenu").each((i, e) => this.enableSubMenus($(e)));
         // =================== Request lifecycle ====================
-        $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", function (e) { return _this.ajaxRedirectBackClicked(e); });
-        $("a[data-redirect=ajax]").off("click.ajax-redirect").on("click.ajax-redirect", function (e) { return _this.enableAjaxRedirect(e); });
-        $('form[method=get]').off("submit.clean-up").on("submit.clean-up", function (e) { return _this.cleanGetFormSubmit(e); });
-        $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", function (e) { return _this.invokeActionWithAjax(e, $(e.currentTarget).attr("formaction")); });
-        $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", function (e) { return _this.invokeActionWithPost(e); });
-        $("[data-change-action]").off("change.data-action").on("change.data-action", function (e) { return _this.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action")); });
-        $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", function (e) { return _this.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action")); });
+        $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => this.ajaxRedirectBackClicked(e));
+        $("a[data-redirect=ajax]").off("click.ajax-redirect").on("click.ajax-redirect", (e) => this.enableAjaxRedirect(e));
+        $('form[method=get]').off("submit.clean-up").on("submit.clean-up", (e) => this.cleanGetFormSubmit(e));
+        $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", (e) => this.invokeActionWithAjax(e, $(e.currentTarget).attr("formaction")));
+        $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", (e) => this.invokeActionWithPost(e));
+        $("[data-change-action]").off("change.data-action").on("change.data-action", (e) => this.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action")));
+        $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => this.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action")));
         this.updateSubFormStates();
         this.adjustModalHeight();
-        this._initializeActions.forEach(function (action) { return action(); });
-    };
-    BaseApplicationPage.prototype.changeItToChosen = function (selectControl) {
-        var options = { disable_search_threshold: 10 };
-        var size = selectControl.attr("size");
-        if (!!size) {
-            selectControl.attr("multiple", "multiple");
-            options = $.extend(options, { max_selected_options: parseInt(size) });
-        }
+        this._initializeActions.forEach((action) => action());
+    }
+    changeItToChosen(selectControl) {
+        let options = { disable_search_threshold: 5 };
         selectControl.chosen(options);
-    };
-    BaseApplicationPage.prototype.skipNewWindows = function () {
+    }
+    skipNewWindows() {
         // Remove the target attribute from links:
-        $(window).off('click.SanityAdapter').on('click.SanityAdapter', function (e) {
+        $(window).off('click.SanityAdapter').on('click.SanityAdapter', e => {
             $(e.target).filter('a').removeAttr('target');
         });
-        this.openWindow = function (url, target) { return location.replace(url); };
-    };
-    BaseApplicationPage.prototype.enableDragSort = function (container) {
-        var _this = this;
+        this.openWindow = (url, target) => location.replace(url);
+    }
+    enableDragSort(container) {
         var isTable = container.is("tbody");
         var items = isTable ? "> tr" : "> li"; // TODO: Do we need to support any other markup?
         container.sortable({
@@ -143,21 +151,21 @@ var BaseApplicationPage = (function () {
             items: items,
             containment: "parent",
             axis: 'y',
-            helper: function (e, ui) {
+            helper: (e, ui) => {
                 // prevent TD collapse during drag
-                ui.children().each(function (i, c) { return $(c).width($(c).width()); });
+                ui.children().each((i, c) => $(c).width($(c).width()));
                 return ui;
             },
-            stop: function (e, ui) {
+            stop: (e, ui) => {
                 var dropBefore = ui.item.next().find("[data-sort-item]").attr("data-sort-item") || "";
                 var handle = ui.item.find("[data-sort-item]");
                 var actionUrl = handle.attr("data-sort-action");
                 actionUrl = urlHelper.addQuery(actionUrl, "drop-before", dropBefore);
-                _this.invokeActionWithAjax({ currentTarget: handle.get(0) }, actionUrl);
+                this.invokeActionWithAjax({ currentTarget: handle.get(0) }, actionUrl);
             }
         });
-    };
-    BaseApplicationPage.prototype.enableSubMenus = function (menu) {
+    }
+    enableSubMenus(menu) {
         // Many options are supported: http://www.smartmenus.org/docs/
         // To provide your custom options, set data-submenu-options attribute on the UL tag with a string json settings.
         if (!!menu.attr('data-smartmenus-id'))
@@ -170,8 +178,8 @@ var BaseApplicationPage = (function () {
         if (options)
             submenuOptions = this.toJson(options);
         menu.smartmenus(submenuOptions);
-    };
-    BaseApplicationPage.prototype.enablePasswordStengthMeter = function (container) {
+    }
+    enablePasswordStengthMeter(container) {
         // for configuration options : https://github.com/ablanco/jquery.pwstrength.bootstrap/blob/master/OPTIONS.md
         if (container.find(".progress").length !== 0)
             return;
@@ -204,12 +212,11 @@ var BaseApplicationPage = (function () {
         }
         else
             password.pwstrength(options);
-    };
-    BaseApplicationPage.prototype.ensureModalResize = function () {
-        var _this = this;
-        setTimeout(function () { return _this.adjustModalHeight(); }, 1);
-    };
-    BaseApplicationPage.prototype.configureValidation = function () {
+    }
+    ensureModalResize() {
+        setTimeout(() => this.adjustModalHeight(), 1);
+    }
+    configureValidation() {
         var methods = $.validator.methods;
         var format = this.DATE_FORMAT;
         methods.date = function (value, element) {
@@ -218,54 +225,54 @@ var BaseApplicationPage = (function () {
             return moment(value, format).isValid();
         };
         // TODO: datetime, time
-    };
-    BaseApplicationPage.prototype.updateSubFormStates = function () {
-        var countItems = function (element) { return $(element).parent().find(".subform-item:visible").length; };
+    }
+    updateSubFormStates() {
+        var countItems = (element) => $(element).parent().find(".subform-item:visible").length;
         // Hide removed items
         $("input[name*=MustBeDeleted][value=True]").closest('[data-subform]').hide();
         // hide empty headers
-        $(".horizontal-subform thead").each(function (i, e) {
+        $(".horizontal-subform thead").each((i, e) => {
             $(e).css('visibility', (countItems(e) > 0) ? 'visible' : 'hidden');
         });
         // Hide add buttons
-        $("[data-subform-max]").each(function (i, e) {
+        $("[data-subform-max]").each((i, e) => {
             var show = countItems(e) < parseInt($(e).attr('data-subform-max'));
             $(e).find("[data-add-subform=" + $(e).attr("data-subform") + "]").toggle(show);
         });
         // Hide delete buttons
-        $("[data-subform-min]").each(function (i, e) {
+        $("[data-subform-min]").each((i, e) => {
             var show = countItems(e) > parseInt($(e).attr('data-subform-min'));
             $(e).find("[data-delete-subform=" + $(e).attr("data-subform") + "]").css('visibility', (show) ? 'visible' : 'hidden');
         });
-    };
-    BaseApplicationPage.prototype.enableDateDropdown = function (input) {
+    }
+    enableDateDropdown(input) {
         // TODO: Implement
-    };
-    BaseApplicationPage.prototype.enableSelectAllToggle = function (event) {
+    }
+    enableSelectAllToggle(event) {
         var trigger = $(event.currentTarget);
         trigger.closest("table").find("td.select-row > input:checkbox").prop('checked', trigger.is(":checked"));
-    };
-    BaseApplicationPage.prototype.enableInstantSearch = function (control) {
+    }
+    enableInstantSearch(control) {
         // TODO: Make it work with List render mode too.
-        control.off("keyup.immediate-filter").on("keyup.immediate-filter", function (event) {
+        control.off("keyup.immediate-filter").on("keyup.immediate-filter", (event) => {
             var keywords = control.val().toLowerCase().split(' ');
             var rows = control.closest('[data-module]').find(".grid > tbody > tr");
-            rows.each(function (index, e) {
+            rows.each((index, e) => {
                 var row = $(e);
                 var content = row.text().toLowerCase();
-                var hasAllKeywords = keywords.filter(function (i) { return content.indexOf(i) == -1; }).length == 0;
+                var hasAllKeywords = keywords.filter((i) => content.indexOf(i) == -1).length == 0;
                 if (hasAllKeywords)
                     row.show();
                 else
                     row.hide();
             });
         });
-        control.on("keydown", function (e) {
+        control.on("keydown", e => {
             if (e.keyCode == 13)
                 e.preventDefault();
         });
-    };
-    BaseApplicationPage.prototype.validateForm = function (trigger) {
+    }
+    validateForm(trigger) {
         if (trigger.is("[formnovalidate]"))
             return true;
         var form = trigger.closest("form");
@@ -273,59 +280,57 @@ var BaseApplicationPage = (function () {
         if (!validator.form()) {
             var alertUntyped = alert;
             if (form.is("[data-validation-style*=message-box]"))
-                alertUntyped(validator.errorList.map(function (err) { return err.message; }).join('\r\n'), function () { setTimeout(function () { return validator.focusInvalid(); }, 0); });
+                alertUntyped(validator.errorList.map(err => err.message).join('\r\n'), () => { setTimeout(() => validator.focusInvalid(), 0); });
             validator.focusInvalid();
             return false;
         }
         return true;
-    };
-    BaseApplicationPage.prototype.enableConfirmQuestion = function (button) {
-        var _this = this;
-        button.off("click.confirm-question").bindFirst("click.confirm-question", function (e) {
+    }
+    enableConfirmQuestion(button) {
+        button.off("click.confirm-question").bindFirst("click.confirm-question", (e) => {
             e.stopImmediatePropagation();
             //return false;
             alertify.set({
                 labels: { ok: button.attr('data-confirm-ok') || 'OK', cancel: button.attr('data-confirm-cancel') || 'Cancel' }
             });
-            _this.showConfirm(button.attr('data-confirm-question'), function () {
+            this.showConfirm(button.attr('data-confirm-question'), () => {
                 button.off("click.confirm-question");
                 button.trigger('click');
-                _this.enableConfirmQuestion(button);
+                this.enableConfirmQuestion(button);
             });
             return false;
         });
-    };
-    BaseApplicationPage.prototype.showConfirm = function (text, yesCallback) {
-        alertify.confirm(text.replace(/\r/g, "<br />"), function (e) {
+    }
+    showConfirm(text, yesCallback) {
+        alertify.confirm(text.replace(/\r/g, "<br />"), (e) => {
             if (e)
                 yesCallback();
             else
                 return false;
         });
-    };
-    BaseApplicationPage.prototype.enableHtmlEditor = function (input) {
-        var _this = this;
-        $.getScript(CKEDITOR_BASEPATH + "ckeditor.js", function () {
-            $.getScript(CKEDITOR_BASEPATH + "adapters/jquery.js", function () {
-                CKEDITOR.config.contentsCss = CKEDITOR_BASEPATH + 'contents.css';
-                var editor = CKEDITOR.replace($(input).attr('id'), {
-                    toolbar: $(input).attr('data-toolbar') || _this.DEFAULT_HTML_EDITOR_MODE,
-                    customConfig: '/Scripts/ckeditor_config.js'
-                });
-                editor.on('change', function (evt) { return evt.editor.updateElement(); });
-                editor.on("instanceReady", function (event) { return _this.adjustModalHeight(); });
-            });
-        });
-    };
-    BaseApplicationPage.prototype.alertUnobtrusively = function (message, style) {
+    }
+    //enableHtmlEditor(input: any) {
+    //    $.getScript(CKEDITOR_BASEPATH + "ckeditor.js", () => {
+    //        $.getScript(CKEDITOR_BASEPATH + "adapters/jquery.js", () => {
+    //            CKEDITOR.config.contentsCss = CKEDITOR_BASEPATH + 'contents.css';
+    //            var editor = CKEDITOR.replace($(input).attr('id'),
+    //                {
+    //                    toolbar: $(input).attr('data-toolbar') || this.DEFAULT_HTML_EDITOR_MODE,
+    //                    customConfig: '/Scripts/ckeditor_config.js'
+    //                });
+    //            editor.on('change', (evt) => evt.editor.updateElement());
+    //            editor.on("instanceReady", (event) => this.adjustModalHeight());
+    //        });
+    //    });
+    //}
+    alertUnobtrusively(message, style) {
         alertify.log(message, style);
-    };
-    BaseApplicationPage.prototype.enableAlert = function () {
-        var _this = this;
+    }
+    enableAlert() {
         var w = window;
-        w.alert = function (text, callback) { return _this.alert(text, null, callback); };
-    };
-    BaseApplicationPage.prototype.alert = function (text, style, callback) {
+        w.alert = (text, callback) => this.alert(text, null, callback);
+    }
+    alert(text, style, callback) {
         if (text == undefined)
             text = "";
         text = text.trim();
@@ -337,8 +342,8 @@ var BaseApplicationPage = (function () {
             alertify.alert('', callback, style);
             $('.alertify-message').empty().append($.parseHTML(text));
         }
-    };
-    BaseApplicationPage.prototype.enableNumericUpDown = function (input) {
+    }
+    enableNumericUpDown(input) {
         var min = input.attr("data-val-range-min");
         var max = input.attr("data-val-range-max");
         input.spinedit({
@@ -346,9 +351,8 @@ var BaseApplicationPage = (function () {
             maximum: parseFloat(max),
             step: 1,
         });
-    };
-    BaseApplicationPage.prototype.enableFileUpload = function (input) {
-        var _this = this;
+    }
+    enableFileUpload(input) {
         var control = input;
         var container = input.closest(".file-upload");
         var del = container.find(".delete-file");
@@ -369,15 +373,15 @@ var BaseApplicationPage = (function () {
             del.show();
             progressBar.width('100%');
             // enable Existing File Download
-            inputControl.val(currentFile.text()).removeAttr('disabled').addClass('file-target').click(function () { return currentFile[0].click(); });
+            inputControl.val(currentFile.text()).removeAttr('disabled').addClass('file-target').click(() => currentFile[0].click());
         }
-        var handleCurrentFileChange = function () {
+        var handleCurrentFileChange = () => {
             if (hasExistingFile) {
                 inputControl.removeClass('file-target').attr('disabled', 'true').off();
                 hasExistingFile = false;
             }
         };
-        del.click(function (e) {
+        del.click((e) => {
             del.hide();
             idInput.val("REMOVE");
             progressBar.width(0);
@@ -389,33 +393,33 @@ var BaseApplicationPage = (function () {
             dataType: 'json',
             dropZone: container,
             replaceFileInput: false,
-            drop: function (e, data) {
+            drop: (e, data) => {
                 if (fileLabel.length > 0 && data.files.length > 0) {
-                    fileLabel.val(data.files.map(function (x) { return x.name; }));
+                    fileLabel.val(data.files.map(x => x.name));
                 }
             },
-            change: function (e, data) { progressBar.width(0); handleCurrentFileChange(); },
-            progressall: function (e, data) {
+            change: (e, data) => { progressBar.width(0); handleCurrentFileChange(); },
+            progressall: (e, data) => {
                 var progress = parseInt((data.loaded / data.total * 100).toString(), 10);
                 progressBar.width(progress + '%');
             },
-            error: function (response) { _this.handleAjaxResponseError(response); fileLabel.val(''); },
-            success: function (response) {
+            error: (response) => { this.handleAjaxResponseError(response); fileLabel.val(''); },
+            success: (response) => {
                 if (response.Error) {
-                    _this.handleAjaxResponseError({ responseText: response.Error });
+                    this.handleAjaxResponseError({ responseText: response.Error });
                     fileLabel.val('');
                 }
                 else {
                     if (input.is("[multiple]"))
-                        idInput.val(idInput.val() + "|file:" + response.ID);
+                        idInput.val(idInput.val() + "|file:" + response.Result.ID);
                     else
-                        idInput.val("file:" + response.ID);
+                        idInput.val("file:" + response.Result.ID);
                     del.show();
                 }
             }
         });
-    };
-    BaseApplicationPage.prototype.openLinkModal = function (event) {
+    }
+    openLinkModal(event) {
         var target = $(event.currentTarget);
         var url = target.attr("href");
         var modalOptions = {};
@@ -424,8 +428,8 @@ var BaseApplicationPage = (function () {
             modalOptions = this.toJson(options);
         this.openModal(url, modalOptions);
         return false;
-    };
-    BaseApplicationPage.prototype.toJson = function (data) {
+    }
+    toJson(data) {
         try {
             return JSON.parse(data);
         }
@@ -434,35 +438,30 @@ var BaseApplicationPage = (function () {
             console.log('Cannot parse this data to Json: ');
             console.log(data);
         }
-    };
-    BaseApplicationPage.prototype.runStartupActions = function (container, trigger, stage) {
-        if (container === void 0) { container = null; }
-        if (trigger === void 0) { trigger = null; }
-        if (stage === void 0) { stage = "Init"; }
+    }
+    runStartupActions(container = null, trigger = null, stage = "Init") {
         if (container == null)
             container = $(document);
         if (trigger == null)
             trigger = $(document);
         var actions = [];
-        $("input[name='Startup.Actions']", container).each(function (index, item) {
+        $("input[name='Startup.Actions']", container).each((index, item) => {
             var action = $(item).val();
             if (actions.indexOf(action) === -1)
                 actions.push(action);
         });
-        for (var _i = 0, actions_1 = actions; _i < actions_1.length; _i++) {
-            var action = actions_1[_i];
+        for (var action of actions) {
             if (action && (action.Stage || "Init") == stage)
                 this.executeActions(this.toJson(action), trigger);
         }
-    };
-    BaseApplicationPage.prototype.canAutoFocus = function (input) {
+    }
+    canAutoFocus(input) {
         return input.attr("data-autofocus") !== "disabled";
-    };
-    BaseApplicationPage.prototype.enableDateControl = function (input) {
-        var _this = this;
+    }
+    enableDateControl(input) {
         if (this.isWindowModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", function (e) { return _this.adjustModalHeightForDataPicker(e); });
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", function (e) { return _this.adjustModalHeightForDataPicker(e); });
+            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
+            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
         }
         input.attr("data-autofocus", "disabled");
         var control = input.attr("data-control");
@@ -478,12 +477,12 @@ var BaseApplicationPage = (function () {
                 locale: this.DATE_LOCALE
             }).data("DateTimePicker").keyBinds().clear = null;
             // Now make calendar icon clickable as well             
-            input.parent().find(".fa-calendar").parent(".input-group-addon").click(function () { input.focus(); });
+            input.parent().find(".fa-calendar").parent(".input-group-addon").click(() => { input.focus(); });
         }
         else
             alert("Don't know how to handle date control of " + control);
-    };
-    BaseApplicationPage.prototype.adjustModalHeightForDataPicker = function (e) {
+    }
+    adjustModalHeightForDataPicker(e) {
         var datepicker = $(e.currentTarget).siblings('.bootstrap-datetimepicker-widget');
         if (datepicker.length === 0) {
             this.adjustModalHeight();
@@ -492,126 +491,8 @@ var BaseApplicationPage = (function () {
         var offset = Math.ceil(datepicker.offset().top + datepicker[0].offsetHeight) - document.body.offsetHeight + 6;
         var overflow = Math.max(offset, 0);
         this.adjustModalHeight(overflow);
-    };
-    BaseApplicationPage.prototype.enableDateAndTimeControl = function (input) {
-        var _this = this;
-        if (this.isWindowModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", function (e) { return _this.adjustModalHeightForDataPicker(e); });
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", function (e) { return _this.adjustModalHeightForDataPicker(e); });
-        }
-        input.attr("data-autofocus", "disabled");
-        input.datetimepicker({
-            format: this.DATE_TIME_FORMAT,
-            useCurrent: false,
-            showTodayButton: true,
-            icons: { today: 'today' },
-            stepping: parseInt(input.attr("data-minute-steps") || this.MINUTE_INTERVALS.toString()),
-            keepInvalid: input.closest("form").find("[data-change-action]").length == 0,
-            locale: this.DATE_LOCALE
-        }).data("DateTimePicker").keyBinds().clear = null;
-        input.parent().find(".fa-calendar").click(function () { input.focus(); });
-    };
-    BaseApplicationPage.prototype.enableTimeControl = function (input) {
-        var _this = this;
-        if (this.isWindowModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", function (e) { return _this.adjustModalHeightForDataPicker(e); });
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", function (e) { return _this.adjustModalHeightForDataPicker(e); });
-        }
-        input.attr("data-autofocus", "disabled");
-        input.datetimepicker({
-            format: this.TIME_FORMAT,
-            useCurrent: false,
-            stepping: parseInt(input.attr("data-minute-steps") || this.MINUTE_INTERVALS.toString()),
-            keepInvalid: input.closest("form").find("[data-change-action]").length == 0,
-            locale: this.DATE_LOCALE
-        }).data("DateTimePicker").keyBinds().clear = null;
-        input.parent().find(".fa-clock-o").parent(".input-group-addon").click(function () { input.focus(); });
-    };
-    BaseApplicationPage.prototype.handleAutoComplete = function (input) {
-        var _this = this;
-        if (input.is('[data-typeahead-enabled=true]'))
-            return;
-        else
-            input.attr('data-typeahead-enabled', true);
-        var valueField = $("[name='" + input.attr("name").slice(0, -5) + "']");
-        if (valueField.length == 0)
-            console.log('Could not find the value field for auto-complete.');
-        var dataSource = function (query, callback) {
-            _this.awaitingAutocompleteResponses++;
-            var url = input.attr("autocomplete-source");
-            url = urlHelper.removeQuery(url, input.attr('name')); // Remove old text.
-            var data = _this.getPostData(input);
-            setTimeout(function () {
-                if (_this.awaitingAutocompleteResponses > 1) {
-                    _this.awaitingAutocompleteResponses--;
-                    return;
-                }
-                $.post(url, data).fail(_this.handleAjaxResponseError).done(function (result) {
-                    result = result.map(function (i) {
-                        return {
-                            Display: i.Display || i.Text || i.Value,
-                            Value: i.Value || i.Text || i.Display,
-                            Text: i.Text || $("<div/>").append($(i.Display)).text() || i.Value
-                        };
-                    });
-                    return callback(result);
-                }).always(function () { return _this.awaitingAutocompleteResponses--; });
-            }, _this.AUTOCOMPLETE_INPUT_DELAY);
-        };
-        var clearValue = function (e) {
-            if (input.val() === "")
-                valueField.val("");
-            if (input.val() !== input.data("selected-text"))
-                valueField.val("");
-        };
-        var itemSelected = function (e, item) {
-            if (item != undefined) {
-                console.log('setting ' + item.Value);
-                valueField.val(item.Value);
-                input.data("selected-text", item.Display);
-            }
-            else {
-                console.log("Clearing text, item is undefined");
-                input.data("selected-text", "");
-            }
-            // This will invoke RunOnLoad M# method as typeahead does not fire textbox change event when it sets its value from drop down
-            input.trigger('change');
-        };
-        var itemBlured = function (e, item) {
-            if (valueField.val() == "" && input.val() != "") {
-                // this hack is so when you paste something a focus out, it should set the hidden field
-                var suggested = input.closest(".twitter-typeahead").find(".tt-suggestion");
-                var filtered = suggested.filter(function (e, obj) { return (obj.innerText === input.val()); });
-                if (filtered.length === 0 && suggested.length === 0) {
-                    // the suggestion list has never been shown
-                    // make typeahead aware of this change otherwise during blur it will clear the text
-                    input.typeahead('val', input.val());
-                    dataSource(input.val(), function (data) {
-                        if (data && data.length === 1) {
-                            itemSelected(null, data[0]);
-                            console.log('match text to suggestion finished');
-                        }
-                        else {
-                            console.warn("There is none or more than one items in the autocomplete data-source to match the given text. Cannot set the value.");
-                        }
-                    });
-                }
-                else {
-                    // the suggestion list has been displayed
-                    if (filtered.length === 0)
-                        suggested.first().trigger("click");
-                    else
-                        filtered.first().trigger("click");
-                }
-            }
-        };
-        var dataset = {
-            displayKey: 'Text', source: dataSource,
-            templates: { suggestion: function (item) { return item.Display; }, empty: "<div class='tt-suggestion'>Not found</div>" }
-        };
-        input.data("selected-text", "").on('input', clearValue).on('blur', itemBlured).on('typeahead:selected', itemSelected).typeahead({ minLength: 0 }, dataset);
-    };
-    BaseApplicationPage.prototype.handleDefaultButton = function (event) {
+    }
+    handleDefaultButton(event) {
         if (event.which === 13) {
             var target = $(event.currentTarget);
             var button = target.closest("[data-module]").find('[default-button]:first'); // Same module
@@ -622,16 +503,16 @@ var BaseApplicationPage = (function () {
         }
         else
             return true;
-    };
-    BaseApplicationPage.prototype.deleteSubForm = function (event) {
+    }
+    deleteSubForm(event) {
         var button = $(event.currentTarget);
         var container = button.parents(".subform-item");
         container.find("input[name*=MustBeDeleted]").val("true");
         container.hide();
         this.updateSubFormStates();
         event.preventDefault();
-    };
-    BaseApplicationPage.prototype.enableAjaxPaging = function (event) {
+    }
+    enableAjaxPaging(event) {
         var button = $(event.currentTarget);
         var page = button.attr("data-pagination");
         var key = "p";
@@ -646,8 +527,8 @@ var BaseApplicationPage = (function () {
             input.parent().append($("<input type='hidden'/>").attr("name", key).val(page));
             input.remove();
         }
-    };
-    BaseApplicationPage.prototype.enableAjaxSorting = function (event) {
+    }
+    enableAjaxSorting(event) {
         var button = $(event.currentTarget);
         var sort = button.attr("data-sort");
         var key = "s";
@@ -659,29 +540,24 @@ var BaseApplicationPage = (function () {
         if (input.val() == sort)
             sort += ".DESC";
         input.val(sort);
-    };
-    BaseApplicationPage.prototype.applyColumns = function (event) {
+    }
+    applyColumns(event) {
         var button = $(event.currentTarget);
         var checkboxes = button.closest(".select-cols").find(":checkbox");
         if (checkboxes.length === 0 || checkboxes.filter(":checked").length > 0)
             return;
         $("<input type='checkbox' checked='checked'/>").hide().attr("name", checkboxes.attr("name")).val("-")
             .appendTo(button.parent());
-    };
-    BaseApplicationPage.prototype.enableAjaxRedirect = function (event) {
+    }
+    enableAjaxRedirect(event) {
         if (event.ctrlKey || event.button === 1)
             return true;
         var link = $(event.currentTarget);
         var url = link.attr('href');
         this.ajaxRedirect(url, link);
         return false;
-    };
-    BaseApplicationPage.prototype.ajaxRedirect = function (url, trigger, isBack, keepScroll, addToHistory) {
-        var _this = this;
-        if (trigger === void 0) { trigger = null; }
-        if (isBack === void 0) { isBack = false; }
-        if (keepScroll === void 0) { keepScroll = false; }
-        if (addToHistory === void 0) { addToHistory = true; }
+    }
+    ajaxRedirect(url, trigger = null, isBack = false, keepScroll = false, addToHistory = true) {
         this.isAjaxRedirecting = true;
         this.isAwaitingAjaxResponse = true;
         if (window.stop)
@@ -696,32 +572,32 @@ var BaseApplicationPage = (function () {
         $.ajax({
             url: url,
             type: 'GET',
-            success: function (response) {
-                _this.events = {};
+            success: (response) => {
+                this.events = {};
                 if (!isBack) {
-                    _this.ajaxChangedUrl++;
+                    this.ajaxChangedUrl++;
                     if (addToHistory)
                         history.pushState({}, $("#page_meta_title").val(), url);
                 }
-                _this.isAwaitingAjaxResponse = false;
-                _this.isAjaxRedirecting = false;
-                _this.invokeAjaxActionResult(response, null, trigger);
+                this.isAwaitingAjaxResponse = false;
+                this.isAjaxRedirecting = false;
+                this.invokeAjaxActionResult(response, null, trigger);
                 if (keepScroll) {
                     $(document).scrollTop(scrollTopBefore);
                 }
             },
-            error: function (response) { return location.href = url; },
-            complete: function (response) { return _this.hidePleaseWait(); }
+            error: (response) => location.href = url,
+            complete: (response) => this.hidePleaseWait()
         });
         return false;
-    };
-    BaseApplicationPage.prototype.ajaxRedirectBackClicked = function (event) {
+    }
+    ajaxRedirectBackClicked(event) {
         if (this.ajaxChangedUrl == 0)
             return;
         this.ajaxChangedUrl--;
         this.ajaxRedirect(location.href, null, true);
-    };
-    BaseApplicationPage.prototype.returnToPreviousPage = function (target) {
+    }
+    returnToPreviousPage(target) {
         var returnUrl = urlHelper.getQuery("ReturnUrl");
         if (returnUrl) {
             if (target && $(target).is("[data-redirect=ajax]"))
@@ -732,21 +608,19 @@ var BaseApplicationPage = (function () {
         else
             history.back();
         return false;
-    };
-    BaseApplicationPage.prototype.cleanGetFormSubmit = function (event) {
+    }
+    cleanGetFormSubmit(event) {
         var form = $(event.currentTarget);
         if (this.validateForm(form) == false) {
             this.hidePleaseWait();
             return false;
         }
-        var formData = urlHelper.mergeFormData(form.serializeArray()).filter(function (item) { return item.name != "__RequestVerificationToken"; });
+        var formData = urlHelper.mergeFormData(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
         var url = urlHelper.removeEmptyQueries(form.attr('action'));
         try {
-            form.find("input:checkbox:unchecked").each(function (ind, e) { return url = urlHelper.removeQuery(url, $(e).attr("name")); });
-            for (var _i = 0, formData_1 = formData; _i < formData_1.length; _i++) {
-                var item = formData_1[_i];
+            form.find("input:checkbox:unchecked").each((ind, e) => url = urlHelper.removeQuery(url, $(e).attr("name")));
+            for (var item of formData)
                 url = urlHelper.updateQuery(url, item.name, item.value);
-            }
             url = urlHelper.removeEmptyQueries(url);
             if (form.is("[data-redirect=ajax]"))
                 this.ajaxRedirect(url, form);
@@ -758,21 +632,19 @@ var BaseApplicationPage = (function () {
             alert(error);
         }
         return false;
-    };
-    BaseApplicationPage.prototype.enableUserHelp = function (element) {
-        element.click(function () { return false; });
+    }
+    enableUserHelp(element) {
+        element.click(() => false);
         var message = element.attr('data-user-help'); // todo: unescape message and conver to html
         element['popover']({ trigger: 'focus', content: message });
-    };
-    BaseApplicationPage.prototype.executeActions = function (actions, trigger) {
-        if (trigger === void 0) { trigger = null; }
-        for (var _i = 0, actions_2 = actions; _i < actions_2.length; _i++) {
-            var action = actions_2[_i];
+    }
+    executeActions(actions, trigger = null) {
+        for (var action of actions) {
             if (!this.executeAction(action, trigger))
                 return;
         }
-    };
-    BaseApplicationPage.prototype.executeAction = function (action, trigger) {
+    }
+    executeAction(action, trigger) {
         if (action.Notify || action.Notify == "")
             this.executeNotifyAction(action, trigger);
         else if (action.Script)
@@ -800,14 +672,14 @@ var BaseApplicationPage = (function () {
         else
             alert("Don't know how to handle: " + urlHelper.htmlEncode(JSON.stringify(action)));
         return true;
-    };
-    BaseApplicationPage.prototype.executeNotifyAction = function (action, trigger) {
+    }
+    executeNotifyAction(action, trigger) {
         if (action.Obstruct == false)
             this.alertUnobtrusively(action.Notify, action.Style);
         else
             this.alert(action.Notify, action.Style);
-    };
-    BaseApplicationPage.prototype.executeRedirectAction = function (action, trigger) {
+    }
+    executeRedirectAction(action, trigger) {
         if (action.Redirect.indexOf('/') != 0 && action.Redirect.indexOf('http') != 0)
             action.Redirect = '/' + action.Redirect;
         if (action.OutOfModal && this.isWindowModal())
@@ -822,8 +694,8 @@ var BaseApplicationPage = (function () {
             this.ajaxRedirect(action.Redirect, trigger);
         else
             location.replace(action.Redirect);
-    };
-    BaseApplicationPage.prototype.replaceListControlSource = function (controlId, items) {
+    }
+    replaceListControlSource(controlId, items) {
         var $control = $('#' + controlId);
         if ($control.is("select")) {
             $control.empty();
@@ -834,8 +706,8 @@ var BaseApplicationPage = (function () {
         else {
             console.log("Unable to replace list items");
         }
-    };
-    BaseApplicationPage.prototype.download = function (url) {
+    }
+    download(url) {
         if (this.isWindowModal()) {
             var page = window.parent["page"];
             if (page && page.download) {
@@ -844,15 +716,11 @@ var BaseApplicationPage = (function () {
             }
         }
         $("<iframe style='visibility:hidden; width:1px; height:1px;'></iframe>").attr("src", url).appendTo("body");
-    };
-    BaseApplicationPage.prototype.openWindow = function (url, target) {
+    }
+    openWindow(url, target) {
         window.open(url, target);
-    };
-    BaseApplicationPage.prototype.hidePleaseWait = function () {
-        $(".wait-screen").remove();
-    };
-    BaseApplicationPage.prototype.showPleaseWait = function (blockScreen) {
-        if (blockScreen === void 0) { blockScreen = false; }
+    }
+    showPleaseWait(blockScreen = false) {
         if (!$(document.forms[0]).valid())
             return;
         var screen = $("<div class='wait-screen' />").appendTo("body");
@@ -865,8 +733,8 @@ var BaseApplicationPage = (function () {
         $("<div class='wait-container'><div class='wait-box'><img src='/public/img/loading.gif'/></div>")
             .appendTo(screen)
             .fadeIn('slow');
-    };
-    BaseApplicationPage.prototype.getModalTemplate = function (options) {
+    }
+    getModalTemplate(options) {
         var modalDialogStyle = "";
         var iframeStyle = "width:100%; border:0;";
         var iframeAttributes = "";
@@ -894,10 +762,8 @@ var BaseApplicationPage = (function () {
         <iframe style='" + iframeStyle + "' " + iframeAttributes + "></iframe>\
     </div>\
 </div></div></div>";
-    };
-    BaseApplicationPage.prototype.openModal = function (url, options) {
-        var _this = this;
-        if (options === void 0) { options = {}; }
+    }
+    openModal(url, options = {}) {
         this.isOpeningModal = true;
         if (this.currentModal != null)
             if (this.closeModal() === false)
@@ -906,19 +772,18 @@ var BaseApplicationPage = (function () {
         if (true /* TODO: Change to if Internet Explorer only */)
             this.currentModal.removeClass("fade");
         var frame = this.currentModal.find("iframe");
-        frame.attr("src", url).on("load", function (e) {
-            _this.isOpeningModal = false;
+        frame.attr("src", url).on("load", (e) => {
+            this.isOpeningModal = false;
             var isHeightProvided = !!(options && options.height);
             if (!isHeightProvided) {
                 var doc = frame.get(0).contentWindow.document;
-                setTimeout(function () { return frame.height(doc.body.offsetHeight); }, 10); // Timeout is used due to an IE bug.
+                setTimeout(() => frame.height(doc.body.offsetHeight), 10); // Timeout is used due to an IE bug.
             }
-            _this.currentModal.find(".modal-body .text-center").remove();
+            this.currentModal.find(".modal-body .text-center").remove();
         });
         this.currentModal.appendTo("body").modal('show');
-    };
-    BaseApplicationPage.prototype.closeModal = function (refreshParent) {
-        if (refreshParent === void 0) { refreshParent = false; }
+    }
+    closeModal(refreshParent = false) {
         if (this.raise("modal:closing") === false)
             return false;
         this.isClosingModal = true;
@@ -937,33 +802,14 @@ var BaseApplicationPage = (function () {
         }
         this.isClosingModal = false;
         return true;
-    };
-    BaseApplicationPage.prototype.refresh = function (keepScroll) {
-        if (keepScroll === void 0) { keepScroll = false; }
+    }
+    refresh(keepScroll = false) {
         if ($("main").parent().is("body"))
             this.ajaxRedirect(location.href, null, false /*isBack*/, keepScroll, false /*addToHistory:*/);
         else
             location.reload();
-    };
-    BaseApplicationPage.prototype.getPostData = function (trigger) {
-        var form = trigger.closest("[data-module]");
-        if (!form.is("form"))
-            form = $("<form />").append(form.clone(true));
-        var data = urlHelper.mergeFormData(form.serializeArray());
-        // If it's master-details, then we need the index.
-        var subFormContainer = trigger.closest(".subform-item");
-        if (subFormContainer != null) {
-            data.push({
-                name: "subFormIndex",
-                value: subFormContainer.closest(".horizontal-subform, .vertical-subform").find(".subform-item").index(subFormContainer).toString()
-            });
-        }
-        data.push({ name: "current.request.url", value: urlHelper.pathAndQuery() });
-        return data;
-    };
-    BaseApplicationPage.prototype.invokeActionWithAjax = function (event, actionUrl, syncCall) {
-        var _this = this;
-        if (syncCall === void 0) { syncCall = false; }
+    }
+    invokeActionWithAjax(event, actionUrl, syncCall = false) {
         var trigger = $(event.currentTarget);
         var triggerUniqueSelector = trigger.getUniqueSelector();
         var containerModule = trigger.closest("[data-module]");
@@ -982,10 +828,10 @@ var BaseApplicationPage = (function () {
             type: trigger.attr("data-ajax-method") || 'POST',
             async: !syncCall,
             data: data_before_disable,
-            success: function (result) { _this.hidePleaseWait(); _this.invokeAjaxActionResult(result, containerModule, trigger); },
-            error: function (response) { return _this.handleAjaxResponseError(response); },
-            complete: function (x) {
-                _this.isAwaitingAjaxResponse = false;
+            success: (result) => { this.hidePleaseWait(); this.invokeAjaxActionResult(result, containerModule, trigger); },
+            error: (response) => this.handleAjaxResponseError(response),
+            complete: (x) => {
+                this.isAwaitingAjaxResponse = false;
                 trigger.removeClass('loading-action-result');
                 if (disableToo)
                     trigger.removeAttr('disabled');
@@ -995,13 +841,13 @@ var BaseApplicationPage = (function () {
             }
         });
         return false;
-    };
-    BaseApplicationPage.prototype.enableSelectColumns = function (container) {
+    }
+    enableSelectColumns(container) {
         var columns = container.find("div.select-cols");
-        container.find("a.select-cols").click(function () { columns.show(); return false; });
-        columns.find('.cancel').click(function () { return columns.hide(); });
-    };
-    BaseApplicationPage.prototype.invokeActionWithPost = function (event) {
+        container.find("a.select-cols").click(() => { columns.show(); return false; });
+        columns.find('.cancel').click(() => columns.hide());
+    }
+    invokeActionWithPost(event) {
         var trigger = $(event.currentTarget);
         var containerModule = trigger.closest("[data-module]");
         if (containerModule.is("form") && this.validateForm(trigger) == false)
@@ -1009,51 +855,31 @@ var BaseApplicationPage = (function () {
         var data = this.getPostData(trigger);
         var url = trigger.attr("formaction");
         var form = $("<form method='post' />").hide().appendTo($("body"));
-        for (var _i = 0, data_1 = data; _i < data_1.length; _i++) {
-            var item = data_1[_i];
+        for (var item of data)
             $("<input type='hidden'/>").attr("name", item.name).val(item.value).appendTo(form);
-        }
         form.attr("action", url).submit();
         return false;
-    };
-    BaseApplicationPage.prototype.handleAjaxResponseError = function (response) {
-        this.hidePleaseWait();
-        console.log(response);
-        var text = response.responseText;
-        if (text.indexOf("<html") > -1) {
-            document.write(text);
-        }
-        else if (text.indexOf("<form") > -1) {
-            var form = $("form", document);
-            if (form.length)
-                form.replaceWith($(text));
-            else
-                document.write(text);
-        }
-        else
-            alert(text);
-    };
-    BaseApplicationPage.prototype.replaceMain = function (element, trigger) {
-        var _this = this;
-        var referencedScripts = element.find("script[src]").map(function (i, s) { return $(s).attr("src"); });
+    }
+    replaceMain(element, trigger) {
+        var referencedScripts = element.find("script[src]").map((i, s) => $(s).attr("src"));
         element.find("script[src]").remove();
         $("main").replaceWith(element);
         if (referencedScripts.length) {
             var expectedScripts = referencedScripts.length;
             var loadedScripts = 0;
-            referencedScripts.each(function (index, item) {
+            referencedScripts.each((index, item) => {
                 var url = '' + item;
-                if (_this.dynamicallyLoadedScriptFiles.indexOf(url) > -1) {
+                if (this.dynamicallyLoadedScriptFiles.indexOf(url) > -1) {
                     loadedScripts++;
                     if (loadedScripts == expectedScripts)
-                        _this.pageLoad(element, trigger);
+                        this.pageLoad(element, trigger);
                 }
                 else {
-                    _this.dynamicallyLoadedScriptFiles.push(url);
-                    $.getScript(url, function () {
+                    this.dynamicallyLoadedScriptFiles.push(url);
+                    $.getScript(url, () => {
                         loadedScripts++;
                         if (loadedScripts == expectedScripts)
-                            _this.pageLoad(element, trigger);
+                            this.pageLoad(element, trigger);
                     });
                 }
             });
@@ -1061,8 +887,8 @@ var BaseApplicationPage = (function () {
         else
             this.pageLoad(element, trigger);
         document.title = $("#page_meta_title").val();
-    };
-    BaseApplicationPage.prototype.invokeAjaxActionResult = function (response, containerModule, trigger) {
+    }
+    invokeAjaxActionResult(response, containerModule, trigger) {
         var asElement = $(response);
         if (asElement.is("main")) {
             this.replaceMain(asElement, trigger);
@@ -1092,26 +918,26 @@ var BaseApplicationPage = (function () {
             this.executeActions(response, trigger);
             this.initialize();
         }
-    };
-    BaseApplicationPage.prototype.ensureNonModal = function () {
+    }
+    ensureNonModal() {
         if (this.isWindowModal())
             parent.window.location.href = location.href;
-    };
-    BaseApplicationPage.prototype.isWindowModal = function () {
+    }
+    isWindowModal() {
         if ($(this.getContainerIFrame()).closest(".modal").length === 0)
             return false;
         return true;
-    };
-    BaseApplicationPage.prototype.getContainerIFrame = function () {
+    }
+    getContainerIFrame() {
         if (parent == null || parent == self)
             return null;
-        return $(parent.document).find("iframe").filter(function (i, f) { return (f.contentDocument || f.contentWindow.document) == document; }).get(0);
-    };
-    BaseApplicationPage.prototype.cleanJson = function (str) {
+        return $(parent.document).find("iframe").filter((i, f) => (f.contentDocument || f.contentWindow.document) == document).get(0);
+    }
+    cleanJson(str) {
         return str.replace(/(\s*?{\s*?|\s*?,\s*?)(['"])?([a-zA-Z0-9]+)(['"])?:/g, '$1"$3":');
-    };
+    }
     ;
-    BaseApplicationPage.prototype.enableSlider = function (input) {
+    enableSlider(input) {
         var options = { min: 0, max: 100, value: null, range: false, formatter: null, tooltip: 'always', upper: null, tooltip_split: false };
         var data_options = input.attr("data-options") ? JSON.parse(this.cleanJson(input.attr("data-options"))) : null;
         if (data_options)
@@ -1119,7 +945,7 @@ var BaseApplicationPage = (function () {
         options.range = input.attr("data-control") == "range-slider";
         if (options.range) {
             if (options.tooltip_split == false)
-                options.formatter = function (v) { return v[0] + " - " + v[1]; };
+                options.formatter = v => v[0] + " - " + v[1];
             if (input.attr("id").endsWith("Max"))
                 return;
             var maxInput = $('[name="' + input.attr("id").split('.')[0] + "." + options.upper + '\"]');
@@ -1133,45 +959,45 @@ var BaseApplicationPage = (function () {
             var container = $(input).closest(".group-control");
             if (container.length == 0)
                 container = input.parent();
-            container.children().each(function (i, e) { return $(e).hide(); });
+            container.children().each((i, e) => $(e).hide());
             var rangeSlider = $("<input type='text' class='range-slider'/>").attr("id", input.attr("id") + "_slider").appendTo(container);
-            rangeSlider.slider(options).on('change', function (ev) { input.val(ev.value.newValue[0]); maxInput.val(ev.value.newValue[1]); }); ///// Updated ***********
+            rangeSlider.slider(options).on('change', ev => { input.val(ev.value.newValue[0]); maxInput.val(ev.value.newValue[1]); }); ///// Updated ***********
         }
         else {
             options.value = Number(input.val() || options.min);
-            input.slider(options).on('change', function (ev) { input.val(ev.value.newValue); }); ///// Updated ***********
+            input.slider(options).on('change', ev => { input.val(ev.value.newValue); }); ///// Updated ***********
         }
-    };
-    BaseApplicationPage.prototype.adjustModalHeight = function (overflow) {
+    }
+    adjustModalHeight(overflow) {
         if (this.isWindowModal()) {
             var frame = $(this.getContainerIFrame());
             if (frame.attr("data-has-explicit-height") != 'true')
                 frame.height(document.body.offsetHeight + (overflow || 0));
         }
-    };
-    BaseApplicationPage.prototype.adjustIFrameHeightToContents = function (iframe) {
+    }
+    adjustIFrameHeightToContents(iframe) {
         $(iframe).height(iframe.contentWindow.document.body.scrollHeight);
-    };
-    BaseApplicationPage.prototype.reloadValidationRules = function (form) {
+    }
+    reloadValidationRules(form) {
         form.removeData("validator").removeData("unobtrusiveValidation");
-        $.validator.unobtrusive.parse(form);
-    };
-    BaseApplicationPage.prototype.paginationSizeChanged = function (event) {
+        //$.validator.unobtrusive.parse(form);
+    }
+    paginationSizeChanged(event) {
         $(event.currentTarget).closest("form").submit();
-    };
-    BaseApplicationPage.prototype.highlightRow = function (element) {
+    }
+    highlightRow(element) {
         var target = $(element.closest("tr"));
         target.siblings('tr').removeClass('highlighted');
         target.addClass('highlighted');
-    };
-    BaseApplicationPage.prototype.cleanUpNumberField = function (field) {
+    }
+    cleanUpNumberField(field) {
         var domElement = field.get(0);
         // var start = domElement.selectionStart;
         // var end = domElement.selectionEnd;
         field.val(field.val().replace(/[^\d.-]/g, ""));
         // domElement.setSelectionRange(start, end);
-    };
-    BaseApplicationPage.prototype.setSortHeaderClass = function (thead) {
+    }
+    setSortHeaderClass(thead) {
         var currentSort = thead.closest("[data-module]").find("#Current-Sort").val() || "";
         if (currentSort == "")
             return;
@@ -1184,7 +1010,7 @@ var BaseApplicationPage = (function () {
             thead.addClass("sort-descending");
             thead.append("<i />");
         }
-    };
-    return BaseApplicationPage;
-}());
-//# sourceMappingURL=base.application.page.js.map
+    }
+}
+exports.BaseApplicationPage = BaseApplicationPage;
+//# sourceMappingURL=OlivePage.js.map
