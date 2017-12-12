@@ -8,6 +8,10 @@ import { WindowContext } from './Components/WindowContext'
 import { TimeControl } from './Plugins/TimeControl'
 import { AutoComplete } from './Plugins/autoComplete'
 import { Slider } from './Plugins/slider'
+import { DatePicker } from './Plugins/datePicker'
+import { NumbericUpDown } from './Plugins/numericUpDown'
+import { FileUpload } from './Plugins/FileUpload'
+import { ConfirmBox } from './Plugins/ConfirmBox'
 
 export class OlivePage {
     // formats: http://momentjs.com/docs/#/displaying/format/
@@ -101,15 +105,15 @@ export class OlivePage {
 
         // =================== Plug-ins ====================enableTimeControl
         $("input[autocomplete-source]").each((i, e) => new AutoComplete($(e)).handle());
-        $("[data-control=date-picker],[data-control=calendar]").each((i, e) => this.enableDateControl($(e)));
+        $("[data-control=date-picker],[data-control=calendar]").each((i, e) => new DatePicker($(e)));
         $("[data-control='date-picker|time-picker']").each((i, e) => new TimeControl($(e)));
         $("[data-control=time-picker]").each((i, e) => new TimeControl($(e)));
         $("[data-control=date-drop-downs]").each((i, e) => this.enableDateDropdown($(e)));
         //$("[data-control=html-editor]").each((i, e) => this.enableHtmlEditor($(e)));
-        $("[data-control=numeric-up-down]").each((i, e) => this.enableNumericUpDown($(e)));
+        $("[data-control=numeric-up-down]").each((i, e) => new NumbericUpDown($(e)).enable());
         $("[data-control=range-slider],[data-control=slider]").each((i, e) => new Slider($(e)).enable());
-        $(".file-upload input:file").each((i, e) => this.enableFileUpload($(e)));
-        $("[data-confirm-question]").each((i, e) => this.enableConfirmQuestion($(e)));
+        $(".file-upload input:file").each((i, e) => new FileUpload($(e)).enable());
+        $("[data-confirm-question]").each((i, e) => new ConfirmBox($(e)).enable());
         $(".password-strength").each((i, e) => this.enablePasswordStengthMeter($(e)));
         $(".with-submenu").each((i, e) => this.enableSubMenus($(e)));
 
@@ -323,30 +327,6 @@ export class OlivePage {
         return true;
     }
 
-    enableConfirmQuestion(button) {
-        button.off("click.confirm-question").bindFirst("click.confirm-question", (e) => {
-            e.stopImmediatePropagation();
-            //return false;
-            alertify.set({
-                labels: { ok: button.attr('data-confirm-ok') || 'OK', cancel: button.attr('data-confirm-cancel') || 'Cancel' }
-            });
-            this.showConfirm(button.attr('data-confirm-question'), () => {
-                button.off("click.confirm-question");
-                button.trigger('click');
-                this.enableConfirmQuestion(button);
-            });
-            return false;
-        });
-    }
-
-    showConfirm(text, yesCallback) {
-        alertify.confirm(text.replace(/\r/g, "<br />"), (e) => {
-            if (e) yesCallback();
-            else return false;
-        });
-    }
-
-
     //enableHtmlEditor(input: any) {
     //    $.getScript(CKEDITOR_BASEPATH + "ckeditor.js", () => {
     //        $.getScript(CKEDITOR_BASEPATH + "adapters/jquery.js", () => {
@@ -386,94 +366,6 @@ export class OlivePage {
             alertify.alert('', callback, style);
             $('.alertify-message').empty().append($.parseHTML(text));
         }
-    }
-
-    enableNumericUpDown(input: any) {
-        var min = input.attr("data-val-range-min");
-        var max = input.attr("data-val-range-max");
-        input.spinedit({
-            minimum: parseFloat(min),
-            maximum: parseFloat(max),
-            step: 1,
-        });
-    }
-
-    enableFileUpload(input: any) {
-        var control = input;
-        var container: JQuery = input.closest(".file-upload");
-        var del = container.find(".delete-file");
-        var idInput = container.find("input.file-id");
-        var progressBar = container.find(".progress-bar");
-
-        control.attr("data-url", "/file/upload");
-
-        // Config http://markusslima.github.io/bootstrap-filestyle/ & https://blueimp.github.io/jQuery-File-Upload/
-
-        control.filestyle({ buttonBefore: true });
-
-        container.find('.bootstrap-filestyle > input:text').wrap($("<div class='progress'></div>"));
-        container.find('.bootstrap-filestyle > .progress').prepend(progressBar);
-
-        if (idInput.val() != "REMOVE") {
-            var currentFile = container.find('.current-file > a');
-            var inputControl = container.find('.bootstrap-filestyle > .progress > input:text');
-        }
-
-        var currentFileName = currentFile ? currentFile.text() : null;
-        var hasExistingFile = currentFileName != "«UNCHANGED»" && (currentFileName != "NoFile.Empty" && currentFileName != null);
-
-        if (hasExistingFile && inputControl.val() == "") {
-            del.show();
-            progressBar.width('100%');
-            // enable Existing File Download
-            inputControl.val(currentFile.text()).removeAttr('disabled').addClass('file-target').click(() => currentFile[0].click());
-        }
-
-        var handleCurrentFileChange = () => {
-            if (hasExistingFile) {
-                inputControl.removeClass('file-target').attr('disabled', 'true').off();
-                hasExistingFile = false;
-            }
-        };
-
-        del.click((e) => {
-            del.hide();
-            idInput.val("REMOVE");
-            progressBar.width(0);
-            control.filestyle('clear');
-            handleCurrentFileChange();
-        });
-
-        var fileLabel = control.parent().find(':text');
-
-        input.fileupload({
-            dataType: 'json',
-            dropZone: container,
-            replaceFileInput: false,
-            drop: (e, data) => {
-
-                if (fileLabel.length > 0 && data.files.length > 0) {
-                    fileLabel.val(data.files.map(x => x.name));
-                }
-            },
-            change: (e, data) => { progressBar.width(0); handleCurrentFileChange(); },
-            progressall: (e, data: any) => {
-                var progress = parseInt((data.loaded / data.total * 100).toString(), 10);
-                progressBar.width(progress + '%');
-            },
-            error: (response) => { WindowContext.handleAjaxResponseError(response); fileLabel.val(''); },
-            success: (response) => {
-                if (response.Error) {
-                    WindowContext.handleAjaxResponseError({ responseText: response.Error });
-                    fileLabel.val('');
-                }
-                else {
-                    if (input.is("[multiple]")) idInput.val(idInput.val() + "|file:" + response.Result.ID);
-                    else idInput.val("file:" + response.Result.ID);
-                    del.show();
-                }
-            }
-        });
     }
 
     openLinkModal(event: JQueryEventObject) {
