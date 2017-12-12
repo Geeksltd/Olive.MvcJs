@@ -34,13 +34,9 @@ export declare class OlivePage {
     enableSelectAllToggle(event: any): void;
     enableInstantSearch(control: any): void;
     validateForm(trigger: any): boolean;
-    enableConfirmQuestion(button: any): void;
-    showConfirm(text: any, yesCallback: any): void;
     alertUnobtrusively(message: string, style?: string): void;
     enableAlert(): void;
     alert(text: string, style?: string, callback?: Function): void;
-    enableNumericUpDown(input: any): void;
-    enableFileUpload(input: any): void;
     openLinkModal(event: JQueryEventObject): boolean;
     toJson(data: any): any;
     runStartupActions(container?: JQuery, trigger?: any, stage?: string): void;

@@ -7,6 +7,10 @@ var WindowContext_1 = require("./Components/WindowContext");
 var TimeControl_1 = require("./Plugins/TimeControl");
 var autoComplete_1 = require("./Plugins/autoComplete");
 var slider_1 = require("./Plugins/slider");
+var datePicker_1 = require("./Plugins/datePicker");
+var numericUpDown_1 = require("./Plugins/numericUpDown");
+var FileUpload_1 = require("./Plugins/FileUpload");
+var ConfirmBox_1 = require("./Plugins/ConfirmBox");
 var OlivePage = /** @class */ (function () {
     function OlivePage() {
         var _this = this;
@@ -102,15 +106,15 @@ var OlivePage = /** @class */ (function () {
         //$.validator.unobtrusive.parse('form');
         // =================== Plug-ins ====================enableTimeControl
         $("input[autocomplete-source]").each(function (i, e) { return new autoComplete_1.AutoComplete($(e)).handle(); });
-        $("[data-control=date-picker],[data-control=calendar]").each(function (i, e) { return _this.enableDateControl($(e)); });
+        $("[data-control=date-picker],[data-control=calendar]").each(function (i, e) { return new datePicker_1.DatePicker($(e)); });
         $("[data-control='date-picker|time-picker']").each(function (i, e) { return new TimeControl_1.TimeControl($(e)); });
         $("[data-control=time-picker]").each(function (i, e) { return new TimeControl_1.TimeControl($(e)); });
         $("[data-control=date-drop-downs]").each(function (i, e) { return _this.enableDateDropdown($(e)); });
         //$("[data-control=html-editor]").each((i, e) => this.enableHtmlEditor($(e)));
-        $("[data-control=numeric-up-down]").each(function (i, e) { return _this.enableNumericUpDown($(e)); });
+        $("[data-control=numeric-up-down]").each(function (i, e) { return new numericUpDown_1.NumbericUpDown($(e)).enable(); });
         $("[data-control=range-slider],[data-control=slider]").each(function (i, e) { return new slider_1.Slider($(e)).enable(); });
-        $(".file-upload input:file").each(function (i, e) { return _this.enableFileUpload($(e)); });
-        $("[data-confirm-question]").each(function (i, e) { return _this.enableConfirmQuestion($(e)); });
+        $(".file-upload input:file").each(function (i, e) { return new FileUpload_1.FileUpload($(e)).enable(); });
+        $("[data-confirm-question]").each(function (i, e) { return new ConfirmBox_1.ConfirmBox($(e)).enable(); });
         $(".password-strength").each(function (i, e) { return _this.enablePasswordStengthMeter($(e)); });
         $(".with-submenu").each(function (i, e) { return _this.enableSubMenus($(e)); });
         // =================== Request lifecycle ====================
@@ -281,30 +285,6 @@ var OlivePage = /** @class */ (function () {
         }
         return true;
     };
-    OlivePage.prototype.enableConfirmQuestion = function (button) {
-        var _this = this;
-        button.off("click.confirm-question").bindFirst("click.confirm-question", function (e) {
-            e.stopImmediatePropagation();
-            //return false;
-            alertify.set({
-                labels: { ok: button.attr('data-confirm-ok') || 'OK', cancel: button.attr('data-confirm-cancel') || 'Cancel' }
-            });
-            _this.showConfirm(button.attr('data-confirm-question'), function () {
-                button.off("click.confirm-question");
-                button.trigger('click');
-                _this.enableConfirmQuestion(button);
-            });
-            return false;
-        });
-    };
-    OlivePage.prototype.showConfirm = function (text, yesCallback) {
-        alertify.confirm(text.replace(/\r/g, "<br />"), function (e) {
-            if (e)
-                yesCallback();
-            else
-                return false;
-        });
-    };
     //enableHtmlEditor(input: any) {
     //    $.getScript(CKEDITOR_BASEPATH + "ckeditor.js", () => {
     //        $.getScript(CKEDITOR_BASEPATH + "adapters/jquery.js", () => {
@@ -339,82 +319,6 @@ var OlivePage = /** @class */ (function () {
             alertify.alert('', callback, style);
             $('.alertify-message').empty().append($.parseHTML(text));
         }
-    };
-    OlivePage.prototype.enableNumericUpDown = function (input) {
-        var min = input.attr("data-val-range-min");
-        var max = input.attr("data-val-range-max");
-        input.spinedit({
-            minimum: parseFloat(min),
-            maximum: parseFloat(max),
-            step: 1
-        });
-    };
-    OlivePage.prototype.enableFileUpload = function (input) {
-        var control = input;
-        var container = input.closest(".file-upload");
-        var del = container.find(".delete-file");
-        var idInput = container.find("input.file-id");
-        var progressBar = container.find(".progress-bar");
-        control.attr("data-url", "/file/upload");
-        // Config http://markusslima.github.io/bootstrap-filestyle/ & https://blueimp.github.io/jQuery-File-Upload/
-        control.filestyle({ buttonBefore: true });
-        container.find('.bootstrap-filestyle > input:text').wrap($("<div class='progress'></div>"));
-        container.find('.bootstrap-filestyle > .progress').prepend(progressBar);
-        if (idInput.val() != "REMOVE") {
-            var currentFile = container.find('.current-file > a');
-            var inputControl = container.find('.bootstrap-filestyle > .progress > input:text');
-        }
-        var currentFileName = currentFile ? currentFile.text() : null;
-        var hasExistingFile = currentFileName != "«UNCHANGED»" && (currentFileName != "NoFile.Empty" && currentFileName != null);
-        if (hasExistingFile && inputControl.val() == "") {
-            del.show();
-            progressBar.width('100%');
-            // enable Existing File Download
-            inputControl.val(currentFile.text()).removeAttr('disabled').addClass('file-target').click(function () { return currentFile[0].click(); });
-        }
-        var handleCurrentFileChange = function () {
-            if (hasExistingFile) {
-                inputControl.removeClass('file-target').attr('disabled', 'true').off();
-                hasExistingFile = false;
-            }
-        };
-        del.click(function (e) {
-            del.hide();
-            idInput.val("REMOVE");
-            progressBar.width(0);
-            control.filestyle('clear');
-            handleCurrentFileChange();
-        });
-        var fileLabel = control.parent().find(':text');
-        input.fileupload({
-            dataType: 'json',
-            dropZone: container,
-            replaceFileInput: false,
-            drop: function (e, data) {
-                if (fileLabel.length > 0 && data.files.length > 0) {
-                    fileLabel.val(data.files.map(function (x) { return x.name; }));
-                }
-            },
-            change: function (e, data) { progressBar.width(0); handleCurrentFileChange(); },
-            progressall: function (e, data) {
-                var progress = parseInt((data.loaded / data.total * 100).toString(), 10);
-                progressBar.width(progress + '%');
-            },
-            error: function (response) { WindowContext_1.WindowContext.handleAjaxResponseError(response); fileLabel.val(''); },
-            success: function (response) {
-                if (response.Error) {
-                    WindowContext_1.WindowContext.handleAjaxResponseError({ responseText: response.Error });
-                    fileLabel.val('');
-                }
-                else {
-                    if (input.is("[multiple]"))
-                        idInput.val(idInput.val() + "|file:" + response.Result.ID);
-                    else
-                        idInput.val("file:" + response.Result.ID);
-                    del.show();
-                }
-            }
-        });
     };
     OlivePage.prototype.openLinkModal = function (event) {
         var target = $(event.currentTarget);
