@@ -77,6 +77,15 @@ export class WindowContext {
         $(".wait-screen").remove();
     }
 
+    public static toJson(data) {
+        try {
+            return JSON.parse(data);
+        } catch (error) {
+            console.log(error);
+            console.log('Cannot parse this data to Json: ');
+            console.log(data);
+        }
+    }
 }
 
 
