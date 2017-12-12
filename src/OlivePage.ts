@@ -12,6 +12,7 @@ import { DatePicker } from './Plugins/datePicker'
 import { NumbericUpDown } from './Plugins/numericUpDown'
 import { FileUpload } from './Plugins/FileUpload'
 import { ConfirmBox } from './Plugins/ConfirmBox'
+import { SubMenu } from './Plugins/subMenu'
 
 export class OlivePage {
     // formats: http://momentjs.com/docs/#/displaying/format/
@@ -115,7 +116,7 @@ export class OlivePage {
         $(".file-upload input:file").each((i, e) => new FileUpload($(e)).enable());
         $("[data-confirm-question]").each((i, e) => new ConfirmBox($(e)).enable());
         $(".password-strength").each((i, e) => this.enablePasswordStengthMeter($(e)));
-        $(".with-submenu").each((i, e) => this.enableSubMenus($(e)));
+        $(".with-submenu").each((i, e) => new SubMenu($(e)));
 
 
         // =================== Request lifecycle ====================
@@ -174,25 +175,6 @@ export class OlivePage {
                 this.invokeActionWithAjax({ currentTarget: handle.get(0) }, actionUrl);
             }
         });
-    }
-
-    enableSubMenus(menu: any) {
-        // Many options are supported: http://www.smartmenus.org/docs/
-        // To provide your custom options, set data-submenu-options attribute on the UL tag with a string json settings.
-
-        if (!!menu.attr('data-smartmenus-id')) return; // Already enabled
-
-        menu.addClass("sm");
-
-        if (menu.is(".nav-stacked.dropped-submenu"))
-            menu.addClass("sm-vertical");
-
-        var submenuOptions = { showTimeout: 0, hideTimeout: 0 };
-
-        var options = menu.attr("data-submenu-options");
-        if (options) submenuOptions = this.toJson(options);
-
-        menu.smartmenus(submenuOptions);
     }
 
     enablePasswordStengthMeter(container: any) {
