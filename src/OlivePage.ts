@@ -358,7 +358,7 @@ export class OlivePage {
         var modalOptions = {};
 
         var options = target.attr("data-modal-options");
-        if (options) modalOptions = this.toJson(options);
+        if (options) modalOptions = WindowContext.toJson(options);
 
         this.openModal(url, modalOptions);
 
@@ -386,7 +386,7 @@ export class OlivePage {
         });
 
         for (var action of actions) {
-            if (action && (action.Stage || "Init") == stage) this.executeActions(this.toJson(action), trigger);
+            if (action && (action.Stage || "Init") == stage) this.executeActions(WindowContext.toJson(action), trigger);
         }
     }
 
