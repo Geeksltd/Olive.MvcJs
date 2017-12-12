@@ -1,26 +1,14 @@
 "use strict";
-// For ckeditor plug-ins to work, this should be globally defined.
 Object.defineProperty(exports, "__esModule", { value: true });
-///<reference path="../typings/jquery/index.d.ts"/>
-///<reference path="../typings/jqueryui/index.d.ts"/>
-///<reference path="../typings/jquery-sortable/index.d.ts"/>
-///<reference path="../typings/jquery-validation-unobtrusive/index.d.ts"/>
-///<reference path="../typings/jquery/jquery.validation.d.ts"/>
-///<reference path="../typings/popper.js/popper.d.ts"/>
-///<reference path="../typings/bootstrap/index.d.ts"/>
-///<reference path="../typings/alertify/alertify.d.ts"/>
-///<reference path="../typings/typeahead/index.d.ts"/>
-///<reference path="../typings/moment/moment.d.ts"/>
-///<reference path="../typings/bootstrap-datepicker/index.d.ts"/>
-///<reference path="../typings/jquery.fileupload/index.d.ts"/>
-///<reference path="../typings/bootstrap-slider/index.d.ts"/>
-///<reference path="../typings/chosen-js/index.d.ts"/>
-///<reference path="../application.urlhelper.ts"/>
+// For ckeditor plug-ins to work, this should be globally defined.
 var CKEDITOR_BASEPATH = '/lib/ckeditor/';
-const TimeControl_1 = require("../plugins/TimeControl");
-const autoComplete_1 = require("../plugins/autoComplete");
-const slider_1 = require("../plugins/slider");
-class BaseApplicationPage {
+const Form_1 = require("./Components/Form");
+const Url_1 = require("./Components/Url");
+const WindowContext_1 = require("./Components/WindowContext");
+const TimeControl_1 = require("./Plugins/TimeControl");
+const autoComplete_1 = require("./Plugins/autoComplete");
+const slider_1 = require("./Plugins/slider");
+class OlivePage {
     constructor() {
         // formats: http://momentjs.com/docs/#/displaying/format/
         this.DATE_FORMAT = "DD/MM/YYYY";
@@ -110,8 +98,8 @@ class BaseApplicationPage {
         // =================== Plug-ins ====================enableTimeControl
         $("input[autocomplete-source]").each((i, e) => new autoComplete_1.AutoComplete($(e)).handle());
         $("[data-control=date-picker],[data-control=calendar]").each((i, e) => this.enableDateControl($(e)));
-        $("[data-control='date-picker|time-picker']").each((i, e) => new TimeControl_1.TimeControl($(e)).show());
-        $("[data-control=time-picker]").each((i, e) => new TimeControl_1.TimeControl($(e)).show());
+        $("[data-control='date-picker|time-picker']").each((i, e) => new TimeControl_1.TimeControl($(e)));
+        $("[data-control=time-picker]").each((i, e) => new TimeControl_1.TimeControl($(e)));
         $("[data-control=date-drop-downs]").each((i, e) => this.enableDateDropdown($(e)));
         //$("[data-control=html-editor]").each((i, e) => this.enableHtmlEditor($(e)));
         $("[data-control=numeric-up-down]").each((i, e) => this.enableNumericUpDown($(e)));
@@ -160,7 +148,7 @@ class BaseApplicationPage {
                 var dropBefore = ui.item.next().find("[data-sort-item]").attr("data-sort-item") || "";
                 var handle = ui.item.find("[data-sort-item]");
                 var actionUrl = handle.attr("data-sort-action");
-                actionUrl = urlHelper.addQuery(actionUrl, "drop-before", dropBefore);
+                actionUrl = Url_1.Url.addQuery(actionUrl, "drop-before", dropBefore);
                 this.invokeActionWithAjax({ currentTarget: handle.get(0) }, actionUrl);
             }
         });
@@ -403,10 +391,10 @@ class BaseApplicationPage {
                 var progress = parseInt((data.loaded / data.total * 100).toString(), 10);
                 progressBar.width(progress + '%');
             },
-            error: (response) => { this.handleAjaxResponseError(response); fileLabel.val(''); },
+            error: (response) => { WindowContext_1.WindowContext.handleAjaxResponseError(response); fileLabel.val(''); },
             success: (response) => {
                 if (response.Error) {
-                    this.handleAjaxResponseError({ responseText: response.Error });
+                    WindowContext_1.WindowContext.handleAjaxResponseError({ responseText: response.Error });
                     fileLabel.val('');
                 }
                 else {
@@ -587,7 +575,7 @@ class BaseApplicationPage {
                 }
             },
             error: (response) => location.href = url,
-            complete: (response) => this.hidePleaseWait()
+            complete: (response) => WindowContext_1.WindowContext.hidePleaseWait()
         });
         return false;
     }
@@ -598,7 +586,7 @@ class BaseApplicationPage {
         this.ajaxRedirect(location.href, null, true);
     }
     returnToPreviousPage(target) {
-        var returnUrl = urlHelper.getQuery("ReturnUrl");
+        var returnUrl = Url_1.Url.getQuery("ReturnUrl");
         if (returnUrl) {
             if (target && $(target).is("[data-redirect=ajax]"))
                 this.ajaxRedirect(returnUrl, $(target));
@@ -612,16 +600,16 @@ class BaseApplicationPage {
     cleanGetFormSubmit(event) {
         var form = $(event.currentTarget);
         if (this.validateForm(form) == false) {
-            this.hidePleaseWait();
+            WindowContext_1.WindowContext.hidePleaseWait();
             return false;
         }
-        var formData = urlHelper.mergeFormData(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
-        var url = urlHelper.removeEmptyQueries(form.attr('action'));
+        var formData = Form_1.Form.merge(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
+        var url = Url_1.Url.removeEmptyQueries(form.attr('action'));
         try {
-            form.find("input:checkbox:unchecked").each((ind, e) => url = urlHelper.removeQuery(url, $(e).attr("name")));
+            form.find("input:checkbox:unchecked").each((ind, e) => url = Url_1.Url.removeQuery(url, $(e).attr("name")));
             for (var item of formData)
-                url = urlHelper.updateQuery(url, item.name, item.value);
-            url = urlHelper.removeEmptyQueries(url);
+                url = Url_1.Url.updateQuery(url, item.name, item.value);
+            url = Url_1.Url.removeEmptyQueries(url);
             if (form.is("[data-redirect=ajax]"))
                 this.ajaxRedirect(url, form);
             else
@@ -670,7 +658,7 @@ class BaseApplicationPage {
         else if (action.Redirect)
             this.executeRedirectAction(action, trigger);
         else
-            alert("Don't know how to handle: " + urlHelper.htmlEncode(JSON.stringify(action)));
+            alert("Don't know how to handle: " + JSON.stringify(action).htmlEncode());
         return true;
     }
     executeNotifyAction(action, trigger) {
@@ -814,10 +802,10 @@ class BaseApplicationPage {
         var triggerUniqueSelector = trigger.getUniqueSelector();
         var containerModule = trigger.closest("[data-module]");
         if (this.validateForm(trigger) == false) {
-            this.hidePleaseWait();
+            WindowContext_1.WindowContext.hidePleaseWait();
             return false;
         }
-        var data_before_disable = this.getPostData(trigger);
+        var data_before_disable = WindowContext_1.WindowContext.getPostData(trigger);
         var disableToo = this.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
         if (disableToo)
             trigger.attr('disabled', 'disabled');
@@ -828,8 +816,8 @@ class BaseApplicationPage {
             type: trigger.attr("data-ajax-method") || 'POST',
             async: !syncCall,
             data: data_before_disable,
-            success: (result) => { this.hidePleaseWait(); this.invokeAjaxActionResult(result, containerModule, trigger); },
-            error: (response) => this.handleAjaxResponseError(response),
+            success: (result) => { WindowContext_1.WindowContext.hidePleaseWait(); this.invokeAjaxActionResult(result, containerModule, trigger); },
+            error: (response) => WindowContext_1.WindowContext.handleAjaxResponseError(response),
             complete: (x) => {
                 this.isAwaitingAjaxResponse = false;
                 trigger.removeClass('loading-action-result');
@@ -852,7 +840,7 @@ class BaseApplicationPage {
         var containerModule = trigger.closest("[data-module]");
         if (containerModule.is("form") && this.validateForm(trigger) == false)
             return false;
-        var data = this.getPostData(trigger);
+        var data = WindowContext_1.WindowContext.getPostData(trigger);
         var url = trigger.attr("formaction");
         var form = $("<form method='post' />").hide().appendTo($("body"));
         for (var item of data)
@@ -933,13 +921,9 @@ class BaseApplicationPage {
             return null;
         return $(parent.document).find("iframe").filter((i, f) => (f.contentDocument || f.contentWindow.document) == document).get(0);
     }
-    cleanJson(str) {
-        return str.replace(/(\s*?{\s*?|\s*?,\s*?)(['"])?([a-zA-Z0-9]+)(['"])?:/g, '$1"$3":');
-    }
-    ;
     enableSlider(input) {
         var options = { min: 0, max: 100, value: null, range: false, formatter: null, tooltip: 'always', upper: null, tooltip_split: false };
-        var data_options = input.attr("data-options") ? JSON.parse(this.cleanJson(input.attr("data-options"))) : null;
+        var data_options = input.attr("data-options") ? JSON.parse(Form_1.Form.cleanJson(input.attr("data-options"))) : null;
         if (data_options)
             $.extend(true, options, data_options);
         options.range = input.attr("data-control") == "range-slider";
@@ -1012,5 +996,5 @@ class BaseApplicationPage {
         }
     }
 }
-exports.BaseApplicationPage = BaseApplicationPage;
+exports.OlivePage = OlivePage;
 //# sourceMappingURL=OlivePage.js.map

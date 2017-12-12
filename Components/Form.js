@@ -19,6 +19,10 @@ class Form {
         }
         return result;
     }
+    static cleanJson(str) {
+        return str.replace(/(\s*?{\s*?|\s*?,\s*?)(['"])?([a-zA-Z0-9]+)(['"])?:/g, '$1"$3":');
+    }
+    ;
 }
 exports.Form = Form;
 //# sourceMappingURL=Form.js.map

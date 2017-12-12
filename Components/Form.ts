@@ -25,4 +25,8 @@
 
         return result;
     }
+
+    static cleanJson(str): string {
+        return str.replace(/(\s*?{\s*?|\s*?,\s*?)(['"])?([a-zA-Z0-9]+)(['"])?:/g, '$1"$3":')
+    };
 }

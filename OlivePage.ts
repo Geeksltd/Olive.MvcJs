@@ -1,27 +1,15 @@
 // For ckeditor plug-ins to work, this should be globally defined.
-
-///<reference path="../typings/jquery/index.d.ts"/>
-///<reference path="../typings/jqueryui/index.d.ts"/>
-///<reference path="../typings/jquery-sortable/index.d.ts"/>
-///<reference path="../typings/jquery-validation-unobtrusive/index.d.ts"/>
-///<reference path="../typings/jquery/jquery.validation.d.ts"/>
-///<reference path="../typings/popper.js/popper.d.ts"/>
-///<reference path="../typings/bootstrap/index.d.ts"/>
-///<reference path="../typings/alertify/alertify.d.ts"/>
-///<reference path="../typings/typeahead/index.d.ts"/>
-///<reference path="../typings/moment/moment.d.ts"/>
-///<reference path="../typings/bootstrap-datepicker/index.d.ts"/>
-///<reference path="../typings/jquery.fileupload/index.d.ts"/>
-///<reference path="../typings/bootstrap-slider/index.d.ts"/>
-///<reference path="../typings/chosen-js/index.d.ts"/>
-///<reference path="../application.urlhelper.ts"/>
-
 var CKEDITOR_BASEPATH = '/lib/ckeditor/';
 
-import { TimeControl  } from '../plugins/TimeControl'
-import { AutoComplete } from '../plugins/autoComplete'
-import { Slider } from '../plugins/slider'
- export class BaseApplicationPage {
+import { Form } from './Components/Form'
+import { Url } from './Components/Url'
+import { WindowContext } from './Components/WindowContext'
+
+import { TimeControl } from './Plugins/TimeControl'
+import { AutoComplete } from './Plugins/autoComplete'
+import { Slider } from './Plugins/slider'
+
+export class OlivePage {
     // formats: http://momentjs.com/docs/#/displaying/format/
     DATE_FORMAT = "DD/MM/YYYY";
     TIME_FORMAT = "HH:mm";
@@ -111,11 +99,11 @@ import { Slider } from '../plugins/slider'
         $("select.form-control").each((i, e) => this.changeItToChosen($(e)));
         //$.validator.unobtrusive.parse('form');
 
-      // =================== Plug-ins ====================enableTimeControl
+        // =================== Plug-ins ====================enableTimeControl
         $("input[autocomplete-source]").each((i, e) => new AutoComplete($(e)).handle());
         $("[data-control=date-picker],[data-control=calendar]").each((i, e) => this.enableDateControl($(e)));
-        $("[data-control='date-picker|time-picker']").each((i, e) => new TimeControl($(e)).show());
-        $("[data-control=time-picker]").each((i, e) => new TimeControl($(e)).show());
+        $("[data-control='date-picker|time-picker']").each((i, e) => new TimeControl($(e)));
+        $("[data-control=time-picker]").each((i, e) => new TimeControl($(e)));
         $("[data-control=date-drop-downs]").each((i, e) => this.enableDateDropdown($(e)));
         //$("[data-control=html-editor]").each((i, e) => this.enableHtmlEditor($(e)));
         $("[data-control=numeric-up-down]").each((i, e) => this.enableNumericUpDown($(e)));
@@ -177,7 +165,7 @@ import { Slider } from '../plugins/slider'
                 var handle = ui.item.find("[data-sort-item]");
 
                 var actionUrl = handle.attr("data-sort-action");
-                actionUrl = urlHelper.addQuery(actionUrl, "drop-before", dropBefore);
+                actionUrl = Url.addQuery(actionUrl, "drop-before", dropBefore);
 
                 this.invokeActionWithAjax({ currentTarget: handle.get(0) }, actionUrl);
             }
@@ -473,10 +461,10 @@ import { Slider } from '../plugins/slider'
                 var progress = parseInt((data.loaded / data.total * 100).toString(), 10);
                 progressBar.width(progress + '%');
             },
-            error: (response) => { this.handleAjaxResponseError(response); fileLabel.val(''); },
+            error: (response) => { WindowContext.handleAjaxResponseError(response); fileLabel.val(''); },
             success: (response) => {
                 if (response.Error) {
-                    this.handleAjaxResponseError({ responseText: response.Error });
+                    WindowContext.handleAjaxResponseError({ responseText: response.Error });
                     fileLabel.val('');
                 }
                 else {
@@ -689,7 +677,7 @@ import { Slider } from '../plugins/slider'
                 }
             },
             error: (response) => location.href = url,
-            complete: (response) => this.hidePleaseWait()
+            complete: (response) => WindowContext.hidePleaseWait()
         });
 
         return false;
@@ -704,7 +692,7 @@ import { Slider } from '../plugins/slider'
     }
 
     returnToPreviousPage(target) {
-        var returnUrl = urlHelper.getQuery("ReturnUrl");
+        var returnUrl = Url.getQuery("ReturnUrl");
 
         if (returnUrl) {
             if (target && $(target).is("[data-redirect=ajax]")) this.ajaxRedirect(returnUrl, $(target));
@@ -718,20 +706,20 @@ import { Slider } from '../plugins/slider'
     cleanGetFormSubmit(event: JQueryEventObject) {
 
         var form = $(event.currentTarget);
-        if (this.validateForm(form) == false) { this.hidePleaseWait(); return false; }
+        if (this.validateForm(form) == false) { WindowContext.hidePleaseWait(); return false; }
 
-        var formData = urlHelper.mergeFormData(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
+        var formData = Form.merge(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
 
-        var url = urlHelper.removeEmptyQueries(form.attr('action'));
+        var url = Url.removeEmptyQueries(form.attr('action'));
 
         try {
 
-            form.find("input:checkbox:unchecked").each((ind, e) => url = urlHelper.removeQuery(url, $(e).attr("name")));
+            form.find("input:checkbox:unchecked").each((ind, e) => url = Url.removeQuery(url, $(e).attr("name")));
 
             for (var item of formData)
-                url = urlHelper.updateQuery(url, item.name, item.value);
+                url = Url.updateQuery(url, item.name, item.value);
 
-            url = urlHelper.removeEmptyQueries(url);
+            url = Url.removeEmptyQueries(url);
 
             if (form.is("[data-redirect=ajax]")) this.ajaxRedirect(url, form);
             else location.href = url;
@@ -770,7 +758,7 @@ import { Slider } from '../plugins/slider'
         else if (action.ReplaceSource) this.replaceListControlSource(action.ReplaceSource, action.Items);
         else if (action.Download) this.download(action.Download);
         else if (action.Redirect) this.executeRedirectAction(action, trigger);
-        else alert("Don't know how to handle: " + urlHelper.htmlEncode(JSON.stringify(action)));
+        else alert("Don't know how to handle: " + JSON.stringify(action).htmlEncode());
 
         return true;
     }
@@ -824,7 +812,7 @@ import { Slider } from '../plugins/slider'
         window.open(url, target);
     }
 
- 
+
 
     showPleaseWait(blockScreen: boolean = false) {
 
@@ -948,9 +936,9 @@ import { Slider } from '../plugins/slider'
         var triggerUniqueSelector = trigger.getUniqueSelector();
         var containerModule = trigger.closest("[data-module]");
 
-        if (this.validateForm(trigger) == false) { this.hidePleaseWait(); return false; }
+        if (this.validateForm(trigger) == false) { WindowContext.hidePleaseWait(); return false; }
 
-        var data_before_disable = this.getPostData(trigger);
+        var data_before_disable = WindowContext.getPostData(trigger);
 
         var disableToo = this.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
         if (disableToo) trigger.attr('disabled', 'disabled');
@@ -964,8 +952,8 @@ import { Slider } from '../plugins/slider'
             type: trigger.attr("data-ajax-method") || 'POST',
             async: !syncCall,
             data: data_before_disable,
-            success: (result) => { this.hidePleaseWait(); this.invokeAjaxActionResult(result, containerModule, trigger); },
-            error: (response) => this.handleAjaxResponseError(response),
+            success: (result) => { WindowContext.hidePleaseWait(); this.invokeAjaxActionResult(result, containerModule, trigger); },
+            error: (response) => WindowContext.handleAjaxResponseError(response),
             complete: (x) => {
                 this.isAwaitingAjaxResponse = false;
 
@@ -992,7 +980,7 @@ import { Slider } from '../plugins/slider'
 
         if (containerModule.is("form") && this.validateForm(trigger) == false) return false;
 
-        var data = this.getPostData(trigger);
+        var data = WindowContext.getPostData(trigger);
         var url = trigger.attr("formaction");
         var form = $("<form method='post' />").hide().appendTo($("body"));
 
@@ -1091,14 +1079,10 @@ import { Slider } from '../plugins/slider'
         return $(parent.document).find("iframe").filter((i, f: any) => (f.contentDocument || f.contentWindow.document) == document).get(0);
     }
 
-    cleanJson(str): string {
-        return str.replace(/(\s*?{\s*?|\s*?,\s*?)(['"])?([a-zA-Z0-9]+)(['"])?:/g, '$1"$3":')
-    };
-
     enableSlider(input) {
         var options = { min: 0, max: 100, value: null, range: false, formatter: null, tooltip: 'always', upper: null, tooltip_split: false };
 
-        var data_options = input.attr("data-options") ? JSON.parse(this.cleanJson(input.attr("data-options"))) : null;
+        var data_options = input.attr("data-options") ? JSON.parse(Form.cleanJson(input.attr("data-options"))) : null;
         if (data_options) $.extend(true, options, data_options);
 
         options.range = input.attr("data-control") == "range-slider";

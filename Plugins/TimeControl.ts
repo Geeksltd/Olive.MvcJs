@@ -1,15 +1,14 @@
-import { WindowContext } from "../Component/WindowContext";
+import { WindowContext } from "../Components/WindowContext";
 import { Config } from "../Config";
 
 export class TimeControl {
 
     constructor(targetInput: any) {
         let input = targetInput;
-        var windowCtx = WindowContext.getInstance();
 
-        if (windowCtx.isWindowModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => windowCtx.adjustModalHeightForDataPicker(e));
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => windowCtx.adjustModalHeightForDataPicker(e));
+        if (WindowContext.isWindowModal()) {
+            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => WindowContext.adjustModalHeightForDataPicker(e));
+            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => WindowContext.adjustModalHeightForDataPicker(e));
         }
 
         input.attr("data-autofocus", "disabled");

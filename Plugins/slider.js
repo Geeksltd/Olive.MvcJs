@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const windowContext_1 = require("../components/windowContext");
+const Form_1 = require("../Components/Form");
 class Slider {
     constructor(targetInput) {
         this.input = targetInput;
         this.options = { min: 0, max: 100, value: null, range: false, formatter: null, tooltip: 'always', upper: null, tooltip_split: false };
     }
     enable() {
-        var data_options = this.input.attr("data-options") ? JSON.parse(windowContext_1.WindowContext.cleanJson(this.input.attr("data-options"))) : null;
+        var data_options = this.input.attr("data-options") ? JSON.parse(Form_1.Form.cleanJson(this.input.attr("data-options"))) : null;
         if (data_options)
             $.extend(true, this.options, data_options);
         this.options.range = this.input.attr("data-control") == "range-slider";

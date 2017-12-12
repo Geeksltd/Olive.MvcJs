@@ -3,7 +3,7 @@ require.config({
     paths: {
         "jquery": "jquery.enhancements.ts",
         "plugins": "/Plugins",
-        "component": "/Component"
+        "component": "/Components"
     }
 });
 //# sourceMappingURL=require.config.js.map

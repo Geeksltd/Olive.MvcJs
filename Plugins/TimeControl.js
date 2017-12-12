@@ -1,14 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const WindowContext_1 = require("../Component/WindowContext");
+const WindowContext_1 = require("../Components/WindowContext");
 const Config_1 = require("../Config");
 class TimeControl {
     constructor(targetInput) {
         let input = targetInput;
-        var windowCtx = WindowContext_1.WindowContext.getInstance();
-        if (windowCtx.isWindowModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => windowCtx.adjustModalHeightForDataPicker(e));
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => windowCtx.adjustModalHeightForDataPicker(e));
+        if (WindowContext_1.WindowContext.isWindowModal()) {
+            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => WindowContext_1.WindowContext.adjustModalHeightForDataPicker(e));
+            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => WindowContext_1.WindowContext.adjustModalHeightForDataPicker(e));
         }
         input.attr("data-autofocus", "disabled");
         input.datetimepicker({
