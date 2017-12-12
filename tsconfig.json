@@ -1,7 +1,14 @@
 {
     "compilerOptions": {
-        "target": "es2017",
-        "module": "commonjs",
-        "sourceMap": true
-    }
+        "sourceMap": true,
+        "outDir": "dist",
+        "declaration": true,
+        "declarationDir": "typings",
+        "noImplicitUseStrict": true,
+        "sourceRoot": "src"
+    },
+    "exclude": [
+      "typings",
+      "dist"  
+    ]
 }
