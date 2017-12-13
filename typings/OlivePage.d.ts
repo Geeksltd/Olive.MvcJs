@@ -25,7 +25,6 @@ export declare class OlivePage {
     changeItToChosen(selectControl: JQuery): void;
     skipNewWindows(): void;
     enableDragSort(container: any): void;
-    enableSubMenus(menu: any): void;
     enablePasswordStengthMeter(container: any): void;
     ensureModalResize(): void;
     configureValidation(): void;

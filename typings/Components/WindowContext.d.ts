@@ -11,4 +11,5 @@ export declare class WindowContext {
     static getPostData(trigger: JQuery): JQuerySerializeArrayElement[];
     static handleAjaxResponseError(response: any): void;
     static hidePleaseWait(): void;
+    static toJson(data: any): any;
 }
