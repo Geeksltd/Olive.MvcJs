@@ -8,6 +8,7 @@ export class WindowContext {
         MINUTE_INTERVALS: 5,
         DATE_LOCALE: "en-gb"
     };
+    static events: { [event: string]: Function[] } = {};
 
     public static isWindowModal(): boolean {
         if ($(this.getContainerIFrame()).closest(".modal").length === 0) return false;
