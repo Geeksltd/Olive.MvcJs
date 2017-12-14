@@ -42,6 +42,8 @@ $.fn.bindFirst = function (name, fn) {
 })(jQuery.fn.clone);
 
 // Enable jquery Validate for checkbox list
+
+
 (function ($) {
     $.validator.unobtrusive.adapters.add("selection-required", function (options) {
         if (options.element.tagName.toUpperCase() == "INPUT" && options.element.type.toUpperCase() == "CHECKBOX") {
@@ -69,6 +71,20 @@ jQuery.fn.extend({
             top: documentOffset.top - $(window).scrollTop(),
             left: documentOffset.left - $(window).scrollLeft()
         };
+    }
+});
+
+jQuery.fn.extend({
+    raiseEvent(event: string,owner:any, data?: any) {
+        let result = true;
+
+        if (owner.events.hasOwnProperty(event)) {
+            owner.events[event].forEach(handler => {
+                let res = handler(data || {});
+                if (res === false) result = false;
+            });
+        }
+        return result;
     }
 });
 

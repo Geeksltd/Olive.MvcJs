@@ -30,6 +30,7 @@ export class OlivePage {
        */
     DEFAULT_HTML_EDITOR_MODE = "Medium";
     DEFAULT_MODAL_BACKDROP = "static";
+    currentModal: any = null;
 
     constructor() {
         $(() => {
@@ -46,27 +47,6 @@ export class OlivePage {
 
     _preInitializeActions = [];
     onPreInit(action) { this._preInitializeActions.push(action) }
-
-    //#region "Events"
-    events: { [event: string]: Function[] } = {};
-
-    on(event: string, handler: Function) {
-        if (!this.events.hasOwnProperty(event)) this.events[event] = [];
-        this.events[event].push(handler);
-    }
-
-    raise(event: string, data?: any) {
-        let result = true;
-
-        if (this.events.hasOwnProperty(event)) {
-            this.events[event].forEach(handler => {
-                let res = handler(data || {});
-                if (res === false) result = false;
-            });
-        }
-        return result;
-    }
-    //#endregion "Events"   
 
     pageLoad(container: JQuery = null, trigger: any = null) {
         $('[autofocus]:not([data-autofocus=disabled]):first').focus();
@@ -535,7 +515,7 @@ export class OlivePage {
             type: 'GET',
             success: (response) => {
 
-                this.events = {};
+                WindowContext.events = {};
 
                 if (!isBack) {
                     this.ajaxChangedUrl++;
@@ -622,8 +602,8 @@ export class OlivePage {
         if (action.Notify || action.Notify == "") this.executeNotifyAction(action, trigger);
         else if (action.Script) eval(action.Script);
         else if (action.BrowserAction == "Back") window.history.back();
-        else if (action.BrowserAction == "CloseModal" && this.closeModal() === false) return false;
-        else if (action.BrowserAction == "CloseModalRefreshParent" && this.closeModal(true) === false) return false;
+        else if (action.BrowserAction == "CloseModal" && this.currentModal && this.closeCurrentModal() === false) return false;
+        else if (action.BrowserAction == "CloseModalRefreshParent" && this.currentModal && this.closeCurrentModal(true) === false) return false;
         else if (action.BrowserAction == "Close") window.close();
         else if (action.BrowserAction == "Refresh") this.refresh();
         else if (action.BrowserAction == "Print") window.print();
@@ -634,6 +614,21 @@ export class OlivePage {
         else alert("Don't know how to handle: " + JSON.stringify(action).htmlEncode());
 
         return true;
+    }
+
+   closeCurrentModal(refreshParrent: boolean = false) {
+            if (refreshParrent) {
+                this.refresh();
+            }
+           return this.currentModal.closeModal();
+     }
+
+    openModal(url, options) {
+        if (this.currentModal) {
+            this.currentModal.closeModal();
+            this.currentModal = false;
+        }
+        this.currentModal = new Modal(null, url, options).openModal();
     }
 
     executeNotifyAction(action: any, trigger: any) {
@@ -703,97 +698,6 @@ export class OlivePage {
         $("<div class='wait-container'><div class='wait-box'><img src='/public/img/loading.gif'/></div>")
             .appendTo(screen)
             .fadeIn('slow');
-    }
-
-    currentModal: any = null;
-
-    getModalTemplate(options: any) {
-
-        var modalDialogStyle = "";
-        var iframeStyle = "width:100%; border:0;";
-        var iframeAttributes = "";
-
-        if (options) {
-            if (options.width) {
-                modalDialogStyle += "width:" + options.width + ";";
-            }
-
-            if (options.height) {
-                modalDialogStyle += "height:" + options.height + ";";
-                iframeStyle += "height:" + options.height + ";";
-                iframeAttributes += " data-has-explicit-height='true'";
-            }
-        }
-
-        return "<div class='modal fade' id='myModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel'\
- aria-hidden='true'>\
-            <div class='modal-dialog' style='"+ modalDialogStyle + "'>\
-    <div class='modal-content'>\
-    <div class='modal-header'>\
-        <button type='button' class='close' data-dismiss='modal' aria-label='Close'>\
-            <i class='fa fa-times-circle'></i>\
-        </button>\
-    </div>\
-    <div class='modal-body'>\
-        <div class='row text-center'><i class='fa fa-spinner fa-spin fa-2x'></i></div>\
-        <iframe style='"+ iframeStyle + "' " + iframeAttributes + "></iframe>\
-    </div>\
-</div></div></div>";
-    }
-
-    isOpeningModal = false;
-    openModal(url: string, options: any = {}) {
-        this.isOpeningModal = true;
-
-        if (this.currentModal != null)
-            if (this.closeModal() === false) return false;
-
-        this.currentModal = $(this.getModalTemplate(options));
-
-        if (true /* TODO: Change to if Internet Explorer only */)
-            this.currentModal.removeClass("fade");
-
-        var frame = this.currentModal.find("iframe");
-
-        frame.attr("src", url).on("load", (e) => {
-            this.isOpeningModal = false;
-
-            var isHeightProvided = !!(options && options.height);
-
-            if (!isHeightProvided) {
-                var doc = frame.get(0).contentWindow.document;
-                setTimeout(() => frame.height(doc.body.offsetHeight), 10); // Timeout is used due to an IE bug.
-            }
-
-            this.currentModal.find(".modal-body .text-center").remove();
-        });
-
-        this.currentModal.appendTo("body").modal('show');
-    }
-
-    isClosingModal = false;
-    closeModal(refreshParent = false) {
-
-        if (this.raise("modal:closing") === false) return false;
-
-        this.isClosingModal = true;
-
-        if (this.currentModal) {
-
-            this.currentModal.modal('hide').remove();
-            if (refreshParent) this.refresh();
-            this.currentModal = null;
-
-            this.raise("modal:closed");
-        }
-        else if (window.parent) {
-            var p: any = window.parent;
-            if (p.page) if (p.page.closeModal(refreshParent) === false) return false;
-        }
-
-        this.isClosingModal = false;
-
-        return true;
     }
 
     refresh(keepScroll: boolean = false) {
