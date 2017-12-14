@@ -18,7 +18,7 @@ define(["require", "exports", "../Components/Form"], function (require, exports,
                     return;
                 var maxInput = $('[name="' + this.input.attr("id").split('.')[0] + "." + this.options.upper + '\"]');
                 if (maxInput.length == 0)
-                    maxInput = $('[name="' + this.options.upper || this.input.attr("id") + 'Max' + '\"]');
+                    maxInput = $('[name="' + (this.options.upper || (this.input.attr("id") + 'Max')) + '\"]');
                 if (maxInput.length == 0)
                     throw new Error("Upper input was not found for the range slider.");
                 this.options.value = [Number(this.input.val() || this.options.min), Number(maxInput.val() || this.options.max)];
@@ -40,4 +40,4 @@ define(["require", "exports", "../Components/Form"], function (require, exports,
     }());
     exports.Slider = Slider;
 });
-//# sourceMappingURL=slider.js.map
+//# sourceMappingURL=Slider.js.map

@@ -17,4 +17,4 @@ define(["require", "exports"], function (require, exports) {
     }());
     exports.NumbericUpDown = NumbericUpDown;
 });
-//# sourceMappingURL=numericUpDown.js.map
+//# sourceMappingURL=NumericUpDown.js.map

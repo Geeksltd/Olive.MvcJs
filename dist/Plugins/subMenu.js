@@ -18,4 +18,4 @@ define(["require", "exports", "../Components/WindowContext"], function (require,
     }());
     exports.SubMenu = SubMenu;
 });
-//# sourceMappingURL=subMenu.js.map
+//# sourceMappingURL=SubMenu.js.map

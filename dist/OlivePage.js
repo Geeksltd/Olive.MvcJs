@@ -1,4 +1,4 @@
-define(["require", "exports", "./Components/Form", "./Components/Url", "./Components/WindowContext", "./Plugins/TimeControl", "./Plugins/autoComplete", "./Plugins/slider", "./Plugins/datePicker", "./Plugins/numericUpDown", "./Plugins/FileUpload", "./Plugins/ConfirmBox", "./Plugins/subMenu"], function (require, exports, Form_1, Url_1, WindowContext_1, TimeControl_1, autoComplete_1, slider_1, datePicker_1, numericUpDown_1, FileUpload_1, ConfirmBox_1, subMenu_1) {
+define(["require", "exports", "./Components/Form", "./Components/Url", "./Components/WindowContext", "./Plugins/TimeControl", "./Plugins/AutoComplete", "./Plugins/Slider", "./Plugins/DatePicker", "./Plugins/NumericUpDown", "./Plugins/FileUpload", "./Plugins/ConfirmBox", "./Plugins/SubMenu"], function (require, exports, Form_1, Url_1, WindowContext_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     // For ckeditor plug-ins to work, this should be globally defined.
     var CKEDITOR_BASEPATH = '/lib/ckeditor/';
@@ -96,18 +96,18 @@ define(["require", "exports", "./Components/Form", "./Components/Url", "./Compon
             $("select.form-control").each(function (i, e) { return _this.changeItToChosen($(e)); });
             //$.validator.unobtrusive.parse('form');
             // =================== Plug-ins ====================enableTimeControl
-            $("input[autocomplete-source]").each(function (i, e) { return new autoComplete_1.AutoComplete($(e)).handle(); });
-            $("[data-control=date-picker],[data-control=calendar]").each(function (i, e) { return new datePicker_1.DatePicker($(e)); });
+            $("input[autocomplete-source]").each(function (i, e) { return new AutoComplete_1.AutoComplete($(e)).handle(); });
+            $("[data-control=date-picker],[data-control=calendar]").each(function (i, e) { return new DatePicker_1.DatePicker($(e)); });
             $("[data-control='date-picker|time-picker']").each(function (i, e) { return new TimeControl_1.TimeControl($(e)); });
             $("[data-control=time-picker]").each(function (i, e) { return new TimeControl_1.TimeControl($(e)); });
             $("[data-control=date-drop-downs]").each(function (i, e) { return _this.enableDateDropdown($(e)); });
             //$("[data-control=html-editor]").each((i, e) => this.enableHtmlEditor($(e)));
-            $("[data-control=numeric-up-down]").each(function (i, e) { return new numericUpDown_1.NumbericUpDown($(e)).enable(); });
-            $("[data-control=range-slider],[data-control=slider]").each(function (i, e) { return new slider_1.Slider($(e)).enable(); });
+            $("[data-control=numeric-up-down]").each(function (i, e) { return new NumericUpDown_1.NumbericUpDown($(e)).enable(); });
+            $("[data-control=range-slider],[data-control=slider]").each(function (i, e) { return new Slider_1.Slider($(e)).enable(); });
             $(".file-upload input:file").each(function (i, e) { return new FileUpload_1.FileUpload($(e)).enable(); });
             $("[data-confirm-question]").each(function (i, e) { return new ConfirmBox_1.ConfirmBox($(e)).enable(); });
             $(".password-strength").each(function (i, e) { return _this.enablePasswordStengthMeter($(e)); });
-            $(".with-submenu").each(function (i, e) { return new subMenu_1.SubMenu($(e)); });
+            $(".with-submenu").each(function (i, e) { return new SubMenu_1.SubMenu($(e)); });
             // =================== Request lifecycle ====================
             $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", function (e) { return _this.ajaxRedirectBackClicked(e); });
             $("a[data-redirect=ajax]").off("click.ajax-redirect").on("click.ajax-redirect", function (e) { return _this.enableAjaxRedirect(e); });

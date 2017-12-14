@@ -6,13 +6,13 @@ import { Url } from './Components/Url'
 import { WindowContext } from './Components/WindowContext'
 
 import { TimeControl } from './Plugins/TimeControl'
-import { AutoComplete } from './Plugins/autoComplete'
-import { Slider } from './Plugins/slider'
-import { DatePicker } from './Plugins/datePicker'
-import { NumbericUpDown } from './Plugins/numericUpDown'
+import { AutoComplete } from './Plugins/AutoComplete'
+import { Slider } from './Plugins/Slider'
+import { DatePicker } from './Plugins/DatePicker'
+import { NumbericUpDown } from './Plugins/NumericUpDown'
 import { FileUpload } from './Plugins/FileUpload'
 import { ConfirmBox } from './Plugins/ConfirmBox'
-import { SubMenu } from './Plugins/subMenu'
+import { SubMenu } from './Plugins/SubMenu'
 
 export class OlivePage {
     // formats: http://momentjs.com/docs/#/displaying/format/
@@ -117,7 +117,6 @@ export class OlivePage {
         $("[data-confirm-question]").each((i, e) => new ConfirmBox($(e)).enable());
         $(".password-strength").each((i, e) => this.enablePasswordStengthMeter($(e)));
         $(".with-submenu").each((i, e) => new SubMenu($(e)));
-
 
         // =================== Request lifecycle ====================
         $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => this.ajaxRedirectBackClicked(e));
