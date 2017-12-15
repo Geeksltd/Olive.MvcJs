@@ -569,7 +569,7 @@ export class OlivePage {
         else if (action.BrowserAction == "Print") window.print();
         else if (action.BrowserAction == "ShowPleaseWait") this.showPleaseWait(action.BlockScreen);
         else if (action.ReplaceSource) this.replaceListControlSource(action.ReplaceSource, action.Items);
-        else if (action.Download) this.download(action.Download);
+        else if (action.Download) WindowContext.download(action.Download);
         else if (action.Redirect) this.executeRedirectAction(action, trigger);
         else alert("Don't know how to handle: " + JSON.stringify(action).htmlEncode());
 
