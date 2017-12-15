@@ -18,6 +18,7 @@ import FileUpload from 'olive/Plugins/FileUpload'
 import ConfirmBox from 'olive/Plugins/ConfirmBox'
 import SubMenu from 'olive/Plugins/SubMenu'
 import Modal from 'olive/Components/Modal'
+import Alert from 'olive/Components/Alert'
 
 // TODO: Find a cleaner way to import an external module
 window["alertify"] = <alertify.IAlertifyStatic>window.require("alertify")();
@@ -44,7 +45,7 @@ export class OlivePage {
         $(() => {
             //$.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: this.DEFAULT_MODAL_BACKDROP });
             //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
-            this.enableAlert();
+            Alert.enableAlert();
             this.configureValidation();
             this.pageLoad();
         });
@@ -315,30 +316,6 @@ export class OlivePage {
     //    });
     //}
 
-    alertUnobtrusively(message: string, style?: string) {
-        alertify.log(message, style);
-    }
-
-    enableAlert() {
-        var w: any = window;
-        w.alert = (text: string, callback) => this.alert(text, null, callback);
-    }
-
-    alert(text: string, style?: string, callback?: Function) {
-
-        if (text == undefined) text = "";
-        text = text.trim();
-
-        if (text.indexOf("<") != 0) {
-            text = text.replace(/\r/g, "<br />");
-            alertify.alert(text, callback, style);
-        }
-        else {
-            alertify.alert('', callback, style);
-            $('.alertify-message').empty().append($.parseHTML(text));
-        }
-    }
-
     openLinkModal(event: JQueryEventObject) {
         this.openModal(event);
         return false;
@@ -591,8 +568,8 @@ export class OlivePage {
 
     executeNotifyAction(action: any, trigger: any) {
         if (action.Obstruct == false)
-            this.alertUnobtrusively(action.Notify, action.Style);
-        else this.alert(action.Notify, action.Style);
+            Alert.alertUnobtrusively(action.Notify, action.Style);
+        else Alert.alert(action.Notify, action.Style);
     }
 
     executeRedirectAction(action: any, trigger: any) {
