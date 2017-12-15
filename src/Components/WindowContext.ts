@@ -155,6 +155,12 @@ export class WindowContext {
         var trigger = $(event.currentTarget);
         trigger.closest("table").find("td.select-row > input:checkbox").prop('checked', trigger.is(":checked"));
     }
+
+    public static enableUserHelp(element: JQuery) {
+        element.click(() => false);
+        var message = element.attr('data-user-help');  // todo: unescape message and conver to html
+        element['popover']({ trigger: 'focus', content: message });
+    } 
 }
 
 
