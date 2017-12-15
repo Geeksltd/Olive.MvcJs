@@ -1,5 +1,5 @@
-import Url from './Url'
-import Form from './Form'
+import Url from 'olive/Components/Url'
+import Form from 'olive/Components/Form'
 
 export default class WindowContext {
 

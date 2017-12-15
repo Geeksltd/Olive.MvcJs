@@ -1,19 +1,20 @@
+
 // For ckeditor plug-ins to work, this should be globally defined.
-var CKEDITOR_BASEPATH = '/lib/ckeditor/';
+window["CKEDITOR_BASEPATH"] = '/lib/ckeditor/';
 
-import Form from './Components/Form'
-import Url from './Components/Url'
-import WindowContext from './Components/WindowContext';
+import Form from 'olive/Components/Form'
+import Url from 'olive/Components/Url'
+import WindowContext from 'olive/Components/WindowContext';
 
-import TimeControl from './Plugins/TimeControl'
-import AutoComplete from './Plugins/AutoComplete'
-import Slider from './Plugins/Slider'
-import DatePicker from './Plugins/DatePicker'
-import NumbericUpDown from './Plugins/NumericUpDown'
-import FileUpload from './Plugins/FileUpload'
-import ConfirmBox from './Plugins/ConfirmBox'
-import SubMenu from './Plugins/SubMenu'
-import Modal from './Components/Modal'
+import TimeControl from 'olive/Plugins/TimeControl'
+import AutoComplete from 'olive/Plugins/AutoComplete'
+import Slider from 'olive/Plugins/Slider'
+import DatePicker from 'olive/Plugins/DatePicker'
+import NumbericUpDown from 'olive/Plugins/NumericUpDown'
+import FileUpload from 'olive/Plugins/FileUpload'
+import ConfirmBox from 'olive/Plugins/ConfirmBox'
+import SubMenu from 'olive/Plugins/SubMenu'
+import Modal from 'olive/Components/Modal'
 
 export class OlivePage {
     // formats: http://momentjs.com/docs/#/displaying/format/

@@ -1,6 +1,6 @@
 
-import WindowContext from "../Components/WindowContext"
-import   Config   from "../Config"
+import WindowContext from "olive/Components/WindowContext"
+import   Config   from "olive/Config"
 
 export default class DatePicker {
     input: any;

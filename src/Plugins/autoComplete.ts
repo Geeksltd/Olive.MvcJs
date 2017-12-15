@@ -1,7 +1,7 @@
 
-import WindowContext from "../Components/WindowContext"
-import Url from "../Components/Url"
-import Config from "../Config"
+import WindowContext from "olive/Components/WindowContext"
+import Url from "olive/Components/Url"
+import Config from "olive/Config"
 
 export default class AutoComplete {
     input: any;

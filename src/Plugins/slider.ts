@@ -1,6 +1,6 @@
 
-import WindowContext from "../Components/WindowContext"
-import Form from "../Components/Form"
+import WindowContext from "olive/Components/WindowContext"
+import Form from "olive/Components/Form"
 
 export default class Slider {
     input: any;

@@ -1,6 +1,10 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
+        "baseUrl": ".",
+        "paths": {
+            "olive/*": [ "src/*" ]
+        },
+        "module": "amd",
         "target": "es5",
         "sourceMap": true,
         "outDir": "dist",
@@ -13,9 +17,11 @@
         "removeComments": false
     },
     "exclude": [
-      "typings",
-      "dist"  
-    ]
+        "typings",
+        "dist"
+    ],
+    "compileOnSave": true,
+     
 }
 
 // {
@@ -31,7 +37,7 @@
 //     },
 //     "exclude": [
 //       "typings",
-//       "dist"  
+//       "dist"
 //     ],
 //     "compileOnSave": true
 // }
