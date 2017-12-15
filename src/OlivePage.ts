@@ -1,3 +1,4 @@
+
 /// <reference path="Typings/alertify/alertify.d.ts" />
 
 //window["require"](["alertify"], a => window["alertify"] = a());
@@ -18,6 +19,7 @@ import FileUpload from 'olive/Plugins/FileUpload'
 import ConfirmBox from 'olive/Plugins/ConfirmBox'
 import SubMenu from 'olive/Plugins/SubMenu'
 import Modal from 'olive/Components/Modal'
+import Waiting from 'olive/Components/Waiting'
 
 // TODO: Find a cleaner way to import an external module
 window["alertify"] = <alertify.IAlertifyStatic>window.require("alertify")();
@@ -465,7 +467,7 @@ export class OlivePage {
             scrollTopBefore = $(document).scrollTop();
         }
 
-        this.showPleaseWait();
+        Waiting.showPleaseWait();
 
         $.ajax({
             url: url,
@@ -564,7 +566,7 @@ export class OlivePage {
         else if (action.BrowserAction == "Close") window.close();
         else if (action.BrowserAction == "Refresh") this.refresh();
         else if (action.BrowserAction == "Print") window.print();
-        else if (action.BrowserAction == "ShowPleaseWait") this.showPleaseWait(action.BlockScreen);
+        else if (action.BrowserAction == "ShowPleaseWait") Waiting.showPleaseWait(action.BlockScreen);
         else if (action.ReplaceSource) this.replaceListControlSource(action.ReplaceSource, action.Items);
         else if (action.Download) this.download(action.Download);
         else if (action.Redirect) this.executeRedirectAction(action, trigger);
@@ -636,26 +638,6 @@ export class OlivePage {
 
     openWindow(url: string, target: string) {
         window.open(url, target);
-    }
-
-
-
-    showPleaseWait(blockScreen: boolean = false) {
-
-        if (!$(document.forms[0]).valid()) return;
-
-        var screen = $("<div class='wait-screen' />").appendTo("body");
-
-        if (blockScreen) {
-            $("<div class='cover' />")
-                .width(Math.max($(document).width(), $(window).width()))
-                .height(Math.max($(document).height(), $(window).height()))
-                .appendTo(screen);
-        }
-
-        $("<div class='wait-container'><div class='wait-box'><img src='/public/img/loading.gif'/></div>")
-            .appendTo(screen)
-            .fadeIn('slow');
     }
 
     refresh(keepScroll: boolean = false) {
