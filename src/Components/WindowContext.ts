@@ -254,6 +254,10 @@ export class WindowContext {
         }
         $("<iframe style='visibility:hidden; width:1px; height:1px;'></iframe>").attr("src", url).appendTo("body");
     }
+
+    public static openWindow(url: string, target: string) {
+        window.open(url, target);
+    }
 }
 
 
