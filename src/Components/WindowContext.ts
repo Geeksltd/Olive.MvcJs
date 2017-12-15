@@ -150,6 +150,11 @@ export class WindowContext {
             if (e.keyCode == 13) e.preventDefault();
         });
     }
+
+    public static enableSelectAllToggle(event) {
+        var trigger = $(event.currentTarget);
+        trigger.closest("table").find("td.select-row > input:checkbox").prop('checked', trigger.is(":checked"));
+    }
 }
 
 
