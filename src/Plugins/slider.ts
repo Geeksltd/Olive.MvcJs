@@ -1,9 +1,8 @@
 
+import WindowContext from "../Components/WindowContext"
+import Form from "../Components/Form"
 
-import { WindowContext } from "../Components/WindowContext"
-import { Form } from "../Components/Form"
-
-export class Slider {
+export default class Slider {
     input: any;
     options;
     constructor(targetInput: any) {

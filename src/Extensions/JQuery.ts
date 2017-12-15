@@ -1,5 +1,9 @@
 ﻿interface Window { stop(); }
 
+interface JQueryStatic {
+    raiseEvent(event: string, owner: any, data?: any): boolean;
+}
+
 // [name] is the name of the event "click", "mouseover", .. 
 // same as you'd pass it to bind()
 // [fn] is the handler function
@@ -42,8 +46,6 @@ $.fn.bindFirst = function (name, fn) {
 })(jQuery.fn.clone);
 
 // Enable jquery Validate for checkbox list
-
-
 (function ($) {
     $.validator.unobtrusive.adapters.add("selection-required", function (options) {
         if (options.element.tagName.toUpperCase() == "INPUT" && options.element.type.toUpperCase() == "CHECKBOX") {
@@ -74,8 +76,9 @@ jQuery.fn.extend({
     }
 });
 
+
 jQuery.fn.extend({
-    raiseEvent(event: string,owner:any, data?: any) {
+    raiseEvent(event: string, owner: any, data?: any) {
         let result = true;
 
         if (owner.events.hasOwnProperty(event)) {

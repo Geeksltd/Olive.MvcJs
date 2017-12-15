@@ -1,9 +1,9 @@
 
-import { WindowContext } from "../Components/WindowContext"
-import { Url } from "../Components/Url"
-import { Config } from "../Config"
+import WindowContext from "../Components/WindowContext"
+import Url from "../Components/Url"
+import Config from "../Config"
 
-export class AutoComplete {
+export default class AutoComplete {
     input: any;
     awaitingAutocompleteResponses: number = 0;
     valueField: JQuery

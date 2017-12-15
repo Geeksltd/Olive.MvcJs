@@ -55,6 +55,19 @@ jQuery.fn.extend({
     }
 });
 jQuery.fn.extend({
+    raiseEvent: function (event, owner, data) {
+        var result = true;
+        if (owner.events.hasOwnProperty(event)) {
+            owner.events[event].forEach(function (handler) {
+                var res = handler(data || {});
+                if (res === false)
+                    result = false;
+            });
+        }
+        return result;
+    }
+});
+jQuery.fn.extend({
     getUniqueSelector: function () {
         if (this.length != 1)
             throw 'Requires one element.';

@@ -1,13 +1,14 @@
-import { Url } from './Url'
-import { Form } from './Form'
+import Url from './Url'
+import Form from './Form'
 
-export class WindowContext {
+export default class WindowContext {
 
     static setting = {
         TIME_FORMAT: "HH:mm",
         MINUTE_INTERVALS: 5,
         DATE_LOCALE: "en-gb"
     };
+
     static events: { [event: string]: Function[] } = {};
 
     public static isWindowModal(): boolean {
@@ -95,7 +96,7 @@ export class WindowContext {
         if (checkboxes.length === 0 || checkboxes.filter(":checked").length > 0) return;
         $("<input type='checkbox' checked='checked'/>").hide().attr("name", checkboxes.attr("name")).val("-")
             .appendTo(button.parent());
-     }
+    }
 
     public static updateSubFormStates() {
         var countItems = (element) => $(element).parent().find(".subform-item:visible").length;
@@ -115,7 +116,7 @@ export class WindowContext {
             var show = countItems(e) > parseInt($(e).attr('data-subform-min'));
             $(e).find("[data-delete-subform=" + $(e).attr("data-subform") + "]").css('visibility', (show) ? 'visible' : 'hidden');
         });
-     }
+    }
 
     public static deleteSubForm(event: JQueryEventObject) {
         var button = $(event.currentTarget);
@@ -161,9 +162,9 @@ export class WindowContext {
         element.click(() => false);
         var message = element.attr('data-user-help');  // todo: unescape message and conver to html
         element['popover']({ trigger: 'focus', content: message });
-    } 
+    }
 
-   public static handleDefaultButton(event: JQueryEventObject): boolean {
+    public static handleDefaultButton(event: JQueryEventObject): boolean {
         if (event.which === 13) {
             var target = $(event.currentTarget);
             var button = target.closest("[data-module]").find('[default-button]:first'); // Same module
@@ -244,6 +245,3 @@ export class WindowContext {
         selectControl.chosen(options);
     }
 }
-
-
-

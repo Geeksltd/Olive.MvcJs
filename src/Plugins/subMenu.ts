@@ -1,5 +1,5 @@
-import { WindowContext } from '../Components/WindowContext'
-export class SubMenu {
+import WindowContext from '../Components/WindowContext'
+export default class SubMenu {
     menu: any;
     submenuOptions: any;
 

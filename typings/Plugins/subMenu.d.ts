@@ -1,4 +1,4 @@
-export declare class SubMenu {
+export default class SubMenu {
     menu: any;
     submenuOptions: any;
     constructor(targetMenue: any);

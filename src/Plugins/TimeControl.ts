@@ -1,7 +1,7 @@
-import { WindowContext } from "../Components/WindowContext";
-import { Config } from "../Config";
+import WindowContext from "../Components/WindowContext";
+import Config from "../Config";
 
-export class TimeControl {
+export default class TimeControl {
 
     constructor(targetInput: any) {
         let input = targetInput;

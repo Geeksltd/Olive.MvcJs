@@ -1,4 +1,4 @@
-export declare class ConfirmBox {
+export default class ConfirmBox {
     button: any;
     constructor(targetButton: any);
     enable(): void;

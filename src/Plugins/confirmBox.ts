@@ -1,8 +1,9 @@
-import { WindowContext } from '../Components/WindowContext'
-export class ConfirmBox{
+import WindowContext from '../Components/WindowContext'
+
+export default class ConfirmBox {
     button: any;
 
-    constructor(targetButton:any) {
+    constructor(targetButton: any) {
         this.button = targetButton;
     }
 
@@ -23,7 +24,7 @@ export class ConfirmBox{
         });
     }
 
-    public showConfirm(text,yesCallback) {
+    public showConfirm(text, yesCallback) {
         alertify.confirm(text.replace(/\r/g, "<br />"), (e) => {
             if (e) yesCallback();
             else return false;

@@ -1,3 +1,3 @@
-export declare class TimeControl {
+export default class TimeControl {
     constructor(targetInput: any);
 }

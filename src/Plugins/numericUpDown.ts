@@ -1,5 +1,5 @@
 
-export class NumbericUpDown {
+export default class NumbericUpDown {
     input: any;
     constructor(targetInput: any) {
         this.input = targetInput;          

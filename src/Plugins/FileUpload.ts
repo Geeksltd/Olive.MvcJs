@@ -1,6 +1,6 @@
-import { WindowContext } from '../Components/WindowContext'
+import   WindowContext   from '../Components/WindowContext'
 
-export class FileUpload {
+export default class FileUpload {
     input: any;
     constructor(targetInput: any) {
         this.input = targetInput;          

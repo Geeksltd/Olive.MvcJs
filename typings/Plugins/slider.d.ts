@@ -1,4 +1,4 @@
-export declare class Slider {
+export default class Slider {
     input: any;
     options: any;
     constructor(targetInput: any);

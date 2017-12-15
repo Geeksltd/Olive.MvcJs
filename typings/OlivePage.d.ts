@@ -9,16 +9,12 @@ export declare class OlivePage {
     AUTOCOMPLETE_INPUT_DELAY: number;
     DEFAULT_HTML_EDITOR_MODE: string;
     DEFAULT_MODAL_BACKDROP: string;
+    currentModal: any;
     constructor();
     _initializeActions: any[];
     onInit(action: any): void;
     _preInitializeActions: any[];
     onPreInit(action: any): void;
-    events: {
-        [event: string]: Function[];
-    };
-    on(event: string, handler: Function): void;
-    raise(event: string, data?: any): boolean;
     pageLoad(container?: JQuery, trigger?: any): void;
     initializeUpdatedPage(container?: JQuery, trigger?: any): void;
     initialize(): void;
@@ -40,8 +36,6 @@ export declare class OlivePage {
     toJson(data: any): any;
     runStartupActions(container?: JQuery, trigger?: any, stage?: string): void;
     canAutoFocus(input: JQuery): boolean;
-    enableDateControl(input: JQuery): void;
-    adjustModalHeightForDataPicker(e: any): void;
     awaitingAutocompleteResponses: number;
     handleDefaultButton(event: JQueryEventObject): boolean;
     deleteSubForm(event: JQueryEventObject): void;
@@ -58,18 +52,14 @@ export declare class OlivePage {
     enableUserHelp(element: JQuery): void;
     executeActions(actions: any, trigger?: any): void;
     executeAction(action: any, trigger: any): boolean;
+    closeCurrentModal(refreshParrent?: boolean): any;
+    openModal(event: any, url?: any, options?: any): void;
     executeNotifyAction(action: any, trigger: any): void;
     executeRedirectAction(action: any, trigger: any): void;
     replaceListControlSource(controlId: string, items: any): void;
     download(url: string): void;
     openWindow(url: string, target: string): void;
     showPleaseWait(blockScreen?: boolean): void;
-    currentModal: any;
-    getModalTemplate(options: any): string;
-    isOpeningModal: boolean;
-    openModal(url: string, options?: any): boolean;
-    isClosingModal: boolean;
-    closeModal(refreshParent?: boolean): boolean;
     refresh(keepScroll?: boolean): void;
     isAwaitingAjaxResponse: boolean;
     invokeActionWithAjax(event: any, actionUrl: any, syncCall?: boolean): boolean;
@@ -79,10 +69,7 @@ export declare class OlivePage {
     replaceMain(element: JQuery, trigger: any): void;
     invokeAjaxActionResult(response: any, containerModule: any, trigger: any): void;
     ensureNonModal(): void;
-    isWindowModal(): boolean;
-    getContainerIFrame(): HTMLElement;
     enableSlider(input: any): void;
-    adjustModalHeight(overflow?: number): void;
     adjustIFrameHeightToContents(iframe: any): void;
     reloadValidationRules(form: JQuery): void;
     paginationSizeChanged(event: Event): void;

@@ -1,4 +1,4 @@
-﻿export class Url {
+﻿export default class Url {
 
     static current(): string { return window.location.href; }
 

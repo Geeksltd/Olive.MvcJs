@@ -1,4 +1,4 @@
-export declare class AutoComplete {
+export default class AutoComplete {
     input: any;
     awaitingAutocompleteResponses: number;
     valueField: JQuery;

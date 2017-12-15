@@ -1,4 +1,4 @@
-export declare class Config {
+export default class Config {
     static TIME_FORMAT: string;
     static DATE_FORMAT: string;
     static DATE_TIME_FORMAT: string;

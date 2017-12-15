@@ -1,4 +1,4 @@
-﻿export class Config {
+﻿export default class Config {
 
     // formats: http://momentjs.com/docs/#/displaying/format/
     static TIME_FORMAT: string = "HH:mm";

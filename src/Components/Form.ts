@@ -1,4 +1,4 @@
-﻿export class Form {
+﻿export default class Form {
     static merge(items: JQuerySerializeArrayElement[]): JQuerySerializeArrayElement[] {
         var result: JQuerySerializeArrayElement[] = [];
 

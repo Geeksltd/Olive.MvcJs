@@ -1,19 +1,19 @@
 // For ckeditor plug-ins to work, this should be globally defined.
 var CKEDITOR_BASEPATH = '/lib/ckeditor/';
 
-import { Form } from './Components/Form'
-import { Url } from './Components/Url'
-import { WindowContext } from './Components/WindowContext'
+import Form from './Components/Form'
+import Url from './Components/Url'
+import WindowContext from './Components/WindowContext';
 
-import { TimeControl } from './Plugins/TimeControl'
-import { AutoComplete } from './Plugins/AutoComplete'
-import { Slider } from './Plugins/Slider'
-import { DatePicker } from './Plugins/DatePicker'
-import { NumbericUpDown } from './Plugins/NumericUpDown'
-import { FileUpload } from './Plugins/FileUpload'
-import { ConfirmBox } from './Plugins/ConfirmBox'
-import { SubMenu } from './Plugins/SubMenu'
-import { Modal } from './Components/Modal'
+import TimeControl from './Plugins/TimeControl'
+import AutoComplete from './Plugins/AutoComplete'
+import Slider from './Plugins/Slider'
+import DatePicker from './Plugins/DatePicker'
+import NumbericUpDown from './Plugins/NumericUpDown'
+import FileUpload from './Plugins/FileUpload'
+import ConfirmBox from './Plugins/ConfirmBox'
+import SubMenu from './Plugins/SubMenu'
+import Modal from './Components/Modal'
 
 export class OlivePage {
     // formats: http://momentjs.com/docs/#/displaying/format/
@@ -64,6 +64,7 @@ export class OlivePage {
     initialize() {
 
         this._preInitializeActions.forEach((action) => action());
+
 
         // =================== Standard Features ====================
 
@@ -331,19 +332,8 @@ export class OlivePage {
         }
     }
 
-
     openLinkModal(event: JQueryEventObject) {
-
-        var target = $(event.currentTarget);
-        var url = target.attr("href");
-
-        var modalOptions = {};
-
-        var options = target.attr("data-modal-options");
-        if (options) modalOptions = WindowContext.toJson(options);
-
-        this.openModal(url, modalOptions);
-
+        this.openModal(event);
         return false;
     }
 
@@ -576,21 +566,21 @@ export class OlivePage {
         return true;
     }
 
-   closeCurrentModal(refreshParrent: boolean = false) {
-            if (refreshParrent) {
-                this.refresh();
-            }
-           return this.currentModal.closeModal();
-     }
+    closeCurrentModal(refreshParrent: boolean = false) {
+        if (refreshParrent) {
+            this.refresh();
+        }
+        return this.currentModal.closeModal();
+    }
 
-    openModal(event,url, options) {
-       if (this.currentModal) {
-           this.currentModal.closeModal();
-           this.currentModal = false;
-       }
-       this.currentModal = new Modal(event, url, options);
-       this.currentModal.openModal();
-   }
+    openModal(event, url?, options?) {
+        if (this.currentModal) {
+            this.currentModal.closeModal();
+            this.currentModal = false;
+        }
+        this.currentModal = new Modal(event, url, options);
+        this.currentModal.openModal();
+    }
 
     executeNotifyAction(action: any, trigger: any) {
         if (action.Obstruct == false)
@@ -602,7 +592,7 @@ export class OlivePage {
         if (action.Redirect.indexOf('/') != 0 && action.Redirect.indexOf('http') != 0) action.Redirect = '/' + action.Redirect;
 
         if (action.OutOfModal && WindowContext.isWindowModal()) parent.window.location.href = action.Redirect;
-        else if (action.Target == '$modal') this.openModal(action.Redirect, {});
+        else if (action.Target == '$modal') this.openModal(null, action.Redirect, {});
         else if (action.Target && action.Target != '') this.openWindow(action.Redirect, action.Target);
         else if (action.WithAjax === false) location.replace(action.Redirect);
         else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true) this.ajaxRedirect(action.Redirect, trigger);

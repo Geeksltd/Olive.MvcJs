@@ -1,4 +1,4 @@
-export declare class NumbericUpDown {
+export default class NumbericUpDown {
     input: any;
     constructor(targetInput: any);
     enable(): void;
