@@ -413,7 +413,7 @@ export class OlivePage {
             scrollTopBefore = $(document).scrollTop();
         }
 
-        this.showPleaseWait();
+        WindowContext.showPleaseWait();
 
         $.ajax({
             url: url,
@@ -512,7 +512,7 @@ export class OlivePage {
         else if (action.BrowserAction == "Close") window.close();
         else if (action.BrowserAction == "Refresh") this.refresh();
         else if (action.BrowserAction == "Print") window.print();
-        else if (action.BrowserAction == "ShowPleaseWait") this.showPleaseWait(action.BlockScreen);
+        else if (action.BrowserAction == "ShowPleaseWait") WindowContext.showPleaseWait(action.BlockScreen);
         else if (action.ReplaceSource) WindowContext.replaceListControlSource(action.ReplaceSource, action.Items);
         else if (action.Download) WindowContext.download(action.Download);
         else if (action.Redirect) this.executeRedirectAction(action, trigger);
@@ -552,24 +552,6 @@ export class OlivePage {
         else if (action.WithAjax === false) location.replace(action.Redirect);
         else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true) this.ajaxRedirect(action.Redirect, trigger);
         else location.replace(action.Redirect);
-    }
-
-    showPleaseWait(blockScreen: boolean = false) {
-
-        if (!$(document.forms[0]).valid()) return;
-
-        var screen = $("<div class='wait-screen' />").appendTo("body");
-
-        if (blockScreen) {
-            $("<div class='cover' />")
-                .width(Math.max($(document).width(), $(window).width()))
-                .height(Math.max($(document).height(), $(window).height()))
-                .appendTo(screen);
-        }
-
-        $("<div class='wait-container'><div class='wait-box'><img src='/public/img/loading.gif'/></div>")
-            .appendTo(screen)
-            .fadeIn('slow');
     }
 
     refresh(keepScroll: boolean = false) {
