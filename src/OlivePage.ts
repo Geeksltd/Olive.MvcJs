@@ -125,8 +125,7 @@ export class OlivePage {
         $(window).off('click.SanityAdapter').on('click.SanityAdapter', e => {
             $(e.target).filter('a').removeAttr('target');
         });
-
-        this.openWindow = (url, target) => location.replace(url);
+        WindowContext.openWindow = (url, target) => location.replace(url);
     }
 
     enableDragSort(container) {
@@ -603,7 +602,7 @@ export class OlivePage {
 
         if (action.OutOfModal && WindowContext.isWindowModal()) parent.window.location.href = action.Redirect;
         else if (action.Target == '$modal') this.openModal(action.Redirect, {});
-        else if (action.Target && action.Target != '') this.openWindow(action.Redirect, action.Target);
+        else if (action.Target && action.Target != '') WindowContext.openWindow(action.Redirect, action.Target);
         else if (action.WithAjax === false) location.replace(action.Redirect);
         else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true) this.ajaxRedirect(action.Redirect, trigger);
         else location.replace(action.Redirect);
@@ -623,25 +622,6 @@ export class OlivePage {
             console.log("Unable to replace list items");
         }
     }
-
-    download(url: string) {
-
-        if (WindowContext.isWindowModal()) {
-            var page = window.parent["page"];
-            if (page && page.download) {
-                page.download(url);
-                return;
-            }
-        }
-
-        $("<iframe style='visibility:hidden; width:1px; height:1px;'></iframe>").attr("src", url).appendTo("body");
-    }
-
-    openWindow(url: string, target: string) {
-        window.open(url, target);
-    }
-
-
 
     showPleaseWait(blockScreen: boolean = false) {
 
