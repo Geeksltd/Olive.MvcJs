@@ -75,7 +75,7 @@ export class OlivePage {
         $("form input, form select").off("keypress.default-button").on("keypress.default-button", (e) => WindowContext.handleDefaultButton(e));
         $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", (e) => WindowContext.paginationSizeChanged(e));
         $("[data-sort-item]").parents("tbody").each((i, e) => this.enableDragSort($(e)));
-        $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", (e) => this.enableAjaxPaging(e));
+        $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", (e) => WindowContext.enableAjaxPaging(e));
         $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", (e) => this.enableAjaxSorting(e));
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", (e) => this.adjustIFrameHeightToContents(e.currentTarget));
         $("th[data-sort]").each((i, e) => this.setSortHeaderClass($(e)));
