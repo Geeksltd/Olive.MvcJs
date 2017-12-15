@@ -65,23 +65,23 @@ export class OlivePage {
         this._preInitializeActions.forEach((action) => action());
 
         // =================== Standard Features ====================
-        $(".select-cols .apply").off("click.apply-columns").on("click.apply-columns", (e) => this.applyColumns(e));
-        $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", (e) => this.deleteSubForm(e));
+        $(".select-cols .apply").off("click.apply-columns").on("click.apply-columns", (e) => WindowContext.applyColumns(e));
+        $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", (e) => WindowContext.deleteSubForm(e));
         $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
-        $(".select-grid-cols .group-control").each((i, e) => this.enableSelectColumns($(e)));
-        $("[name=InstantSearch]").each((i, e) => this.enableInstantSearch($(e)));
-        $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", (e) => this.enableSelectAllToggle(e));
-        $("[data-user-help]").each((i, e) => this.enableUserHelp($(e)));
-        $("form input, form select").off("keypress.default-button").on("keypress.default-button", (e) => this.handleDefaultButton(e));
-        $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", (e) => this.paginationSizeChanged(e));
+        $(".select-grid-cols .group-control").each((i, e) => WindowContext.enableSelectColumns($(e)));
+        $("[name=InstantSearch]").each((i, e) => WindowContext.enableInstantSearch($(e)));
+        $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", (e) => WindowContext.enableSelectAllToggle(e));
+        $("[data-user-help]").each((i, e) => WindowContext.enableUserHelp($(e)));
+        $("form input, form select").off("keypress.default-button").on("keypress.default-button", (e) => WindowContext.handleDefaultButton(e));
+        $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", (e) => WindowContext.paginationSizeChanged(e));
         $("[data-sort-item]").parents("tbody").each((i, e) => this.enableDragSort($(e)));
-        $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", (e) => this.enableAjaxPaging(e));
-        $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", (e) => this.enableAjaxSorting(e));
-        $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", (e) => this.adjustIFrameHeightToContents(e.currentTarget));
-        $("th[data-sort]").each((i, e) => this.setSortHeaderClass($(e)));
-        $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", (e) => this.cleanUpNumberField($(e.currentTarget)));
-        $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => this.ensureModalResize());
-        $("select.form-control").each((i, e) => this.changeItToChosen($(e)));
+        $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", (e) => WindowContext.enableAjaxPaging(e));
+        $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", (e) => WindowContext.enableAjaxSorting(e));
+        $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", (e) => WindowContext.adjustIFrameHeightToContents(e.currentTarget));
+        $("th[data-sort]").each((i, e) => WindowContext.setSortHeaderClass($(e)));
+        $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", (e) => WindowContext.cleanUpNumberField($(e.currentTarget)));
+        $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => WindowContext.ensureModalResize());
+        $("select.form-control").each((i, e) => WindowContext.changeItToChosen($(e)));
         //$.validator.unobtrusive.parse('form');
 
         // =================== Plug-ins ====================enableTimeControl
@@ -107,7 +107,7 @@ export class OlivePage {
         $("[data-change-action]").off("change.data-action").on("change.data-action", (e) => this.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action")));
         $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => this.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action")));
 
-        this.updateSubFormStates();
+        WindowContext.updateSubFormStates();
         this.adjustModalHeight();
 
         this._initializeActions.forEach((action) => action());
@@ -829,7 +829,7 @@ export class OlivePage {
 
             this.reloadValidationRules(trigger.parents("form"));
 
-            this.updateSubFormStates();
+            WindowContext.updateSubFormStates();
 
             this.initializeUpdatedPage(asElement, trigger);
         }
