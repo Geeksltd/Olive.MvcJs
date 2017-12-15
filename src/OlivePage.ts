@@ -81,7 +81,7 @@ export class OlivePage {
         $("th[data-sort]").each((i, e) => WindowContext.setSortHeaderClass($(e)));
         $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", (e) => WindowContext.cleanUpNumberField($(e.currentTarget)));
         $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => WindowContext.ensureModalResize());
-        $("select.form-control").each((i, e) => this.changeItToChosen($(e)));
+        $("select.form-control").each((i, e) => WindowContext.changeItToChosen($(e)));
         //$.validator.unobtrusive.parse('form');
 
         // =================== Plug-ins ====================enableTimeControl
