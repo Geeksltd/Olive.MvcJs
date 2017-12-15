@@ -65,7 +65,7 @@ export class OlivePage {
         this._preInitializeActions.forEach((action) => action());
 
         // =================== Standard Features ====================
-        $(".select-cols .apply").off("click.apply-columns").on("click.apply-columns", (e) => this.applyColumns(e));
+        $(".select-cols .apply").off("click.apply-columns").on("click.apply-columns", (e) => WindowContext.applyColumns(e));
         $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", (e) => this.deleteSubForm(e));
         $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
         $(".select-grid-cols .group-control").each((i, e) => this.enableSelectColumns($(e)));
