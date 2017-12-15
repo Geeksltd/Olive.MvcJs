@@ -70,7 +70,7 @@ export class OlivePage {
         $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
         $(".select-grid-cols .group-control").each((i, e) => WindowContext.enableSelectColumns($(e)));
         $("[name=InstantSearch]").each((i, e) => WindowContext.enableInstantSearch($(e)));
-        $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", (e) => this.enableSelectAllToggle(e));
+        $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", (e) => WindowContext.enableSelectAllToggle(e));
         $("[data-user-help]").each((i, e) => this.enableUserHelp($(e)));
         $("form input, form select").off("keypress.default-button").on("keypress.default-button", (e) => this.handleDefaultButton(e));
         $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", (e) => this.paginationSizeChanged(e));
