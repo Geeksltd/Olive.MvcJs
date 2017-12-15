@@ -87,6 +87,14 @@ export class WindowContext {
             console.log(data);
         }
     }
+
+    public static applyColumns(event: JQueryEventObject) {
+        var button = $(event.currentTarget);
+        var checkboxes = button.closest(".select-cols").find(":checkbox");
+        if (checkboxes.length === 0 || checkboxes.filter(":checked").length > 0) return;
+        $("<input type='checkbox' checked='checked'/>").hide().attr("name", checkboxes.attr("name")).val("-")
+            .appendTo(button.parent());
+     }
 }
 
 
