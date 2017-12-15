@@ -304,6 +304,19 @@ public static alertUnobtrusively(message: string, style?: string) {
             $('.alertify-message').empty().append($.parseHTML(text));
         }
     }
+
+    public static replaceListControlSource(controlId: string, items) {
+        var $control = $('#' + controlId);
+        if ($control.is("select")) {
+            $control.empty();
+            for (var i = 0; i < items.length; i++) {
+                $control.append($("<option value='" + items[i].Value + "'>" + items[i].Text + "</option>"));
+            }
+
+        } else {
+            console.log("Unable to replace list items");
+        }
+    }
 }
 
 
