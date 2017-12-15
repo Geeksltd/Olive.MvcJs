@@ -1,4 +1,4 @@
-export class Alert{
+ export default class Alert{
     
     public static  enableAlert() {
         var w: any = window;
