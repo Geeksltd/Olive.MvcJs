@@ -273,13 +273,36 @@ public static adjustIFrameHeightToContents(iframe) {
         var form = trigger.closest("form");
         var validator = form.validate();
         if (!validator.form()) {
-            var alertUntyped: any = alert;
+            var alertUntyped: any = this.alert;
             if (form.is("[data-validation-style*=message-box]"))
                 alertUntyped(validator.errorList.map(err => err.message).join('\r\n'), () => { setTimeout(() => validator.focusInvalid(), 0); });
             validator.focusInvalid();
             return false;
         }
         return true;
+    }
+
+public static alertUnobtrusively(message: string, style?: string) {
+        alertify.log(message, style);
+    }
+
+    public static enableAlert() {
+        var w: any = window;
+        w.alert = (text: string, callback) => this.alert(text, null, callback);
+    }
+
+    public static alert(text: string, style?: string, callback?: Function) {
+        if (text == undefined) text = "";
+        text = text.trim();
+
+        if (text.indexOf("<") != 0) {
+            text = text.replace(/\r/g, "<br />");
+            alertify.alert(text, callback, style);
+        }
+        else {
+            alertify.alert('', callback, style);
+            $('.alertify-message').empty().append($.parseHTML(text));
+        }
     }
 }
 
