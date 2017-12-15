@@ -54,6 +54,7 @@ export class WindowContext {
             });
         }
 
+
         data.push({ name: "current.request.url", value: window.location.pathAndQuery() });
         return data;
     }
@@ -115,6 +116,15 @@ export class WindowContext {
             $(e).find("[data-delete-subform=" + $(e).attr("data-subform") + "]").css('visibility', (show) ? 'visible' : 'hidden');
         });
      }
+
+    public static deleteSubForm(event: JQueryEventObject) {
+        var button = $(event.currentTarget);
+        var container = button.parents(".subform-item");
+        container.find("input[name*=MustBeDeleted]").val("true");
+        container.hide();
+        this.updateSubFormStates();
+        event.preventDefault();
+    }
 }
 
 
