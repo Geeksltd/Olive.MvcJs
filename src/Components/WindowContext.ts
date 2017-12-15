@@ -226,6 +226,14 @@ export class WindowContext {
             thead.append("<i />");
         }
     }
+
+    public static cleanUpNumberField(field: JQuery) {
+        var domElement = <HTMLInputElement>field.get(0);
+        // var start = domElement.selectionStart;
+        // var end = domElement.selectionEnd;
+        field.val(field.val().replace(/[^\d.-]/g, ""));
+        // domElement.setSelectionRange(start, end);
+    }
 }
 
 
