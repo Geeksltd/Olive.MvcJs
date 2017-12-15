@@ -107,7 +107,7 @@ export class OlivePage {
         $("[data-change-action]").off("change.data-action").on("change.data-action", (e) => this.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action")));
         $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => this.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action")));
 
-        this.updateSubFormStates();
+        WindowContext.updateSubFormStates();
         this.adjustModalHeight();
 
         this._initializeActions.forEach((action) => action());
@@ -829,7 +829,7 @@ export class OlivePage {
 
             this.reloadValidationRules(trigger.parents("form"));
 
-            this.updateSubFormStates();
+            WindowContext.updateSubFormStates();
 
             this.initializeUpdatedPage(asElement, trigger);
         }
