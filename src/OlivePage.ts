@@ -108,7 +108,7 @@ export class OlivePage {
         $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => this.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action")));
 
         this.updateSubFormStates();
-        this.adjustModalHeight();
+        WindowContext.adjustModalHeight();
 
         this._initializeActions.forEach((action) => action());
     }
@@ -193,7 +193,7 @@ export class OlivePage {
     }
 
     ensureModalResize() {
-        setTimeout(() => this.adjustModalHeight(), 1);
+        setTimeout(() => WindowContext.adjustModalHeight(), 1);
     }
 
     configureValidation() {
@@ -344,16 +344,6 @@ export class OlivePage {
         return false;
     }
 
-    toJson(data) {
-        try {
-            return JSON.parse(data);
-        } catch (error) {
-            console.log(error);
-            console.log('Cannot parse this data to Json: ');
-            console.log(data);
-        }
-    }
-
     runStartupActions(container: JQuery = null, trigger: any = null, stage: string = "Init") {
         if (container == null) container = $(document);
         if (trigger == null) trigger = $(document);
@@ -371,49 +361,6 @@ export class OlivePage {
 
     canAutoFocus(input: JQuery) {
         return input.attr("data-autofocus") !== "disabled";
-    }
-
-    enableDateControl(input: JQuery) {
-        if (this.isWindowModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => this.adjustModalHeightForDataPicker(e));
-        }
-
-        input.attr("data-autofocus", "disabled");
-
-        var control = input.attr("data-control");
-        var viewMode = input.attr("data-view-mode") || 'days';
-
-        if (control == "date-picker") {
-            (<any>input).datetimepicker({
-                format: this.DATE_FORMAT,
-                useCurrent: false,
-                showTodayButton: true,
-                icons: { today: 'today' },
-                viewMode: viewMode,
-                keepInvalid: input.closest("form").find("[data-change-action]").length == 0,
-                locale: this.DATE_LOCALE
-            }).data("DateTimePicker").keyBinds().clear = null;
-
-            // Now make calendar icon clickable as well             
-            input.parent().find(".fa-calendar").parent(".input-group-addon").click(() => { input.focus(); });
-
-        }
-        else alert("Don't know how to handle date control of " + control);
-    }
-
-    adjustModalHeightForDataPicker(e) {
-
-        var datepicker = $(e.currentTarget).siblings('.bootstrap-datetimepicker-widget');
-
-        if (datepicker.length === 0) {
-            this.adjustModalHeight();
-            return;
-        }
-
-        var offset = Math.ceil(datepicker.offset().top + datepicker[0].offsetHeight) - document.body.offsetHeight + 6;
-        var overflow = Math.max(offset, 0);
-        this.adjustModalHeight(overflow);
     }
 
     awaitingAutocompleteResponses: number = 0;
@@ -640,7 +587,7 @@ export class OlivePage {
     executeRedirectAction(action: any, trigger: any) {
         if (action.Redirect.indexOf('/') != 0 && action.Redirect.indexOf('http') != 0) action.Redirect = '/' + action.Redirect;
 
-        if (action.OutOfModal && this.isWindowModal()) parent.window.location.href = action.Redirect;
+        if (action.OutOfModal && WindowContext.isWindowModal()) parent.window.location.href = action.Redirect;
         else if (action.Target == '$modal') this.openModal(action.Redirect, {});
         else if (action.Target && action.Target != '') this.openWindow(action.Redirect, action.Target);
         else if (action.WithAjax === false) location.replace(action.Redirect);
@@ -665,7 +612,7 @@ export class OlivePage {
 
     download(url: string) {
 
-        if (this.isWindowModal()) {
+        if (WindowContext.isWindowModal()) {
             var page = window.parent["page"];
             if (page && page.download) {
                 page.download(url);
@@ -840,18 +787,8 @@ export class OlivePage {
     }
 
     ensureNonModal() {
-        if (this.isWindowModal())
+        if (WindowContext.isWindowModal())
             parent.window.location.href = location.href;
-    }
-
-    isWindowModal() {
-        if ($(this.getContainerIFrame()).closest(".modal").length === 0) return false;
-        return true;
-    }
-
-    getContainerIFrame() {
-        if (parent == null || parent == self) return null;
-        return $(parent.document).find("iframe").filter((i, f: any) => (f.contentDocument || f.contentWindow.document) == document).get(0);
     }
 
     enableSlider(input) {
@@ -886,15 +823,6 @@ export class OlivePage {
         else {
             options.value = Number(input.val() || options.min);
             (<any>input).slider(options).on('change', ev => { input.val(ev.value.newValue); });  ///// Updated ***********
-        }
-    }
-
-    adjustModalHeight(overflow?: number) {
-        if (this.isWindowModal()) {
-
-            var frame = $(this.getContainerIFrame());
-            if (frame.attr("data-has-explicit-height") != 'true')
-                frame.height(document.body.offsetHeight + (overflow || 0));
         }
     }
 
