@@ -13,6 +13,7 @@ import { NumbericUpDown } from './Plugins/NumericUpDown'
 import { FileUpload } from './Plugins/FileUpload'
 import { ConfirmBox } from './Plugins/ConfirmBox'
 import { SubMenu } from './Plugins/SubMenu'
+import { Modal } from './Components/Modal'
 
 export class OlivePage {
     // formats: http://momentjs.com/docs/#/displaying/format/
@@ -65,6 +66,7 @@ export class OlivePage {
         this._preInitializeActions.forEach((action) => action());
 
         // =================== Standard Features ====================
+
         $(".select-cols .apply").off("click.apply-columns").on("click.apply-columns", (e) => WindowContext.applyColumns(e));
         $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", (e) => WindowContext.deleteSubForm(e));
         $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
@@ -327,21 +329,6 @@ export class OlivePage {
             alertify.alert('', callback, style);
             $('.alertify-message').empty().append($.parseHTML(text));
         }
-    }
-
-    openLinkModal(event: JQueryEventObject) {
-
-        var target = $(event.currentTarget);
-        var url = target.attr("href");
-
-        var modalOptions = {};
-
-        var options = target.attr("data-modal-options");
-        if (options) modalOptions = WindowContext.toJson(options);
-
-        this.openModal(url, modalOptions);
-
-        return false;
     }
 
     toJson(data) {
@@ -623,13 +610,14 @@ export class OlivePage {
            return this.currentModal.closeModal();
      }
 
-    openModal(url, options) {
-        if (this.currentModal) {
-            this.currentModal.closeModal();
-            this.currentModal = false;
-        }
-        this.currentModal = new Modal(null, url, options).openModal();
-    }
+    openModal(event,url, options) {
+       if (this.currentModal) {
+           this.currentModal.closeModal();
+           this.currentModal = false;
+       }
+       this.currentModal = new Modal(event, url, options);
+       this.currentModal.openModal();
+   }
 
     executeNotifyAction(action: any, trigger: any) {
         if (action.Obstruct == false)
@@ -641,7 +629,7 @@ export class OlivePage {
         if (action.Redirect.indexOf('/') != 0 && action.Redirect.indexOf('http') != 0) action.Redirect = '/' + action.Redirect;
 
         if (action.OutOfModal && this.isWindowModal()) parent.window.location.href = action.Redirect;
-        else if (action.Target == '$modal') this.openModal(action.Redirect, {});
+        else if (action.Target == '$modal') this.openModal(null,action.Redirect, {});
         else if (action.Target && action.Target != '') this.openWindow(action.Redirect, action.Target);
         else if (action.WithAjax === false) location.replace(action.Redirect);
         else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true) this.ajaxRedirect(action.Redirect, trigger);
