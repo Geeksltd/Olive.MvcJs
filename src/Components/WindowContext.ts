@@ -238,6 +238,11 @@ export class WindowContext {
     public static ensureModalResize() {
         setTimeout(() => this.adjustModalHeight(), 1);
     }
+
+    public static changeItToChosen(selectControl: JQuery) {
+        let options = { disable_search_threshold: 5 }
+        selectControl.chosen(options);
+    }
 }
 
 
