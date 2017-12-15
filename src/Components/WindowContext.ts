@@ -161,6 +161,16 @@ export class WindowContext {
         var message = element.attr('data-user-help');  // todo: unescape message and conver to html
         element['popover']({ trigger: 'focus', content: message });
     } 
+
+   public static handleDefaultButton(event: JQueryEventObject): boolean {
+        if (event.which === 13) {
+            var target = $(event.currentTarget);
+            var button = target.closest("[data-module]").find('[default-button]:first'); // Same module
+            if (button.length == 0) button = $('[default-button]:first') // anywhere
+            button.click();
+            return false;
+        } else return true;
+    }
 }
 
 
