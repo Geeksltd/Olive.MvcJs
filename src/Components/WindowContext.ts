@@ -119,6 +119,7 @@ export class WindowContext {
 
     public static deleteSubForm(event: JQueryEventObject) {
         var button = $(event.currentTarget);
+
         var container = button.parents(".subform-item");
         container.find("input[name*=MustBeDeleted]").val("true");
         container.hide();
@@ -170,6 +171,10 @@ export class WindowContext {
             button.click();
             return false;
         } else return true;
+    }
+
+    public static paginationSizeChanged(event: Event) {
+        $(event.currentTarget).closest("form").submit();
     }
 }
 
