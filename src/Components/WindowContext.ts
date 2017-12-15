@@ -1,5 +1,6 @@
 import Url from 'olive/Components/Url'
 import Form from 'olive/Components/Form'
+import Waiting from 'olive/Components/Waiting'
 
 export default class WindowContext {
 
@@ -61,7 +62,7 @@ export default class WindowContext {
     }
 
     public static handleAjaxResponseError(response) {
-        this.hidePleaseWait();
+        Waiting.hidePleaseWait();
         console.log(response);
 
         var text = response.responseText;
