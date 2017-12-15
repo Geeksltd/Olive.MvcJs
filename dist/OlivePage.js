@@ -1,7 +1,11 @@
+/// <reference path="Typings/alertify/alertify.d.ts" />
 define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Components/Modal"], function (require, exports, Form_1, Url_1, WindowContext_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, Modal_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
+    //window["require"](["alertify"], a => window["alertify"] = a());
     // For ckeditor plug-ins to work, this should be globally defined.
     window["CKEDITOR_BASEPATH"] = '/lib/ckeditor/';
+    // TODO: Find a cleaner way to import an external module
+    window["alertify"] = window.require("alertify")();
     var OlivePage = /** @class */ (function () {
         function OlivePage() {
             var _this = this;

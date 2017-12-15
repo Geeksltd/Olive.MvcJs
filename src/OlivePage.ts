@@ -1,3 +1,6 @@
+/// <reference path="Typings/alertify/alertify.d.ts" />
+
+//window["require"](["alertify"], a => window["alertify"] = a());
 
 // For ckeditor plug-ins to work, this should be globally defined.
 window["CKEDITOR_BASEPATH"] = '/lib/ckeditor/';
@@ -15,6 +18,9 @@ import FileUpload from 'olive/Plugins/FileUpload'
 import ConfirmBox from 'olive/Plugins/ConfirmBox'
 import SubMenu from 'olive/Plugins/SubMenu'
 import Modal from 'olive/Components/Modal'
+
+// TODO: Find a cleaner way to import an external module
+window["alertify"] = <alertify.IAlertifyStatic>window.require("alertify")();
 
 export class OlivePage {
     // formats: http://momentjs.com/docs/#/displaying/format/
