@@ -125,6 +125,12 @@ export class WindowContext {
         this.updateSubFormStates();
         event.preventDefault();
     }
+
+    public static enableSelectColumns(container) {
+        var columns = container.find("div.select-cols");
+        container.find("a.select-cols").click(() => { columns.show(); return false; });
+        columns.find('.cancel').click(() => columns.hide());
+    }
 }
 
 
