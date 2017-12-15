@@ -80,7 +80,7 @@ export class OlivePage {
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", (e) => WindowContext.adjustIFrameHeightToContents(e.currentTarget));
         $("th[data-sort]").each((i, e) => WindowContext.setSortHeaderClass($(e)));
         $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", (e) => WindowContext.cleanUpNumberField($(e.currentTarget)));
-        $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => this.ensureModalResize());
+        $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => WindowContext.ensureModalResize());
         $("select.form-control").each((i, e) => this.changeItToChosen($(e)));
         //$.validator.unobtrusive.parse('form');
 
