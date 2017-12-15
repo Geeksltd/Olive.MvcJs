@@ -192,6 +192,21 @@ export class WindowContext {
             input.remove();
         }
     }
+
+    public static enableAjaxSorting(event: JQueryEventObject) {
+        var button = $(event.currentTarget);
+        var sort = button.attr("data-sort");
+        var key = "s";
+
+        if (sort.split('=').length > 1) {
+            key = sort.split('=')[0];
+            sort = sort.split('=')[1];
+        }
+
+        var input = $("[name='" + key + "']");
+        if (input.val() == sort) sort += ".DESC";
+        input.val(sort);
+    }
 }
 
 
