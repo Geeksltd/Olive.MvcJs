@@ -208,7 +208,8 @@ export class WindowContext {
         input.val(sort);
     }
 
-    public static adjustIFrameHeightToContents(iframe) {
+
+public static adjustIFrameHeightToContents(iframe) {
         $(iframe).height(iframe.contentWindow.document.body.scrollHeight);
     }
 
@@ -257,6 +258,14 @@ export class WindowContext {
 
     public static openWindow(url: string, target: string) {
         window.open(url, target);
+    }
+
+    public static skipNewWindows() {
+        // Remove the target attribute from links:
+        $(window).off('click.SanityAdapter').on('click.SanityAdapter', e => {
+            $(e.target).filter('a').removeAttr('target');
+        });
+        this.openWindow = (url, target) => location.replace(url);
     }
 }
 
