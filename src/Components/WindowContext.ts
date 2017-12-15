@@ -243,6 +243,17 @@ export class WindowContext {
         let options = { disable_search_threshold: 5 }
         selectControl.chosen(options);
     }
+
+    public static download(url: string) {
+        if (this.isWindowModal()) {
+            var page = window.parent["page"];
+            if (page && page.download) {
+                page.download(url);
+                return;
+            }
+        }
+        $("<iframe style='visibility:hidden; width:1px; height:1px;'></iframe>").attr("src", url).appendTo("body");
+    }
 }
 
 
