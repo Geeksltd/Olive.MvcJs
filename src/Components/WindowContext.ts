@@ -131,6 +131,25 @@ export class WindowContext {
         container.find("a.select-cols").click(() => { columns.show(); return false; });
         columns.find('.cancel').click(() => columns.hide());
     }
+
+    public static enableInstantSearch(control) {
+        // TODO: Make it work with List render mode too.
+        control.off("keyup.immediate-filter").on("keyup.immediate-filter", (event) => {
+            var keywords = control.val().toLowerCase().split(' ');
+            var rows = control.closest('[data-module]').find(".grid > tbody > tr");
+
+            rows.each((index, e) => {
+                var row = $(e);
+                var content = row.text().toLowerCase();
+                var hasAllKeywords = keywords.filter((i) => content.indexOf(i) == -1).length == 0;
+                if (hasAllKeywords) row.show(); else row.hide();
+            });
+        });
+
+        control.on("keydown", e => {
+            if (e.keyCode == 13) e.preventDefault();
+        });
+    }
 }
 
 
