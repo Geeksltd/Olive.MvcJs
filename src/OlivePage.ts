@@ -73,7 +73,7 @@ export class OlivePage {
         $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", (e) => WindowContext.enableSelectAllToggle(e));
         $("[data-user-help]").each((i, e) => WindowContext.enableUserHelp($(e)));
         $("form input, form select").off("keypress.default-button").on("keypress.default-button", (e) => WindowContext.handleDefaultButton(e));
-        $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", (e) => this.paginationSizeChanged(e));
+        $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", (e) => WindowContext.paginationSizeChanged(e));
         $("[data-sort-item]").parents("tbody").each((i, e) => this.enableDragSort($(e)));
         $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", (e) => this.enableAjaxPaging(e));
         $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", (e) => this.enableAjaxSorting(e));
