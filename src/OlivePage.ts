@@ -68,7 +68,7 @@ export class OlivePage {
         $(".select-cols .apply").off("click.apply-columns").on("click.apply-columns", (e) => WindowContext.applyColumns(e));
         $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", (e) => WindowContext.deleteSubForm(e));
         $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
-        $(".select-grid-cols .group-control").each((i, e) => this.enableSelectColumns($(e)));
+        $(".select-grid-cols .group-control").each((i, e) => WindowContext.enableSelectColumns($(e)));
         $("[name=InstantSearch]").each((i, e) => this.enableInstantSearch($(e)));
         $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", (e) => this.enableSelectAllToggle(e));
         $("[data-user-help]").each((i, e) => this.enableUserHelp($(e)));
