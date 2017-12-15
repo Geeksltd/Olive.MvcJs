@@ -513,7 +513,7 @@ export class OlivePage {
         else if (action.BrowserAction == "Refresh") this.refresh();
         else if (action.BrowserAction == "Print") window.print();
         else if (action.BrowserAction == "ShowPleaseWait") this.showPleaseWait(action.BlockScreen);
-        else if (action.ReplaceSource) this.replaceListControlSource(action.ReplaceSource, action.Items);
+        else if (action.ReplaceSource) WindowContext.replaceListControlSource(action.ReplaceSource, action.Items);
         else if (action.Download) WindowContext.download(action.Download);
         else if (action.Redirect) this.executeRedirectAction(action, trigger);
         else alert("Don't know how to handle: " + JSON.stringify(action).htmlEncode());
@@ -552,21 +552,6 @@ export class OlivePage {
         else if (action.WithAjax === false) location.replace(action.Redirect);
         else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true) this.ajaxRedirect(action.Redirect, trigger);
         else location.replace(action.Redirect);
-    }
-
-    replaceListControlSource(controlId: string, items) {
-
-        var $control = $('#' + controlId);
-
-        if ($control.is("select")) {
-            $control.empty();
-            for (var i = 0; i < items.length; i++) {
-                $control.append($("<option value='" + items[i].Value + "'>" + items[i].Text + "</option>"));
-            }
-
-        } else {
-            console.log("Unable to replace list items");
-        }
     }
 
     showPleaseWait(blockScreen: boolean = false) {
