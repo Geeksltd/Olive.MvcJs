@@ -123,11 +123,6 @@ export class OlivePage {
         this._initializeActions.forEach((action) => action());
     }
 
-    changeItToChosen(selectControl: JQuery) {
-        let options = { disable_search_threshold: 5 }
-        selectControl.chosen(options);
-    }
-
     skipNewWindows() {
         // Remove the target attribute from links:
         $(window).off('click.SanityAdapter').on('click.SanityAdapter', e => {
@@ -201,11 +196,7 @@ export class OlivePage {
         }
         else password.pwstrength(options);
     }
-
-    ensureModalResize() {
-        setTimeout(() => WindowContext.adjustModalHeight(), 1);
-    }
-
+    
     configureValidation() {
 
         var methods: any = $.validator.methods;
@@ -247,34 +238,6 @@ export class OlivePage {
 
     enableDateDropdown(input) {
         // TODO: Implement
-    }
-
-    enableSelectAllToggle(event) {
-        var trigger = $(event.currentTarget);
-        trigger.closest("table").find("td.select-row > input:checkbox").prop('checked', trigger.is(":checked"));
-    }
-
-    enableInstantSearch(control) {
-        // TODO: Make it work with List render mode too.
-
-        control.off("keyup.immediate-filter").on("keyup.immediate-filter", (event) => {
-
-            var keywords = control.val().toLowerCase().split(' ');
-
-            var rows = control.closest('[data-module]').find(".grid > tbody > tr");
-
-            rows.each((index, e) => {
-                var row = $(e);
-                var content = row.text().toLowerCase();
-                var hasAllKeywords = keywords.filter((i) => content.indexOf(i) == -1).length == 0;
-                if (hasAllKeywords) row.show(); else row.hide();
-            });
-
-        });
-
-        control.on("keydown", e => {
-            if (e.keyCode == 13) e.preventDefault();
-        });
     }
 
     validateForm(trigger) {
@@ -374,70 +337,6 @@ export class OlivePage {
     }
 
     awaitingAutocompleteResponses: number = 0;
-
-    handleDefaultButton(event: JQueryEventObject): boolean {
-        if (event.which === 13) {
-            var target = $(event.currentTarget);
-            var button = target.closest("[data-module]").find('[default-button]:first'); // Same module
-            if (button.length == 0) button = $('[default-button]:first') // anywhere
-            button.click();
-            return false;
-        } else return true;
-    }
-
-    deleteSubForm(event: JQueryEventObject) {
-        var button = $(event.currentTarget);
-        var container = button.parents(".subform-item");
-        container.find("input[name*=MustBeDeleted]").val("true");
-        container.hide();
-
-        this.updateSubFormStates();
-        event.preventDefault();
-    }
-
-    enableAjaxPaging(event: JQueryEventObject) {
-        var button = $(event.currentTarget);
-        var page = button.attr("data-pagination");
-
-        var key = "p";
-
-        if (page.split('=').length > 1) { key = page.split('=')[0]; page = page.split('=')[1]; }
-
-        var input = $("[name='" + key + "']");
-        input.val(page);
-        if (input.val() != page) {
-            // Drop down list case
-            input.parent().append($("<input type='hidden'/>").attr("name", key).val(page));
-            input.remove();
-        }
-    }
-
-    enableAjaxSorting(event: JQueryEventObject) {
-        var button = $(event.currentTarget);
-        var sort = button.attr("data-sort");
-
-        var key = "s";
-
-        if (sort.split('=').length > 1) {
-            key = sort.split('=')[0];
-            sort = sort.split('=')[1];
-        }
-
-        var input = $("[name='" + key + "']");
-        if (input.val() == sort) sort += ".DESC";
-
-        input.val(sort);
-    }
-
-    applyColumns(event: JQueryEventObject) {
-        var button = $(event.currentTarget);
-        var checkboxes = button.closest(".select-cols").find(":checkbox");
-
-        if (checkboxes.length === 0 || checkboxes.filter(":checked").length > 0) return;
-
-        $("<input type='checkbox' checked='checked'/>").hide().attr("name", checkboxes.attr("name")).val("-")
-            .appendTo(button.parent());
-    }
 
     enableAjaxRedirect(event: JQueryEventObject) {
 
@@ -539,14 +438,6 @@ export class OlivePage {
             alert(error);
         }
         return false;
-    }
-
-    enableUserHelp(element: JQuery) {
-
-        element.click(() => false);
-        var message = element.attr('data-user-help');  // todo: unescape message and conver to html
-
-        element['popover']({ trigger: 'focus', content: message });
     }
 
     executeActions(actions: any, trigger: any = null) {
@@ -703,12 +594,6 @@ export class OlivePage {
         return false;
     }
 
-    enableSelectColumns(container) {
-        var columns = container.find("div.select-cols");
-        container.find("a.select-cols").click(() => { columns.show(); return false; });
-        columns.find('.cancel').click(() => columns.hide());
-    }
-
     invokeActionWithPost(event) {
         var trigger = $(event.currentTarget);
         var containerModule = trigger.closest("[data-module]");
@@ -837,17 +722,9 @@ export class OlivePage {
         }
     }
 
-    adjustIFrameHeightToContents(iframe) {
-        $(iframe).height(iframe.contentWindow.document.body.scrollHeight);
-    }
-
     reloadValidationRules(form: JQuery) {
         form.removeData("validator").removeData("unobtrusiveValidation");
         //$.validator.unobtrusive.parse(form);
-    }
-
-    paginationSizeChanged(event: Event) {
-        $(event.currentTarget).closest("form").submit();
     }
 
     highlightRow(element: any) {
@@ -856,31 +733,4 @@ export class OlivePage {
         target.addClass('highlighted');
     }
 
-    cleanUpNumberField(field: JQuery) {
-        var domElement = <HTMLInputElement>field.get(0);
-
-        // var start = domElement.selectionStart;
-        // var end = domElement.selectionEnd;
-
-        field.val(field.val().replace(/[^\d.-]/g, ""));
-
-        // domElement.setSelectionRange(start, end);
-    }
-
-    setSortHeaderClass(thead: JQuery) {
-        var currentSort = thead.closest("[data-module]").find("#Current-Sort").val() || "";
-
-        if (currentSort == "") return;
-
-        var sortKey = thead.attr('data-sort');
-
-        if (sortKey == currentSort && !thead.hasClass('sort-ascending')) {
-            thead.addClass("sort-ascending");
-            thead.append("<i />");
-        }
-        else if (currentSort == sortKey + ".DESC" && !thead.hasClass('sort-descending')) {
-            thead.addClass("sort-descending");
-            thead.append("<i />");
-        }
-    }
 }
