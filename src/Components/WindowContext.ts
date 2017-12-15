@@ -234,6 +234,10 @@ export class WindowContext {
         field.val(field.val().replace(/[^\d.-]/g, ""));
         // domElement.setSelectionRange(start, end);
     }
+
+    public static ensureModalResize() {
+        setTimeout(() => this.adjustModalHeight(), 1);
+    }
 }
 
 
