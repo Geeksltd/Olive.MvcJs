@@ -260,27 +260,6 @@ export class OlivePage {
         });
     }
 
-    validateForm(trigger) {
-
-        if (trigger.is("[formnovalidate]")) return true;
-
-        var form = trigger.closest("form");
-
-        var validator = form.validate();
-        if (!validator.form()) {
-
-            var alertUntyped: any = alert;
-
-            if (form.is("[data-validation-style*=message-box]"))
-                alertUntyped(validator.errorList.map(err => err.message).join('\r\n'), () => { setTimeout(() => validator.focusInvalid(), 0); });
-
-            validator.focusInvalid();
-            return false;
-        }
-
-        return true;
-    }
-
     //enableHtmlEditor(input: any) {
     //    $.getScript(CKEDITOR_BASEPATH + "ckeditor.js", () => {
     //        $.getScript(CKEDITOR_BASEPATH + "adapters/jquery.js", () => {
@@ -510,7 +489,7 @@ export class OlivePage {
     cleanGetFormSubmit(event: JQueryEventObject) {
 
         var form = $(event.currentTarget);
-        if (this.validateForm(form) == false) { WindowContext.hidePleaseWait(); return false; }
+        if (WindowContext.validateForm(form) == false) { WindowContext.hidePleaseWait(); return false; }
 
         var formData = Form.merge(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
 
@@ -646,15 +625,11 @@ export class OlivePage {
         var triggerUniqueSelector = trigger.getUniqueSelector();
         var containerModule = trigger.closest("[data-module]");
 
-        if (this.validateForm(trigger) == false) { WindowContext.hidePleaseWait(); return false; }
-
+        if (WindowContext.validateForm(trigger) == false) { WindowContext.hidePleaseWait(); return false; }
         var data_before_disable = WindowContext.getPostData(trigger);
-
         var disableToo = this.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
         if (disableToo) trigger.attr('disabled', 'disabled');
-
         trigger.addClass('loading-action-result');
-
         this.isAwaitingAjaxResponse = true;
 
         $.ajax({
@@ -674,7 +649,6 @@ export class OlivePage {
                 if (triggerTabIndex > -1) $(":focusable").eq(triggerTabIndex + 1).focus();
             }
         });
-
         return false;
     }
 
@@ -687,16 +661,13 @@ export class OlivePage {
     invokeActionWithPost(event) {
         var trigger = $(event.currentTarget);
         var containerModule = trigger.closest("[data-module]");
-
-        if (containerModule.is("form") && this.validateForm(trigger) == false) return false;
+        if (containerModule.is("form") && WindowContext.validateForm(trigger) == false) return false;
 
         var data = WindowContext.getPostData(trigger);
         var url = trigger.attr("formaction");
         var form = $("<form method='post' />").hide().appendTo($("body"));
-
         for (var item of data)
             $("<input type='hidden'/>").attr("name", item.name).val(item.value).appendTo(form);
-
         form.attr("action", url).submit();
         return false;
     }
