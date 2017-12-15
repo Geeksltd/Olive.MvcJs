@@ -120,14 +120,6 @@ export class OlivePage {
         selectControl.chosen(options);
     }
 
-    skipNewWindows() {
-        // Remove the target attribute from links:
-        $(window).off('click.SanityAdapter').on('click.SanityAdapter', e => {
-            $(e.target).filter('a').removeAttr('target');
-        });
-        WindowContext.openWindow = (url, target) => location.replace(url);
-    }
-
     enableDragSort(container) {
 
         var isTable = container.is("tbody");
