@@ -208,8 +208,23 @@ export class WindowContext {
         input.val(sort);
     }
 
-   public static adjustIFrameHeightToContents(iframe) {
+    public static adjustIFrameHeightToContents(iframe) {
         $(iframe).height(iframe.contentWindow.document.body.scrollHeight);
+    }
+
+    public static setSortHeaderClass(thead: JQuery) {
+        var currentSort = thead.closest("[data-module]").find("#Current-Sort").val() || "";
+        if (currentSort == "") return;
+
+        var sortKey = thead.attr('data-sort');
+        if (sortKey == currentSort && !thead.hasClass('sort-ascending')) {
+            thead.addClass("sort-ascending");
+            thead.append("<i />");
+        }
+        else if (currentSort == sortKey + ".DESC" && !thead.hasClass('sort-descending')) {
+            thead.addClass("sort-descending");
+            thead.append("<i />");
+        }
     }
 }
 
