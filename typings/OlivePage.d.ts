@@ -1,5 +1,5 @@
 /// <reference path="../src/Typings/alertify/alertify.d.ts" />
-export declare class OlivePage {
+export default class OlivePage {
     DATE_FORMAT: string;
     TIME_FORMAT: string;
     DATE_TIME_FORMAT: string;

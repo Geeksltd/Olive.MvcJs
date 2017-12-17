@@ -17,10 +17,8 @@ import ConfirmBox from 'olive/Plugins/ConfirmBox'
 import SubMenu from 'olive/Plugins/SubMenu'
 import Modal from 'olive/Components/Modal'
 
-// TODO: Find a cleaner way to import an external module
-//window["alertify"] = <alertify.IAlertifyStatic>window.require("alertify")();
 
-export class OlivePage {
+export default class OlivePage {
     // formats: http://momentjs.com/docs/#/displaying/format/
     DATE_FORMAT = "DD/MM/YYYY";
     TIME_FORMAT = "HH:mm";
@@ -46,6 +44,9 @@ export class OlivePage {
             this.configureValidation();
             this.pageLoad();
         });
+
+        // TODO: Find a cleaner way.
+        window["alertify"] = <alertify.IAlertifyStatic>window.require("alertify")();
     }
 
     _initializeActions = [];
