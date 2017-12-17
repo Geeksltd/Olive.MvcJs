@@ -1,5 +1,5 @@
 /// <reference path="../src/Typings/alertify/alertify.d.ts" />
-export declare class OlivePage {
+export default class OlivePage {
     DATE_FORMAT: string;
     TIME_FORMAT: string;
     DATE_TIME_FORMAT: string;
@@ -10,7 +10,7 @@ export declare class OlivePage {
     AUTOCOMPLETE_INPUT_DELAY: number;
     DEFAULT_HTML_EDITOR_MODE: string;
     DEFAULT_MODAL_BACKDROP: string;
-    currentModal: any;
+    modal: any;
     constructor();
     _initializeActions: any[];
     onInit(action: any): void;

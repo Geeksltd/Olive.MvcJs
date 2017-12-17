@@ -1,11 +1,11 @@
 export default class Modal {
-    currentModal: any;
-    isOpeningModal: boolean;
+    current: any;
+    isOpening: boolean;
     isClosingModal: boolean;
     url: string;
     modalOptions: any;
     constructor(event?: JQueryEventObject, targeturl?: string, opt?: any);
-    openModal(): boolean;
-    closeModal(): boolean;
+    open(): boolean;
+    close(): boolean;
     getModalTemplate(options: any): string;
 }
