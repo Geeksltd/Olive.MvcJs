@@ -20,7 +20,7 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
                */
             this.DEFAULT_HTML_EDITOR_MODE = "Medium";
             this.DEFAULT_MODAL_BACKDROP = "static";
-            this.currentModal = null;
+            this.modal = null;
             this._initializeActions = [];
             this._preInitializeActions = [];
             this.awaitingAutocompleteResponses = 0;
@@ -483,9 +483,9 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
                 eval(action.Script);
             else if (action.BrowserAction == "Back")
                 window.history.back();
-            else if (action.BrowserAction == "CloseModal" && this.currentModal && this.closeCurrentModal() === false)
+            else if (action.BrowserAction == "CloseModal" && this.modal && this.closeCurrentModal() === false)
                 return false;
-            else if (action.BrowserAction == "CloseModalRefreshParent" && this.currentModal && this.closeCurrentModal(true) === false)
+            else if (action.BrowserAction == "CloseModalRefreshParent" && this.modal && this.closeCurrentModal(true) === false)
                 return false;
             else if (action.BrowserAction == "Close")
                 window.close();
@@ -510,15 +510,15 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
             if (refreshParrent) {
                 this.refresh();
             }
-            return this.currentModal.closeModal();
+            return this.modal.closeModal();
         };
         OlivePage.prototype.openModal = function (event, url, options) {
-            if (this.currentModal) {
-                this.currentModal.closeModal();
-                this.currentModal = false;
+            if (this.modal) {
+                this.modal.close();
+                this.modal = false;
             }
-            this.currentModal = new Modal_1.default(event, url, options);
-            this.currentModal.openModal();
+            this.modal = new Modal_1.default(event, url, options);
+            this.modal.open();
         };
         OlivePage.prototype.executeNotifyAction = function (action, trigger) {
             if (action.Obstruct == false)

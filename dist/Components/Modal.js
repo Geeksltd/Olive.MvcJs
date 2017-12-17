@@ -2,8 +2,8 @@ define(["require", "exports", "olive/Components/WindowContext"], function (requi
     Object.defineProperty(exports, "__esModule", { value: true });
     var Modal = /** @class */ (function () {
         function Modal(event, targeturl, opt) {
-            this.currentModal = null;
-            this.isOpeningModal = false;
+            this.current = null;
+            this.isOpening = false;
             this.isClosingModal = false;
             this.modalOptions = {};
             var target = event ? $(event.currentTarget) : null;
@@ -12,34 +12,35 @@ define(["require", "exports", "olive/Components/WindowContext"], function (requi
             if (options)
                 this.modalOptions = WindowContext_1.default.toJson(options);
         }
-        Modal.prototype.openModal = function () {
+        Modal.prototype.open = function () {
             var _this = this;
-            this.isOpeningModal = true;
-            if (this.currentModal != null)
-                if (this.closeModal() === false)
+            this.isOpening = true;
+            if (this.current != null)
+                if (this.close() === false)
                     return false;
-            this.currentModal = $(this.getModalTemplate(this.modalOptions));
+            this.current = $(this.getModalTemplate(this.modalOptions));
             if (true /* TODO: Change to if Internet Explorer only */)
-                this.currentModal.removeClass("fade");
-            var frame = this.currentModal.find("iframe");
+                this.current.removeClass("fade");
+            var frame = this.current.find("iframe");
             frame.attr("src", this.url).on("load", function (e) {
-                _this.isOpeningModal = false;
+                _this.isOpening = false;
                 var isHeightProvided = !!(_this.modalOptions && _this.modalOptions.height);
                 if (!isHeightProvided) {
                     var doc = frame.get(0).contentWindow.document;
                     setTimeout(function () { return frame.height(doc.body.offsetHeight); }, 10); // Timeout is used due to an IE bug.
                 }
-                _this.currentModal.find(".modal-body .text-center").remove();
+                _this.current.find(".modal-body .text-center").remove();
             });
-            this.currentModal.appendTo("body").modal('show');
+            $("body").append(this.current);
+            this.current.modal('show');
         };
-        Modal.prototype.closeModal = function () {
+        Modal.prototype.close = function () {
             if ($.raiseEvent("modal:closing", window) === false)
                 return false;
             this.isClosingModal = true;
-            if (this.currentModal) {
-                this.currentModal.modal('hide').remove();
-                this.currentModal = null;
+            if (this.current) {
+                this.current.modal('hide').remove();
+                this.current = null;
                 $.raiseEvent("modal:closed", window);
             }
             this.isClosingModal = false;

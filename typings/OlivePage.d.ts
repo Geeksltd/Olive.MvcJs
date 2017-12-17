@@ -10,7 +10,7 @@ export default class OlivePage {
     AUTOCOMPLETE_INPUT_DELAY: number;
     DEFAULT_HTML_EDITOR_MODE: string;
     DEFAULT_MODAL_BACKDROP: string;
-    currentModal: any;
+    modal: any;
     constructor();
     _initializeActions: any[];
     onInit(action: any): void;

@@ -79,7 +79,6 @@ jQuery.fn.extend({
     }
 });
 
-
 jQuery.fn.extend({
     raiseEvent(event: string, owner: any, data?: any) {
         let result = true;

@@ -1,8 +1,8 @@
 import WindowContext from 'olive/Components/WindowContext'
 
 export default class Modal {
-    currentModal: any = null;
-    isOpeningModal: boolean = false;
+    current: any = null;
+    isOpening: boolean = false;
     isClosingModal: boolean = false;
     url: string;
     modalOptions: any = {};
@@ -14,37 +14,39 @@ export default class Modal {
         if (options) this.modalOptions = WindowContext.toJson(options);
     }
 
-    openModal() {
-        this.isOpeningModal = true;
-        if (this.currentModal != null)
-            if (this.closeModal() === false) return false;
+    open() {
+        this.isOpening = true;
+        if (this.current != null)
+            if (this.close() === false) return false;
 
-        this.currentModal = $(this.getModalTemplate(this.modalOptions));
+        this.current = $(this.getModalTemplate(this.modalOptions));
 
         if (true /* TODO: Change to if Internet Explorer only */)
-            this.currentModal.removeClass("fade");
+            this.current.removeClass("fade");
 
-        var frame = this.currentModal.find("iframe");
+        var frame = this.current.find("iframe");
+
         frame.attr("src", this.url).on("load", (e) => {
-            this.isOpeningModal = false;
+            this.isOpening = false;
             var isHeightProvided = !!(this.modalOptions && this.modalOptions.height);
             if (!isHeightProvided) {
                 var doc = frame.get(0).contentWindow.document;
                 setTimeout(() => frame.height(doc.body.offsetHeight), 10); // Timeout is used due to an IE bug.
             }
-            this.currentModal.find(".modal-body .text-center").remove();
+            this.current.find(".modal-body .text-center").remove();
         });
 
-        this.currentModal.appendTo("body").modal('show');
+        $("body").append(this.current);
+        this.current.modal('show');
     }
 
-    closeModal() {
+    close() {
         if ($.raiseEvent("modal:closing", window) === false) return false;
         this.isClosingModal = true;
 
-        if (this.currentModal) {
-            this.currentModal.modal('hide').remove();
-            this.currentModal = null;
+        if (this.current) {
+            this.current.modal('hide').remove();
+            this.current = null;
             $.raiseEvent("modal:closed", window);
         }
 

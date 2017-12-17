@@ -34,7 +34,7 @@ export default class OlivePage {
        */
     DEFAULT_HTML_EDITOR_MODE = "Medium";
     DEFAULT_MODAL_BACKDROP = "static";
-    currentModal: any = null;
+    modal: any = null;
 
     constructor() {
         $(() => {
@@ -70,7 +70,6 @@ export default class OlivePage {
     initialize() {
 
         this._preInitializeActions.forEach((action) => action());
-
 
         // =================== Standard Features ====================
 
@@ -558,8 +557,8 @@ export default class OlivePage {
         if (action.Notify || action.Notify == "") this.executeNotifyAction(action, trigger);
         else if (action.Script) eval(action.Script);
         else if (action.BrowserAction == "Back") window.history.back();
-        else if (action.BrowserAction == "CloseModal" && this.currentModal && this.closeCurrentModal() === false) return false;
-        else if (action.BrowserAction == "CloseModalRefreshParent" && this.currentModal && this.closeCurrentModal(true) === false) return false;
+        else if (action.BrowserAction == "CloseModal" && this.modal && this.closeCurrentModal() === false) return false;
+        else if (action.BrowserAction == "CloseModalRefreshParent" && this.modal && this.closeCurrentModal(true) === false) return false;
         else if (action.BrowserAction == "Close") window.close();
         else if (action.BrowserAction == "Refresh") this.refresh();
         else if (action.BrowserAction == "Print") window.print();
@@ -576,16 +575,16 @@ export default class OlivePage {
         if (refreshParrent) {
             this.refresh();
         }
-        return this.currentModal.closeModal();
+        return this.modal.closeModal();
     }
 
     openModal(event, url?, options?) {
-        if (this.currentModal) {
-            this.currentModal.closeModal();
-            this.currentModal = false;
+        if (this.modal) {
+            this.modal.close();
+            this.modal = false;
         }
-        this.currentModal = new Modal(event, url, options);
-        this.currentModal.openModal();
+        this.modal = new Modal(event, url, options);
+        this.modal.open();
     }
 
     executeNotifyAction(action: any, trigger: any) {
