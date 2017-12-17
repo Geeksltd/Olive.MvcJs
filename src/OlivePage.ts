@@ -16,6 +16,7 @@ import FileUpload from 'olive/Plugins/FileUpload'
 import ConfirmBox from 'olive/Plugins/ConfirmBox'
 import SubMenu from 'olive/Plugins/SubMenu'
 import Modal from 'olive/Components/Modal'
+import Action from 'olive/Components/Action'
 
 
 export default class OlivePage {
@@ -107,13 +108,13 @@ export default class OlivePage {
         $(".with-submenu").each((i, e) => new SubMenu($(e)));
 
         // =================== Request lifecycle ====================
-        $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => this.ajaxRedirectBackClicked(e));
-        $("a[data-redirect=ajax]").off("click.ajax-redirect").on("click.ajax-redirect", (e) => this.enableAjaxRedirect(e));
+        $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => Action.ajaxRedirectBackClicked(e,this.invokeAjaxActionResult));
+        $("a[data-redirect=ajax]").off("click.ajax-redirect").on("click.ajax-redirect", (e) => Action.enableAjaxRedirect(e,this.invokeAjaxActionResult));
         $('form[method=get]').off("submit.clean-up").on("submit.clean-up", (e) => this.cleanGetFormSubmit(e));
-        $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", (e) => this.invokeActionWithAjax(e, $(e.currentTarget).attr("formaction")));
-        $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", (e) => this.invokeActionWithPost(e));
-        $("[data-change-action]").off("change.data-action").on("change.data-action", (e) => this.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action")));
-        $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => this.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action")));
+        $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", (e) => Action.invokeActionWithAjax(e, $(e.currentTarget).attr("formaction"),false,this.invokeAjaxActionResult));
+        $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", (e) => Action.invokeActionWithPost(e));
+        $("[data-change-action]").off("change.data-action").on("change.data-action", (e) => Action.invokeActionWithAjax(e,$(e.currentTarget).attr("data-change-action"),false,this.invokeAjaxActionResult));
+        $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => Action.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action"),false,this.invokeAjaxActionResult));
 
         WindowContext.updateSubFormStates();
         WindowContext.adjustModalHeight();
@@ -437,73 +438,11 @@ export default class OlivePage {
             .appendTo(button.parent());
     }
 
-    enableAjaxRedirect(event: JQueryEventObject) {
-
-        if (event.ctrlKey || event.button === 1) return true;
-
-        var link = $(event.currentTarget);
-        var url = link.attr('href');
-
-        this.ajaxRedirect(url, link);
-
-        return false;
-    }
-
-    ajaxChangedUrl = 0;
-    isAjaxRedirecting = false;
-    ajaxRedirect(url: string, trigger: JQuery = null, isBack: boolean = false, keepScroll: boolean = false, addToHistory = true) {
-        this.isAjaxRedirecting = true;
-        this.isAwaitingAjaxResponse = true;
-
-        if (window.stop) window.stop();
-        else if (document.execCommand !== undefined) document.execCommand("Stop", false);
-
-        var scrollTopBefore;
-        if (keepScroll) {
-            scrollTopBefore = $(document).scrollTop();
-        }
-
-        this.showPleaseWait();
-
-        $.ajax({
-            url: url,
-            type: 'GET',
-            success: (response) => {
-
-                WindowContext.events = {};
-
-                if (!isBack) {
-                    this.ajaxChangedUrl++;
-                    if (addToHistory) history.pushState({}, $("#page_meta_title").val(), url);
-                }
-
-                this.isAwaitingAjaxResponse = false;
-                this.isAjaxRedirecting = false;
-                this.invokeAjaxActionResult(response, null, trigger);
-                if (keepScroll) {
-                    $(document).scrollTop(scrollTopBefore);
-                }
-            },
-            error: (response) => location.href = url,
-            complete: (response) => WindowContext.hidePleaseWait()
-        });
-
-        return false;
-    }
-
-    ajaxRedirectBackClicked(event) {
-
-        if (this.ajaxChangedUrl == 0) return;
-
-        this.ajaxChangedUrl--;
-        this.ajaxRedirect(location.href, null, true);
-    }
-
     returnToPreviousPage(target) {
         var returnUrl = Url.getQuery("ReturnUrl");
 
         if (returnUrl) {
-            if (target && $(target).is("[data-redirect=ajax]")) this.ajaxRedirect(returnUrl, $(target));
+            if (target && $(target).is("[data-redirect=ajax]")) Action.ajaxRedirect(returnUrl, $(target),false,false,true,this.invokeAjaxActionResult);
             else location.href = returnUrl;
         }
         else history.back();
@@ -529,7 +468,7 @@ export default class OlivePage {
 
             url = Url.removeEmptyQueries(url);
 
-            if (form.is("[data-redirect=ajax]")) this.ajaxRedirect(url, form);
+            if (form.is("[data-redirect=ajax]")) Action.ajaxRedirect(url, form,false,false,true,this.invokeAjaxActionResult);
             else location.href = url;
         }
         catch (error) {
@@ -600,7 +539,7 @@ export default class OlivePage {
         else if (action.Target == '$modal') this.openModal(null, action.Redirect, {});
         else if (action.Target && action.Target != '') this.openWindow(action.Redirect, action.Target);
         else if (action.WithAjax === false) location.replace(action.Redirect);
-        else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true) this.ajaxRedirect(action.Redirect, trigger);
+        else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true) Action.ajaxRedirect(action.Redirect, trigger,false,false,true,this.invokeAjaxActionResult);
         else location.replace(action.Redirect);
     }
 
@@ -658,70 +597,14 @@ export default class OlivePage {
 
     refresh(keepScroll: boolean = false) {
         if ($("main").parent().is("body"))
-            this.ajaxRedirect(location.href, null, false /*isBack*/, keepScroll, false /*addToHistory:*/);
+            Action.ajaxRedirect(location.href, null, false /*isBack*/, keepScroll, false ,this.invokeAjaxActionResult/*addToHistory:*/);
         else location.reload();
-    }
-
-    isAwaitingAjaxResponse = false;
-    invokeActionWithAjax(event, actionUrl, syncCall = false) {
-
-        var trigger = $(event.currentTarget);
-        var triggerUniqueSelector = trigger.getUniqueSelector();
-        var containerModule = trigger.closest("[data-module]");
-
-        if (this.validateForm(trigger) == false) { WindowContext.hidePleaseWait(); return false; }
-
-        var data_before_disable = WindowContext.getPostData(trigger);
-
-        var disableToo = this.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
-        if (disableToo) trigger.attr('disabled', 'disabled');
-
-        trigger.addClass('loading-action-result');
-
-        this.isAwaitingAjaxResponse = true;
-
-        $.ajax({
-            url: actionUrl,
-            type: trigger.attr("data-ajax-method") || 'POST',
-            async: !syncCall,
-            data: data_before_disable,
-            success: (result) => { WindowContext.hidePleaseWait(); this.invokeAjaxActionResult(result, containerModule, trigger); },
-            error: (response) => WindowContext.handleAjaxResponseError(response),
-            complete: (x) => {
-                this.isAwaitingAjaxResponse = false;
-
-                trigger.removeClass('loading-action-result');
-                if (disableToo) trigger.removeAttr('disabled');
-
-                var triggerTabIndex = $(":focusable").index($(triggerUniqueSelector));
-                if (triggerTabIndex > -1) $(":focusable").eq(triggerTabIndex + 1).focus();
-            }
-        });
-
-        return false;
     }
 
     enableSelectColumns(container) {
         var columns = container.find("div.select-cols");
         container.find("a.select-cols").click(() => { columns.show(); return false; });
         columns.find('.cancel').click(() => columns.hide());
-    }
-
-    invokeActionWithPost(event) {
-        var trigger = $(event.currentTarget);
-        var containerModule = trigger.closest("[data-module]");
-
-        if (containerModule.is("form") && this.validateForm(trigger) == false) return false;
-
-        var data = WindowContext.getPostData(trigger);
-        var url = trigger.attr("formaction");
-        var form = $("<form method='post' />").hide().appendTo($("body"));
-
-        for (var item of data)
-            $("<input type='hidden'/>").attr("name", item.name).val(item.value).appendTo(form);
-
-        form.attr("action", url).submit();
-        return false;
     }
 
     dynamicallyLoadedScriptFiles = [];
