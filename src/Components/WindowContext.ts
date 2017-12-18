@@ -205,7 +205,7 @@ export default class WindowContext {
         if (input.val() == sort) sort += ".DESC";
         input.val(sort);
     }
-
+    
     public static adjustIFrameHeightToContents(iframe) {
         $(iframe).height(iframe.contentWindow.document.body.scrollHeight);
     }
