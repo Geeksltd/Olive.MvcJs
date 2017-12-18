@@ -3,23 +3,7 @@ import Form from 'olive/Components/Form'
 import Waiting from 'olive/Components/Waiting'
 
 export default class WindowContext {
-    static initialize() {
-        window["isModal"] = () => WindowContext.isWindowModal();
-        window["getContainerIFrame"] = () => WindowContext.findContainerIFrame();
-    }
-
     static events: { [event: string]: Function[] } = {};
-
-    static findContainerIFrame() {
-        if (parent == null || parent == self) return null;
-        else return <HTMLIFrameElement>$(parent.document).find("iframe")
-            .filter((i, f: any) => (f.contentDocument || f.contentWindow.document) == document).get(0);
-    }
-
-    static isWindowModal() {
-        if ($(window.getContainerIFrame()).closest(".modal").length === 0) return false;
-        return true;
-    }
 
     public static handleAjaxResponseError(response) {
         Waiting.hidePleaseWait();

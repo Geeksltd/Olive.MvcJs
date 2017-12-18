@@ -3,22 +3,6 @@ define(["require", "exports", "olive/Components/Waiting"], function (require, ex
     var WindowContext = /** @class */ (function () {
         function WindowContext() {
         }
-        WindowContext.initialize = function () {
-            window["isModal"] = function () { return WindowContext.isWindowModal(); };
-            window["getContainerIFrame"] = function () { return WindowContext.findContainerIFrame(); };
-        };
-        WindowContext.findContainerIFrame = function () {
-            if (parent == null || parent == self)
-                return null;
-            else
-                return $(parent.document).find("iframe")
-                    .filter(function (i, f) { return (f.contentDocument || f.contentWindow.document) == document; }).get(0);
-        };
-        WindowContext.isWindowModal = function () {
-            if ($(window.getContainerIFrame()).closest(".modal").length === 0)
-                return false;
-            return true;
-        };
         WindowContext.handleAjaxResponseError = function (response) {
             Waiting_1.default.hidePleaseWait();
             console.error(response);

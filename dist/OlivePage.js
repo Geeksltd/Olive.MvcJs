@@ -10,7 +10,7 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             this._preInitializeActions = [];
             this.awaitingAutocompleteResponses = 0;
             this.dynamicallyLoadedScriptFiles = [];
-            WindowContext_1.default.initialize();
+            Modal_1.default.initialize();
             $(function () {
                 //$.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: this.DEFAULT_MODAL_BACKDROP });
                 //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;

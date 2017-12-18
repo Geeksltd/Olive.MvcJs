@@ -4,6 +4,7 @@ export default class Modal {
     isClosingModal: boolean;
     url: string;
     modalOptions: any;
+    static initialize(): void;
     constructor(event?: JQueryEventObject, targeturl?: string, opt?: any);
     open(): boolean;
     close(): boolean;

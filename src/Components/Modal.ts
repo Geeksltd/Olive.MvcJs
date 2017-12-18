@@ -7,6 +7,19 @@ export default class Modal {
     url: string;
     modalOptions: any = {};
 
+    static initialize() {
+        window["isModal"] = () => {
+            if ($(window.getContainerIFrame()).closest(".modal").length === 0) return false;
+            return true;
+        };
+
+        window["getContainerIFrame"] = () => {
+            if (parent == null || parent == self) return null;
+            else return <HTMLIFrameElement>$(parent.document).find("iframe")
+                .filter((i, f: any) => (f.contentDocument || f.contentWindow.document) == document).get(0);
+        };
+    }
+
     constructor(event?: JQueryEventObject, targeturl?: string, opt?: any) {
         let target = event ? $(event.currentTarget) : null;
         this.url = targeturl ? targeturl : target.attr("href");

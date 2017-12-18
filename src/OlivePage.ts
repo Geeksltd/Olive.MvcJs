@@ -30,7 +30,7 @@ export default class OlivePage {
     modal: any = null;
 
     constructor() {
-        WindowContext.initialize();
+        Modal.initialize();
 
         $(() => {
             //$.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: this.DEFAULT_MODAL_BACKDROP });

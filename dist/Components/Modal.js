@@ -12,6 +12,20 @@ define(["require", "exports", "olive/Components/WindowContext"], function (requi
             if (options)
                 this.modalOptions = WindowContext_1.default.toJson(options);
         }
+        Modal.initialize = function () {
+            window["isModal"] = function () {
+                if ($(window.getContainerIFrame()).closest(".modal").length === 0)
+                    return false;
+                return true;
+            };
+            window["getContainerIFrame"] = function () {
+                if (parent == null || parent == self)
+                    return null;
+                else
+                    return $(parent.document).find("iframe")
+                        .filter(function (i, f) { return (f.contentDocument || f.contentWindow.document) == document; }).get(0);
+            };
+        };
         Modal.prototype.open = function () {
             var _this = this;
             this.isOpening = true;
