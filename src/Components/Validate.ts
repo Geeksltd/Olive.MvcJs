@@ -1,5 +1,20 @@
-﻿
+﻿import Config from "olive/Config"
+
 export default class Validate {
+
+    public static configure() {
+
+        var methods: any = $.validator.methods;
+
+        var format = Config.DATE_FORMAT;
+
+        methods.date = function (value, element) {
+            if (this.optional(element)) return true;
+            return moment(value, format).isValid();
+        }
+
+        // TODO: datetime, time
+    }
 
     public static validateForm(trigger) {
 

@@ -1,24 +1,10 @@
-define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Sorting", "olive/Components/MasterDetail", "olive/Components/Alert", "olive/Components/Action", "olive/Components/Waiting", "olive/Plugins/Select", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Plugins/InstantSearch"], function (require, exports, Form_1, Url_1, WindowContext_1, Modal_1, Validate_1, Sorting_1, MasterDetail_1, Alert_1, Action_1, Waiting_1, Select_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, InstantSearch_1) {
+define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Sorting", "olive/Components/MasterDetail", "olive/Components/Alert", "olive/Components/Action", "olive/Components/Waiting", "olive/Plugins/Select", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Plugins/InstantSearch"], function (require, exports, Config_1, Form_1, Url_1, WindowContext_1, Modal_1, Validate_1, Sorting_1, MasterDetail_1, Alert_1, Action_1, Waiting_1, Select_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, InstantSearch_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     // For ckeditor plug-ins to work, this should be globally defined.
     window["CKEDITOR_BASEPATH"] = '/lib/ckeditor/';
     var OlivePage = /** @class */ (function () {
         function OlivePage() {
             var _this = this;
-            // formats: http://momentjs.com/docs/#/displaying/format/
-            this.DATE_FORMAT = "DD/MM/YYYY";
-            this.TIME_FORMAT = "HH:mm";
-            this.DATE_TIME_FORMAT = "DD/MM/YYYY HH:mm";
-            this.MINUTE_INTERVALS = 5;
-            this.DISABLE_BUTTONS_DURING_AJAX = false;
-            this.DATE_LOCALE = "en-gb";
-            this.REDIRECT_SCROLLS_UP = true;
-            this.AUTOCOMPLETE_INPUT_DELAY = 500;
-            /* Possible values: Compact | Medium | Advance | Full
-               To customise modes, change '/Scripts/Lib/ckeditor_config.js' file
-               */
-            this.DEFAULT_HTML_EDITOR_MODE = "Medium";
-            this.DEFAULT_MODAL_BACKDROP = "static";
             this.modal = null;
             this._initializeActions = [];
             this._preInitializeActions = [];
@@ -29,7 +15,7 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
                 //$.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: this.DEFAULT_MODAL_BACKDROP });
                 //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
                 Alert_1.default.enableAlert();
-                _this.configureValidation();
+                Validate_1.default.configure();
                 _this.pageLoad();
             });
             // TODO: Find a cleaner way.
@@ -42,7 +28,7 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
             if (trigger === void 0) { trigger = null; }
             $('[autofocus]:not([data-autofocus=disabled]):first').focus();
             this.initializeUpdatedPage(container, trigger);
-            if (this.REDIRECT_SCROLLS_UP)
+            if (Config_1.default.REDIRECT_SCROLLS_UP)
                 $(window).scrollTop(0);
         };
         OlivePage.prototype.initializeUpdatedPage = function (container, trigger) {
@@ -73,7 +59,7 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
             $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", function () { return WindowContext_1.default.ensureModalResize(); });
             $("select.form-control").each(function (i, e) { return Select_1.default.enhance($(e)); });
             //$.validator.unobtrusive.parse('form');
-            // =================== Plug-ins ====================enableTimeControl
+            // =================== Plug-ins ====================
             $("[name=InstantSearch]").each(function (i, e) { return new InstantSearch_1.default($(e)).enable(); });
             $("input[autocomplete-source]").each(function (i, e) { return new AutoComplete_1.default($(e)).handle(); });
             $("[data-control=date-picker],[data-control=calendar]").each(function (i, e) { return new DatePicker_1.default($(e)); });
@@ -161,16 +147,6 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
             }
             else
                 password.pwstrength(options);
-        };
-        OlivePage.prototype.configureValidation = function () {
-            var methods = $.validator.methods;
-            var format = this.DATE_FORMAT;
-            methods.date = function (value, element) {
-                if (this.optional(element))
-                    return true;
-                return moment(value, format).isValid();
-            };
-            // TODO: datetime, time
         };
         OlivePage.prototype.enableDateDropdown = function (input) {
             // TODO: Implement

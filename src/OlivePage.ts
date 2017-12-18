@@ -1,5 +1,6 @@
 // For ckeditor plug-ins to work, this should be globally defined.
 window["CKEDITOR_BASEPATH"] = '/lib/ckeditor/';
+import Config from "olive/Config"
 
 import Form from 'olive/Components/Form'
 import Url from 'olive/Components/Url'
@@ -24,21 +25,7 @@ import SubMenu from 'olive/Plugins/SubMenu'
 import InstantSearch from 'olive/Plugins/InstantSearch'
 
 export default class OlivePage {
-    // formats: http://momentjs.com/docs/#/displaying/format/
-    DATE_FORMAT = "DD/MM/YYYY";
-    TIME_FORMAT = "HH:mm";
-    DATE_TIME_FORMAT = "DD/MM/YYYY HH:mm";
-    MINUTE_INTERVALS = 5;
-    DISABLE_BUTTONS_DURING_AJAX = false;
-    DATE_LOCALE = "en-gb";
-    REDIRECT_SCROLLS_UP = true;
-    AUTOCOMPLETE_INPUT_DELAY = 500;
 
-    /* Possible values: Compact | Medium | Advance | Full
-       To customise modes, change '/Scripts/Lib/ckeditor_config.js' file
-       */
-    DEFAULT_HTML_EDITOR_MODE = "Medium";
-    DEFAULT_MODAL_BACKDROP = "static";
     modal: any = null;
 
     constructor() {
@@ -48,7 +35,7 @@ export default class OlivePage {
             //$.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: this.DEFAULT_MODAL_BACKDROP });
             //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
             Alert.enableAlert();
-            this.configureValidation();
+            Validate.configure();
             this.pageLoad();
         });
 
@@ -65,7 +52,7 @@ export default class OlivePage {
     pageLoad(container: JQuery = null, trigger: any = null) {
         $('[autofocus]:not([data-autofocus=disabled]):first').focus();
         this.initializeUpdatedPage(container, trigger);
-        if (this.REDIRECT_SCROLLS_UP) $(window).scrollTop(0);
+        if (Config.REDIRECT_SCROLLS_UP) $(window).scrollTop(0);
     }
 
     initializeUpdatedPage(container: JQuery = null, trigger: any = null) {
@@ -98,7 +85,7 @@ export default class OlivePage {
         $("select.form-control").each((i, e) => Select.enhance($(e)));
         //$.validator.unobtrusive.parse('form');
 
-        // =================== Plug-ins ====================enableTimeControl
+        // =================== Plug-ins ====================
         $("[name=InstantSearch]").each((i, e) => new InstantSearch($(e)).enable());
         $("input[autocomplete-source]").each((i, e) => new AutoComplete($(e)).handle());
         $("[data-control=date-picker],[data-control=calendar]").each((i, e) => new DatePicker($(e)));
@@ -200,20 +187,6 @@ export default class OlivePage {
             console.log(container);
         }
         else password.pwstrength(options);
-    }
-
-    configureValidation() {
-
-        var methods: any = $.validator.methods;
-
-        var format = this.DATE_FORMAT;
-
-        methods.date = function (value, element) {
-            if (this.optional(element)) return true;
-            return moment(value, format).isValid();
-        }
-
-        // TODO: datetime, time
     }
 
     enableDateDropdown(input) {

@@ -1,14 +1,4 @@
 export default class OlivePage {
-    DATE_FORMAT: string;
-    TIME_FORMAT: string;
-    DATE_TIME_FORMAT: string;
-    MINUTE_INTERVALS: number;
-    DISABLE_BUTTONS_DURING_AJAX: boolean;
-    DATE_LOCALE: string;
-    REDIRECT_SCROLLS_UP: boolean;
-    AUTOCOMPLETE_INPUT_DELAY: number;
-    DEFAULT_HTML_EDITOR_MODE: string;
-    DEFAULT_MODAL_BACKDROP: string;
     modal: any;
     constructor();
     _initializeActions: any[];
@@ -21,7 +11,6 @@ export default class OlivePage {
     skipNewWindows(): void;
     enableDragSort(container: any): void;
     enablePasswordStengthMeter(container: any): void;
-    configureValidation(): void;
     enableDateDropdown(input: any): void;
     openLinkModal(event: JQueryEventObject): boolean;
     toJson(data: any): any;
