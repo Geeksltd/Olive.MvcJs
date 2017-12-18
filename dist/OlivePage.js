@@ -163,10 +163,10 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
                 eval(action.Script);
             else if (action.BrowserAction == "Back")
                 window.history.back();
-            else if (action.BrowserAction == "CloseModal" && this.modal && this.closeCurrentModal() === false)
+            else if (action.BrowserAction == "CloseModal" && this.modal && this.modal.closeModal() === false)
                 return false;
-            else if (action.BrowserAction == "CloseModalRefreshParent" && this.modal && this.closeCurrentModal(true) === false)
-                return false;
+            else if (action.BrowserAction == "CloseModalRefreshParent")
+                return this.refresh();
             else if (action.BrowserAction == "Close")
                 window.close();
             else if (action.BrowserAction == "Refresh")
@@ -184,13 +184,6 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             else
                 alert("Don't know how to handle: " + JSON.stringify(action).htmlEncode());
             return true;
-        };
-        OlivePage.prototype.closeCurrentModal = function (refreshParrent) {
-            if (refreshParrent === void 0) { refreshParrent = false; }
-            if (refreshParrent) {
-                this.refresh();
-            }
-            return this.modal.closeModal();
         };
         OlivePage.prototype.openModal = function (event, url, options) {
             if (this.modal) {
@@ -228,6 +221,7 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
                 Action_1.default.ajaxRedirect(location.href, null, false /*isBack*/, keepScroll, false, this.invokeAjaxActionResult /*addToHistory:*/);
             else
                 location.reload();
+            return false;
         };
         OlivePage.prototype.replaceMain = function (element, trigger) {
             var _this = this;

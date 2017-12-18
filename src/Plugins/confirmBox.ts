@@ -9,9 +9,12 @@ export default class ConfirmBox {
     public enable() {
         this.button.off("click.confirm-question").bindFirst("click.confirm-question", (e) => {
             e.stopImmediatePropagation();
-            //return false;
+
             alertify.set({
-                labels: { ok: this.button.attr('data-confirm-ok') || 'OK', cancel: this.button.attr('data-confirm-cancel') || 'Cancel' }
+                labels: {
+                    ok: this.button.attr('data-confirm-ok') || 'OK',
+                    cancel: this.button.attr('data-confirm-cancel') || 'Cancel'
+                }
             });
 
             this.showConfirm(this.button.attr('data-confirm-question'), () => {

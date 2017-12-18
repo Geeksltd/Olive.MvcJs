@@ -23,3 +23,7 @@ interface String {
     htmlEncode(): string;
     htmlDecode(): string;
 }
+
+interface JQueryStatic {
+    raiseEvent(event: string, owner: any, data?: any): boolean;
+}

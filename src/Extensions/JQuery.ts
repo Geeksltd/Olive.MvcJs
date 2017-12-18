@@ -1,8 +1,4 @@
 ﻿
-interface JQueryStatic {
-    raiseEvent(event: string, owner: any, data?: any): boolean;
-}
-
 // [name] is the name of the event "click", "mouseover", .. 
 // same as you'd pass it to bind()
 // [fn] is the handler function

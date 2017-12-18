@@ -15,11 +15,10 @@ export default class OlivePage {
     cleanGetFormSubmit(event: JQueryEventObject): boolean;
     executeActions(actions: any, trigger?: any): void;
     executeAction(action: any, trigger: any): boolean;
-    closeCurrentModal(refreshParrent?: boolean): any;
     openModal(event: any, url?: any, options?: any): void;
     executeNotifyAction(action: any, trigger: any): void;
     executeRedirectAction(action: any, trigger: any): void;
-    refresh(keepScroll?: boolean): void;
+    refresh(keepScroll?: boolean): boolean;
     dynamicallyLoadedScriptFiles: any[];
     replaceMain(element: JQuery, trigger: any): void;
     invokeAjaxActionResult(response: any, containerModule: any, trigger: any): void;

@@ -8,9 +8,11 @@ define(["require", "exports"], function (require, exports) {
             var _this = this;
             this.button.off("click.confirm-question").bindFirst("click.confirm-question", function (e) {
                 e.stopImmediatePropagation();
-                //return false;
                 alertify.set({
-                    labels: { ok: _this.button.attr('data-confirm-ok') || 'OK', cancel: _this.button.attr('data-confirm-cancel') || 'Cancel' }
+                    labels: {
+                        ok: _this.button.attr('data-confirm-ok') || 'OK',
+                        cancel: _this.button.attr('data-confirm-cancel') || 'Cancel'
+                    }
                 });
                 _this.showConfirm(_this.button.attr('data-confirm-question'), function () {
                     _this.button.off("click.confirm-question");

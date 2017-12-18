@@ -199,8 +199,8 @@ export default class OlivePage {
         if (action.Notify || action.Notify == "") this.executeNotifyAction(action, trigger);
         else if (action.Script) eval(action.Script);
         else if (action.BrowserAction == "Back") window.history.back();
-        else if (action.BrowserAction == "CloseModal" && this.modal && this.closeCurrentModal() === false) return false;
-        else if (action.BrowserAction == "CloseModalRefreshParent" && this.modal && this.closeCurrentModal(true) === false) return false;
+        else if (action.BrowserAction == "CloseModal" && this.modal && this.modal.closeModal() === false) return false;
+        else if (action.BrowserAction == "CloseModalRefreshParent") return this.refresh();
         else if (action.BrowserAction == "Close") window.close();
         else if (action.BrowserAction == "Refresh") this.refresh();
         else if (action.BrowserAction == "Print") window.print();
@@ -211,13 +211,6 @@ export default class OlivePage {
         else alert("Don't know how to handle: " + JSON.stringify(action).htmlEncode());
 
         return true;
-    }
-
-    closeCurrentModal(refreshParrent: boolean = false) {
-        if (refreshParrent) {
-            this.refresh();
-        }
-        return this.modal.closeModal();
     }
 
     openModal(event, url?, options?) {
@@ -247,10 +240,12 @@ export default class OlivePage {
         else location.replace(action.Redirect);
     }
 
-    refresh(keepScroll: boolean = false) {
+    refresh(keepScroll = false) {
         if ($("main").parent().is("body"))
             Action.ajaxRedirect(location.href, null, false /*isBack*/, keepScroll, false, this.invokeAjaxActionResult/*addToHistory:*/);
         else location.reload();
+
+        return false;
     }
 
     dynamicallyLoadedScriptFiles = [];
