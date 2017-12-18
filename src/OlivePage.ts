@@ -4,7 +4,15 @@ window["CKEDITOR_BASEPATH"] = '/lib/ckeditor/';
 import Form from 'olive/Components/Form'
 import Url from 'olive/Components/Url'
 import WindowContext from 'olive/Components/WindowContext';
+import Modal from 'olive/Components/Modal'
+import Validate from 'olive/Components/Validate'
+import Sorting from 'olive/Components/Sorting'
+import MasterDetail from 'olive/Components/MasterDetail'
+import Alert from 'olive/Components/Alert'
+import Action from 'olive/Components/Action'
+import Waiting from 'olive/Components/Waiting'
 
+import Select from 'olive/Plugins/Select'
 import TimeControl from 'olive/Plugins/TimeControl'
 import AutoComplete from 'olive/Plugins/AutoComplete'
 import Slider from 'olive/Plugins/Slider'
@@ -13,17 +21,6 @@ import NumbericUpDown from 'olive/Plugins/NumericUpDown'
 import FileUpload from 'olive/Plugins/FileUpload'
 import ConfirmBox from 'olive/Plugins/ConfirmBox'
 import SubMenu from 'olive/Plugins/SubMenu'
-import Modal from 'olive/Components/Modal'
-import Validate from 'olive/Components/Validate'
-import Sorting from 'olive/Components/Sorting'
-import MasterDetail from 'olive/Components/MasterDetail'
-
-import Alert from 'olive/Components/Alert'
-import Action from 'olive/Components/Action'
-import Waiting from 'olive/Components/Waiting'
-
-import Select from 'olive/Plugins/Select'
-
 
 export default class OlivePage {
     // formats: http://momentjs.com/docs/#/displaying/format/
