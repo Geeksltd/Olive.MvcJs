@@ -1,5 +1,5 @@
 /// <reference path="Typings/alertify/alertify.d.ts" />
-define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Components/Modal"], function (require, exports, Form_1, Url_1, WindowContext_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, Modal_1) {
+define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Components/Modal", "olive/Components/Validate"], function (require, exports, Form_1, Url_1, WindowContext_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, Modal_1, Validate_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     // For ckeditor plug-ins to work, this should be globally defined.
     window["CKEDITOR_BASEPATH"] = '/lib/ckeditor/';
@@ -229,20 +229,6 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
                     e.preventDefault();
             });
         };
-        OlivePage.prototype.validateForm = function (trigger) {
-            if (trigger.is("[formnovalidate]"))
-                return true;
-            var form = trigger.closest("form");
-            var validator = form.validate();
-            if (!validator.form()) {
-                var alertUntyped = alert;
-                if (form.is("[data-validation-style*=message-box]"))
-                    alertUntyped(validator.errorList.map(function (err) { return err.message; }).join('\r\n'), function () { setTimeout(function () { return validator.focusInvalid(); }, 0); });
-                validator.focusInvalid();
-                return false;
-            }
-            return true;
-        };
         //enableHtmlEditor(input: any) {
         //    $.getScript(CKEDITOR_BASEPATH + "ckeditor.js", () => {
         //        $.getScript(CKEDITOR_BASEPATH + "adapters/jquery.js", () => {
@@ -439,7 +425,7 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
         };
         OlivePage.prototype.cleanGetFormSubmit = function (event) {
             var form = $(event.currentTarget);
-            if (this.validateForm(form) == false) {
+            if (Validate_1.default.validateForm(form) == false) {
                 WindowContext_1.default.hidePleaseWait();
                 return false;
             }
@@ -595,7 +581,7 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
             var trigger = $(event.currentTarget);
             var triggerUniqueSelector = trigger.getUniqueSelector();
             var containerModule = trigger.closest("[data-module]");
-            if (this.validateForm(trigger) == false) {
+            if (Validate_1.default.validateForm(trigger) == false) {
                 WindowContext_1.default.hidePleaseWait();
                 return false;
             }
@@ -632,7 +618,7 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
         OlivePage.prototype.invokeActionWithPost = function (event) {
             var trigger = $(event.currentTarget);
             var containerModule = trigger.closest("[data-module]");
-            if (containerModule.is("form") && this.validateForm(trigger) == false)
+            if (containerModule.is("form") && Validate_1.default.validateForm(trigger) == false)
                 return false;
             var data = WindowContext_1.default.getPostData(trigger);
             var url = trigger.attr("formaction");

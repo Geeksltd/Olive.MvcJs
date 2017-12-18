@@ -29,7 +29,6 @@ export default class OlivePage {
     enableDateDropdown(input: any): void;
     enableSelectAllToggle(event: any): void;
     enableInstantSearch(control: any): void;
-    validateForm(trigger: any): boolean;
     alertUnobtrusively(message: string, style?: string): void;
     enableAlert(): void;
     alert(text: string, style?: string, callback?: Function): void;
