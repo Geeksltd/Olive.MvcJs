@@ -1,22 +1,25 @@
-define(["require", "exports", "olive/Components/Form", "olive/Components/Waiting"], function (require, exports, Form_1, Waiting_1) {
+define(["require", "exports", "olive/Components/Waiting"], function (require, exports, Waiting_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var WindowContext = /** @class */ (function () {
         function WindowContext() {
         }
         WindowContext.initialize = function () {
-            var _this = this;
-            window["isModal"] = function () {
-                if ($(_this.getContainerIFrame()).closest(".modal").length === 0)
-                    return false;
-                return true;
-            };
+            window["isModal"] = function () { return WindowContext.isWindowModal(); };
+            window["getContainerIFrame"] = function () { return WindowContext.findContainerIFrame(); };
         };
-        WindowContext.getContainerIFrame = function () {
+        WindowContext.findContainerIFrame = function () {
             if (parent == null || parent == self)
                 return null;
-            return $(parent.document).find("iframe").filter(function (i, f) { return (f.contentDocument || f.contentWindow.document) == document; }).get(0);
+            else
+                return $(parent.document).find("iframe")
+                    .filter(function (i, f) { return (f.contentDocument || f.contentWindow.document) == document; }).get(0);
         };
-        WindowContext.adjustModalHeightForDataPicker = function (target) {
+        WindowContext.isWindowModal = function () {
+            if ($(window.getContainerIFrame()).closest(".modal").length === 0)
+                return false;
+            return true;
+        };
+        WindowContext.expandModalToFitPicker = function (target) {
             var datepicker = $(target.currentTarget).siblings('.bootstrap-datetimepicker-widget');
             if (datepicker.length === 0) {
                 this.adjustModalHeight();
@@ -28,26 +31,10 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Waiting
         };
         WindowContext.adjustModalHeight = function (overflow) {
             if (window.isModal()) {
-                var frame = $(this.getContainerIFrame());
+                var frame = $(window.getContainerIFrame());
                 if (frame.attr("data-has-explicit-height") != 'true')
                     frame.height(document.body.offsetHeight + (overflow || 0));
             }
-        };
-        WindowContext.getPostData = function (trigger) {
-            var form = trigger.closest("[data-module]");
-            if (!form.is("form"))
-                form = $("<form />").append(form.clone(true));
-            var data = Form_1.default.merge(form.serializeArray());
-            // If it's master-details, then we need the index.
-            var subFormContainer = trigger.closest(".subform-item");
-            if (subFormContainer != null) {
-                data.push({
-                    name: "subFormIndex",
-                    value: subFormContainer.closest(".horizontal-subform, .vertical-subform").find(".subform-item").index(subFormContainer).toString()
-                });
-            }
-            data.push({ name: "current.request.url", value: window.location.pathAndQuery() });
-            return data;
         };
         WindowContext.handleAjaxResponseError = function (response) {
             Waiting_1.default.hidePleaseWait();
@@ -216,11 +203,6 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Waiting
         WindowContext.ensureModalResize = function () {
             var _this = this;
             setTimeout(function () { return _this.adjustModalHeight(); }, 1);
-        };
-        WindowContext.setting = {
-            TIME_FORMAT: "HH:mm",
-            MINUTE_INTERVALS: 5,
-            DATE_LOCALE: "en-gb"
         };
         WindowContext.events = {};
         return WindowContext;

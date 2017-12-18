@@ -42,23 +42,7 @@ export default class WindowContext {
         }
     }
 
-    public static getPostData(trigger: JQuery): JQuerySerializeArrayElement[] {
-        var form = trigger.closest("[data-module]");
-        if (!form.is("form")) form = $("<form />").append(form.clone(true));
-        var data = Form.merge(form.serializeArray());
-        // If it's master-details, then we need the index.
-        var subFormContainer = trigger.closest(".subform-item");
-        if (subFormContainer != null) {
-            data.push({
-                name: "subFormIndex",
-                value: subFormContainer.closest(".horizontal-subform, .vertical-subform").find(".subform-item").index(subFormContainer).toString()
-            });
-        }
-
-
-        data.push({ name: "current.request.url", value: window.location.pathAndQuery() });
-        return data;
-    }
+   
 
     public static handleAjaxResponseError(response) {
         Waiting.hidePleaseWait();

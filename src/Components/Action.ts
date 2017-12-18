@@ -1,6 +1,7 @@
 import Waiting from 'olive/Components/Waiting'
 import WindowContext from 'olive/Components/WindowContext'
 import Validate from 'olive/Components/Validate'
+import Form from 'olive/Components/Form'
 import Config from "olive/Config"
 
 export default class Action {
@@ -20,7 +21,7 @@ export default class Action {
         var containerModule = trigger.closest("[data-module]");
         if (containerModule.is("form") && Validate.validateForm(trigger) == false) return false;
 
-        var data = WindowContext.getPostData(trigger);
+        var data = Form.getPostData(trigger);
         var url = trigger.attr("formaction");
         var form = $("<form method='post' />").hide().appendTo($("body"));
 
@@ -46,7 +47,7 @@ export default class Action {
         var containerModule = trigger.closest("[data-module]");
 
         if (Validate.validateForm(trigger) == false) { Waiting.hidePleaseWait(); return false; }
-        var data_before_disable = WindowContext.getPostData(trigger);
+        var data_before_disable = Form.getPostData(trigger);
         var disableToo = Config.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
         if (disableToo) trigger.attr('disabled', 'disabled');
         trigger.addClass('loading-action-result');

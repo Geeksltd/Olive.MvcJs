@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Components/WindowContext", "olive/Components/Url", "olive/Config"], function (require, exports, WindowContext_1, Url_1, Config_1) {
+define(["require", "exports", "olive/Components/WindowContext", "olive/Components/Url", "olive/Components/Form", "olive/Config"], function (require, exports, WindowContext_1, Url_1, Form_1, Config_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var AutoComplete = /** @class */ (function () {
         function AutoComplete(targetInput) {
@@ -73,7 +73,7 @@ define(["require", "exports", "olive/Components/WindowContext", "olive/Component
             this.awaitingAutocompleteResponses++;
             var url = this.input.attr("autocomplete-source");
             url = Url_1.default.removeQuery(url, this.input.attr('name')); // Remove old text.
-            var data = WindowContext_1.default.getPostData(this.input);
+            var data = Form_1.default.getPostData(this.input);
             setTimeout(function () {
                 if (_this.awaitingAutocompleteResponses > 1) {
                     _this.awaitingAutocompleteResponses--;

@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Components/Waiting", "olive/Components/WindowContext", "olive/Components/Validate", "olive/Config"], function (require, exports, Waiting_1, WindowContext_1, Validate_1, Config_1) {
+define(["require", "exports", "olive/Components/Waiting", "olive/Components/WindowContext", "olive/Components/Validate", "olive/Components/Form", "olive/Config"], function (require, exports, Waiting_1, WindowContext_1, Validate_1, Form_1, Config_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var Action = /** @class */ (function () {
         function Action() {
@@ -14,7 +14,7 @@ define(["require", "exports", "olive/Components/Waiting", "olive/Components/Wind
             var containerModule = trigger.closest("[data-module]");
             if (containerModule.is("form") && Validate_1.default.validateForm(trigger) == false)
                 return false;
-            var data = WindowContext_1.default.getPostData(trigger);
+            var data = Form_1.default.getPostData(trigger);
             var url = trigger.attr("formaction");
             var form = $("<form method='post' />").hide().appendTo($("body"));
             for (var _i = 0, data_1 = data; _i < data_1.length; _i++) {
@@ -42,7 +42,7 @@ define(["require", "exports", "olive/Components/Waiting", "olive/Components/Wind
                 Waiting_1.default.hidePleaseWait();
                 return false;
             }
-            var data_before_disable = WindowContext_1.default.getPostData(trigger);
+            var data_before_disable = Form_1.default.getPostData(trigger);
             var disableToo = Config_1.default.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
             if (disableToo)
                 trigger.attr('disabled', 'disabled');

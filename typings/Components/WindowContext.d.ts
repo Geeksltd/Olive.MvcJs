@@ -1,17 +1,12 @@
 export default class WindowContext {
-    static setting: {
-        TIME_FORMAT: string;
-        MINUTE_INTERVALS: number;
-        DATE_LOCALE: string;
-    };
     static initialize(): void;
     static events: {
         [event: string]: Function[];
     };
-    static getContainerIFrame(): HTMLElement;
+    static findContainerIFrame(): HTMLIFrameElement;
+    static isWindowModal(): boolean;
     static expandModalToFitPicker(target: any): void;
     static adjustModalHeight(overflow?: number): void;
-    static getPostData(trigger: JQuery): JQuerySerializeArrayElement[];
     static handleAjaxResponseError(response: any): void;
     static toJson(data: any): any;
     static applyColumns(event: JQueryEventObject): void;

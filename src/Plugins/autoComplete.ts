@@ -1,6 +1,7 @@
 
 import WindowContext from "olive/Components/WindowContext"
 import Url from "olive/Components/Url"
+import Form from "olive/Components/Form"
 import Config from "olive/Config"
 
 export default class AutoComplete {
@@ -82,7 +83,7 @@ export default class AutoComplete {
         this.awaitingAutocompleteResponses++;
         var url = this.input.attr("autocomplete-source");
         url = Url.removeQuery(url, this.input.attr('name')); // Remove old text.
-        var data = WindowContext.getPostData(this.input);
+        var data = Form.getPostData(this.input);
 
         setTimeout(() => {
             if (this.awaitingAutocompleteResponses > 1) {

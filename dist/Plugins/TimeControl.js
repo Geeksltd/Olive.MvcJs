@@ -4,8 +4,8 @@ define(["require", "exports", "olive/Components/WindowContext", "olive/Config"],
         function TimeControl(targetInput) {
             var input = targetInput;
             if (window.isModal()) {
-                input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", function (e) { return WindowContext_1.default.adjustModalHeightForDataPicker(e); });
-                input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", function (e) { return WindowContext_1.default.adjustModalHeightForDataPicker(e); });
+                input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", function (e) { return WindowContext_1.default.expandModalToFitPicker(e); });
+                input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", function (e) { return WindowContext_1.default.expandModalToFitPicker(e); });
             }
             input.attr("data-autofocus", "disabled");
             input.datetimepicker({
