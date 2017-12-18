@@ -48,7 +48,7 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             $(".select-grid-cols .group-control").each(function (i, e) { return WindowContext_1.default.enableSelectColumns($(e)); });
             $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", function (e) { return WindowContext_1.default.enableSelectAllToggle(e); });
             $("[data-user-help]").each(function (i, e) { return WindowContext_1.default.enableUserHelp($(e)); });
-            $("form input, form select").off("keypress.default-button").on("keypress.default-button", function (e) { return WindowContext_1.default.handleDefaultButton(e); });
+            $("form input, form select").off("keypress.default-button").on("keypress.default-button", function (e) { return Form_1.default.onDefaultButtonKeyPress(e); });
             $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", function (e) { return Paging_1.default.onSizeChanged(e); });
             $("[data-sort-item]").parents("tbody").each(function (i, e) { return _this.enableDragSort($(e)); });
             $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", function (e) { return Paging_1.default.enableWithAjax(e); });

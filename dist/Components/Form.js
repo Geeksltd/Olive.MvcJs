@@ -41,6 +41,18 @@ define(["require", "exports"], function (require, exports) {
             data.push({ name: "current.request.url", value: window.location.pathAndQuery() });
             return data;
         };
+        Form.onDefaultButtonKeyPress = function (event) {
+            if (event.which === 13) {
+                var target = $(event.currentTarget);
+                var button = target.closest("[data-module]").find('[default-button]:first'); // Same module
+                if (button.length == 0)
+                    button = $('[default-button]:first'); // anywhere
+                button.click();
+                return false;
+            }
+            else
+                return true;
+        };
         return Form;
     }());
     exports.default = Form;
