@@ -8,6 +8,7 @@ import WindowContext from 'olive/Components/WindowContext';
 import Modal from 'olive/Components/Modal'
 import Validate from 'olive/Components/Validate'
 import Sorting from 'olive/Components/Sorting'
+import Paging from 'olive/Components/Paging'
 import MasterDetail from 'olive/Components/MasterDetail'
 import Alert from 'olive/Components/Alert'
 import Action from 'olive/Components/Action'
@@ -74,9 +75,9 @@ export default class OlivePage {
         $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", (e) => WindowContext.enableSelectAllToggle(e));
         $("[data-user-help]").each((i, e) => WindowContext.enableUserHelp($(e)));
         $("form input, form select").off("keypress.default-button").on("keypress.default-button", (e) => WindowContext.handleDefaultButton(e));
-        $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", (e) => WindowContext.paginationSizeChanged(e));
+        $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", (e) => Paging.onSizeChanged(e));
         $("[data-sort-item]").parents("tbody").each((i, e) => this.enableDragSort($(e)));
-        $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", (e) => WindowContext.enableAjaxPaging(e));
+        $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", (e) => Paging.enableWithAjax(e));
         $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", (e) => Sorting.enableAjaxSorting(e));
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", (e) => WindowContext.adjustIFrameHeightToContents(e.currentTarget));
         $("th[data-sort]").each((i, e) => Sorting.setSortHeaderClass($(e)));

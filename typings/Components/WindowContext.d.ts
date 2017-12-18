@@ -12,8 +12,6 @@ export default class WindowContext {
     static enableSelectAllToggle(event: any): void;
     static enableUserHelp(element: JQuery): void;
     static handleDefaultButton(event: JQueryEventObject): boolean;
-    static paginationSizeChanged(event: Event): void;
-    static enableAjaxPaging(event: JQueryEventObject): void;
     static adjustIFrameHeightToContents(iframe: any): void;
     static cleanUpNumberField(field: JQuery): void;
 }
