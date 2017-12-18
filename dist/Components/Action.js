@@ -54,7 +54,7 @@ define(["require", "exports", "olive/Components/Waiting", "olive/Components/Wind
                 async: !syncCall,
                 data: data_before_disable,
                 success: function (result) { Waiting_1.default.hidePleaseWait(); callback(result, containerModule, trigger); },
-                error: function (response) { return WindowContext_1.default.handleAjaxResponseError(response); },
+                error: function (response) { return _this.handleAjaxResponseError(response); },
                 complete: function (x) {
                     _this.isAwaitingAjaxResponse = false;
                     trigger.removeClass('loading-action-result');
@@ -105,6 +105,23 @@ define(["require", "exports", "olive/Components/Waiting", "olive/Components/Wind
                 complete: function (response) { return Waiting_1.default.hidePleaseWait(); }
             });
             return false;
+        };
+        Action.handleAjaxResponseError = function (response) {
+            Waiting_1.default.hidePleaseWait();
+            console.error(response);
+            var text = response.responseText;
+            if (text.indexOf("<html") > -1) {
+                document.write(text);
+            }
+            else if (text.indexOf("<form") > -1) {
+                var form = $("form", document);
+                if (form.length)
+                    form.replaceWith($(text));
+                else
+                    document.write(text);
+            }
+            else
+                alert(text);
         };
         Action.ajaxChangedUrl = 0;
         Action.isAjaxRedirecting = false;

@@ -31,4 +31,10 @@ export default class Validate {
         }
         return true;
     }
+
+    public static reloadRules(form: JQuery) {
+        form.removeData("validator").removeData("unobtrusiveValidation");
+        //$.validator.unobtrusive.parse(form);
+    }
+
 }

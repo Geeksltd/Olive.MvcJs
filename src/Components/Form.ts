@@ -56,4 +56,9 @@
             return false;
         } else return true;
     }
+
+    public static cleanUpNumberField(field: JQuery) {
+        var domElement = <HTMLInputElement>field.get(0);
+        field.val(field.val().replace(/[^\d.-]/g, ""));
+    }
 }

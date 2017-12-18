@@ -1,8 +1,8 @@
 
-import WindowContext from "olive/Components/WindowContext"
 import Url from "olive/Components/Url"
 import Form from "olive/Components/Form"
 import Config from "olive/Config"
+import Action from "olive/Components/Action"
 
 export default class AutoComplete {
     input: any;
@@ -91,7 +91,7 @@ export default class AutoComplete {
                 return;
             }
 
-            $.post(url, data).fail(WindowContext.handleAjaxResponseError).done((result) => {
+            $.post(url, data).fail(Action.handleAjaxResponseError).done((result) => {
                 result = result.map((i) => {
                     return {
                         Display: i.Display || i.Text || i.Value,

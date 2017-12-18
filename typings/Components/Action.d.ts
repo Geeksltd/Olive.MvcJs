@@ -7,4 +7,5 @@ export default class Action {
     static enableAjaxRedirect(event: JQueryEventObject, callback: any): boolean;
     static invokeActionWithAjax(event: any, actionUrl: any, syncCall: boolean, callback: any): boolean;
     static ajaxRedirect(url: string, trigger: JQuery, isBack: boolean, keepScroll: boolean, addToHistory: boolean, callback: (response: any, containerModule: JQuery, trigger: JQuery) => void): boolean;
+    static handleAjaxResponseError(response: any): void;
 }

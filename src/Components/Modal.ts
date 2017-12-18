@@ -125,4 +125,9 @@ export default class Modal {
         var overflow = Math.max(offset, 0);
         this.adjustHeight(overflow);
     }
+
+    public static ensureNonModal() {
+        if (window.isModal())
+            parent.window.location.href = location.href;
+    }
 }

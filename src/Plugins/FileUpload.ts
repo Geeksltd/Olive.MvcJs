@@ -1,4 +1,4 @@
-import WindowContext from 'olive/Components/WindowContext'
+import Action from "olive/Components/Action"
 
 export default class FileUpload {
     input: any;
@@ -65,10 +65,10 @@ export default class FileUpload {
                 var progress = parseInt((data.loaded / data.total * 100).toString(), 10);
                 progressBar.width(progress + '%');
             },
-            error: (response) => { WindowContext.handleAjaxResponseError(response); fileLabel.val(''); },
+            error: (response) => { Action.handleAjaxResponseError(response); fileLabel.val(''); },
             success: (response) => {
                 if (response.Error) {
-                    WindowContext.handleAjaxResponseError({ responseText: response.Error });
+                    Action.handleAjaxResponseError({ responseText: response.Error });
                     fileLabel.val('');
                 }
                 else {

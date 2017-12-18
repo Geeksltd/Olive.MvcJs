@@ -59,7 +59,7 @@ export default class Action {
             async: !syncCall,
             data: data_before_disable,
             success: (result) => { Waiting.hidePleaseWait(); callback(result, containerModule, trigger); },
-            error: (response) => WindowContext.handleAjaxResponseError(response),
+            error: (response) => this.handleAjaxResponseError(response),
             complete: (x) => {
                 this.isAwaitingAjaxResponse = false;
                 trigger.removeClass('loading-action-result');
@@ -106,5 +106,21 @@ export default class Action {
             complete: (response) => Waiting.hidePleaseWait()
         });
         return false;
+    }
+
+    public static handleAjaxResponseError(response) {
+        Waiting.hidePleaseWait();
+        console.error(response);
+
+        var text = response.responseText;
+        if (text.indexOf("<html") > -1) {
+            document.write(text);
+        }
+        else if (text.indexOf("<form") > -1) {
+            var form = $("form", document);
+            if (form.length) form.replaceWith($(text));
+            else document.write(text);
+        }
+        else alert(text);
     }
 }

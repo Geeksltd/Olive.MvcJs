@@ -13,6 +13,7 @@ import MasterDetail from 'olive/Components/MasterDetail'
 import Alert from 'olive/Components/Alert'
 import Action from 'olive/Components/Action'
 import Waiting from 'olive/Components/Waiting'
+import Grid from 'olive/Components/Grid'
 
 import Select from 'olive/Plugins/Select'
 import TimeControl from 'olive/Plugins/TimeControl'
@@ -68,20 +69,20 @@ export default class OlivePage {
 
         // =================== Standard Features ====================
 
-        $(".select-cols .apply").off("click.apply-columns").on("click.apply-columns", (e) => WindowContext.applyColumns(e));
+        $(".select-cols .apply").off("click.apply-columns").on("click.apply-columns", (e) => Grid.applyColumns(e));
         $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", (e) => MasterDetail.deleteSubForm(e));
         $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
-        $(".select-grid-cols .group-control").each((i, e) => WindowContext.enableSelectColumns($(e)));
-        $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", (e) => WindowContext.enableSelectAllToggle(e));
-        $("[data-user-help]").each((i, e) => WindowContext.enableUserHelp($(e)));
+        $(".select-grid-cols .group-control").each((i, e) => Grid.enableSelectColumns($(e)));
+        $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", (e) => Grid.enableSelectAllToggle(e));
+        $("[data-user-help]").each((i, e) => this.enableUserHelp($(e)));
         $("form input, form select").off("keypress.default-button").on("keypress.default-button", (e) => Form.onDefaultButtonKeyPress(e));
         $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", (e) => Paging.onSizeChanged(e));
         $("[data-sort-item]").parents("tbody").each((i, e) => this.enableDragSort($(e)));
         $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", (e) => Paging.enableWithAjax(e));
         $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", (e) => Sorting.enableAjaxSorting(e));
-        $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", (e) => WindowContext.adjustIFrameHeightToContents(e.currentTarget));
+        $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", (e) => WindowContext.fitFrameContentHeight(e.currentTarget));
         $("th[data-sort]").each((i, e) => Sorting.setSortHeaderClass($(e)));
-        $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", (e) => WindowContext.cleanUpNumberField($(e.currentTarget)));
+        $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", (e) => Form.cleanUpNumberField($(e.currentTarget)));
         $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => Modal.ensureHeight());
         $("select.form-control").each((i, e) => Select.enhance($(e)));
         //$.validator.unobtrusive.parse('form');
@@ -303,8 +304,8 @@ export default class OlivePage {
         else if (action.BrowserAction == "Refresh") this.refresh();
         else if (action.BrowserAction == "Print") window.print();
         else if (action.BrowserAction == "ShowPleaseWait") Waiting.showPleaseWait(action.BlockScreen);
-        else if (action.ReplaceSource) this.replaceListControlSource(action.ReplaceSource, action.Items);
-        else if (action.Download) this.download(action.Download);
+        else if (action.ReplaceSource) Select.replaceSource(action.ReplaceSource, action.Items);
+        else if (action.Download) window.download(action.Download);
         else if (action.Redirect) this.executeRedirectAction(action, trigger);
         else alert("Don't know how to handle: " + JSON.stringify(action).htmlEncode());
 
@@ -319,6 +320,7 @@ export default class OlivePage {
     }
 
     openModal(event, url?, options?) {
+
         if (this.modal) {
             this.modal.close();
             this.modal = false;
@@ -344,33 +346,7 @@ export default class OlivePage {
         else location.replace(action.Redirect);
     }
 
-    replaceListControlSource(controlId: string, items) {
 
-        var $control = $('#' + controlId);
-
-        if ($control.is("select")) {
-            $control.empty();
-            for (var i = 0; i < items.length; i++) {
-                $control.append($("<option value='" + items[i].Value + "'>" + items[i].Text + "</option>"));
-            }
-
-        } else {
-            console.log("Unable to replace list items");
-        }
-    }
-
-    download(url: string) {
-
-        if (window.isModal()) {
-            var page = <OlivePage>window.parent["page"];
-            if (page && page.download) {
-                page.download(url);
-                return;
-            }
-        }
-
-        $("<iframe style='visibility:hidden; width:1px; height:1px;'></iframe>").attr("src", url).appendTo("body");
-    }
 
     openWindow(url: string, target: string) {
         window.open(url, target);
@@ -441,7 +417,7 @@ export default class OlivePage {
 
             container.append(asElement);
 
-            this.reloadValidationRules(trigger.parents("form"));
+            Validate.reloadRules(trigger.parents("form"));
 
             MasterDetail.updateSubFormStates();
 
@@ -453,55 +429,9 @@ export default class OlivePage {
         }
     }
 
-    ensureNonModal() {
-        if (window.isModal())
-            parent.window.location.href = location.href;
+    public enableUserHelp(element: JQuery) {
+        element.click(() => false);
+        var message = element.attr('data-user-help');  // todo: unescape message and conver to html
+        element['popover']({ trigger: 'focus', content: message });
     }
-
-    enableSlider(input) {
-        var options = { min: 0, max: 100, value: null, range: false, formatter: null, tooltip: 'always', upper: null, tooltip_split: false };
-
-        var data_options = input.attr("data-options") ? JSON.parse(Form.cleanJson(input.attr("data-options"))) : null;
-        if (data_options) $.extend(true, options, data_options);
-
-        options.range = input.attr("data-control") == "range-slider";
-
-        if (options.range) {
-            if (options.tooltip_split == false)
-                options.formatter = v => v[0] + " - " + v[1];
-
-            if (input.attr("id").endsWith("Max")) return;
-            var maxInput = $('[name="' + input.attr("id").split('.')[0] + "." + options.upper + '\"]');
-            if (maxInput.length == 0)
-                maxInput = $('[name="' + options.upper || input.attr("id") + 'Max' + '\"]');
-
-            if (maxInput.length == 0) throw new Error("Upper input was not found for the range slider.");
-
-            options.value = [Number(input.val() || options.min), Number(maxInput.val() || options.max)];
-
-            // Standard SEARCH min and max.														 
-            // TODO: Change the following to first detect if we're in a search control context and skip the following otherwise.
-            var container = $(input).closest(".group-control");
-            if (container.length == 0) container = input.parent();
-            container.children().each((i, e) => $(e).hide());
-            var rangeSlider = $("<input type='text' class='range-slider'/>").attr("id", input.attr("id") + "_slider").appendTo(container);
-            (<any>rangeSlider).slider(options).on('change', ev => { input.val(ev.value.newValue[0]); maxInput.val(ev.value.newValue[1]); });   ///// Updated ***********
-        }
-        else {
-            options.value = Number(input.val() || options.min);
-            (<any>input).slider(options).on('change', ev => { input.val(ev.value.newValue); });  ///// Updated ***********
-        }
-    }
-
-    reloadValidationRules(form: JQuery) {
-        form.removeData("validator").removeData("unobtrusiveValidation");
-        //$.validator.unobtrusive.parse(form);
-    }
-
-    highlightRow(element: any) {
-        var target = $(element.closest("tr"));
-        target.siblings('tr').removeClass('highlighted');
-        target.addClass('highlighted');
-    }
-
 }

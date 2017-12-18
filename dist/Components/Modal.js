@@ -110,6 +110,10 @@ define(["require", "exports", "olive/Components/WindowContext"], function (requi
             var overflow = Math.max(offset, 0);
             this.adjustHeight(overflow);
         };
+        Modal.ensureNonModal = function () {
+            if (window.isModal())
+                parent.window.location.href = location.href;
+        };
         return Modal;
     }());
     exports.default = Modal;

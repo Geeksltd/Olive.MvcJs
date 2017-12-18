@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Sorting", "olive/Components/Paging", "olive/Components/MasterDetail", "olive/Components/Alert", "olive/Components/Action", "olive/Components/Waiting", "olive/Plugins/Select", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Plugins/InstantSearch"], function (require, exports, Config_1, Form_1, Url_1, WindowContext_1, Modal_1, Validate_1, Sorting_1, Paging_1, MasterDetail_1, Alert_1, Action_1, Waiting_1, Select_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, InstantSearch_1) {
+define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Sorting", "olive/Components/Paging", "olive/Components/MasterDetail", "olive/Components/Alert", "olive/Components/Action", "olive/Components/Waiting", "olive/Components/Grid", "olive/Plugins/Select", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Plugins/InstantSearch"], function (require, exports, Config_1, Form_1, Url_1, WindowContext_1, Modal_1, Validate_1, Sorting_1, Paging_1, MasterDetail_1, Alert_1, Action_1, Waiting_1, Grid_1, Select_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, InstantSearch_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     // For ckeditor plug-ins to work, this should be globally defined.
     window["CKEDITOR_BASEPATH"] = '/lib/ckeditor/';
@@ -42,20 +42,20 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             var _this = this;
             this._preInitializeActions.forEach(function (action) { return action(); });
             // =================== Standard Features ====================
-            $(".select-cols .apply").off("click.apply-columns").on("click.apply-columns", function (e) { return WindowContext_1.default.applyColumns(e); });
+            $(".select-cols .apply").off("click.apply-columns").on("click.apply-columns", function (e) { return Grid_1.default.applyColumns(e); });
             $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", function (e) { return MasterDetail_1.default.deleteSubForm(e); });
             $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", function (e) { return _this.openLinkModal(e); });
-            $(".select-grid-cols .group-control").each(function (i, e) { return WindowContext_1.default.enableSelectColumns($(e)); });
-            $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", function (e) { return WindowContext_1.default.enableSelectAllToggle(e); });
-            $("[data-user-help]").each(function (i, e) { return WindowContext_1.default.enableUserHelp($(e)); });
+            $(".select-grid-cols .group-control").each(function (i, e) { return Grid_1.default.enableSelectColumns($(e)); });
+            $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", function (e) { return Grid_1.default.enableSelectAllToggle(e); });
+            $("[data-user-help]").each(function (i, e) { return _this.enableUserHelp($(e)); });
             $("form input, form select").off("keypress.default-button").on("keypress.default-button", function (e) { return Form_1.default.onDefaultButtonKeyPress(e); });
             $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", function (e) { return Paging_1.default.onSizeChanged(e); });
             $("[data-sort-item]").parents("tbody").each(function (i, e) { return _this.enableDragSort($(e)); });
             $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", function (e) { return Paging_1.default.enableWithAjax(e); });
             $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", function (e) { return Sorting_1.default.enableAjaxSorting(e); });
-            $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", function (e) { return WindowContext_1.default.adjustIFrameHeightToContents(e.currentTarget); });
+            $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", function (e) { return WindowContext_1.default.fitFrameContentHeight(e.currentTarget); });
             $("th[data-sort]").each(function (i, e) { return Sorting_1.default.setSortHeaderClass($(e)); });
-            $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", function (e) { return WindowContext_1.default.cleanUpNumberField($(e.currentTarget)); });
+            $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", function (e) { return Form_1.default.cleanUpNumberField($(e.currentTarget)); });
             $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", function () { return Modal_1.default.ensureHeight(); });
             $("select.form-control").each(function (i, e) { return Select_1.default.enhance($(e)); });
             //$.validator.unobtrusive.parse('form');
@@ -268,9 +268,9 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             else if (action.BrowserAction == "ShowPleaseWait")
                 Waiting_1.default.showPleaseWait(action.BlockScreen);
             else if (action.ReplaceSource)
-                this.replaceListControlSource(action.ReplaceSource, action.Items);
+                Select_1.default.replaceSource(action.ReplaceSource, action.Items);
             else if (action.Download)
-                this.download(action.Download);
+                window.download(action.Download);
             else if (action.Redirect)
                 this.executeRedirectAction(action, trigger);
             else
@@ -313,28 +313,6 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
                 Action_1.default.ajaxRedirect(action.Redirect, trigger, false, false, true, this.invokeAjaxActionResult);
             else
                 location.replace(action.Redirect);
-        };
-        OlivePage.prototype.replaceListControlSource = function (controlId, items) {
-            var $control = $('#' + controlId);
-            if ($control.is("select")) {
-                $control.empty();
-                for (var i = 0; i < items.length; i++) {
-                    $control.append($("<option value='" + items[i].Value + "'>" + items[i].Text + "</option>"));
-                }
-            }
-            else {
-                console.log("Unable to replace list items");
-            }
-        };
-        OlivePage.prototype.download = function (url) {
-            if (window.isModal()) {
-                var page = window.parent["page"];
-                if (page && page.download) {
-                    page.download(url);
-                    return;
-                }
-            }
-            $("<iframe style='visibility:hidden; width:1px; height:1px;'></iframe>").attr("src", url).appendTo("body");
         };
         OlivePage.prototype.openWindow = function (url, target) {
             window.open(url, target);
@@ -397,7 +375,7 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
                 if (container.length == 0)
                     container = containerModule.find("[data-subform=" + subFormName + "]:first");
                 container.append(asElement);
-                this.reloadValidationRules(trigger.parents("form"));
+                Validate_1.default.reloadRules(trigger.parents("form"));
                 MasterDetail_1.default.updateSubFormStates();
                 this.initializeUpdatedPage(asElement, trigger);
             }
@@ -406,49 +384,10 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
                 this.initialize();
             }
         };
-        OlivePage.prototype.ensureNonModal = function () {
-            if (window.isModal())
-                parent.window.location.href = location.href;
-        };
-        OlivePage.prototype.enableSlider = function (input) {
-            var options = { min: 0, max: 100, value: null, range: false, formatter: null, tooltip: 'always', upper: null, tooltip_split: false };
-            var data_options = input.attr("data-options") ? JSON.parse(Form_1.default.cleanJson(input.attr("data-options"))) : null;
-            if (data_options)
-                $.extend(true, options, data_options);
-            options.range = input.attr("data-control") == "range-slider";
-            if (options.range) {
-                if (options.tooltip_split == false)
-                    options.formatter = function (v) { return v[0] + " - " + v[1]; };
-                if (input.attr("id").endsWith("Max"))
-                    return;
-                var maxInput = $('[name="' + input.attr("id").split('.')[0] + "." + options.upper + '\"]');
-                if (maxInput.length == 0)
-                    maxInput = $('[name="' + options.upper || input.attr("id") + 'Max' + '\"]');
-                if (maxInput.length == 0)
-                    throw new Error("Upper input was not found for the range slider.");
-                options.value = [Number(input.val() || options.min), Number(maxInput.val() || options.max)];
-                // Standard SEARCH min and max.														 
-                // TODO: Change the following to first detect if we're in a search control context and skip the following otherwise.
-                var container = $(input).closest(".group-control");
-                if (container.length == 0)
-                    container = input.parent();
-                container.children().each(function (i, e) { return $(e).hide(); });
-                var rangeSlider = $("<input type='text' class='range-slider'/>").attr("id", input.attr("id") + "_slider").appendTo(container);
-                rangeSlider.slider(options).on('change', function (ev) { input.val(ev.value.newValue[0]); maxInput.val(ev.value.newValue[1]); }); ///// Updated ***********
-            }
-            else {
-                options.value = Number(input.val() || options.min);
-                input.slider(options).on('change', function (ev) { input.val(ev.value.newValue); }); ///// Updated ***********
-            }
-        };
-        OlivePage.prototype.reloadValidationRules = function (form) {
-            form.removeData("validator").removeData("unobtrusiveValidation");
-            //$.validator.unobtrusive.parse(form);
-        };
-        OlivePage.prototype.highlightRow = function (element) {
-            var target = $(element.closest("tr"));
-            target.siblings('tr').removeClass('highlighted');
-            target.addClass('highlighted');
+        OlivePage.prototype.enableUserHelp = function (element) {
+            element.click(function () { return false; });
+            var message = element.attr('data-user-help'); // todo: unescape message and conver to html
+            element['popover']({ trigger: 'focus', content: message });
         };
         return OlivePage;
     }());

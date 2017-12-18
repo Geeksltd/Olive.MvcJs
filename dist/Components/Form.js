@@ -53,6 +53,10 @@ define(["require", "exports"], function (require, exports) {
             else
                 return true;
         };
+        Form.cleanUpNumberField = function (field) {
+            var domElement = field.get(0);
+            field.val(field.val().replace(/[^\d.-]/g, ""));
+        };
         return Form;
     }());
     exports.default = Form;

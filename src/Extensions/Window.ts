@@ -4,4 +4,6 @@
 
     isModal(): boolean;
     getContainerIFrame(): HTMLIFrameElement;
+
+    download(url: string);
 }

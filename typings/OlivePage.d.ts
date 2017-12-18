@@ -25,15 +25,10 @@ export default class OlivePage {
     openModal(event: any, url?: any, options?: any): void;
     executeNotifyAction(action: any, trigger: any): void;
     executeRedirectAction(action: any, trigger: any): void;
-    replaceListControlSource(controlId: string, items: any): void;
-    download(url: string): void;
     openWindow(url: string, target: string): void;
     refresh(keepScroll?: boolean): void;
     dynamicallyLoadedScriptFiles: any[];
     replaceMain(element: JQuery, trigger: any): void;
     invokeAjaxActionResult(response: any, containerModule: any, trigger: any): void;
-    ensureNonModal(): void;
-    enableSlider(input: any): void;
-    reloadValidationRules(form: JQuery): void;
-    highlightRow(element: any): void;
+    enableUserHelp(element: JQuery): void;
 }

@@ -27,6 +27,10 @@ define(["require", "exports", "olive/Config"], function (require, exports, Confi
             }
             return true;
         };
+        Validate.reloadRules = function (form) {
+            form.removeData("validator").removeData("unobtrusiveValidation");
+            //$.validator.unobtrusive.parse(form);
+        };
         return Validate;
     }());
     exports.default = Validate;
