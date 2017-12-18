@@ -136,35 +136,8 @@ define(["require", "exports", "olive/Components/Waiting"], function (require, ex
                 input.remove();
             }
         };
-        WindowContext.enableAjaxSorting = function (event) {
-            var button = $(event.currentTarget);
-            var sort = button.attr("data-sort");
-            var key = "s";
-            if (sort.split('=').length > 1) {
-                key = sort.split('=')[0];
-                sort = sort.split('=')[1];
-            }
-            var input = $("[name='" + key + "']");
-            if (input.val() == sort)
-                sort += ".DESC";
-            input.val(sort);
-        };
         WindowContext.adjustIFrameHeightToContents = function (iframe) {
             $(iframe).height(iframe.contentWindow.document.body.scrollHeight);
-        };
-        WindowContext.setSortHeaderClass = function (thead) {
-            var currentSort = thead.closest("[data-module]").find("#Current-Sort").val() || "";
-            if (currentSort == "")
-                return;
-            var sortKey = thead.attr('data-sort');
-            if (sortKey == currentSort && !thead.hasClass('sort-ascending')) {
-                thead.addClass("sort-ascending");
-                thead.append("<i />");
-            }
-            else if (currentSort == sortKey + ".DESC" && !thead.hasClass('sort-descending')) {
-                thead.addClass("sort-descending");
-                thead.append("<i />");
-            }
         };
         WindowContext.cleanUpNumberField = function (field) {
             var domElement = field.get(0);

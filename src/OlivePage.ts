@@ -15,6 +15,7 @@ import ConfirmBox from 'olive/Plugins/ConfirmBox'
 import SubMenu from 'olive/Plugins/SubMenu'
 import Modal from 'olive/Components/Modal'
 import Validate from 'olive/Components/Validate'
+import Sorting from 'olive/Components/Sorting'
 import MasterDetail from 'olive/Components/MasterDetail'
 
 import Alert from 'olive/Components/Alert'
@@ -92,9 +93,9 @@ export default class OlivePage {
         $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", (e) => WindowContext.paginationSizeChanged(e));
         $("[data-sort-item]").parents("tbody").each((i, e) => this.enableDragSort($(e)));
         $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", (e) => WindowContext.enableAjaxPaging(e));
-        $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", (e) => WindowContext.enableAjaxSorting(e));
+        $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", (e) => Sorting.enableAjaxSorting(e));
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", (e) => WindowContext.adjustIFrameHeightToContents(e.currentTarget));
-        $("th[data-sort]").each((i, e) => WindowContext.setSortHeaderClass($(e)));
+        $("th[data-sort]").each((i, e) => Sorting.setSortHeaderClass($(e)));
         $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", (e) => WindowContext.cleanUpNumberField($(e.currentTarget)));
         $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => WindowContext.ensureModalResize());
         $("select.form-control").each((i, e) => Select.enhance($(e)));

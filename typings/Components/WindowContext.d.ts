@@ -17,9 +17,7 @@ export default class WindowContext {
     static handleDefaultButton(event: JQueryEventObject): boolean;
     static paginationSizeChanged(event: Event): void;
     static enableAjaxPaging(event: JQueryEventObject): void;
-    static enableAjaxSorting(event: JQueryEventObject): void;
     static adjustIFrameHeightToContents(iframe: any): void;
-    static setSortHeaderClass(thead: JQuery): void;
     static cleanUpNumberField(field: JQuery): void;
     static ensureModalResize(): void;
 }
