@@ -21,6 +21,7 @@ import NumbericUpDown from 'olive/Plugins/NumericUpDown'
 import FileUpload from 'olive/Plugins/FileUpload'
 import ConfirmBox from 'olive/Plugins/ConfirmBox'
 import SubMenu from 'olive/Plugins/SubMenu'
+import InstantSearch from 'olive/Plugins/InstantSearch'
 
 export default class OlivePage {
     // formats: http://momentjs.com/docs/#/displaying/format/
@@ -83,7 +84,6 @@ export default class OlivePage {
         $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", (e) => MasterDetail.deleteSubForm(e));
         $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
         $(".select-grid-cols .group-control").each((i, e) => WindowContext.enableSelectColumns($(e)));
-        $("[name=InstantSearch]").each((i, e) => WindowContext.enableInstantSearch($(e)));
         $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", (e) => WindowContext.enableSelectAllToggle(e));
         $("[data-user-help]").each((i, e) => WindowContext.enableUserHelp($(e)));
         $("form input, form select").off("keypress.default-button").on("keypress.default-button", (e) => WindowContext.handleDefaultButton(e));
@@ -99,6 +99,7 @@ export default class OlivePage {
         //$.validator.unobtrusive.parse('form');
 
         // =================== Plug-ins ====================enableTimeControl
+        $("[name=InstantSearch]").each((i, e) => new InstantSearch($(e)).enable());
         $("input[autocomplete-source]").each((i, e) => new AutoComplete($(e)).handle());
         $("[data-control=date-picker],[data-control=calendar]").each((i, e) => new DatePicker($(e)));
         $("[data-control='date-picker|time-picker']").each((i, e) => new TimeControl($(e)));
