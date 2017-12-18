@@ -18,6 +18,7 @@ define(["require", "exports", "olive/Config", "olive/Mvc/FormAction", "olive/Mvc
             window["alertify"] = window.require("alertify")();
             FormAction_1.default.onViewChanged.handle(function (x) { return _this.onViewChanged(x.container, x.trigger, x.isNewPage); });
         }
+        OlivePage.prototype.modal = function () { return Modal_1.default; };
         OlivePage.prototype.onInit = function (action) { this._initializeActions.push(action); };
         OlivePage.prototype.onPreInit = function (action) { this._preInitializeActions.push(action); };
         OlivePage.prototype.onViewChanged = function (container, trigger, newPage) {

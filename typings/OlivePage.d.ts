@@ -1,4 +1,6 @@
+import Modal from 'olive/Components/Modal';
 export default class OlivePage {
+    modal(): typeof Modal;
     constructor();
     _initializeActions: any[];
     onInit(action: any): void;

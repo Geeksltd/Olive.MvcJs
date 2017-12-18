@@ -33,6 +33,8 @@ import DateDropdown from 'olive/Plugins/DateDropdown'
 
 export default class OlivePage {
 
+    public modal() { return Modal; }
+
     constructor() {
         SystemExtensins.initialize();
         Modal.initialize();

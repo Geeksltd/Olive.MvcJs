@@ -1,8 +1,8 @@
 
 export default class Modal {
-    current: any = null;
+    static current: any = null;
     isOpening: boolean = false;
-    isClosingModal: boolean = false;
+    static isClosingModal: boolean = false;
     url: string;
     modalOptions: any = {};
 
@@ -28,15 +28,15 @@ export default class Modal {
 
     open() {
         this.isOpening = true;
-        if (this.current != null)
-            if (this.close() === false) return false;
+        if (Modal.current != null)
+            if (Modal.close() === false) return false;
 
-        this.current = $(this.getModalTemplate(this.modalOptions));
+        Modal.current = $(this.getModalTemplate(this.modalOptions));
 
         if (true /* TODO: Change to if Internet Explorer only */)
-            this.current.removeClass("fade");
+            Modal.current.removeClass("fade");
 
-        var frame = this.current.find("iframe");
+        var frame = Modal.current.find("iframe");
 
         frame.attr("src", this.url).on("load", (e) => {
             this.isOpening = false;
@@ -45,14 +45,14 @@ export default class Modal {
                 var doc = frame.get(0).contentWindow.document;
                 setTimeout(() => frame.height(doc.body.offsetHeight), 10); // Timeout is used due to an IE bug.
             }
-            this.current.find(".modal-body .text-center").remove();
+            Modal.current.find(".modal-body .text-center").remove();
         });
 
-        $("body").append(this.current);
-        this.current.modal('show');
+        $("body").append(Modal.current);
+        Modal.current.modal('show');
     }
 
-    close() {
+    public static close() {
         if ($.raiseEvent("modal:closing", window) === false) return false;
         this.isClosingModal = true;
 

@@ -1,13 +1,13 @@
 export default class Modal {
-    current: any;
+    static current: any;
     isOpening: boolean;
-    isClosingModal: boolean;
+    static isClosingModal: boolean;
     url: string;
     modalOptions: any;
     static initialize(): void;
     constructor(event?: JQueryEventObject, targeturl?: string, opt?: any);
     open(): boolean;
-    close(): boolean;
+    static close(): boolean;
     getModalTemplate(options: any): string;
     static ensureHeight(): void;
     static adjustHeight(overflow?: number): void;

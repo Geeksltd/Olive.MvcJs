@@ -2,9 +2,7 @@ define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var Modal = /** @class */ (function () {
         function Modal(event, targeturl, opt) {
-            this.current = null;
             this.isOpening = false;
-            this.isClosingModal = false;
             this.modalOptions = {};
             var target = event ? $(event.currentTarget) : null;
             this.url = targeturl ? targeturl : target.attr("href");
@@ -29,13 +27,13 @@ define(["require", "exports"], function (require, exports) {
         Modal.prototype.open = function () {
             var _this = this;
             this.isOpening = true;
-            if (this.current != null)
-                if (this.close() === false)
+            if (Modal.current != null)
+                if (Modal.close() === false)
                     return false;
-            this.current = $(this.getModalTemplate(this.modalOptions));
+            Modal.current = $(this.getModalTemplate(this.modalOptions));
             if (true /* TODO: Change to if Internet Explorer only */)
-                this.current.removeClass("fade");
-            var frame = this.current.find("iframe");
+                Modal.current.removeClass("fade");
+            var frame = Modal.current.find("iframe");
             frame.attr("src", this.url).on("load", function (e) {
                 _this.isOpening = false;
                 var isHeightProvided = !!(_this.modalOptions && _this.modalOptions.height);
@@ -43,12 +41,12 @@ define(["require", "exports"], function (require, exports) {
                     var doc = frame.get(0).contentWindow.document;
                     setTimeout(function () { return frame.height(doc.body.offsetHeight); }, 10); // Timeout is used due to an IE bug.
                 }
-                _this.current.find(".modal-body .text-center").remove();
+                Modal.current.find(".modal-body .text-center").remove();
             });
-            $("body").append(this.current);
-            this.current.modal('show');
+            $("body").append(Modal.current);
+            Modal.current.modal('show');
         };
-        Modal.prototype.close = function () {
+        Modal.close = function () {
             if ($.raiseEvent("modal:closing", window) === false)
                 return false;
             this.isClosingModal = true;
@@ -114,6 +112,8 @@ define(["require", "exports"], function (require, exports) {
             if (window.isModal())
                 parent.window.location.href = location.href;
         };
+        Modal.current = null;
+        Modal.isClosingModal = false;
         return Modal;
     }());
     exports.default = Modal;
