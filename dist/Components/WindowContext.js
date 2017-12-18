@@ -38,7 +38,7 @@ define(["require", "exports", "olive/Components/Waiting"], function (require, ex
         };
         WindowContext.handleAjaxResponseError = function (response) {
             Waiting_1.default.hidePleaseWait();
-            console.log(response);
+            console.error(response);
             var text = response.responseText;
             if (text.indexOf("<html") > -1) {
                 document.write(text);
@@ -70,33 +70,6 @@ define(["require", "exports", "olive/Components/Waiting"], function (require, ex
                 return;
             $("<input type='checkbox' checked='checked'/>").hide().attr("name", checkboxes.attr("name")).val("-")
                 .appendTo(button.parent());
-        };
-        WindowContext.updateSubFormStates = function () {
-            var countItems = function (element) { return $(element).parent().find(".subform-item:visible").length; };
-            // Hide removed items
-            $("input[name*=MustBeDeleted][value=True]").closest('[data-subform]').hide();
-            // hide empty headers
-            $(".horizontal-subform thead").each(function (i, e) {
-                $(e).css('visibility', (countItems(e) > 0) ? 'visible' : 'hidden');
-            });
-            // Hide add buttons
-            $("[data-subform-max]").each(function (i, e) {
-                var show = countItems(e) < parseInt($(e).attr('data-subform-max'));
-                $(e).find("[data-add-subform=" + $(e).attr("data-subform") + "]").toggle(show);
-            });
-            // Hide delete buttons
-            $("[data-subform-min]").each(function (i, e) {
-                var show = countItems(e) > parseInt($(e).attr('data-subform-min'));
-                $(e).find("[data-delete-subform=" + $(e).attr("data-subform") + "]").css('visibility', (show) ? 'visible' : 'hidden');
-            });
-        };
-        WindowContext.deleteSubForm = function (event) {
-            var button = $(event.currentTarget);
-            var container = button.parents(".subform-item");
-            container.find("input[name*=MustBeDeleted]").val("true");
-            container.hide();
-            this.updateSubFormStates();
-            event.preventDefault();
         };
         WindowContext.enableSelectColumns = function (container) {
             var columns = container.find("div.select-cols");

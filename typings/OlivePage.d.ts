@@ -22,7 +22,6 @@ export default class OlivePage {
     enableDragSort(container: any): void;
     enablePasswordStengthMeter(container: any): void;
     configureValidation(): void;
-    updateSubFormStates(): void;
     enableDateDropdown(input: any): void;
     openLinkModal(event: JQueryEventObject): boolean;
     toJson(data: any): any;

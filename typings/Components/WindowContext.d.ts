@@ -10,8 +10,6 @@ export default class WindowContext {
     static handleAjaxResponseError(response: any): void;
     static toJson(data: any): any;
     static applyColumns(event: JQueryEventObject): void;
-    static updateSubFormStates(): void;
-    static deleteSubForm(event: JQueryEventObject): void;
     static enableSelectColumns(container: any): void;
     static enableInstantSearch(control: any): void;
     static enableSelectAllToggle(event: any): void;

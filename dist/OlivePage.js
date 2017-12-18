@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Alert", "olive/Components/Action", "olive/Components/Waiting", "olive/Plugins/Select"], function (require, exports, Form_1, Url_1, WindowContext_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, Modal_1, Validate_1, Alert_1, Action_1, Waiting_1, Select_1) {
+define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/MasterDetail", "olive/Components/Alert", "olive/Components/Action", "olive/Components/Waiting", "olive/Plugins/Select"], function (require, exports, Form_1, Url_1, WindowContext_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, Modal_1, Validate_1, MasterDetail_1, Alert_1, Action_1, Waiting_1, Select_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     // For ckeditor plug-ins to work, this should be globally defined.
     window["CKEDITOR_BASEPATH"] = '/lib/ckeditor/';
@@ -57,7 +57,7 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
             this._preInitializeActions.forEach(function (action) { return action(); });
             // =================== Standard Features ====================
             $(".select-cols .apply").off("click.apply-columns").on("click.apply-columns", function (e) { return WindowContext_1.default.applyColumns(e); });
-            $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", function (e) { return WindowContext_1.default.deleteSubForm(e); });
+            $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", function (e) { return MasterDetail_1.default.deleteSubForm(e); });
             $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", function (e) { return _this.openLinkModal(e); });
             $(".select-grid-cols .group-control").each(function (i, e) { return WindowContext_1.default.enableSelectColumns($(e)); });
             $("[name=InstantSearch]").each(function (i, e) { return WindowContext_1.default.enableInstantSearch($(e)); });
@@ -95,7 +95,7 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
             $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", function (e) { return Action_1.default.invokeActionWithPost(e); });
             $("[data-change-action]").off("change.data-action").on("change.data-action", function (e) { return Action_1.default.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, _this.invokeAjaxActionResult); });
             $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", function (e) { return Action_1.default.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, _this.invokeAjaxActionResult); });
-            WindowContext_1.default.updateSubFormStates();
+            MasterDetail_1.default.updateSubFormStates();
             WindowContext_1.default.adjustModalHeight();
             this._initializeActions.forEach(function (action) { return action(); });
         };
@@ -171,25 +171,6 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
                 return moment(value, format).isValid();
             };
             // TODO: datetime, time
-        };
-        OlivePage.prototype.updateSubFormStates = function () {
-            var countItems = function (element) { return $(element).parent().find(".subform-item:visible").length; };
-            // Hide removed items
-            $("input[name*=MustBeDeleted][value=True]").closest('[data-subform]').hide();
-            // hide empty headers
-            $(".horizontal-subform thead").each(function (i, e) {
-                $(e).css('visibility', (countItems(e) > 0) ? 'visible' : 'hidden');
-            });
-            // Hide add buttons
-            $("[data-subform-max]").each(function (i, e) {
-                var show = countItems(e) < parseInt($(e).attr('data-subform-max'));
-                $(e).find("[data-add-subform=" + $(e).attr("data-subform") + "]").toggle(show);
-            });
-            // Hide delete buttons
-            $("[data-subform-min]").each(function (i, e) {
-                var show = countItems(e) > parseInt($(e).attr('data-subform-min'));
-                $(e).find("[data-delete-subform=" + $(e).attr("data-subform") + "]").css('visibility', (show) ? 'visible' : 'hidden');
-            });
         };
         OlivePage.prototype.enableDateDropdown = function (input) {
             // TODO: Implement
@@ -441,7 +422,7 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
                     container = containerModule.find("[data-subform=" + subFormName + "]:first");
                 container.append(asElement);
                 this.reloadValidationRules(trigger.parents("form"));
-                WindowContext_1.default.updateSubFormStates();
+                MasterDetail_1.default.updateSubFormStates();
                 this.initializeUpdatedPage(asElement, trigger);
             }
             else {

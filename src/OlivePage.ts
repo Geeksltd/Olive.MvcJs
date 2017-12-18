@@ -15,6 +15,7 @@ import ConfirmBox from 'olive/Plugins/ConfirmBox'
 import SubMenu from 'olive/Plugins/SubMenu'
 import Modal from 'olive/Components/Modal'
 import Validate from 'olive/Components/Validate'
+import MasterDetail from 'olive/Components/MasterDetail'
 
 import Alert from 'olive/Components/Alert'
 import Action from 'olive/Components/Action'
@@ -81,7 +82,7 @@ export default class OlivePage {
         // =================== Standard Features ====================
 
         $(".select-cols .apply").off("click.apply-columns").on("click.apply-columns", (e) => WindowContext.applyColumns(e));
-        $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", (e) => WindowContext.deleteSubForm(e));
+        $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", (e) => MasterDetail.deleteSubForm(e));
         $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
         $(".select-grid-cols .group-control").each((i, e) => WindowContext.enableSelectColumns($(e)));
         $("[name=InstantSearch]").each((i, e) => WindowContext.enableInstantSearch($(e)));
@@ -122,7 +123,7 @@ export default class OlivePage {
         $("[data-change-action]").off("change.data-action").on("change.data-action", (e) => Action.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, this.invokeAjaxActionResult));
         $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => Action.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, this.invokeAjaxActionResult));
 
-        WindowContext.updateSubFormStates();
+        MasterDetail.updateSubFormStates();
         WindowContext.adjustModalHeight();
 
         this._initializeActions.forEach((action) => action());
@@ -214,31 +215,6 @@ export default class OlivePage {
         }
 
         // TODO: datetime, time
-    }
-
-    updateSubFormStates() {
-
-        var countItems = (element) => $(element).parent().find(".subform-item:visible").length;
-
-        // Hide removed items
-        $("input[name*=MustBeDeleted][value=True]").closest('[data-subform]').hide();
-
-        // hide empty headers
-        $(".horizontal-subform thead").each((i, e) => {
-            $(e).css('visibility', (countItems(e) > 0) ? 'visible' : 'hidden');
-        });
-
-        // Hide add buttons
-        $("[data-subform-max]").each((i, e) => {
-            var show = countItems(e) < parseInt($(e).attr('data-subform-max'));
-            $(e).find("[data-add-subform=" + $(e).attr("data-subform") + "]").toggle(show);
-        });
-
-        // Hide delete buttons
-        $("[data-subform-min]").each((i, e) => {
-            var show = countItems(e) > parseInt($(e).attr('data-subform-min'));
-            $(e).find("[data-delete-subform=" + $(e).attr("data-subform") + "]").css('visibility', (show) ? 'visible' : 'hidden');
-        });
     }
 
     enableDateDropdown(input) {
@@ -494,7 +470,7 @@ export default class OlivePage {
 
             this.reloadValidationRules(trigger.parents("form"));
 
-            WindowContext.updateSubFormStates();
+            MasterDetail.updateSubFormStates();
 
             this.initializeUpdatedPage(asElement, trigger);
         }
