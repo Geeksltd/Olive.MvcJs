@@ -6,7 +6,7 @@ define(["require", "exports", "olive/Components/WindowContext", "olive/Config"],
         }
         DatePicker.prototype.show = function () {
             var _this = this;
-            if (WindowContext_1.default.isWindowModal()) {
+            if (window.isModal()) {
                 this.input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", function (e) { return WindowContext_1.default.adjustModalHeightForDataPicker(e); });
                 this.input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", function (e) { return WindowContext_1.default.adjustModalHeightForDataPicker(e); });
             }

@@ -3,26 +3,25 @@ import Form from 'olive/Components/Form'
 import Waiting from 'olive/Components/Waiting'
 
 export default class WindowContext {
-
-    static setting = {
-        TIME_FORMAT: "HH:mm",
-        MINUTE_INTERVALS: 5,
-        DATE_LOCALE: "en-gb"
-    };
+    static initialize() {
+        window["isModal"] = () => WindowContext.isWindowModal();
+        window["getContainerIFrame"] = () => WindowContext.findContainerIFrame();
+    }
 
     static events: { [event: string]: Function[] } = {};
 
-    public static isWindowModal(): boolean {
-        if ($(this.getContainerIFrame()).closest(".modal").length === 0) return false;
+    static findContainerIFrame() {
+        if (parent == null || parent == self) return null;
+        else return <HTMLIFrameElement>$(parent.document).find("iframe")
+            .filter((i, f: any) => (f.contentDocument || f.contentWindow.document) == document).get(0);
+    }
+
+    static isWindowModal() {
+        if ($(window.getContainerIFrame()).closest(".modal").length === 0) return false;
         return true;
     }
 
-    public static getContainerIFrame() {
-        if (parent == null || parent == self) return null;
-        return $(parent.document).find("iframe").filter((i, f: any) => (f.contentDocument || f.contentWindow.document) == document).get(0);
-    }
-
-    public static adjustModalHeightForDataPicker(target: any) {
+    public static expandModalToFitPicker(target: any) {
         var datepicker = $(target.currentTarget).siblings('.bootstrap-datetimepicker-widget');
 
         if (datepicker.length === 0) {
@@ -36,8 +35,8 @@ export default class WindowContext {
     }
 
     public static adjustModalHeight(overflow?: number) {
-        if (this.isWindowModal()) {
-            var frame = $(this.getContainerIFrame());
+        if (window.isModal()) {
+            var frame = $(window.getContainerIFrame());
             if (frame.attr("data-has-explicit-height") != 'true')
                 frame.height(document.body.offsetHeight + (overflow || 0));
         }

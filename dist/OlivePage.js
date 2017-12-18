@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Alert", "olive/Components/Action", "olive/Components/Waiting"], function (require, exports, Form_1, Url_1, WindowContext_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, Modal_1, Validate_1, Alert_1, Action_1, Waiting_1) {
+define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Alert", "olive/Components/Action", "olive/Components/Waiting", "olive/Plugins/Select"], function (require, exports, Form_1, Url_1, WindowContext_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, Modal_1, Validate_1, Alert_1, Action_1, Waiting_1, Select_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     // For ckeditor plug-ins to work, this should be globally defined.
     window["CKEDITOR_BASEPATH"] = '/lib/ckeditor/';
@@ -71,7 +71,7 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
             $("th[data-sort]").each(function (i, e) { return WindowContext_1.default.setSortHeaderClass($(e)); });
             $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", function (e) { return WindowContext_1.default.cleanUpNumberField($(e.currentTarget)); });
             $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", function () { return WindowContext_1.default.ensureModalResize(); });
-            $("select.form-control").each(function (i, e) { return WindowContext_1.default.changeItToChosen($(e)); });
+            $("select.form-control").each(function (i, e) { return Select_1.default.enhance($(e)); });
             //$.validator.unobtrusive.parse('form');
             // =================== Plug-ins ====================enableTimeControl
             $("input[autocomplete-source]").each(function (i, e) { return new AutoComplete_1.default($(e)).handle(); });
@@ -343,7 +343,7 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
         OlivePage.prototype.executeRedirectAction = function (action, trigger) {
             if (action.Redirect.indexOf('/') != 0 && action.Redirect.indexOf('http') != 0)
                 action.Redirect = '/' + action.Redirect;
-            if (action.OutOfModal && WindowContext_1.default.isWindowModal())
+            if (action.OutOfModal && window.isModal())
                 parent.window.location.href = action.Redirect;
             else if (action.Target == '$modal')
                 this.openModal(null, action.Redirect, {});
@@ -369,7 +369,7 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
             }
         };
         OlivePage.prototype.download = function (url) {
-            if (WindowContext_1.default.isWindowModal()) {
+            if (window.isModal()) {
                 var page = window.parent["page"];
                 if (page && page.download) {
                     page.download(url);
@@ -449,7 +449,7 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
             }
         };
         OlivePage.prototype.ensureNonModal = function () {
-            if (WindowContext_1.default.isWindowModal())
+            if (window.isModal())
                 parent.window.location.href = location.href;
         };
         OlivePage.prototype.enableSlider = function (input) {

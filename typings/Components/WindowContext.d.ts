@@ -4,12 +4,12 @@ export default class WindowContext {
         MINUTE_INTERVALS: number;
         DATE_LOCALE: string;
     };
+    static initialize(): void;
     static events: {
         [event: string]: Function[];
     };
-    static isWindowModal(): boolean;
     static getContainerIFrame(): HTMLElement;
-    static adjustModalHeightForDataPicker(target: any): void;
+    static expandModalToFitPicker(target: any): void;
     static adjustModalHeight(overflow?: number): void;
     static getPostData(trigger: JQuery): JQuerySerializeArrayElement[];
     static handleAjaxResponseError(response: any): void;
@@ -29,5 +29,4 @@ export default class WindowContext {
     static setSortHeaderClass(thead: JQuery): void;
     static cleanUpNumberField(field: JQuery): void;
     static ensureModalResize(): void;
-    static changeItToChosen(selectControl: JQuery): void;
 }

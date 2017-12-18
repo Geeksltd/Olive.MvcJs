@@ -42,6 +42,8 @@ export default class OlivePage {
     modal: any = null;
 
     constructor() {
+        WindowContext.initialize();
+
         $(() => {
             //$.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: this.DEFAULT_MODAL_BACKDROP });
             //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
@@ -385,7 +387,7 @@ export default class OlivePage {
     executeRedirectAction(action: any, trigger: any) {
         if (action.Redirect.indexOf('/') != 0 && action.Redirect.indexOf('http') != 0) action.Redirect = '/' + action.Redirect;
 
-        if (action.OutOfModal && WindowContext.isWindowModal()) parent.window.location.href = action.Redirect;
+        if (action.OutOfModal && window.isModal()) parent.window.location.href = action.Redirect;
         else if (action.Target == '$modal') this.openModal(null, action.Redirect, {});
         else if (action.Target && action.Target != '') this.openWindow(action.Redirect, action.Target);
         else if (action.WithAjax === false) location.replace(action.Redirect);
@@ -410,7 +412,7 @@ export default class OlivePage {
 
     download(url: string) {
 
-        if (WindowContext.isWindowModal()) {
+        if (window.isModal()) {
             var page = <OlivePage>window.parent["page"];
             if (page && page.download) {
                 page.download(url);
@@ -503,7 +505,7 @@ export default class OlivePage {
     }
 
     ensureNonModal() {
-        if (WindowContext.isWindowModal())
+        if (window.isModal())
             parent.window.location.href = location.href;
     }
 

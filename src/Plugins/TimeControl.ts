@@ -6,9 +6,9 @@ export default class TimeControl {
     constructor(targetInput: any) {
         let input = targetInput;
 
-        if (WindowContext.isWindowModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => WindowContext.adjustModalHeightForDataPicker(e));
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => WindowContext.adjustModalHeightForDataPicker(e));
+        if (window.isModal()) {
+            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => WindowContext.expandModalToFitPicker(e));
+            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => WindowContext.expandModalToFitPicker(e));
         }
 
         input.attr("data-autofocus", "disabled");

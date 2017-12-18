@@ -3,10 +3,13 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Waiting
     var WindowContext = /** @class */ (function () {
         function WindowContext() {
         }
-        WindowContext.isWindowModal = function () {
-            if ($(this.getContainerIFrame()).closest(".modal").length === 0)
-                return false;
-            return true;
+        WindowContext.initialize = function () {
+            var _this = this;
+            window["isModal"] = function () {
+                if ($(_this.getContainerIFrame()).closest(".modal").length === 0)
+                    return false;
+                return true;
+            };
         };
         WindowContext.getContainerIFrame = function () {
             if (parent == null || parent == self)
@@ -24,7 +27,7 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Waiting
             this.adjustModalHeight(overflow);
         };
         WindowContext.adjustModalHeight = function (overflow) {
-            if (this.isWindowModal()) {
+            if (window.isModal()) {
                 var frame = $(this.getContainerIFrame());
                 if (frame.attr("data-has-explicit-height") != 'true')
                     frame.height(document.body.offsetHeight + (overflow || 0));
@@ -213,10 +216,6 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Waiting
         WindowContext.ensureModalResize = function () {
             var _this = this;
             setTimeout(function () { return _this.adjustModalHeight(); }, 1);
-        };
-        WindowContext.changeItToChosen = function (selectControl) {
-            var options = { disable_search_threshold: 5 };
-            selectControl.chosen(options);
         };
         WindowContext.setting = {
             TIME_FORMAT: "HH:mm",

@@ -1,6 +1,6 @@
 
 import WindowContext from "olive/Components/WindowContext"
-import   Config   from "olive/Config"
+import Config from "olive/Config"
 
 export default class DatePicker {
     input: any;
@@ -11,9 +11,9 @@ export default class DatePicker {
 
     show() {
 
-        if (WindowContext.isWindowModal()) {
-            this.input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => WindowContext.adjustModalHeightForDataPicker(e));
-            this.input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => WindowContext.adjustModalHeightForDataPicker(e));
+        if (window.isModal()) {
+            this.input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => WindowContext.expandModalToFitPicker(e));
+            this.input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => WindowContext.expandModalToFitPicker(e));
         }
 
         this.input.attr("data-autofocus", "disabled");

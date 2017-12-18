@@ -3,7 +3,7 @@ define(["require", "exports", "olive/Components/WindowContext", "olive/Config"],
     var TimeControl = /** @class */ (function () {
         function TimeControl(targetInput) {
             var input = targetInput;
-            if (WindowContext_1.default.isWindowModal()) {
+            if (window.isModal()) {
                 input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", function (e) { return WindowContext_1.default.adjustModalHeightForDataPicker(e); });
                 input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", function (e) { return WindowContext_1.default.adjustModalHeightForDataPicker(e); });
             }
