@@ -2,7 +2,7 @@
 import Url from "olive/Components/Url"
 import Form from "olive/Components/Form"
 import Config from "olive/Config"
-import FormAction from "olive/Components/FormAction"
+import FormAction from "olive/Mvc/FormAction"
 
 export default class AutoComplete {
     input: any;

@@ -1,6 +1,10 @@
 
 import Config from "olive/Config"
 
+import FormAction from 'olive/Mvc/FormAction'
+import AjaxRedirect from 'olive/Mvc/AjaxRedirect'
+import StandardAction from 'olive/Mvc/StandardAction'
+
 import Form from 'olive/Components/Form'
 import Url from 'olive/Components/Url'
 import SystemExtensins from 'olive/Extensions/SystemExtensins';
@@ -10,8 +14,6 @@ import Sorting from 'olive/Components/Sorting'
 import Paging from 'olive/Components/Paging'
 import MasterDetail from 'olive/Components/MasterDetail'
 import Alert from 'olive/Components/Alert'
-import FormAction from 'olive/Components/FormAction'
-import AjaxRedirect from 'olive/Components/AjaxRedirect'
 import Waiting from 'olive/Components/Waiting'
 import Grid from 'olive/Components/Grid'
 
@@ -31,8 +33,6 @@ import DateDropdown from 'olive/Plugins/DateDropdown'
 
 export default class OlivePage {
 
-    modal: any = null;
-
     constructor() {
         SystemExtensins.initialize();
         Modal.initialize();
@@ -42,11 +42,12 @@ export default class OlivePage {
             //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
             Alert.enableAlert();
             Validate.configure();
-            this.pageLoad();
+            this.onViewChanged(null, null, true);
         });
 
         // TODO: Find a cleaner way.
         window["alertify"] = <alertify.IAlertifyStatic>window.require("alertify")();
+        FormAction.onViewChanged.handle(x => this.onViewChanged(x.container, x.trigger, x.isNewPage));
     }
 
     _initializeActions = [];
@@ -55,16 +56,15 @@ export default class OlivePage {
     _preInitializeActions = [];
     onPreInit(action) { this._preInitializeActions.push(action) }
 
-    pageLoad(container: JQuery = null, trigger: any = null) {
-        $('[autofocus]:not([data-autofocus=disabled]):first').focus();
-        this.initializeUpdatedPage(container, trigger);
-        if (Config.REDIRECT_SCROLLS_UP) $(window).scrollTop(0);
-    }
-
-    initializeUpdatedPage(container: JQuery = null, trigger: any = null) {
-        this.runStartupActions(container, trigger, "PreInit");
+    onViewChanged(container: JQuery = null, trigger: any = null, newPage: boolean = false) {
+        StandardAction.runStartup(container, trigger, "PreInit");
         this.initialize();
-        this.runStartupActions(container, trigger, "Init");
+        StandardAction.runStartup(container, trigger, "Init");
+
+        if (newPage) {
+            $('[autofocus]:not([data-autofocus=disabled]):first').focus();
+            if (Config.REDIRECT_SCROLLS_UP) $(window).scrollTop(0);
+        }
     }
 
     initialize() {
@@ -109,13 +109,13 @@ export default class OlivePage {
         $(".with-submenu").each((i, e) => new SubMenu($(e)));
 
         // =================== Request lifecycle ====================
-        $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => AjaxRedirect.back(e, this.invokeAjaxActionResult));
-        $("a[data-redirect=ajax]").off("click.ajax-redirect").on("click.ajax-redirect", (e) => AjaxRedirect.enable(e, this.invokeAjaxActionResult));
+        $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => AjaxRedirect.back(e));
+        $("a[data-redirect=ajax]").off("click.ajax-redirect").on("click.ajax-redirect", (e) => AjaxRedirect.enable(e));
         $('form[method=get]').off("submit.clean-up").on("submit.clean-up", (e) => this.cleanGetFormSubmit(e));
-        $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", (e) => FormAction.invokeWithAjax(e, $(e.currentTarget).attr("formaction"), false, this.invokeAjaxActionResult));
+        $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", (e) => FormAction.invokeWithAjax(e, $(e.currentTarget).attr("formaction"), false));
         $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", (e) => FormAction.invokeWithPost(e));
-        $("[data-change-action]").off("change.data-action").on("change.data-action", (e) => FormAction.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, this.invokeAjaxActionResult));
-        $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => FormAction.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, this.invokeAjaxActionResult));
+        $("[data-change-action]").off("change.data-action").on("change.data-action", (e) => FormAction.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false));
+        $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => FormAction.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false));
 
         MasterDetail.updateSubFormStates();
         Modal.adjustHeight();
@@ -133,30 +133,15 @@ export default class OlivePage {
     }
 
     openLinkModal(event: JQueryEventObject) {
-        this.openModal(event);
+        StandardAction.openModal(event);
         return false;
-    }
-
-    runStartupActions(container: JQuery = null, trigger: any = null, stage: string = "Init") {
-        if (container == null) container = $(document);
-        if (trigger == null) trigger = $(document);
-        var actions = [];
-        $("input[name='Startup.Actions']", container).each((index, item) => {
-            var action = $(item).val();
-            if (actions.indexOf(action) === -1)
-                actions.push(action);
-        });
-
-        for (var action of actions) {
-            if (action && (action.Stage || "Init") == stage) this.executeActions(JSON.safeParse(action), trigger);
-        }
     }
 
     goBack(target) {
         var returnUrl = Url.getQuery("ReturnUrl");
 
         if (returnUrl && target && $(target).is("[data-redirect=ajax]"))
-            AjaxRedirect.go(returnUrl, $(target), false, false, true, this.invokeAjaxActionResult);
+            AjaxRedirect.go(returnUrl, $(target), false, false, true);
         else Url.goBack();
 
         return false;
@@ -164,7 +149,7 @@ export default class OlivePage {
 
     cleanGetFormSubmit(event: JQueryEventObject) {
         var form = $(event.currentTarget);
-        if (Validate.validateForm(form) == false) { Waiting.hidePleaseWait(); return false; }
+        if (Validate.validateForm(form) == false) { Waiting.hide(); return false; }
 
         var formData = Form.merge(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
 
@@ -179,7 +164,7 @@ export default class OlivePage {
 
             url = Url.removeEmptyQueries(url);
 
-            if (form.is("[data-redirect=ajax]")) AjaxRedirect.go(url, form, false, false, true, this.invokeAjaxActionResult);
+            if (form.is("[data-redirect=ajax]")) AjaxRedirect.go(url, form, false, false, true);
             else location.href = url;
         }
         catch (error) {
@@ -187,136 +172,6 @@ export default class OlivePage {
             alert(error);
         }
         return false;
-    }
-
-    executeActions(actions: any, trigger: any = null) {
-        for (var action of actions) {
-            if (!this.executeAction(action, trigger)) return;
-        }
-    }
-
-    executeAction(action: any, trigger: any): boolean {
-        if (action.Notify || action.Notify == "") this.executeNotifyAction(action, trigger);
-        else if (action.Script) eval(action.Script);
-        else if (action.BrowserAction == "Back") window.history.back();
-        else if (action.BrowserAction == "CloseModal" && this.modal && this.modal.closeModal() === false) return false;
-        else if (action.BrowserAction == "CloseModalRefreshParent") return this.refresh();
-        else if (action.BrowserAction == "Close") window.close();
-        else if (action.BrowserAction == "Refresh") this.refresh();
-        else if (action.BrowserAction == "Print") window.print();
-        else if (action.BrowserAction == "ShowPleaseWait") Waiting.showPleaseWait(action.BlockScreen);
-        else if (action.ReplaceSource) Select.replaceSource(action.ReplaceSource, action.Items);
-        else if (action.Download) window.download(action.Download);
-        else if (action.Redirect) this.executeRedirectAction(action, trigger);
-        else alert("Don't know how to handle: " + JSON.stringify(action).htmlEncode());
-
-        return true;
-    }
-
-    openModal(event, url?, options?) {
-
-        if (this.modal) {
-            this.modal.close();
-            this.modal = false;
-        }
-        this.modal = new Modal(event, url, options);
-        this.modal.open();
-    }
-
-    executeNotifyAction(action: any, trigger: any) {
-        if (action.Obstruct == false)
-            Alert.alertUnobtrusively(action.Notify, action.Style);
-        else Alert.alert(action.Notify, action.Style);
-    }
-
-    executeRedirectAction(action: any, trigger: any) {
-        if (action.Redirect.indexOf('/') != 0 && action.Redirect.indexOf('http') != 0) action.Redirect = '/' + action.Redirect;
-
-        if (action.OutOfModal && window.isModal()) parent.window.location.href = action.Redirect;
-        else if (action.Target == '$modal') this.openModal(null, action.Redirect, {});
-        else if (action.Target && action.Target != '') window.open(action.Redirect, action.Target);
-        else if (action.WithAjax === false) location.replace(action.Redirect);
-        else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true) AjaxRedirect.go(action.Redirect, trigger, false, false, true, this.invokeAjaxActionResult);
-        else location.replace(action.Redirect);
-    }
-
-    refresh(keepScroll = false) {
-        if ($("main").parent().is("body"))
-            AjaxRedirect.go(location.href, null, false /*isBack*/, keepScroll, false, this.invokeAjaxActionResult/*addToHistory:*/);
-        else location.reload();
-
-        return false;
-    }
-
-    dynamicallyLoadedScriptFiles = [];
-
-    replaceMain(element: JQuery, trigger) {
-        var referencedScripts = element.find("script[src]").map((i, s) => $(s).attr("src"));
-        element.find("script[src]").remove();
-
-        $("main").replaceWith(element);
-
-        if (referencedScripts.length) {
-            var expectedScripts = referencedScripts.length;
-            var loadedScripts = 0;
-            referencedScripts.each((index, item) => {
-                var url = '' + item;
-                if (this.dynamicallyLoadedScriptFiles.indexOf(url) > -1) {
-                    loadedScripts++;
-                    if (loadedScripts == expectedScripts) this.pageLoad(element, trigger);
-                }
-                else {
-                    this.dynamicallyLoadedScriptFiles.push(url);
-                    $.getScript(url, () => {
-                        loadedScripts++;
-                        if (loadedScripts == expectedScripts) this.pageLoad(element, trigger);
-                    });
-                }
-            });
-        }
-        else this.pageLoad(element, trigger);
-
-        document.title = $("#page_meta_title").val();
-    }
-
-    invokeAjaxActionResult(response, containerModule, trigger) {
-
-        var asElement = $(response);
-
-        if (asElement.is("main")) {
-            this.replaceMain(asElement, trigger);
-            return;
-        }
-
-        if (asElement.is("[data-module]")) {
-            // TODO: Support specifying the module to be updated at the Action level.
-            containerModule.replaceWith(asElement);
-
-            this.initializeUpdatedPage(asElement, trigger);
-        }
-        else if (response.length == 1 && response[0].ReplaceView) {
-            asElement = $("<div/>").append(response[0].ReplaceView);
-            containerModule.replaceWith(asElement);
-            this.initializeUpdatedPage(asElement, trigger);
-        }
-        else if (trigger && trigger.is("[data-add-subform]")) {
-            var subFormName = trigger.attr("data-add-subform");
-            var container = containerModule.find("[data-subform=" + subFormName + "] > table tbody:first");
-
-            if (container.length == 0) container = containerModule.find("[data-subform=" + subFormName + "]:first");
-
-            container.append(asElement);
-
-            Validate.reloadRules(trigger.parents("form"));
-
-            MasterDetail.updateSubFormStates();
-
-            this.initializeUpdatedPage(asElement, trigger);
-        }
-        else {
-            this.executeActions(response, trigger);
-            this.initialize();
-        }
     }
 
     public enableUserHelp(element: JQuery) {

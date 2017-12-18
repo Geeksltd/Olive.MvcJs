@@ -1,5 +1,5 @@
 ﻿import Url from 'olive/Components/Url'
-import FormAction from 'olive/Components/FormAction'
+import FormAction from 'olive/Mvc/FormAction'
 
 export default class Sorting {
 
@@ -57,7 +57,7 @@ export default class Sorting {
                 var actionUrl = handle.attr("data-sort-action");
                 actionUrl = Url.addQuery(actionUrl, "drop-before", dropBefore);
 
-                FormAction.invokeWithAjax(null/*{ currentTarget: handle.get(0) }*/, actionUrl, null, null);
+                FormAction.invokeWithAjax(null/*{ currentTarget: handle.get(0) }*/, actionUrl);
             }
         });
     }

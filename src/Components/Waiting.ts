@@ -1,6 +1,6 @@
 ﻿export default class Waiting {
 
-    public static showPleaseWait(blockScreen: boolean = false) {
+    public static show(blockScreen: boolean = false) {
 
         if (!$(document.forms[0]).valid()) return;
         var screen = $("<div class='wait-screen' />").appendTo("body");
@@ -16,7 +16,7 @@
             .fadeIn('slow');
     }
 
-    public static hidePleaseWait() {
+    public static hide() {
         $(".wait-screen").remove();
     }
 }

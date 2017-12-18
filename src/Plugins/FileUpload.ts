@@ -1,4 +1,4 @@
-import FormAction from "olive/Components/FormAction"
+import FormAction from "olive/Mvc/FormAction"
 
 export default class FileUpload {
     input: any;

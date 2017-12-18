@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Components/Url", "olive/Components/Form", "olive/Config", "olive/Components/FormAction"], function (require, exports, Url_1, Form_1, Config_1, FormAction_1) {
+define(["require", "exports", "olive/Components/Url", "olive/Components/Form", "olive/Config", "olive/Mvc/FormAction"], function (require, exports, Url_1, Form_1, Config_1, FormAction_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var AutoComplete = /** @class */ (function () {
         function AutoComplete(targetInput) {

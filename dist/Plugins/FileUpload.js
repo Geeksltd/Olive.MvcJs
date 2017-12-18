@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Components/FormAction"], function (require, exports, FormAction_1) {
+define(["require", "exports", "olive/Mvc/FormAction"], function (require, exports, FormAction_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var FileUpload = /** @class */ (function () {
         function FileUpload(targetInput) {

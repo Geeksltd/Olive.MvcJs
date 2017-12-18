@@ -3,7 +3,7 @@ define(["require", "exports"], function (require, exports) {
     var Waiting = /** @class */ (function () {
         function Waiting() {
         }
-        Waiting.showPleaseWait = function (blockScreen) {
+        Waiting.show = function (blockScreen) {
             if (blockScreen === void 0) { blockScreen = false; }
             if (!$(document.forms[0]).valid())
                 return;
@@ -18,7 +18,7 @@ define(["require", "exports"], function (require, exports) {
                 .appendTo(screen)
                 .fadeIn('slow');
         };
-        Waiting.hidePleaseWait = function () {
+        Waiting.hide = function () {
             $(".wait-screen").remove();
         };
         return Waiting;
