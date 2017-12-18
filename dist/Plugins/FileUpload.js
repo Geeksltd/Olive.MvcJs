@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Components/Action"], function (require, exports, Action_1) {
+define(["require", "exports", "olive/Components/MvcAction"], function (require, exports, MvcAction_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var FileUpload = /** @class */ (function () {
         function FileUpload(targetInput) {
@@ -56,10 +56,10 @@ define(["require", "exports", "olive/Components/Action"], function (require, exp
                     var progress = parseInt((data.loaded / data.total * 100).toString(), 10);
                     progressBar.width(progress + '%');
                 },
-                error: function (response) { Action_1.default.handleAjaxResponseError(response); fileLabel.val(''); },
+                error: function (response) { MvcAction_1.default.onAjaxResponseError(response); fileLabel.val(''); },
                 success: function (response) {
                     if (response.Error) {
-                        Action_1.default.handleAjaxResponseError({ responseText: response.Error });
+                        MvcAction_1.default.onAjaxResponseError({ responseText: response.Error });
                         fileLabel.val('');
                     }
                     else {

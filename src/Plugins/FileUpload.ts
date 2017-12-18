@@ -1,4 +1,4 @@
-import Action from "olive/Components/Action"
+import MvcAction from "olive/Components/MvcAction"
 
 export default class FileUpload {
     input: any;
@@ -65,10 +65,10 @@ export default class FileUpload {
                 var progress = parseInt((data.loaded / data.total * 100).toString(), 10);
                 progressBar.width(progress + '%');
             },
-            error: (response) => { Action.handleAjaxResponseError(response); fileLabel.val(''); },
+            error: (response) => { MvcAction.onAjaxResponseError(response); fileLabel.val(''); },
             success: (response) => {
                 if (response.Error) {
-                    Action.handleAjaxResponseError({ responseText: response.Error });
+                    MvcAction.onAjaxResponseError({ responseText: response.Error });
                     fileLabel.val('');
                 }
                 else {

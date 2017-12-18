@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Components/Url", "olive/Components/Action"], function (require, exports, Url_1, Action_1) {
+define(["require", "exports", "olive/Components/Url", "olive/Components/MvcAction"], function (require, exports, Url_1, MvcAction_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var Sorting = /** @class */ (function () {
         function Sorting() {
@@ -48,7 +48,7 @@ define(["require", "exports", "olive/Components/Url", "olive/Components/Action"]
                     var handle = ui.item.find("[data-sort-item]");
                     var actionUrl = handle.attr("data-sort-action");
                     actionUrl = Url_1.default.addQuery(actionUrl, "drop-before", dropBefore);
-                    Action_1.default.invokeActionWithAjax(null /*{ currentTarget: handle.get(0) }*/, actionUrl, null, null);
+                    MvcAction_1.default.invokeWithAjax(null /*{ currentTarget: handle.get(0) }*/, actionUrl, null, null);
                 }
             });
         };

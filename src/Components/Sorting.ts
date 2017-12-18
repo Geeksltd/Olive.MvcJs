@@ -1,5 +1,5 @@
 ﻿import Url from 'olive/Components/Url'
-import Action from 'olive/Components/Action'
+import MvcAction from 'olive/Components/MvcAction'
 
 export default class Sorting {
 
@@ -57,7 +57,7 @@ export default class Sorting {
                 var actionUrl = handle.attr("data-sort-action");
                 actionUrl = Url.addQuery(actionUrl, "drop-before", dropBefore);
 
-                Action.invokeActionWithAjax(null/*{ currentTarget: handle.get(0) }*/, actionUrl, null, null);
+                MvcAction.invokeWithAjax(null/*{ currentTarget: handle.get(0) }*/, actionUrl, null, null);
             }
         });
     }

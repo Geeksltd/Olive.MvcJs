@@ -2,7 +2,7 @@
 import Url from "olive/Components/Url"
 import Form from "olive/Components/Form"
 import Config from "olive/Config"
-import Action from "olive/Components/Action"
+import MvcAction from "olive/Components/MvcAction"
 
 export default class AutoComplete {
     input: any;
@@ -91,7 +91,7 @@ export default class AutoComplete {
                 return;
             }
 
-            $.post(url, data).fail(Action.handleAjaxResponseError).done((result) => {
+            $.post(url, data).fail(MvcAction.onAjaxResponseError).done((result) => {
                 result = result.map((i) => {
                     return {
                         Display: i.Display || i.Text || i.Value,

@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Components/Url", "olive/Extensions/SystemExtensins", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Sorting", "olive/Components/Paging", "olive/Components/MasterDetail", "olive/Components/Alert", "olive/Components/Action", "olive/Components/Waiting", "olive/Components/Grid", "olive/Plugins/Select", "olive/Plugins/PasswordStength", "olive/Plugins/HtmlEditor", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Plugins/InstantSearch", "olive/Plugins/DateDropdown"], function (require, exports, Config_1, Form_1, Url_1, SystemExtensins_1, Modal_1, Validate_1, Sorting_1, Paging_1, MasterDetail_1, Alert_1, Action_1, Waiting_1, Grid_1, Select_1, PasswordStength_1, HtmlEditor_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, InstantSearch_1, DateDropdown_1) {
+define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Components/Url", "olive/Extensions/SystemExtensins", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Sorting", "olive/Components/Paging", "olive/Components/MasterDetail", "olive/Components/Alert", "olive/Components/MvcAction", "olive/Components/AjaxRedirect", "olive/Components/Waiting", "olive/Components/Grid", "olive/Plugins/Select", "olive/Plugins/PasswordStength", "olive/Plugins/HtmlEditor", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Plugins/InstantSearch", "olive/Plugins/DateDropdown"], function (require, exports, Config_1, Form_1, Url_1, SystemExtensins_1, Modal_1, Validate_1, Sorting_1, Paging_1, MasterDetail_1, Alert_1, MvcAction_1, AjaxRedirect_1, Waiting_1, Grid_1, Select_1, PasswordStength_1, HtmlEditor_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, InstantSearch_1, DateDropdown_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var OlivePage = /** @class */ (function () {
         function OlivePage() {
@@ -72,13 +72,13 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             $(".password-strength").each(function (i, e) { return PasswordStength_1.default.enable($(e)); });
             $(".with-submenu").each(function (i, e) { return new SubMenu_1.default($(e)); });
             // =================== Request lifecycle ====================
-            $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", function (e) { return Action_1.default.ajaxRedirectBackClicked(e, _this.invokeAjaxActionResult); });
-            $("a[data-redirect=ajax]").off("click.ajax-redirect").on("click.ajax-redirect", function (e) { return Action_1.default.enableAjaxRedirect(e, _this.invokeAjaxActionResult); });
+            $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", function (e) { return AjaxRedirect_1.default.back(e, _this.invokeAjaxActionResult); });
+            $("a[data-redirect=ajax]").off("click.ajax-redirect").on("click.ajax-redirect", function (e) { return AjaxRedirect_1.default.enable(e, _this.invokeAjaxActionResult); });
             $('form[method=get]').off("submit.clean-up").on("submit.clean-up", function (e) { return _this.cleanGetFormSubmit(e); });
-            $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", function (e) { return Action_1.default.invokeActionWithAjax(e, $(e.currentTarget).attr("formaction"), false, _this.invokeAjaxActionResult); });
-            $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", function (e) { return Action_1.default.invokeActionWithPost(e); });
-            $("[data-change-action]").off("change.data-action").on("change.data-action", function (e) { return Action_1.default.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, _this.invokeAjaxActionResult); });
-            $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", function (e) { return Action_1.default.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, _this.invokeAjaxActionResult); });
+            $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", function (e) { return MvcAction_1.default.invokeWithAjax(e, $(e.currentTarget).attr("formaction"), false, _this.invokeAjaxActionResult); });
+            $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", function (e) { return MvcAction_1.default.invokeWithPost(e); });
+            $("[data-change-action]").off("change.data-action").on("change.data-action", function (e) { return MvcAction_1.default.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, _this.invokeAjaxActionResult); });
+            $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", function (e) { return MvcAction_1.default.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, _this.invokeAjaxActionResult); });
             MasterDetail_1.default.updateSubFormStates();
             Modal_1.default.adjustHeight();
             this._initializeActions.forEach(function (action) { return action(); });
@@ -117,7 +117,7 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
         OlivePage.prototype.goBack = function (target) {
             var returnUrl = Url_1.default.getQuery("ReturnUrl");
             if (returnUrl && target && $(target).is("[data-redirect=ajax]"))
-                Action_1.default.ajaxRedirect(returnUrl, $(target), false, false, true, this.invokeAjaxActionResult);
+                AjaxRedirect_1.default.go(returnUrl, $(target), false, false, true, this.invokeAjaxActionResult);
             else
                 Url_1.default.goBack();
             return false;
@@ -138,7 +138,7 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
                 }
                 url = Url_1.default.removeEmptyQueries(url);
                 if (form.is("[data-redirect=ajax]"))
-                    Action_1.default.ajaxRedirect(url, form, false, false, true, this.invokeAjaxActionResult);
+                    AjaxRedirect_1.default.go(url, form, false, false, true, this.invokeAjaxActionResult);
                 else
                     location.href = url;
             }
@@ -211,14 +211,14 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             else if (action.WithAjax === false)
                 location.replace(action.Redirect);
             else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true)
-                Action_1.default.ajaxRedirect(action.Redirect, trigger, false, false, true, this.invokeAjaxActionResult);
+                AjaxRedirect_1.default.go(action.Redirect, trigger, false, false, true, this.invokeAjaxActionResult);
             else
                 location.replace(action.Redirect);
         };
         OlivePage.prototype.refresh = function (keepScroll) {
             if (keepScroll === void 0) { keepScroll = false; }
             if ($("main").parent().is("body"))
-                Action_1.default.ajaxRedirect(location.href, null, false /*isBack*/, keepScroll, false, this.invokeAjaxActionResult /*addToHistory:*/);
+                AjaxRedirect_1.default.go(location.href, null, false /*isBack*/, keepScroll, false, this.invokeAjaxActionResult /*addToHistory:*/);
             else
                 location.reload();
             return false;

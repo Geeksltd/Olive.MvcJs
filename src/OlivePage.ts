@@ -10,7 +10,8 @@ import Sorting from 'olive/Components/Sorting'
 import Paging from 'olive/Components/Paging'
 import MasterDetail from 'olive/Components/MasterDetail'
 import Alert from 'olive/Components/Alert'
-import Action from 'olive/Components/Action'
+import MvcAction from 'olive/Components/MvcAction'
+import AjaxRedirect from 'olive/Components/AjaxRedirect'
 import Waiting from 'olive/Components/Waiting'
 import Grid from 'olive/Components/Grid'
 
@@ -108,13 +109,13 @@ export default class OlivePage {
         $(".with-submenu").each((i, e) => new SubMenu($(e)));
 
         // =================== Request lifecycle ====================
-        $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => Action.ajaxRedirectBackClicked(e, this.invokeAjaxActionResult));
-        $("a[data-redirect=ajax]").off("click.ajax-redirect").on("click.ajax-redirect", (e) => Action.enableAjaxRedirect(e, this.invokeAjaxActionResult));
+        $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => AjaxRedirect.back(e, this.invokeAjaxActionResult));
+        $("a[data-redirect=ajax]").off("click.ajax-redirect").on("click.ajax-redirect", (e) => AjaxRedirect.enable(e, this.invokeAjaxActionResult));
         $('form[method=get]').off("submit.clean-up").on("submit.clean-up", (e) => this.cleanGetFormSubmit(e));
-        $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", (e) => Action.invokeActionWithAjax(e, $(e.currentTarget).attr("formaction"), false, this.invokeAjaxActionResult));
-        $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", (e) => Action.invokeActionWithPost(e));
-        $("[data-change-action]").off("change.data-action").on("change.data-action", (e) => Action.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, this.invokeAjaxActionResult));
-        $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => Action.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, this.invokeAjaxActionResult));
+        $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", (e) => MvcAction.invokeWithAjax(e, $(e.currentTarget).attr("formaction"), false, this.invokeAjaxActionResult));
+        $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", (e) => MvcAction.invokeWithPost(e));
+        $("[data-change-action]").off("change.data-action").on("change.data-action", (e) => MvcAction.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, this.invokeAjaxActionResult));
+        $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => MvcAction.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, this.invokeAjaxActionResult));
 
         MasterDetail.updateSubFormStates();
         Modal.adjustHeight();
@@ -155,7 +156,7 @@ export default class OlivePage {
         var returnUrl = Url.getQuery("ReturnUrl");
 
         if (returnUrl && target && $(target).is("[data-redirect=ajax]"))
-            Action.ajaxRedirect(returnUrl, $(target), false, false, true, this.invokeAjaxActionResult);
+            AjaxRedirect.go(returnUrl, $(target), false, false, true, this.invokeAjaxActionResult);
         else Url.goBack();
 
         return false;
@@ -179,7 +180,7 @@ export default class OlivePage {
 
             url = Url.removeEmptyQueries(url);
 
-            if (form.is("[data-redirect=ajax]")) Action.ajaxRedirect(url, form, false, false, true, this.invokeAjaxActionResult);
+            if (form.is("[data-redirect=ajax]")) AjaxRedirect.go(url, form, false, false, true, this.invokeAjaxActionResult);
             else location.href = url;
         }
         catch (error) {
@@ -236,13 +237,13 @@ export default class OlivePage {
         else if (action.Target == '$modal') this.openModal(null, action.Redirect, {});
         else if (action.Target && action.Target != '') window.open(action.Redirect, action.Target);
         else if (action.WithAjax === false) location.replace(action.Redirect);
-        else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true) Action.ajaxRedirect(action.Redirect, trigger, false, false, true, this.invokeAjaxActionResult);
+        else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true) AjaxRedirect.go(action.Redirect, trigger, false, false, true, this.invokeAjaxActionResult);
         else location.replace(action.Redirect);
     }
 
     refresh(keepScroll = false) {
         if ($("main").parent().is("body"))
-            Action.ajaxRedirect(location.href, null, false /*isBack*/, keepScroll, false, this.invokeAjaxActionResult/*addToHistory:*/);
+            AjaxRedirect.go(location.href, null, false /*isBack*/, keepScroll, false, this.invokeAjaxActionResult/*addToHistory:*/);
         else location.reload();
 
         return false;
