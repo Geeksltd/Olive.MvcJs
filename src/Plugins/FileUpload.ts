@@ -1,9 +1,9 @@
-import   WindowContext   from 'olive/Components/WindowContext'
+import WindowContext from 'olive/Components/WindowContext'
 
 export default class FileUpload {
     input: any;
     constructor(targetInput: any) {
-        this.input = targetInput;          
+        this.input = targetInput;
     }
 
     public enable() {

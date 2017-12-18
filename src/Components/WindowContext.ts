@@ -205,7 +205,7 @@ export default class WindowContext {
         if (input.val() == sort) sort += ".DESC";
         input.val(sort);
     }
-    
+
     public static adjustIFrameHeightToContents(iframe) {
         $(iframe).height(iframe.contentWindow.document.body.scrollHeight);
     }
@@ -235,10 +235,5 @@ export default class WindowContext {
 
     public static ensureModalResize() {
         setTimeout(() => this.adjustModalHeight(), 1);
-    }
-
-    public static changeItToChosen(selectControl: JQuery) {
-        let options = { disable_search_threshold: 5 }
-        selectControl.chosen(options);
     }
 }

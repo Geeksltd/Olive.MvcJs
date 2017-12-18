@@ -20,6 +20,8 @@ import Alert from 'olive/Components/Alert'
 import Action from 'olive/Components/Action'
 import Waiting from 'olive/Components/Waiting'
 
+import Select from 'olive/Plugins/Select'
+
 
 export default class OlivePage {
     // formats: http://momentjs.com/docs/#/displaying/format/
@@ -92,7 +94,7 @@ export default class OlivePage {
         $("th[data-sort]").each((i, e) => WindowContext.setSortHeaderClass($(e)));
         $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", (e) => WindowContext.cleanUpNumberField($(e.currentTarget)));
         $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => WindowContext.ensureModalResize());
-        $("select.form-control").each((i, e) => WindowContext.changeItToChosen($(e)));
+        $("select.form-control").each((i, e) => Select.enhance($(e)));
         //$.validator.unobtrusive.parse('form');
 
         // =================== Plug-ins ====================enableTimeControl
