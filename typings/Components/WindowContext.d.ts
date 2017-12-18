@@ -11,7 +11,6 @@ export default class WindowContext {
     static toJson(data: any): any;
     static applyColumns(event: JQueryEventObject): void;
     static enableSelectColumns(container: any): void;
-    static enableInstantSearch(control: any): void;
     static enableSelectAllToggle(event: any): void;
     static enableUserHelp(element: JQuery): void;
     static handleDefaultButton(event: JQueryEventObject): boolean;

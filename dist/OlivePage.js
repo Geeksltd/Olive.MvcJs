@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Sorting", "olive/Components/MasterDetail", "olive/Components/Alert", "olive/Components/Action", "olive/Components/Waiting", "olive/Plugins/Select"], function (require, exports, Form_1, Url_1, WindowContext_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, Modal_1, Validate_1, Sorting_1, MasterDetail_1, Alert_1, Action_1, Waiting_1, Select_1) {
+define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Sorting", "olive/Components/MasterDetail", "olive/Components/Alert", "olive/Components/Action", "olive/Components/Waiting", "olive/Plugins/Select", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Plugins/InstantSearch"], function (require, exports, Form_1, Url_1, WindowContext_1, Modal_1, Validate_1, Sorting_1, MasterDetail_1, Alert_1, Action_1, Waiting_1, Select_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, InstantSearch_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     // For ckeditor plug-ins to work, this should be globally defined.
     window["CKEDITOR_BASEPATH"] = '/lib/ckeditor/';
@@ -60,7 +60,6 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
             $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", function (e) { return MasterDetail_1.default.deleteSubForm(e); });
             $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", function (e) { return _this.openLinkModal(e); });
             $(".select-grid-cols .group-control").each(function (i, e) { return WindowContext_1.default.enableSelectColumns($(e)); });
-            $("[name=InstantSearch]").each(function (i, e) { return WindowContext_1.default.enableInstantSearch($(e)); });
             $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", function (e) { return WindowContext_1.default.enableSelectAllToggle(e); });
             $("[data-user-help]").each(function (i, e) { return WindowContext_1.default.enableUserHelp($(e)); });
             $("form input, form select").off("keypress.default-button").on("keypress.default-button", function (e) { return WindowContext_1.default.handleDefaultButton(e); });
@@ -75,6 +74,7 @@ define(["require", "exports", "olive/Components/Form", "olive/Components/Url", "
             $("select.form-control").each(function (i, e) { return Select_1.default.enhance($(e)); });
             //$.validator.unobtrusive.parse('form');
             // =================== Plug-ins ====================enableTimeControl
+            $("[name=InstantSearch]").each(function (i, e) { return new InstantSearch_1.default($(e)).enable(); });
             $("input[autocomplete-source]").each(function (i, e) { return new AutoComplete_1.default($(e)).handle(); });
             $("[data-control=date-picker],[data-control=calendar]").each(function (i, e) { return new DatePicker_1.default($(e)); });
             $("[data-control='date-picker|time-picker']").each(function (i, e) { return new TimeControl_1.default($(e)); });

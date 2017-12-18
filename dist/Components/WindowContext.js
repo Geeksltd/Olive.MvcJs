@@ -76,26 +76,6 @@ define(["require", "exports", "olive/Components/Waiting"], function (require, ex
             container.find("a.select-cols").click(function () { columns.show(); return false; });
             columns.find('.cancel').click(function () { return columns.hide(); });
         };
-        WindowContext.enableInstantSearch = function (control) {
-            // TODO: Make it work with List render mode too.
-            control.off("keyup.immediate-filter").on("keyup.immediate-filter", function (event) {
-                var keywords = control.val().toLowerCase().split(' ');
-                var rows = control.closest('[data-module]').find(".grid > tbody > tr");
-                rows.each(function (index, e) {
-                    var row = $(e);
-                    var content = row.text().toLowerCase();
-                    var hasAllKeywords = keywords.filter(function (i) { return content.indexOf(i) == -1; }).length == 0;
-                    if (hasAllKeywords)
-                        row.show();
-                    else
-                        row.hide();
-                });
-            });
-            control.on("keydown", function (e) {
-                if (e.keyCode == 13)
-                    e.preventDefault();
-            });
-        };
         WindowContext.enableSelectAllToggle = function (event) {
             var trigger = $(event.currentTarget);
             trigger.closest("table").find("td.select-row > input:checkbox").prop('checked', trigger.is(":checked"));
