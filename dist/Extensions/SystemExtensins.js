@@ -1,4 +1,4 @@
-define(["require", "exports"], function (require, exports) {
+define(["require", "exports", "olive/Extensions/JQueryExtensions"], function (require, exports, jq) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var SystemExtensins = /** @class */ (function () {
         function SystemExtensins() {
@@ -14,6 +14,15 @@ define(["require", "exports"], function (require, exports) {
             if (!String.prototype.htmlDecode)
                 String.prototype.htmlDecode = function () { return SystemExtensins.htmlDecode(this); };
             window.location.pathAndQuery = function () { return window.location.pathname + window.location.search; };
+            jq.enableValidateForCheckboxList();
+            jq.enableValidateForTimePicker();
+            $.fn.extend({
+                screenOffset: jq.screenOffset,
+                bindFirst: jq.bindFirst,
+                clone: jq.clone,
+                raiseEvent: jq.raiseEvent,
+                getUniqueSelector: jq.getUniqueSelector
+            });
         };
         SystemExtensins.safeParse = function (data) {
             try {

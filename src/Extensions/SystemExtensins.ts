@@ -1,3 +1,4 @@
+import * as jq from 'olive/Extensions/JQueryExtensions'
 
 export default class SystemExtensins {
 
@@ -11,6 +12,17 @@ export default class SystemExtensins {
         if (!String.prototype.htmlDecode) String.prototype.htmlDecode = function () { return SystemExtensins.htmlDecode(this) };
 
         window.location.pathAndQuery = () => window.location.pathname + window.location.search;
+
+        jq.enableValidateForCheckboxList();
+        jq.enableValidateForTimePicker();
+
+        $.fn.extend({
+            screenOffset: jq.screenOffset,
+            bindFirst: jq.bindFirst,
+            clone: jq.clone,
+            raiseEvent: jq.raiseEvent,
+            getUniqueSelector: jq.getUniqueSelector
+        });
     }
 
     static safeParse(data) {
