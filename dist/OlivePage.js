@@ -56,7 +56,7 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", function (e) { return WindowContext_1.default.adjustIFrameHeightToContents(e.currentTarget); });
             $("th[data-sort]").each(function (i, e) { return Sorting_1.default.setSortHeaderClass($(e)); });
             $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", function (e) { return WindowContext_1.default.cleanUpNumberField($(e.currentTarget)); });
-            $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", function () { return WindowContext_1.default.ensureModalResize(); });
+            $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", function () { return Modal_1.default.ensureHeight(); });
             $("select.form-control").each(function (i, e) { return Select_1.default.enhance($(e)); });
             //$.validator.unobtrusive.parse('form');
             // =================== Plug-ins ====================
@@ -82,7 +82,7 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             $("[data-change-action]").off("change.data-action").on("change.data-action", function (e) { return Action_1.default.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, _this.invokeAjaxActionResult); });
             $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", function (e) { return Action_1.default.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, _this.invokeAjaxActionResult); });
             MasterDetail_1.default.updateSubFormStates();
-            WindowContext_1.default.adjustModalHeight();
+            Modal_1.default.adjustHeight();
             this._initializeActions.forEach(function (action) { return action(); });
         };
         OlivePage.prototype.skipNewWindows = function () {
@@ -161,7 +161,7 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
         //                    customConfig: '/Scripts/ckeditor_config.js'
         //                });
         //            editor.on('change', (evt) => evt.editor.updateElement());
-        //            editor.on("instanceReady", (event) => this.adjustModalHeight());
+        //            editor.on("instanceReady", (event) => Modal.adjustHeight());
         //        });
         //    });
         //}

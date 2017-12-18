@@ -75,6 +75,27 @@ define(["require", "exports", "olive/Components/WindowContext"], function (requi
             </div>\
         </div></div></div>";
         };
+        Modal.ensureHeight = function () {
+            var _this = this;
+            setTimeout(function () { return _this.adjustHeight(); }, 1);
+        };
+        Modal.adjustHeight = function (overflow) {
+            if (window.isModal()) {
+                var frame = $(window.getContainerIFrame());
+                if (frame.attr("data-has-explicit-height") != 'true')
+                    frame.height(document.body.offsetHeight + (overflow || 0));
+            }
+        };
+        Modal.expandToFitPicker = function (target) {
+            var datepicker = $(target.currentTarget).siblings('.bootstrap-datetimepicker-widget');
+            if (datepicker.length === 0) {
+                this.adjustHeight();
+                return;
+            }
+            var offset = Math.ceil(datepicker.offset().top + datepicker[0].offsetHeight) - document.body.offsetHeight + 6;
+            var overflow = Math.max(offset, 0);
+            this.adjustHeight(overflow);
+        };
         return Modal;
     }());
     exports.default = Modal;

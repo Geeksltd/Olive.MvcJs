@@ -8,4 +8,7 @@ export default class Modal {
     open(): boolean;
     close(): boolean;
     getModalTemplate(options: any): string;
+    static ensureHeight(): void;
+    static adjustHeight(overflow?: number): void;
+    static expandToFitPicker(target: any): void;
 }

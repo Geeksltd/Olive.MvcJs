@@ -21,27 +21,6 @@ export default class WindowContext {
         return true;
     }
 
-    public static expandModalToFitPicker(target: any) {
-        var datepicker = $(target.currentTarget).siblings('.bootstrap-datetimepicker-widget');
-
-        if (datepicker.length === 0) {
-            this.adjustModalHeight();
-            return;
-        }
-
-        var offset = Math.ceil(datepicker.offset().top + datepicker[0].offsetHeight) - document.body.offsetHeight + 6;
-        var overflow = Math.max(offset, 0);
-        this.adjustModalHeight(overflow);
-    }
-
-    public static adjustModalHeight(overflow?: number) {
-        if (window.isModal()) {
-            var frame = $(window.getContainerIFrame());
-            if (frame.attr("data-has-explicit-height") != 'true')
-                frame.height(document.body.offsetHeight + (overflow || 0));
-        }
-    }
-
     public static handleAjaxResponseError(response) {
         Waiting.hidePleaseWait();
         console.error(response);
@@ -133,9 +112,5 @@ export default class WindowContext {
         // var end = domElement.selectionEnd;
         field.val(field.val().replace(/[^\d.-]/g, ""));
         // domElement.setSelectionRange(start, end);
-    }
-
-    public static ensureModalResize() {
-        setTimeout(() => this.adjustModalHeight(), 1);
     }
 }

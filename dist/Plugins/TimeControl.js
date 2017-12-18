@@ -1,11 +1,11 @@
-define(["require", "exports", "olive/Components/WindowContext", "olive/Config"], function (require, exports, WindowContext_1, Config_1) {
+define(["require", "exports", "olive/Components/Modal", "olive/Config"], function (require, exports, Modal_1, Config_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var TimeControl = /** @class */ (function () {
         function TimeControl(targetInput) {
             var input = targetInput;
             if (window.isModal()) {
-                input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", function (e) { return WindowContext_1.default.expandModalToFitPicker(e); });
-                input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", function (e) { return WindowContext_1.default.expandModalToFitPicker(e); });
+                input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", function (e) { return Modal_1.default.expandToFitPicker(e); });
+                input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", function (e) { return Modal_1.default.expandToFitPicker(e); });
             }
             input.attr("data-autofocus", "disabled");
             input.datetimepicker({

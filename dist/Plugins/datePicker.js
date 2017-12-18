@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Components/WindowContext", "olive/Config"], function (require, exports, WindowContext_1, Config_1) {
+define(["require", "exports", "olive/Components/Modal", "olive/Config"], function (require, exports, Modal_1, Config_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var DatePicker = /** @class */ (function () {
         function DatePicker(targetInput) {
@@ -7,8 +7,8 @@ define(["require", "exports", "olive/Components/WindowContext", "olive/Config"],
         DatePicker.prototype.show = function () {
             var _this = this;
             if (window.isModal()) {
-                this.input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", function (e) { return WindowContext_1.default.expandModalToFitPicker(e); });
-                this.input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", function (e) { return WindowContext_1.default.expandModalToFitPicker(e); });
+                this.input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", function (e) { return Modal_1.default.expandToFitPicker(e); });
+                this.input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", function (e) { return Modal_1.default.expandToFitPicker(e); });
             }
             this.input.attr("data-autofocus", "disabled");
             var control = this.input.attr("data-control");

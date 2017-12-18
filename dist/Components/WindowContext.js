@@ -19,23 +19,6 @@ define(["require", "exports", "olive/Components/Waiting"], function (require, ex
                 return false;
             return true;
         };
-        WindowContext.expandModalToFitPicker = function (target) {
-            var datepicker = $(target.currentTarget).siblings('.bootstrap-datetimepicker-widget');
-            if (datepicker.length === 0) {
-                this.adjustModalHeight();
-                return;
-            }
-            var offset = Math.ceil(datepicker.offset().top + datepicker[0].offsetHeight) - document.body.offsetHeight + 6;
-            var overflow = Math.max(offset, 0);
-            this.adjustModalHeight(overflow);
-        };
-        WindowContext.adjustModalHeight = function (overflow) {
-            if (window.isModal()) {
-                var frame = $(window.getContainerIFrame());
-                if (frame.attr("data-has-explicit-height") != 'true')
-                    frame.height(document.body.offsetHeight + (overflow || 0));
-            }
-        };
         WindowContext.handleAjaxResponseError = function (response) {
             Waiting_1.default.hidePleaseWait();
             console.error(response);
@@ -125,10 +108,6 @@ define(["require", "exports", "olive/Components/Waiting"], function (require, ex
             // var end = domElement.selectionEnd;
             field.val(field.val().replace(/[^\d.-]/g, ""));
             // domElement.setSelectionRange(start, end);
-        };
-        WindowContext.ensureModalResize = function () {
-            var _this = this;
-            setTimeout(function () { return _this.adjustModalHeight(); }, 1);
         };
         WindowContext.events = {};
         return WindowContext;

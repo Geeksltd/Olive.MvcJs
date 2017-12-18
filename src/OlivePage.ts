@@ -81,7 +81,7 @@ export default class OlivePage {
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", (e) => WindowContext.adjustIFrameHeightToContents(e.currentTarget));
         $("th[data-sort]").each((i, e) => Sorting.setSortHeaderClass($(e)));
         $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", (e) => WindowContext.cleanUpNumberField($(e.currentTarget)));
-        $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => WindowContext.ensureModalResize());
+        $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => Modal.ensureHeight());
         $("select.form-control").each((i, e) => Select.enhance($(e)));
         //$.validator.unobtrusive.parse('form');
 
@@ -110,7 +110,7 @@ export default class OlivePage {
         $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => Action.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, this.invokeAjaxActionResult));
 
         MasterDetail.updateSubFormStates();
-        WindowContext.adjustModalHeight();
+        Modal.adjustHeight();
 
         this._initializeActions.forEach((action) => action());
     }
@@ -205,7 +205,7 @@ export default class OlivePage {
 
     //            editor.on('change', (evt) => evt.editor.updateElement());
 
-    //            editor.on("instanceReady", (event) => this.adjustModalHeight());
+    //            editor.on("instanceReady", (event) => Modal.adjustHeight());
     //        });
     //    });
     //}

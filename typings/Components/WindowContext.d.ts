@@ -5,8 +5,6 @@ export default class WindowContext {
     };
     static findContainerIFrame(): HTMLIFrameElement;
     static isWindowModal(): boolean;
-    static expandModalToFitPicker(target: any): void;
-    static adjustModalHeight(overflow?: number): void;
     static handleAjaxResponseError(response: any): void;
     static toJson(data: any): any;
     static applyColumns(event: JQueryEventObject): void;
@@ -18,5 +16,4 @@ export default class WindowContext {
     static enableAjaxPaging(event: JQueryEventObject): void;
     static adjustIFrameHeightToContents(iframe: any): void;
     static cleanUpNumberField(field: JQuery): void;
-    static ensureModalResize(): void;
 }

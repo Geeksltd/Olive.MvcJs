@@ -87,4 +87,29 @@ export default class Modal {
             </div>\
         </div></div></div>";
     }
+
+    public static ensureHeight() {
+        setTimeout(() => this.adjustHeight(), 1);
+    }
+
+    public static adjustHeight(overflow?: number) {
+        if (window.isModal()) {
+            var frame = $(window.getContainerIFrame());
+            if (frame.attr("data-has-explicit-height") != 'true')
+                frame.height(document.body.offsetHeight + (overflow || 0));
+        }
+    }
+
+    public static expandToFitPicker(target: any) {
+        var datepicker = $(target.currentTarget).siblings('.bootstrap-datetimepicker-widget');
+
+        if (datepicker.length === 0) {
+            this.adjustHeight();
+            return;
+        }
+
+        var offset = Math.ceil(datepicker.offset().top + datepicker[0].offsetHeight) - document.body.offsetHeight + 6;
+        var overflow = Math.max(offset, 0);
+        this.adjustHeight(overflow);
+    }
 }

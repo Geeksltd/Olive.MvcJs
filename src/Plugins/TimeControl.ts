@@ -1,4 +1,4 @@
-import WindowContext from "olive/Components/WindowContext";
+import Modal from "olive/Components/Modal"
 import Config from "olive/Config";
 
 export default class TimeControl {
@@ -7,8 +7,8 @@ export default class TimeControl {
         let input = targetInput;
 
         if (window.isModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => WindowContext.expandModalToFitPicker(e));
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => WindowContext.expandModalToFitPicker(e));
+            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => Modal.expandToFitPicker(e));
+            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => Modal.expandToFitPicker(e));
         }
 
         input.attr("data-autofocus", "disabled");
