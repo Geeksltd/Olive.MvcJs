@@ -10,7 +10,7 @@ import Sorting from 'olive/Components/Sorting'
 import Paging from 'olive/Components/Paging'
 import MasterDetail from 'olive/Components/MasterDetail'
 import Alert from 'olive/Components/Alert'
-import MvcAction from 'olive/Components/MvcAction'
+import FormAction from 'olive/Components/FormAction'
 import AjaxRedirect from 'olive/Components/AjaxRedirect'
 import Waiting from 'olive/Components/Waiting'
 import Grid from 'olive/Components/Grid'
@@ -112,10 +112,10 @@ export default class OlivePage {
         $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => AjaxRedirect.back(e, this.invokeAjaxActionResult));
         $("a[data-redirect=ajax]").off("click.ajax-redirect").on("click.ajax-redirect", (e) => AjaxRedirect.enable(e, this.invokeAjaxActionResult));
         $('form[method=get]').off("submit.clean-up").on("submit.clean-up", (e) => this.cleanGetFormSubmit(e));
-        $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", (e) => MvcAction.invokeWithAjax(e, $(e.currentTarget).attr("formaction"), false, this.invokeAjaxActionResult));
-        $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", (e) => MvcAction.invokeWithPost(e));
-        $("[data-change-action]").off("change.data-action").on("change.data-action", (e) => MvcAction.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, this.invokeAjaxActionResult));
-        $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => MvcAction.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, this.invokeAjaxActionResult));
+        $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", (e) => FormAction.invokeWithAjax(e, $(e.currentTarget).attr("formaction"), false, this.invokeAjaxActionResult));
+        $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", (e) => FormAction.invokeWithPost(e));
+        $("[data-change-action]").off("change.data-action").on("change.data-action", (e) => FormAction.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, this.invokeAjaxActionResult));
+        $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => FormAction.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, this.invokeAjaxActionResult));
 
         MasterDetail.updateSubFormStates();
         Modal.adjustHeight();
@@ -163,7 +163,6 @@ export default class OlivePage {
     }
 
     cleanGetFormSubmit(event: JQueryEventObject) {
-
         var form = $(event.currentTarget);
         if (Validate.validateForm(form) == false) { Waiting.hidePleaseWait(); return false; }
 

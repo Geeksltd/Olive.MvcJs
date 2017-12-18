@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Components/Url", "olive/Components/Form", "olive/Config", "olive/Components/MvcAction"], function (require, exports, Url_1, Form_1, Config_1, MvcAction_1) {
+define(["require", "exports", "olive/Components/Url", "olive/Components/Form", "olive/Config", "olive/Components/FormAction"], function (require, exports, Url_1, Form_1, Config_1, FormAction_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var AutoComplete = /** @class */ (function () {
         function AutoComplete(targetInput) {
@@ -79,7 +79,7 @@ define(["require", "exports", "olive/Components/Url", "olive/Components/Form", "
                     _this.awaitingAutocompleteResponses--;
                     return;
                 }
-                $.post(url, data).fail(MvcAction_1.default.onAjaxResponseError).done(function (result) {
+                $.post(url, data).fail(FormAction_1.default.onAjaxResponseError).done(function (result) {
                     result = result.map(function (i) {
                         return {
                             Display: i.Display || i.Text || i.Value,

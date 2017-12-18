@@ -3,7 +3,7 @@ import Validate from 'olive/Components/Validate'
 import Form from 'olive/Components/Form'
 import Config from "olive/Config"
 
-export default class MvcAction {
+export default class FormAction {
 
     public static isAwaitingAjaxResponse = false;
     static events: { [event: string]: Function[] } = {};

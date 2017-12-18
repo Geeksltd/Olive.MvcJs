@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Components/Waiting", "olive/Components/MvcAction"], function (require, exports, Waiting_1, MvcAction_1) {
+define(["require", "exports", "olive/Components/Waiting", "olive/Components/FormAction"], function (require, exports, Waiting_1, FormAction_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var AjaxRedirect = /** @class */ (function () {
         function AjaxRedirect() {
@@ -24,7 +24,7 @@ define(["require", "exports", "olive/Components/Waiting", "olive/Components/MvcA
             if (keepScroll === void 0) { keepScroll = false; }
             if (addToHistory === void 0) { addToHistory = true; }
             this.isAjaxRedirecting = true;
-            MvcAction_1.default.isAwaitingAjaxResponse = true;
+            FormAction_1.default.isAwaitingAjaxResponse = true;
             if (window.stop)
                 window.stop();
             else if (document.execCommand !== undefined)
@@ -38,13 +38,13 @@ define(["require", "exports", "olive/Components/Waiting", "olive/Components/MvcA
                 url: url,
                 type: 'GET',
                 success: function (response) {
-                    MvcAction_1.default.events = {};
+                    FormAction_1.default.events = {};
                     if (!isBack) {
                         _this.ajaxChangedUrl++;
                         if (addToHistory)
                             history.pushState({}, $("#page_meta_title").val(), url);
                     }
-                    MvcAction_1.default.isAwaitingAjaxResponse = false;
+                    FormAction_1.default.isAwaitingAjaxResponse = false;
                     _this.isAjaxRedirecting = false;
                     callback(response, null, trigger);
                     if (keepScroll) {

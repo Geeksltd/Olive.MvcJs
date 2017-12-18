@@ -1,5 +1,5 @@
 ﻿import Waiting from 'olive/Components/Waiting'
-import MvcAction from 'olive/Components/MvcAction'
+import FormAction from 'olive/Components/FormAction'
 
 export default class AjaxRedirect {
     static ajaxChangedUrl = 0;
@@ -21,7 +21,7 @@ export default class AjaxRedirect {
 
     public static go(url: string, trigger: JQuery = null, isBack: boolean = false, keepScroll: boolean = false, addToHistory = true, callback: (response: any, containerModule: JQuery, trigger: JQuery) => void) {
         this.isAjaxRedirecting = true;
-        MvcAction.isAwaitingAjaxResponse = true;
+        FormAction.isAwaitingAjaxResponse = true;
         if (window.stop) window.stop();
         else if (document.execCommand !== undefined) document.execCommand("Stop", false);
 
@@ -35,14 +35,14 @@ export default class AjaxRedirect {
             url: url,
             type: 'GET',
             success: (response) => {
-                MvcAction.events = {};
+                FormAction.events = {};
 
                 if (!isBack) {
                     this.ajaxChangedUrl++;
                     if (addToHistory) history.pushState({}, $("#page_meta_title").val(), url);
                 }
 
-                MvcAction.isAwaitingAjaxResponse = false;
+                FormAction.isAwaitingAjaxResponse = false;
                 this.isAjaxRedirecting = false;
                 callback(response, null, trigger);
                 if (keepScroll) {
