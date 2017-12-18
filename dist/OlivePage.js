@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Sorting", "olive/Components/Paging", "olive/Components/MasterDetail", "olive/Components/Alert", "olive/Components/Action", "olive/Components/Waiting", "olive/Components/Grid", "olive/Plugins/Select", "olive/Plugins/PasswordStength", "olive/Plugins/HtmlEditor", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Plugins/InstantSearch", "olive/Plugins/DateDropdown"], function (require, exports, Config_1, Form_1, Url_1, WindowContext_1, Modal_1, Validate_1, Sorting_1, Paging_1, MasterDetail_1, Alert_1, Action_1, Waiting_1, Grid_1, Select_1, PasswordStength_1, HtmlEditor_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, InstantSearch_1, DateDropdown_1) {
+define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Components/Url", "olive/Extensions/SystemExtensins", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Sorting", "olive/Components/Paging", "olive/Components/MasterDetail", "olive/Components/Alert", "olive/Components/Action", "olive/Components/Waiting", "olive/Components/Grid", "olive/Plugins/Select", "olive/Plugins/PasswordStength", "olive/Plugins/HtmlEditor", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Plugins/InstantSearch", "olive/Plugins/DateDropdown"], function (require, exports, Config_1, Form_1, Url_1, SystemExtensins_1, Modal_1, Validate_1, Sorting_1, Paging_1, MasterDetail_1, Alert_1, Action_1, Waiting_1, Grid_1, Select_1, PasswordStength_1, HtmlEditor_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, InstantSearch_1, DateDropdown_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var OlivePage = /** @class */ (function () {
         function OlivePage() {
@@ -7,6 +7,7 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             this._initializeActions = [];
             this._preInitializeActions = [];
             this.dynamicallyLoadedScriptFiles = [];
+            SystemExtensins_1.default.initialize();
             Modal_1.default.initialize();
             $(function () {
                 //$.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: this.DEFAULT_MODAL_BACKDROP });
@@ -50,11 +51,11 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             $("[data-sort-item]").parents("tbody").each(function (i, e) { return Sorting_1.default.enableDragSort($(e)); });
             $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", function (e) { return Paging_1.default.enableWithAjax(e); });
             $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", function (e) { return Sorting_1.default.enableAjaxSorting(e); });
-            $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", function (e) { return WindowContext_1.default.fitFrameContentHeight(e.currentTarget); });
             $("th[data-sort]").each(function (i, e) { return Sorting_1.default.setSortHeaderClass($(e)); });
             $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", function (e) { return Form_1.default.cleanUpNumberField($(e.currentTarget)); });
             $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", function () { return Modal_1.default.ensureHeight(); });
             $("select.form-control").each(function (i, e) { return Select_1.default.enhance($(e)); });
+            $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", function (e) { return $(e.currentTarget).height(e.currentTarget.contentWindow.document.body.scrollHeight); });
             //$.validator.unobtrusive.parse('form');
             // =================== Plug-ins ====================
             $("[name=InstantSearch]").each(function (i, e) { return new InstantSearch_1.default($(e)).enable(); });

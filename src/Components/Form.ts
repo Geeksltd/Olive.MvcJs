@@ -2,9 +2,7 @@
     static merge(items: JQuerySerializeArrayElement[]): JQuerySerializeArrayElement[] {
         var result: JQuerySerializeArrayElement[] = [];
 
-        var a: any = Array;
-
-        var groupedByKeys = a.groupBy(items, i => i.name.toLowerCase());
+        var groupedByKeys = Array.groupBy(items, i => i.name.toLowerCase());
 
         for (var i in groupedByKeys) {
 

@@ -3,7 +3,7 @@ import Config from "olive/Config"
 
 import Form from 'olive/Components/Form'
 import Url from 'olive/Components/Url'
-import WindowContext from 'olive/Components/WindowContext';
+import SystemExtensins from 'olive/Extensions/SystemExtensins';
 import Modal from 'olive/Components/Modal'
 import Validate from 'olive/Components/Validate'
 import Sorting from 'olive/Components/Sorting'
@@ -33,6 +33,7 @@ export default class OlivePage {
     modal: any = null;
 
     constructor() {
+        SystemExtensins.initialize();
         Modal.initialize();
 
         $(() => {
@@ -82,11 +83,13 @@ export default class OlivePage {
         $("[data-sort-item]").parents("tbody").each((i, e) => Sorting.enableDragSort($(e)));
         $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", (e) => Paging.enableWithAjax(e));
         $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", (e) => Sorting.enableAjaxSorting(e));
-        $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", (e) => WindowContext.fitFrameContentHeight(e.currentTarget));
         $("th[data-sort]").each((i, e) => Sorting.setSortHeaderClass($(e)));
         $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", (e) => Form.cleanUpNumberField($(e.currentTarget)));
         $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => Modal.ensureHeight());
         $("select.form-control").each((i, e) => Select.enhance($(e)));
+        $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust",
+            (e: any) => $(e.currentTarget).height(e.currentTarget.contentWindow.document.body.scrollHeight));
+
         //$.validator.unobtrusive.parse('form');
 
         // =================== Plug-ins ====================

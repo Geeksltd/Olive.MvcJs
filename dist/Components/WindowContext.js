@@ -17,9 +17,7 @@ define(["require", "exports"], function (require, exports) {
                     throw error;
                 }
             };
-        };
-        WindowContext.fitFrameContentHeight = function (iframe) {
-            $(iframe).height(iframe.contentWindow.document.body.scrollHeight);
+            window.location["pathAndQuery"] = function () { return window.location.pathname + window.location.search; };
         };
         return WindowContext;
     }());

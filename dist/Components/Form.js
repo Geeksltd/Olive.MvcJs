@@ -5,8 +5,7 @@ define(["require", "exports"], function (require, exports) {
         }
         Form.merge = function (items) {
             var result = [];
-            var a = Array;
-            var groupedByKeys = a.groupBy(items, function (i) { return i.name.toLowerCase(); });
+            var groupedByKeys = Array.groupBy(items, function (i) { return i.name.toLowerCase(); });
             for (var i in groupedByKeys) {
                 var group = groupedByKeys[i];
                 if (typeof (group) == 'function')
