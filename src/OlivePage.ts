@@ -68,11 +68,9 @@ export default class OlivePage {
     }
 
     initialize() {
-
         this._preInitializeActions.forEach((action) => action());
 
         // =================== Standard Features ====================
-
         $(".select-cols .apply").off("click.apply-columns").on("click.apply-columns", (e) => Grid.applyColumns(e));
         $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", (e) => MasterDetail.deleteSubForm(e));
         $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
@@ -111,7 +109,7 @@ export default class OlivePage {
         // =================== Request lifecycle ====================
         $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => AjaxRedirect.back(e));
         $("a[data-redirect=ajax]").off("click.ajax-redirect").on("click.ajax-redirect", (e) => AjaxRedirect.enable(e));
-        $('form[method=get]').off("submit.clean-up").on("submit.clean-up", (e) => this.cleanGetFormSubmit(e));
+        $('form[method=get]').off("submit.clean-up").on("submit.clean-up", (e) => Form.submitCleanGet(e));
         $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", (e) => FormAction.invokeWithAjax(e, $(e.currentTarget).attr("formaction"), false));
         $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", (e) => FormAction.invokeWithPost(e));
         $("[data-change-action]").off("change.data-action").on("change.data-action", (e) => FormAction.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false));
@@ -144,33 +142,6 @@ export default class OlivePage {
             AjaxRedirect.go(returnUrl, $(target), false, false, true);
         else Url.goBack();
 
-        return false;
-    }
-
-    cleanGetFormSubmit(event: JQueryEventObject) {
-        var form = $(event.currentTarget);
-        if (Validate.validateForm(form) == false) { Waiting.hide(); return false; }
-
-        var formData = Form.merge(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
-
-        var url = Url.removeEmptyQueries(form.attr('action'));
-
-        try {
-
-            form.find("input:checkbox:unchecked").each((ind, e) => url = Url.removeQuery(url, $(e).attr("name")));
-
-            for (var item of formData)
-                url = Url.updateQuery(url, item.name, item.value);
-
-            url = Url.removeEmptyQueries(url);
-
-            if (form.is("[data-redirect=ajax]")) AjaxRedirect.go(url, form, false, false, true);
-            else location.href = url;
-        }
-        catch (error) {
-            console.log(error);
-            alert(error);
-        }
         return false;
     }
 

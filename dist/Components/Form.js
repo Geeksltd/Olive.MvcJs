@@ -1,4 +1,4 @@
-define(["require", "exports"], function (require, exports) {
+define(["require", "exports", "olive/Components/Url", "olive/Components/Validate", "olive/Components/Waiting", "olive/Mvc/AjaxRedirect"], function (require, exports, Url_1, Validate_1, Waiting_1, AjaxRedirect_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var Form = /** @class */ (function () {
         function Form() {
@@ -55,6 +55,32 @@ define(["require", "exports"], function (require, exports) {
         Form.cleanUpNumberField = function (field) {
             var domElement = field.get(0);
             field.val(field.val().replace(/[^\d.-]/g, ""));
+        };
+        Form.submitCleanGet = function (event) {
+            var form = $(event.currentTarget);
+            if (Validate_1.default.validateForm(form) == false) {
+                Waiting_1.default.hide();
+                return false;
+            }
+            var formData = Form.merge(form.serializeArray()).filter(function (item) { return item.name != "__RequestVerificationToken"; });
+            var url = Url_1.default.removeEmptyQueries(form.attr('action'));
+            try {
+                form.find("input:checkbox:unchecked").each(function (ind, e) { return url = Url_1.default.removeQuery(url, $(e).attr("name")); });
+                for (var _i = 0, formData_1 = formData; _i < formData_1.length; _i++) {
+                    var item = formData_1[_i];
+                    url = Url_1.default.updateQuery(url, item.name, item.value);
+                }
+                url = Url_1.default.removeEmptyQueries(url);
+                if (form.is("[data-redirect=ajax]"))
+                    AjaxRedirect_1.default.go(url, form, false, false, true);
+                else
+                    location.href = url;
+            }
+            catch (error) {
+                console.log(error);
+                alert(error);
+            }
+            return false;
         };
         return Form;
     }());

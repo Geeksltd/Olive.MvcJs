@@ -4,4 +4,5 @@ export default class Form {
     static getPostData(trigger: JQuery): JQuerySerializeArrayElement[];
     static onDefaultButtonKeyPress(event: JQueryEventObject): boolean;
     static cleanUpNumberField(field: JQuery): void;
+    static submitCleanGet(event: JQueryEventObject): boolean;
 }

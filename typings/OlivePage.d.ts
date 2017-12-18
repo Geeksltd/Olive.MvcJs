@@ -9,6 +9,5 @@ export default class OlivePage {
     skipNewWindows(): void;
     openLinkModal(event: JQueryEventObject): boolean;
     goBack(target: any): boolean;
-    cleanGetFormSubmit(event: JQueryEventObject): boolean;
     enableUserHelp(element: JQuery): void;
 }

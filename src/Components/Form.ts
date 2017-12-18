@@ -1,4 +1,9 @@
-﻿export default class Form {
+﻿import Url from 'olive/Components/Url'
+import Validate from 'olive/Components/Validate'
+import Waiting from 'olive/Components/Waiting'
+import AjaxRedirect from 'olive/Mvc/AjaxRedirect'
+
+export default class Form {
     static merge(items: JQuerySerializeArrayElement[]): JQuerySerializeArrayElement[] {
         var result: JQuerySerializeArrayElement[] = [];
 
@@ -58,5 +63,32 @@
     public static cleanUpNumberField(field: JQuery) {
         var domElement = <HTMLInputElement>field.get(0);
         field.val(field.val().replace(/[^\d.-]/g, ""));
+    }
+
+    public static submitCleanGet(event: JQueryEventObject) {
+        var form = $(event.currentTarget);
+        if (Validate.validateForm(form) == false) { Waiting.hide(); return false; }
+
+        var formData = Form.merge(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
+
+        var url = Url.removeEmptyQueries(form.attr('action'));
+
+        try {
+
+            form.find("input:checkbox:unchecked").each((ind, e) => url = Url.removeQuery(url, $(e).attr("name")));
+
+            for (var item of formData)
+                url = Url.updateQuery(url, item.name, item.value);
+
+            url = Url.removeEmptyQueries(url);
+
+            if (form.is("[data-redirect=ajax]")) AjaxRedirect.go(url, form, false, false, true);
+            else location.href = url;
+        }
+        catch (error) {
+            console.log(error);
+            alert(error);
+        }
+        return false;
     }
 }
