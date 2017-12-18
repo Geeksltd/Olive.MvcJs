@@ -77,7 +77,7 @@ export default class OlivePage {
         $("[data-user-help]").each((i, e) => this.enableUserHelp($(e)));
         $("form input, form select").off("keypress.default-button").on("keypress.default-button", (e) => Form.onDefaultButtonKeyPress(e));
         $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", (e) => Paging.onSizeChanged(e));
-        $("[data-sort-item]").parents("tbody").each((i, e) => this.enableDragSort($(e)));
+        $("[data-sort-item]").parents("tbody").each((i, e) => Sorting.enableDragSort($(e)));
         $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", (e) => Paging.enableWithAjax(e));
         $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", (e) => Sorting.enableAjaxSorting(e));
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", (e) => WindowContext.fitFrameContentHeight(e.currentTarget));
@@ -126,34 +126,7 @@ export default class OlivePage {
         this.openWindow = (url, target) => location.replace(url);
     }
 
-    enableDragSort(container) {
 
-        var isTable = container.is("tbody");
-        var items = isTable ? "> tr" : "> li"; // TODO: Do we need to support any other markup?
-
-        container.sortable({
-            handle: '[data-sort-item]',
-            items: items,
-            containment: "parent",
-            axis: 'y',
-            helper: (e, ui) => {
-                // prevent TD collapse during drag
-                ui.children().each((i, c) => $(c).width($(c).width()));
-                return ui;
-            },
-            stop: (e, ui) => {
-
-                var dropBefore = ui.item.next().find("[data-sort-item]").attr("data-sort-item") || "";
-
-                var handle = ui.item.find("[data-sort-item]");
-
-                var actionUrl = handle.attr("data-sort-action");
-                actionUrl = Url.addQuery(actionUrl, "drop-before", dropBefore);
-
-                Action.invokeActionWithAjax(null/*{ currentTarget: handle.get(0) }*/, actionUrl, null, null);
-            }
-        });
-    }
 
     enablePasswordStengthMeter(container: any) {
         // for configuration options : https://github.com/ablanco/jquery.pwstrength.bootstrap/blob/master/OPTIONS.md

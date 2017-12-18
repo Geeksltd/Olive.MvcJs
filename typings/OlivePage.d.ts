@@ -9,7 +9,6 @@ export default class OlivePage {
     initializeUpdatedPage(container?: JQuery, trigger?: any): void;
     initialize(): void;
     skipNewWindows(): void;
-    enableDragSort(container: any): void;
     enablePasswordStengthMeter(container: any): void;
     enableDateDropdown(input: any): void;
     openLinkModal(event: JQueryEventObject): boolean;

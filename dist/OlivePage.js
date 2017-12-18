@@ -48,7 +48,7 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             $("[data-user-help]").each(function (i, e) { return _this.enableUserHelp($(e)); });
             $("form input, form select").off("keypress.default-button").on("keypress.default-button", function (e) { return Form_1.default.onDefaultButtonKeyPress(e); });
             $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", function (e) { return Paging_1.default.onSizeChanged(e); });
-            $("[data-sort-item]").parents("tbody").each(function (i, e) { return _this.enableDragSort($(e)); });
+            $("[data-sort-item]").parents("tbody").each(function (i, e) { return Sorting_1.default.enableDragSort($(e)); });
             $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", function (e) { return Paging_1.default.enableWithAjax(e); });
             $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", function (e) { return Sorting_1.default.enableAjaxSorting(e); });
             $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", function (e) { return WindowContext_1.default.fitFrameContentHeight(e.currentTarget); });
@@ -89,28 +89,6 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
                 $(e.target).filter('a').removeAttr('target');
             });
             this.openWindow = function (url, target) { return location.replace(url); };
-        };
-        OlivePage.prototype.enableDragSort = function (container) {
-            var isTable = container.is("tbody");
-            var items = isTable ? "> tr" : "> li"; // TODO: Do we need to support any other markup?
-            container.sortable({
-                handle: '[data-sort-item]',
-                items: items,
-                containment: "parent",
-                axis: 'y',
-                helper: function (e, ui) {
-                    // prevent TD collapse during drag
-                    ui.children().each(function (i, c) { return $(c).width($(c).width()); });
-                    return ui;
-                },
-                stop: function (e, ui) {
-                    var dropBefore = ui.item.next().find("[data-sort-item]").attr("data-sort-item") || "";
-                    var handle = ui.item.find("[data-sort-item]");
-                    var actionUrl = handle.attr("data-sort-action");
-                    actionUrl = Url_1.default.addQuery(actionUrl, "drop-before", dropBefore);
-                    Action_1.default.invokeActionWithAjax(null /*{ currentTarget: handle.get(0) }*/, actionUrl, null, null);
-                }
-            });
         };
         OlivePage.prototype.enablePasswordStengthMeter = function (container) {
             // for configuration options : https://github.com/ablanco/jquery.pwstrength.bootstrap/blob/master/OPTIONS.md
