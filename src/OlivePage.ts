@@ -16,6 +16,10 @@ import SubMenu from 'olive/Plugins/SubMenu'
 import Modal from 'olive/Components/Modal'
 import Validate from 'olive/Components/Validate'
 
+import Alert from 'olive/Components/Alert'
+import Action from 'olive/Components/Action'
+import Waiting from 'olive/Components/Waiting'
+
 
 export default class OlivePage {
     // formats: http://momentjs.com/docs/#/displaying/format/
@@ -39,7 +43,7 @@ export default class OlivePage {
         $(() => {
             //$.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: this.DEFAULT_MODAL_BACKDROP });
             //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
-            this.enableAlert();
+            Alert.enableAlert();
             this.configureValidation();
             this.pageLoad();
         });
@@ -106,23 +110,18 @@ export default class OlivePage {
         $(".with-submenu").each((i, e) => new SubMenu($(e)));
 
         // =================== Request lifecycle ====================
-        $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => this.ajaxRedirectBackClicked(e));
-        $("a[data-redirect=ajax]").off("click.ajax-redirect").on("click.ajax-redirect", (e) => this.enableAjaxRedirect(e));
+        $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => Action.ajaxRedirectBackClicked(e, this.invokeAjaxActionResult));
+        $("a[data-redirect=ajax]").off("click.ajax-redirect").on("click.ajax-redirect", (e) => Action.enableAjaxRedirect(e, this.invokeAjaxActionResult));
         $('form[method=get]').off("submit.clean-up").on("submit.clean-up", (e) => this.cleanGetFormSubmit(e));
-        $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", (e) => this.invokeActionWithAjax(e, $(e.currentTarget).attr("formaction")));
-        $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", (e) => this.invokeActionWithPost(e));
-        $("[data-change-action]").off("change.data-action").on("change.data-action", (e) => this.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action")));
-        $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => this.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action")));
+        $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", (e) => Action.invokeActionWithAjax(e, $(e.currentTarget).attr("formaction"), false, this.invokeAjaxActionResult));
+        $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", (e) => Action.invokeActionWithPost(e));
+        $("[data-change-action]").off("change.data-action").on("change.data-action", (e) => Action.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, this.invokeAjaxActionResult));
+        $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => Action.invokeActionWithAjax(e, $(e.currentTarget).attr("data-change-action"), false, this.invokeAjaxActionResult));
 
         WindowContext.updateSubFormStates();
         WindowContext.adjustModalHeight();
 
         this._initializeActions.forEach((action) => action());
-    }
-
-    changeItToChosen(selectControl: JQuery) {
-        let options = { disable_search_threshold: 5 }
-        selectControl.chosen(options);
     }
 
     skipNewWindows() {
@@ -158,7 +157,7 @@ export default class OlivePage {
                 var actionUrl = handle.attr("data-sort-action");
                 actionUrl = Url.addQuery(actionUrl, "drop-before", dropBefore);
 
-                this.invokeActionWithAjax({ currentTarget: handle.get(0) }, actionUrl);
+                Action.invokeActionWithAjax(null/*{ currentTarget: handle.get(0) }*/, actionUrl, null, null);
             }
         });
     }
@@ -197,10 +196,6 @@ export default class OlivePage {
             console.log(container);
         }
         else password.pwstrength(options);
-    }
-
-    ensureModalResize() {
-        setTimeout(() => WindowContext.adjustModalHeight(), 1);
     }
 
     configureValidation() {
@@ -246,34 +241,6 @@ export default class OlivePage {
         // TODO: Implement
     }
 
-    enableSelectAllToggle(event) {
-        var trigger = $(event.currentTarget);
-        trigger.closest("table").find("td.select-row > input:checkbox").prop('checked', trigger.is(":checked"));
-    }
-
-    enableInstantSearch(control) {
-        // TODO: Make it work with List render mode too.
-
-        control.off("keyup.immediate-filter").on("keyup.immediate-filter", (event) => {
-
-            var keywords = control.val().toLowerCase().split(' ');
-
-            var rows = control.closest('[data-module]').find(".grid > tbody > tr");
-
-            rows.each((index, e) => {
-                var row = $(e);
-                var content = row.text().toLowerCase();
-                var hasAllKeywords = keywords.filter((i) => content.indexOf(i) == -1).length == 0;
-                if (hasAllKeywords) row.show(); else row.hide();
-            });
-
-        });
-
-        control.on("keydown", e => {
-            if (e.keyCode == 13) e.preventDefault();
-        });
-    }
-
     //enableHtmlEditor(input: any) {
     //    $.getScript(CKEDITOR_BASEPATH + "ckeditor.js", () => {
     //        $.getScript(CKEDITOR_BASEPATH + "adapters/jquery.js", () => {
@@ -290,30 +257,6 @@ export default class OlivePage {
     //        });
     //    });
     //}
-
-    alertUnobtrusively(message: string, style?: string) {
-        alertify.log(message, style);
-    }
-
-    enableAlert() {
-        var w: any = window;
-        w.alert = (text: string, callback) => this.alert(text, null, callback);
-    }
-
-    alert(text: string, style?: string, callback?: Function) {
-
-        if (text == undefined) text = "";
-        text = text.trim();
-
-        if (text.indexOf("<") != 0) {
-            text = text.replace(/\r/g, "<br />");
-            alertify.alert(text, callback, style);
-        }
-        else {
-            alertify.alert('', callback, style);
-            $('.alertify-message').empty().append($.parseHTML(text));
-        }
-    }
 
     openLinkModal(event: JQueryEventObject) {
         this.openModal(event);
@@ -351,137 +294,11 @@ export default class OlivePage {
 
     awaitingAutocompleteResponses: number = 0;
 
-    handleDefaultButton(event: JQueryEventObject): boolean {
-        if (event.which === 13) {
-            var target = $(event.currentTarget);
-            var button = target.closest("[data-module]").find('[default-button]:first'); // Same module
-            if (button.length == 0) button = $('[default-button]:first') // anywhere
-            button.click();
-            return false;
-        } else return true;
-    }
-
-    deleteSubForm(event: JQueryEventObject) {
-        var button = $(event.currentTarget);
-        var container = button.parents(".subform-item");
-        container.find("input[name*=MustBeDeleted]").val("true");
-        container.hide();
-
-        this.updateSubFormStates();
-        event.preventDefault();
-    }
-
-    enableAjaxPaging(event: JQueryEventObject) {
-        var button = $(event.currentTarget);
-        var page = button.attr("data-pagination");
-
-        var key = "p";
-
-        if (page.split('=').length > 1) { key = page.split('=')[0]; page = page.split('=')[1]; }
-
-        var input = $("[name='" + key + "']");
-        input.val(page);
-        if (input.val() != page) {
-            // Drop down list case
-            input.parent().append($("<input type='hidden'/>").attr("name", key).val(page));
-            input.remove();
-        }
-    }
-
-    enableAjaxSorting(event: JQueryEventObject) {
-        var button = $(event.currentTarget);
-        var sort = button.attr("data-sort");
-
-        var key = "s";
-
-        if (sort.split('=').length > 1) {
-            key = sort.split('=')[0];
-            sort = sort.split('=')[1];
-        }
-
-        var input = $("[name='" + key + "']");
-        if (input.val() == sort) sort += ".DESC";
-
-        input.val(sort);
-    }
-
-    applyColumns(event: JQueryEventObject) {
-        var button = $(event.currentTarget);
-        var checkboxes = button.closest(".select-cols").find(":checkbox");
-
-        if (checkboxes.length === 0 || checkboxes.filter(":checked").length > 0) return;
-
-        $("<input type='checkbox' checked='checked'/>").hide().attr("name", checkboxes.attr("name")).val("-")
-            .appendTo(button.parent());
-    }
-
-    enableAjaxRedirect(event: JQueryEventObject) {
-
-        if (event.ctrlKey || event.button === 1) return true;
-
-        var link = $(event.currentTarget);
-        var url = link.attr('href');
-
-        this.ajaxRedirect(url, link);
-
-        return false;
-    }
-
-    ajaxChangedUrl = 0;
-    isAjaxRedirecting = false;
-    ajaxRedirect(url: string, trigger: JQuery = null, isBack: boolean = false, keepScroll: boolean = false, addToHistory = true) {
-        this.isAjaxRedirecting = true;
-        this.isAwaitingAjaxResponse = true;
-
-        if (window.stop) window.stop();
-        else if (document.execCommand !== undefined) document.execCommand("Stop", false);
-
-        var scrollTopBefore;
-        if (keepScroll) {
-            scrollTopBefore = $(document).scrollTop();
-        }
-
-        this.showPleaseWait();
-
-        $.ajax({
-            url: url,
-            type: 'GET',
-            success: (response) => {
-
-                WindowContext.events = {};
-
-                if (!isBack) {
-                    this.ajaxChangedUrl++;
-                    if (addToHistory) history.pushState({}, $("#page_meta_title").val(), url);
-                }
-
-                this.isAwaitingAjaxResponse = false;
-                this.isAjaxRedirecting = false;
-                this.invokeAjaxActionResult(response, null, trigger);
-                if (keepScroll) {
-                    $(document).scrollTop(scrollTopBefore);
-                }
-            },
-            error: (response) => location.href = url,
-            complete: (response) => WindowContext.hidePleaseWait()
-        });
-
-        return false;
-    }
-
-    ajaxRedirectBackClicked(event) {
-
-        if (this.ajaxChangedUrl == 0) return;
-
-        this.ajaxChangedUrl--;
-        this.ajaxRedirect(location.href, null, true);
-    }
-
     returnToPreviousPage(target) {
         var returnUrl = Url.getQuery("ReturnUrl");
 
         if (returnUrl) {
-            if (target && $(target).is("[data-redirect=ajax]")) this.ajaxRedirect(returnUrl, $(target));
+            if (target && $(target).is("[data-redirect=ajax]")) Action.ajaxRedirect(returnUrl, $(target), false, false, true, this.invokeAjaxActionResult);
             else location.href = returnUrl;
         }
         else history.back();
@@ -492,7 +309,7 @@ export default class OlivePage {
     cleanGetFormSubmit(event: JQueryEventObject) {
 
         var form = $(event.currentTarget);
-        if (Validate.validateForm(form) == false) { WindowContext.hidePleaseWait(); return false; }
+        if (Validate.validateForm(form) == false) { Waiting.hidePleaseWait(); return false; }
 
         var formData = Form.merge(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
 
@@ -507,7 +324,7 @@ export default class OlivePage {
 
             url = Url.removeEmptyQueries(url);
 
-            if (form.is("[data-redirect=ajax]")) this.ajaxRedirect(url, form);
+            if (form.is("[data-redirect=ajax]")) Action.ajaxRedirect(url, form, false, false, true, this.invokeAjaxActionResult);
             else location.href = url;
         }
         catch (error) {
@@ -515,14 +332,6 @@ export default class OlivePage {
             alert(error);
         }
         return false;
-    }
-
-    enableUserHelp(element: JQuery) {
-
-        element.click(() => false);
-        var message = element.attr('data-user-help');  // todo: unescape message and conver to html
-
-        element['popover']({ trigger: 'focus', content: message });
     }
 
     executeActions(actions: any, trigger: any = null) {
@@ -540,7 +349,7 @@ export default class OlivePage {
         else if (action.BrowserAction == "Close") window.close();
         else if (action.BrowserAction == "Refresh") this.refresh();
         else if (action.BrowserAction == "Print") window.print();
-        else if (action.BrowserAction == "ShowPleaseWait") this.showPleaseWait(action.BlockScreen);
+        else if (action.BrowserAction == "ShowPleaseWait") Waiting.showPleaseWait(action.BlockScreen);
         else if (action.ReplaceSource) this.replaceListControlSource(action.ReplaceSource, action.Items);
         else if (action.Download) this.download(action.Download);
         else if (action.Redirect) this.executeRedirectAction(action, trigger);
@@ -567,8 +376,8 @@ export default class OlivePage {
 
     executeNotifyAction(action: any, trigger: any) {
         if (action.Obstruct == false)
-            this.alertUnobtrusively(action.Notify, action.Style);
-        else this.alert(action.Notify, action.Style);
+            Alert.alertUnobtrusively(action.Notify, action.Style);
+        else Alert.alert(action.Notify, action.Style);
     }
 
     executeRedirectAction(action: any, trigger: any) {
@@ -578,7 +387,7 @@ export default class OlivePage {
         else if (action.Target == '$modal') this.openModal(null, action.Redirect, {});
         else if (action.Target && action.Target != '') this.openWindow(action.Redirect, action.Target);
         else if (action.WithAjax === false) location.replace(action.Redirect);
-        else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true) this.ajaxRedirect(action.Redirect, trigger);
+        else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true) Action.ajaxRedirect(action.Redirect, trigger, false, false, true, this.invokeAjaxActionResult);
         else location.replace(action.Redirect);
     }
 
@@ -600,7 +409,7 @@ export default class OlivePage {
     download(url: string) {
 
         if (WindowContext.isWindowModal()) {
-            var page = window.parent["page"];
+            var page = <OlivePage>window.parent["page"];
             if (page && page.download) {
                 page.download(url);
                 return;
@@ -614,92 +423,10 @@ export default class OlivePage {
         window.open(url, target);
     }
 
-
-
-    showPleaseWait(blockScreen: boolean = false) {
-
-        if (!$(document.forms[0]).valid()) return;
-
-        var screen = $("<div class='wait-screen' />").appendTo("body");
-
-        if (blockScreen) {
-            $("<div class='cover' />")
-                .width(Math.max($(document).width(), $(window).width()))
-                .height(Math.max($(document).height(), $(window).height()))
-                .appendTo(screen);
-        }
-
-        $("<div class='wait-container'><div class='wait-box'><img src='/public/img/loading.gif'/></div>")
-            .appendTo(screen)
-            .fadeIn('slow');
-    }
-
     refresh(keepScroll: boolean = false) {
         if ($("main").parent().is("body"))
-            this.ajaxRedirect(location.href, null, false /*isBack*/, keepScroll, false /*addToHistory:*/);
+            Action.ajaxRedirect(location.href, null, false /*isBack*/, keepScroll, false, this.invokeAjaxActionResult/*addToHistory:*/);
         else location.reload();
-    }
-
-    isAwaitingAjaxResponse = false;
-    invokeActionWithAjax(event, actionUrl, syncCall = false) {
-
-        var trigger = $(event.currentTarget);
-        var triggerUniqueSelector = trigger.getUniqueSelector();
-        var containerModule = trigger.closest("[data-module]");
-
-        if (Validate.validateForm(trigger) == false) { WindowContext.hidePleaseWait(); return false; }
-
-        var data_before_disable = WindowContext.getPostData(trigger);
-
-        var disableToo = this.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
-        if (disableToo) trigger.attr('disabled', 'disabled');
-
-        trigger.addClass('loading-action-result');
-
-        this.isAwaitingAjaxResponse = true;
-
-        $.ajax({
-            url: actionUrl,
-            type: trigger.attr("data-ajax-method") || 'POST',
-            async: !syncCall,
-            data: data_before_disable,
-            success: (result) => { WindowContext.hidePleaseWait(); this.invokeAjaxActionResult(result, containerModule, trigger); },
-            error: (response) => WindowContext.handleAjaxResponseError(response),
-            complete: (x) => {
-                this.isAwaitingAjaxResponse = false;
-
-                trigger.removeClass('loading-action-result');
-                if (disableToo) trigger.removeAttr('disabled');
-
-                var triggerTabIndex = $(":focusable").index($(triggerUniqueSelector));
-                if (triggerTabIndex > -1) $(":focusable").eq(triggerTabIndex + 1).focus();
-            }
-        });
-
-        return false;
-    }
-
-    enableSelectColumns(container) {
-        var columns = container.find("div.select-cols");
-        container.find("a.select-cols").click(() => { columns.show(); return false; });
-        columns.find('.cancel').click(() => columns.hide());
-    }
-
-    invokeActionWithPost(event) {
-        var trigger = $(event.currentTarget);
-        var containerModule = trigger.closest("[data-module]");
-
-        if (containerModule.is("form") && Validate.validateForm(trigger) == false) return false;
-
-        var data = WindowContext.getPostData(trigger);
-        var url = trigger.attr("formaction");
-        var form = $("<form method='post' />").hide().appendTo($("body"));
-
-        for (var item of data)
-            $("<input type='hidden'/>").attr("name", item.name).val(item.value).appendTo(form);
-
-        form.attr("action", url).submit();
-        return false;
     }
 
     dynamicallyLoadedScriptFiles = [];
@@ -813,17 +540,9 @@ export default class OlivePage {
         }
     }
 
-    adjustIFrameHeightToContents(iframe) {
-        $(iframe).height(iframe.contentWindow.document.body.scrollHeight);
-    }
-
     reloadValidationRules(form: JQuery) {
         form.removeData("validator").removeData("unobtrusiveValidation");
         //$.validator.unobtrusive.parse(form);
-    }
-
-    paginationSizeChanged(event: Event) {
-        $(event.currentTarget).closest("form").submit();
     }
 
     highlightRow(element: any) {
@@ -832,31 +551,4 @@ export default class OlivePage {
         target.addClass('highlighted');
     }
 
-    cleanUpNumberField(field: JQuery) {
-        var domElement = <HTMLInputElement>field.get(0);
-
-        // var start = domElement.selectionStart;
-        // var end = domElement.selectionEnd;
-
-        field.val(field.val().replace(/[^\d.-]/g, ""));
-
-        // domElement.setSelectionRange(start, end);
-    }
-
-    setSortHeaderClass(thead: JQuery) {
-        var currentSort = thead.closest("[data-module]").find("#Current-Sort").val() || "";
-
-        if (currentSort == "") return;
-
-        var sortKey = thead.attr('data-sort');
-
-        if (sortKey == currentSort && !thead.hasClass('sort-ascending')) {
-            thead.addClass("sort-ascending");
-            thead.append("<i />");
-        }
-        else if (currentSort == sortKey + ".DESC" && !thead.hasClass('sort-descending')) {
-            thead.addClass("sort-descending");
-            thead.append("<i />");
-        }
-    }
 }

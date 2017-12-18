@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Components/Form"], function (require, exports, Form_1) {
+define(["require", "exports", "olive/Components/Form", "olive/Components/Waiting"], function (require, exports, Form_1, Waiting_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var WindowContext = /** @class */ (function () {
         function WindowContext() {
@@ -47,7 +47,7 @@ define(["require", "exports", "olive/Components/Form"], function (require, expor
             return data;
         };
         WindowContext.handleAjaxResponseError = function (response) {
-            this.hidePleaseWait();
+            Waiting_1.default.hidePleaseWait();
             console.log(response);
             var text = response.responseText;
             if (text.indexOf("<html") > -1) {
@@ -62,9 +62,6 @@ define(["require", "exports", "olive/Components/Form"], function (require, expor
             }
             else
                 alert(text);
-        };
-        WindowContext.hidePleaseWait = function () {
-            $(".wait-screen").remove();
         };
         WindowContext.toJson = function (data) {
             try {

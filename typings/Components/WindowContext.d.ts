@@ -13,7 +13,6 @@ export default class WindowContext {
     static adjustModalHeight(overflow?: number): void;
     static getPostData(trigger: JQuery): JQuerySerializeArrayElement[];
     static handleAjaxResponseError(response: any): void;
-    static hidePleaseWait(): void;
     static toJson(data: any): any;
     static applyColumns(event: JQueryEventObject): void;
     static updateSubFormStates(): void;

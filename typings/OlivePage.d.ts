@@ -1,4 +1,3 @@
-/// <reference path="../src/Typings/alertify/alertify.d.ts" />
 export default class OlivePage {
     DATE_FORMAT: string;
     TIME_FORMAT: string;
@@ -19,37 +18,19 @@ export default class OlivePage {
     pageLoad(container?: JQuery, trigger?: any): void;
     initializeUpdatedPage(container?: JQuery, trigger?: any): void;
     initialize(): void;
-    changeItToChosen(selectControl: JQuery): void;
     skipNewWindows(): void;
     enableDragSort(container: any): void;
     enablePasswordStengthMeter(container: any): void;
-    ensureModalResize(): void;
     configureValidation(): void;
     updateSubFormStates(): void;
     enableDateDropdown(input: any): void;
-    enableSelectAllToggle(event: any): void;
-    enableInstantSearch(control: any): void;
-    alertUnobtrusively(message: string, style?: string): void;
-    enableAlert(): void;
-    alert(text: string, style?: string, callback?: Function): void;
     openLinkModal(event: JQueryEventObject): boolean;
     toJson(data: any): any;
     runStartupActions(container?: JQuery, trigger?: any, stage?: string): void;
     canAutoFocus(input: JQuery): boolean;
     awaitingAutocompleteResponses: number;
-    handleDefaultButton(event: JQueryEventObject): boolean;
-    deleteSubForm(event: JQueryEventObject): void;
-    enableAjaxPaging(event: JQueryEventObject): void;
-    enableAjaxSorting(event: JQueryEventObject): void;
-    applyColumns(event: JQueryEventObject): void;
-    enableAjaxRedirect(event: JQueryEventObject): boolean;
-    ajaxChangedUrl: number;
-    isAjaxRedirecting: boolean;
-    ajaxRedirect(url: string, trigger?: JQuery, isBack?: boolean, keepScroll?: boolean, addToHistory?: boolean): boolean;
-    ajaxRedirectBackClicked(event: any): void;
     returnToPreviousPage(target: any): boolean;
     cleanGetFormSubmit(event: JQueryEventObject): boolean;
-    enableUserHelp(element: JQuery): void;
     executeActions(actions: any, trigger?: any): void;
     executeAction(action: any, trigger: any): boolean;
     closeCurrentModal(refreshParrent?: boolean): any;
@@ -59,21 +40,12 @@ export default class OlivePage {
     replaceListControlSource(controlId: string, items: any): void;
     download(url: string): void;
     openWindow(url: string, target: string): void;
-    showPleaseWait(blockScreen?: boolean): void;
     refresh(keepScroll?: boolean): void;
-    isAwaitingAjaxResponse: boolean;
-    invokeActionWithAjax(event: any, actionUrl: any, syncCall?: boolean): boolean;
-    enableSelectColumns(container: any): void;
-    invokeActionWithPost(event: any): boolean;
     dynamicallyLoadedScriptFiles: any[];
     replaceMain(element: JQuery, trigger: any): void;
     invokeAjaxActionResult(response: any, containerModule: any, trigger: any): void;
     ensureNonModal(): void;
     enableSlider(input: any): void;
-    adjustIFrameHeightToContents(iframe: any): void;
     reloadValidationRules(form: JQuery): void;
-    paginationSizeChanged(event: Event): void;
     highlightRow(element: any): void;
-    cleanUpNumberField(field: JQuery): void;
-    setSortHeaderClass(thead: JQuery): void;
 }
