@@ -9,4 +9,5 @@ export default class Config {
     static AUTOCOMPLETE_INPUT_DELAY: number;
     static DEFAULT_MODAL_BACKDROP: string;
     static DEFAULT_HTML_EDITOR_MODE: string;
+    static CK_EDITOR_BASE_PATH: string;
 }

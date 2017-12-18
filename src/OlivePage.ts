@@ -1,5 +1,4 @@
-// For ckeditor plug-ins to work, this should be globally defined.
-window["CKEDITOR_BASEPATH"] = '/lib/ckeditor/';
+
 import Config from "olive/Config"
 
 import Form from 'olive/Components/Form'
@@ -16,6 +15,7 @@ import Waiting from 'olive/Components/Waiting'
 import Grid from 'olive/Components/Grid'
 
 import Select from 'olive/Plugins/Select'
+import HtmlEditor from 'olive/Plugins/HtmlEditor'
 import TimeControl from 'olive/Plugins/TimeControl'
 import AutoComplete from 'olive/Plugins/AutoComplete'
 import Slider from 'olive/Plugins/Slider'
@@ -94,7 +94,7 @@ export default class OlivePage {
         $("[data-control='date-picker|time-picker']").each((i, e) => new TimeControl($(e)));
         $("[data-control=time-picker]").each((i, e) => new TimeControl($(e)));
         $("[data-control=date-drop-downs]").each((i, e) => this.enableDateDropdown($(e)));
-        //$("[data-control=html-editor]").each((i, e) => this.enableHtmlEditor($(e)));
+        $("[data-control=html-editor]").each((i, e) => new HtmlEditor($(e)).enable());
         $("[data-control=numeric-up-down]").each((i, e) => new NumbericUpDown($(e)).enable());
         $("[data-control=range-slider],[data-control=slider]").each((i, e) => new Slider($(e)).enable());
         $(".file-upload input:file").each((i, e) => new FileUpload($(e)).enable());
@@ -195,22 +195,7 @@ export default class OlivePage {
         // TODO: Implement
     }
 
-    //enableHtmlEditor(input: any) {
-    //    $.getScript(CKEDITOR_BASEPATH + "ckeditor.js", () => {
-    //        $.getScript(CKEDITOR_BASEPATH + "adapters/jquery.js", () => {
-    //            CKEDITOR.config.contentsCss = CKEDITOR_BASEPATH + 'contents.css';
-    //            var editor = CKEDITOR.replace($(input).attr('id'),
-    //                {
-    //                    toolbar: $(input).attr('data-toolbar') || this.DEFAULT_HTML_EDITOR_MODE,
-    //                    customConfig: '/Scripts/ckeditor_config.js'
-    //                });
 
-    //            editor.on('change', (evt) => evt.editor.updateElement());
-
-    //            editor.on("instanceReady", (event) => Modal.adjustHeight());
-    //        });
-    //    });
-    //}
 
     openLinkModal(event: JQueryEventObject) {
         this.openModal(event);
@@ -345,8 +330,6 @@ export default class OlivePage {
         else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true) Action.ajaxRedirect(action.Redirect, trigger, false, false, true, this.invokeAjaxActionResult);
         else location.replace(action.Redirect);
     }
-
-
 
     openWindow(url: string, target: string) {
         window.open(url, target);

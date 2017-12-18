@@ -16,6 +16,7 @@ define(["require", "exports"], function (require, exports) {
         /* Possible values: Compact | Medium | Advance | Full
         To customise modes, change '/Scripts/Lib/ckeditor_config.js' file */
         Config.DEFAULT_HTML_EDITOR_MODE = "Medium";
+        Config.CK_EDITOR_BASE_PATH = '/lib/ckeditor/';
         return Config;
     }());
     exports.default = Config;

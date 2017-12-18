@@ -1,7 +1,5 @@
-define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Sorting", "olive/Components/Paging", "olive/Components/MasterDetail", "olive/Components/Alert", "olive/Components/Action", "olive/Components/Waiting", "olive/Components/Grid", "olive/Plugins/Select", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Plugins/InstantSearch"], function (require, exports, Config_1, Form_1, Url_1, WindowContext_1, Modal_1, Validate_1, Sorting_1, Paging_1, MasterDetail_1, Alert_1, Action_1, Waiting_1, Grid_1, Select_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, InstantSearch_1) {
+define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Sorting", "olive/Components/Paging", "olive/Components/MasterDetail", "olive/Components/Alert", "olive/Components/Action", "olive/Components/Waiting", "olive/Components/Grid", "olive/Plugins/Select", "olive/Plugins/HtmlEditor", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Plugins/InstantSearch"], function (require, exports, Config_1, Form_1, Url_1, WindowContext_1, Modal_1, Validate_1, Sorting_1, Paging_1, MasterDetail_1, Alert_1, Action_1, Waiting_1, Grid_1, Select_1, HtmlEditor_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, InstantSearch_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    // For ckeditor plug-ins to work, this should be globally defined.
-    window["CKEDITOR_BASEPATH"] = '/lib/ckeditor/';
     var OlivePage = /** @class */ (function () {
         function OlivePage() {
             var _this = this;
@@ -66,7 +64,7 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             $("[data-control='date-picker|time-picker']").each(function (i, e) { return new TimeControl_1.default($(e)); });
             $("[data-control=time-picker]").each(function (i, e) { return new TimeControl_1.default($(e)); });
             $("[data-control=date-drop-downs]").each(function (i, e) { return _this.enableDateDropdown($(e)); });
-            //$("[data-control=html-editor]").each((i, e) => this.enableHtmlEditor($(e)));
+            $("[data-control=html-editor]").each(function (i, e) { return new HtmlEditor_1.default($(e)).enable(); });
             $("[data-control=numeric-up-down]").each(function (i, e) { return new NumericUpDown_1.default($(e)).enable(); });
             $("[data-control=range-slider],[data-control=slider]").each(function (i, e) { return new Slider_1.default($(e)).enable(); });
             $(".file-upload input:file").each(function (i, e) { return new FileUpload_1.default($(e)).enable(); });
@@ -151,20 +149,6 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
         OlivePage.prototype.enableDateDropdown = function (input) {
             // TODO: Implement
         };
-        //enableHtmlEditor(input: any) {
-        //    $.getScript(CKEDITOR_BASEPATH + "ckeditor.js", () => {
-        //        $.getScript(CKEDITOR_BASEPATH + "adapters/jquery.js", () => {
-        //            CKEDITOR.config.contentsCss = CKEDITOR_BASEPATH + 'contents.css';
-        //            var editor = CKEDITOR.replace($(input).attr('id'),
-        //                {
-        //                    toolbar: $(input).attr('data-toolbar') || this.DEFAULT_HTML_EDITOR_MODE,
-        //                    customConfig: '/Scripts/ckeditor_config.js'
-        //                });
-        //            editor.on('change', (evt) => evt.editor.updateElement());
-        //            editor.on("instanceReady", (event) => Modal.adjustHeight());
-        //        });
-        //    });
-        //}
         OlivePage.prototype.openLinkModal = function (event) {
             this.openModal(event);
             return false;

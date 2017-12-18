@@ -15,6 +15,7 @@
     /* Possible values: Compact | Medium | Advance | Full
     To customise modes, change '/Scripts/Lib/ckeditor_config.js' file */
     static DEFAULT_HTML_EDITOR_MODE = "Medium";
+    static CK_EDITOR_BASE_PATH = '/lib/ckeditor/';
 
 }
 
