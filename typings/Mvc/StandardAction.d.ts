@@ -1,5 +1,4 @@
 export default class StandardAction {
-    static modal: any;
     static runStartup(container?: JQuery, trigger?: any, stage?: string): void;
     static runAll(actions: any, trigger?: any): void;
     static run(action: any, trigger: any): boolean;

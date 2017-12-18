@@ -6,8 +6,6 @@ import AjaxRedirect from 'olive/Mvc/AjaxRedirect'
 
 export default class StandardAction {
 
-    static modal: any = null;
-
     public static runStartup(container: JQuery = null, trigger: any = null, stage: string = "Init") {
         if (container == null) container = $(document);
         if (trigger == null) trigger = $(document);
@@ -33,7 +31,7 @@ export default class StandardAction {
         if (action.Notify || action.Notify == "") this.notify(action, trigger);
         else if (action.Script) eval(action.Script);
         else if (action.BrowserAction == "Back") window.history.back();
-        else if (action.BrowserAction == "CloseModal" && this.modal && this.modal.closeModal() === false) return false;
+        else if (action.BrowserAction == "CloseModal" && Modal.close() === false) return false;
         else if (action.BrowserAction == "CloseModalRefreshParent") return this.refresh();
         else if (action.BrowserAction == "Close") window.close();
         else if (action.BrowserAction == "Refresh") this.refresh();
@@ -74,11 +72,7 @@ export default class StandardAction {
     }
 
     static openModal(event, url?, options?) {
-        if (this.modal) {
-            this.modal.close();
-            this.modal = false;
-        }
-        this.modal = new Modal(event, url, options);
-        this.modal.open();
+        Modal.close();
+        new Modal(event, url, options).open();
     }
 }
