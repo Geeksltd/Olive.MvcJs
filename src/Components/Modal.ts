@@ -1,4 +1,3 @@
-import WindowContext from 'olive/Components/WindowContext'
 
 export default class Modal {
     current: any = null;
@@ -24,7 +23,7 @@ export default class Modal {
         let target = event ? $(event.currentTarget) : null;
         this.url = targeturl ? targeturl : target.attr("href");
         let options = opt ? opt : target.attr("data-modal-options");
-        if (options) this.modalOptions = WindowContext.toJson(options);
+        if (options) this.modalOptions = JSON.safeParse(options);
     }
 
     open() {

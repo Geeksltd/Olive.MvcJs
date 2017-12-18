@@ -2,6 +2,9 @@ export default class Action {
     static ajaxChangedUrl: number;
     static isAjaxRedirecting: boolean;
     static isAwaitingAjaxResponse: boolean;
+    static events: {
+        [event: string]: Function[];
+    };
     static ajaxRedirectBackClicked(event: any, backCallback: any): void;
     static invokeActionWithPost(event: any): boolean;
     static enableAjaxRedirect(event: JQueryEventObject, callback: any): boolean;

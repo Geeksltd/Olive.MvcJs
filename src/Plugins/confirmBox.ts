@@ -1,4 +1,3 @@
-import WindowContext from 'olive/Components/WindowContext'
 
 export default class ConfirmBox {
     button: any;

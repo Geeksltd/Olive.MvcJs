@@ -9,14 +9,9 @@ export default class OlivePage {
     initializeUpdatedPage(container?: JQuery, trigger?: any): void;
     initialize(): void;
     skipNewWindows(): void;
-    enablePasswordStengthMeter(container: any): void;
-    enableDateDropdown(input: any): void;
     openLinkModal(event: JQueryEventObject): boolean;
-    toJson(data: any): any;
     runStartupActions(container?: JQuery, trigger?: any, stage?: string): void;
-    canAutoFocus(input: JQuery): boolean;
-    awaitingAutocompleteResponses: number;
-    returnToPreviousPage(target: any): boolean;
+    goBack(target: any): boolean;
     cleanGetFormSubmit(event: JQueryEventObject): boolean;
     executeActions(actions: any, trigger?: any): void;
     executeAction(action: any, trigger: any): boolean;
@@ -24,7 +19,6 @@ export default class OlivePage {
     openModal(event: any, url?: any, options?: any): void;
     executeNotifyAction(action: any, trigger: any): void;
     executeRedirectAction(action: any, trigger: any): void;
-    openWindow(url: string, target: string): void;
     refresh(keepScroll?: boolean): void;
     dynamicallyLoadedScriptFiles: any[];
     replaceMain(element: JQuery, trigger: any): void;

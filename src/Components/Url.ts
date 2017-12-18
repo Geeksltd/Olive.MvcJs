@@ -7,7 +7,7 @@
         if (returnUrl) window.location.href = returnUrl;
         else history.back();
     }
-
+    
     static updateQuery(uri, key, value) {
         if (uri == null) uri = window.location.href;
 

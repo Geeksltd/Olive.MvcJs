@@ -7,21 +7,20 @@ define(["require", "exports"], function (require, exports) {
             window["download"] = function (url) {
                 $("<iframe style='visibility:hidden; width:1px; height:1px;'></iframe>").attr("src", url).appendTo("body");
             };
-        };
-        WindowContext.toJson = function (data) {
-            try {
-                return JSON.parse(data);
-            }
-            catch (error) {
-                console.log(error);
-                console.log('Cannot parse this data to Json: ');
-                console.log(data);
-            }
+            JSON["safeParse"] = function (data) {
+                try {
+                    return JSON.parse(data);
+                }
+                catch (error) {
+                    console.log(error);
+                    console.log('Cannot parse this data to Json: ');
+                    throw error;
+                }
+            };
         };
         WindowContext.fitFrameContentHeight = function (iframe) {
             $(iframe).height(iframe.contentWindow.document.body.scrollHeight);
         };
-        WindowContext.events = {};
         return WindowContext;
     }());
     exports.default = WindowContext;

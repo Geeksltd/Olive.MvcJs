@@ -5,3 +5,6 @@ interface Window {
     getContainerIFrame(): HTMLIFrameElement;
     download(url: string): any;
 }
+interface JSON {
+    safeParse(text: string): any;
+}

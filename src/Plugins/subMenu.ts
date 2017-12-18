@@ -1,4 +1,4 @@
-import WindowContext from 'olive/Components/WindowContext'
+
 export default class SubMenu {
     menu: any;
     submenuOptions: any;
@@ -13,7 +13,7 @@ export default class SubMenu {
             this.menu.addClass("sm-vertical");
 
         var options = this.menu.attr("data-submenu-options");
-        if (options) this.submenuOptions = WindowContext.toJson(options);
+        if (options) this.submenuOptions = JSON.safeParse(options);
         this.menu.smartmenus(this.submenuOptions);
     }
 }

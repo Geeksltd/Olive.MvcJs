@@ -7,3 +7,7 @@
 
     download(url: string);
 }
+
+interface JSON {
+    safeParse(text: string);
+}

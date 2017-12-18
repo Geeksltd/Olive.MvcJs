@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Components/Waiting", "olive/Components/WindowContext", "olive/Components/Validate", "olive/Components/Form", "olive/Config"], function (require, exports, Waiting_1, WindowContext_1, Validate_1, Form_1, Config_1) {
+define(["require", "exports", "olive/Components/Waiting", "olive/Components/Validate", "olive/Components/Form", "olive/Config"], function (require, exports, Waiting_1, Validate_1, Form_1, Config_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var Action = /** @class */ (function () {
         function Action() {
@@ -88,7 +88,7 @@ define(["require", "exports", "olive/Components/Waiting", "olive/Components/Wind
                 url: url,
                 type: 'GET',
                 success: function (response) {
-                    WindowContext_1.default.events = {};
+                    Action.events = {};
                     if (!isBack) {
                         _this.ajaxChangedUrl++;
                         if (addToHistory)
@@ -126,6 +126,7 @@ define(["require", "exports", "olive/Components/Waiting", "olive/Components/Wind
         Action.ajaxChangedUrl = 0;
         Action.isAjaxRedirecting = false;
         Action.isAwaitingAjaxResponse = false;
+        Action.events = {};
         return Action;
     }());
     exports.default = Action;

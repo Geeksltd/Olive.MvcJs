@@ -15,6 +15,7 @@ import Waiting from 'olive/Components/Waiting'
 import Grid from 'olive/Components/Grid'
 
 import Select from 'olive/Plugins/Select'
+import PasswordStength from 'olive/Plugins/PasswordStength'
 import HtmlEditor from 'olive/Plugins/HtmlEditor'
 import TimeControl from 'olive/Plugins/TimeControl'
 import AutoComplete from 'olive/Plugins/AutoComplete'
@@ -25,6 +26,7 @@ import FileUpload from 'olive/Plugins/FileUpload'
 import ConfirmBox from 'olive/Plugins/ConfirmBox'
 import SubMenu from 'olive/Plugins/SubMenu'
 import InstantSearch from 'olive/Plugins/InstantSearch'
+import DateDropdown from 'olive/Plugins/DateDropdown'
 
 export default class OlivePage {
 
@@ -93,13 +95,13 @@ export default class OlivePage {
         $("[data-control=date-picker],[data-control=calendar]").each((i, e) => new DatePicker($(e)));
         $("[data-control='date-picker|time-picker']").each((i, e) => new TimeControl($(e)));
         $("[data-control=time-picker]").each((i, e) => new TimeControl($(e)));
-        $("[data-control=date-drop-downs]").each((i, e) => this.enableDateDropdown($(e)));
+        $("[data-control=date-drop-downs]").each((i, e) => DateDropdown.enable($(e)));
         $("[data-control=html-editor]").each((i, e) => new HtmlEditor($(e)).enable());
         $("[data-control=numeric-up-down]").each((i, e) => new NumbericUpDown($(e)).enable());
         $("[data-control=range-slider],[data-control=slider]").each((i, e) => new Slider($(e)).enable());
         $(".file-upload input:file").each((i, e) => new FileUpload($(e)).enable());
         $("[data-confirm-question]").each((i, e) => new ConfirmBox($(e)).enable());
-        $(".password-strength").each((i, e) => this.enablePasswordStengthMeter($(e)));
+        $(".password-strength").each((i, e) => PasswordStength.enable($(e)));
         $(".with-submenu").each((i, e) => new SubMenu($(e)));
 
         // =================== Request lifecycle ====================
@@ -123,66 +125,12 @@ export default class OlivePage {
             $(e.target).filter('a').removeAttr('target');
         });
 
-        this.openWindow = (url, target) => location.replace(url);
+        window["open"] = (url, r, f, re) => { location.replace(url); return window; };
     }
-
-
-
-    enablePasswordStengthMeter(container: any) {
-        // for configuration options : https://github.com/ablanco/jquery.pwstrength.bootstrap/blob/master/OPTIONS.md
-
-        if (container.find(".progress").length !== 0) return;
-
-        var formGroup = container.closest(".form-group");
-
-        var options = {
-            common: {},
-            rules: {},
-            ui: {
-                container: formGroup,
-                showVerdictsInsideProgressBar: true,
-                showStatus: true,
-                showPopover: false,
-                showErrors: false,
-                viewports: {
-                    progress: container
-                },
-                verdicts: [
-                    "<span class='fa fa-exclamation-triangle'></span> Weak",
-                    "<span class='fa fa-exclamation-triangle'></span> Normal",
-                    "Medium",
-                    "<span class='fa fa-thumbs-up'></span> Strong",
-                    "<span class='fa fa-thumbs-up'></span> Very Strong"],
-            }
-        };
-
-        var password = formGroup.find(":password");
-        if (password.length == 0) {
-            console.log('Error: no password field found for password strength.');
-            console.log(container);
-        }
-        else password.pwstrength(options);
-    }
-
-    enableDateDropdown(input) {
-        // TODO: Implement
-    }
-
-
 
     openLinkModal(event: JQueryEventObject) {
         this.openModal(event);
         return false;
-    }
-
-    toJson(data) {
-        try {
-            return JSON.parse(data);
-        } catch (error) {
-            console.log(error);
-            console.log('Cannot parse this data to Json: ');
-            console.log(data);
-        }
     }
 
     runStartupActions(container: JQuery = null, trigger: any = null, stage: string = "Init") {
@@ -196,24 +144,16 @@ export default class OlivePage {
         });
 
         for (var action of actions) {
-            if (action && (action.Stage || "Init") == stage) this.executeActions(WindowContext.toJson(action), trigger);
+            if (action && (action.Stage || "Init") == stage) this.executeActions(JSON.safeParse(action), trigger);
         }
     }
 
-    canAutoFocus(input: JQuery) {
-        return input.attr("data-autofocus") !== "disabled";
-    }
-
-    awaitingAutocompleteResponses: number = 0;
-
-    returnToPreviousPage(target) {
+    goBack(target) {
         var returnUrl = Url.getQuery("ReturnUrl");
 
-        if (returnUrl) {
-            if (target && $(target).is("[data-redirect=ajax]")) Action.ajaxRedirect(returnUrl, $(target), false, false, true, this.invokeAjaxActionResult);
-            else location.href = returnUrl;
-        }
-        else history.back();
+        if (returnUrl && target && $(target).is("[data-redirect=ajax]"))
+            Action.ajaxRedirect(returnUrl, $(target), false, false, true, this.invokeAjaxActionResult);
+        else Url.goBack();
 
         return false;
     }
@@ -298,14 +238,10 @@ export default class OlivePage {
 
         if (action.OutOfModal && window.isModal()) parent.window.location.href = action.Redirect;
         else if (action.Target == '$modal') this.openModal(null, action.Redirect, {});
-        else if (action.Target && action.Target != '') this.openWindow(action.Redirect, action.Target);
+        else if (action.Target && action.Target != '') window.open(action.Redirect, action.Target);
         else if (action.WithAjax === false) location.replace(action.Redirect);
         else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true) Action.ajaxRedirect(action.Redirect, trigger, false, false, true, this.invokeAjaxActionResult);
         else location.replace(action.Redirect);
-    }
-
-    openWindow(url: string, target: string) {
-        window.open(url, target);
     }
 
     refresh(keepScroll: boolean = false) {

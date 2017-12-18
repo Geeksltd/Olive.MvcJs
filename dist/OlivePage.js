@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Sorting", "olive/Components/Paging", "olive/Components/MasterDetail", "olive/Components/Alert", "olive/Components/Action", "olive/Components/Waiting", "olive/Components/Grid", "olive/Plugins/Select", "olive/Plugins/HtmlEditor", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Plugins/InstantSearch"], function (require, exports, Config_1, Form_1, Url_1, WindowContext_1, Modal_1, Validate_1, Sorting_1, Paging_1, MasterDetail_1, Alert_1, Action_1, Waiting_1, Grid_1, Select_1, HtmlEditor_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, InstantSearch_1) {
+define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Components/Url", "olive/Components/WindowContext", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Sorting", "olive/Components/Paging", "olive/Components/MasterDetail", "olive/Components/Alert", "olive/Components/Action", "olive/Components/Waiting", "olive/Components/Grid", "olive/Plugins/Select", "olive/Plugins/PasswordStength", "olive/Plugins/HtmlEditor", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Plugins/InstantSearch", "olive/Plugins/DateDropdown"], function (require, exports, Config_1, Form_1, Url_1, WindowContext_1, Modal_1, Validate_1, Sorting_1, Paging_1, MasterDetail_1, Alert_1, Action_1, Waiting_1, Grid_1, Select_1, PasswordStength_1, HtmlEditor_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, InstantSearch_1, DateDropdown_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var OlivePage = /** @class */ (function () {
         function OlivePage() {
@@ -6,7 +6,6 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             this.modal = null;
             this._initializeActions = [];
             this._preInitializeActions = [];
-            this.awaitingAutocompleteResponses = 0;
             this.dynamicallyLoadedScriptFiles = [];
             Modal_1.default.initialize();
             $(function () {
@@ -63,13 +62,13 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             $("[data-control=date-picker],[data-control=calendar]").each(function (i, e) { return new DatePicker_1.default($(e)); });
             $("[data-control='date-picker|time-picker']").each(function (i, e) { return new TimeControl_1.default($(e)); });
             $("[data-control=time-picker]").each(function (i, e) { return new TimeControl_1.default($(e)); });
-            $("[data-control=date-drop-downs]").each(function (i, e) { return _this.enableDateDropdown($(e)); });
+            $("[data-control=date-drop-downs]").each(function (i, e) { return DateDropdown_1.default.enable($(e)); });
             $("[data-control=html-editor]").each(function (i, e) { return new HtmlEditor_1.default($(e)).enable(); });
             $("[data-control=numeric-up-down]").each(function (i, e) { return new NumericUpDown_1.default($(e)).enable(); });
             $("[data-control=range-slider],[data-control=slider]").each(function (i, e) { return new Slider_1.default($(e)).enable(); });
             $(".file-upload input:file").each(function (i, e) { return new FileUpload_1.default($(e)).enable(); });
             $("[data-confirm-question]").each(function (i, e) { return new ConfirmBox_1.default($(e)).enable(); });
-            $(".password-strength").each(function (i, e) { return _this.enablePasswordStengthMeter($(e)); });
+            $(".password-strength").each(function (i, e) { return PasswordStength_1.default.enable($(e)); });
             $(".with-submenu").each(function (i, e) { return new SubMenu_1.default($(e)); });
             // =================== Request lifecycle ====================
             $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", function (e) { return Action_1.default.ajaxRedirectBackClicked(e, _this.invokeAjaxActionResult); });
@@ -88,58 +87,11 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             $(window).off('click.SanityAdapter').on('click.SanityAdapter', function (e) {
                 $(e.target).filter('a').removeAttr('target');
             });
-            this.openWindow = function (url, target) { return location.replace(url); };
-        };
-        OlivePage.prototype.enablePasswordStengthMeter = function (container) {
-            // for configuration options : https://github.com/ablanco/jquery.pwstrength.bootstrap/blob/master/OPTIONS.md
-            if (container.find(".progress").length !== 0)
-                return;
-            var formGroup = container.closest(".form-group");
-            var options = {
-                common: {},
-                rules: {},
-                ui: {
-                    container: formGroup,
-                    showVerdictsInsideProgressBar: true,
-                    showStatus: true,
-                    showPopover: false,
-                    showErrors: false,
-                    viewports: {
-                        progress: container
-                    },
-                    verdicts: [
-                        "<span class='fa fa-exclamation-triangle'></span> Weak",
-                        "<span class='fa fa-exclamation-triangle'></span> Normal",
-                        "Medium",
-                        "<span class='fa fa-thumbs-up'></span> Strong",
-                        "<span class='fa fa-thumbs-up'></span> Very Strong"
-                    ],
-                }
-            };
-            var password = formGroup.find(":password");
-            if (password.length == 0) {
-                console.log('Error: no password field found for password strength.');
-                console.log(container);
-            }
-            else
-                password.pwstrength(options);
-        };
-        OlivePage.prototype.enableDateDropdown = function (input) {
-            // TODO: Implement
+            window["open"] = function (url, r, f, re) { location.replace(url); return window; };
         };
         OlivePage.prototype.openLinkModal = function (event) {
             this.openModal(event);
             return false;
-        };
-        OlivePage.prototype.toJson = function (data) {
-            try {
-                return JSON.parse(data);
-            }
-            catch (error) {
-                console.log(error);
-                console.log('Cannot parse this data to Json: ');
-                console.log(data);
-            }
         };
         OlivePage.prototype.runStartupActions = function (container, trigger, stage) {
             if (container === void 0) { container = null; }
@@ -158,22 +110,15 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             for (var _i = 0, actions_1 = actions; _i < actions_1.length; _i++) {
                 var action = actions_1[_i];
                 if (action && (action.Stage || "Init") == stage)
-                    this.executeActions(WindowContext_1.default.toJson(action), trigger);
+                    this.executeActions(JSON.safeParse(action), trigger);
             }
         };
-        OlivePage.prototype.canAutoFocus = function (input) {
-            return input.attr("data-autofocus") !== "disabled";
-        };
-        OlivePage.prototype.returnToPreviousPage = function (target) {
+        OlivePage.prototype.goBack = function (target) {
             var returnUrl = Url_1.default.getQuery("ReturnUrl");
-            if (returnUrl) {
-                if (target && $(target).is("[data-redirect=ajax]"))
-                    Action_1.default.ajaxRedirect(returnUrl, $(target), false, false, true, this.invokeAjaxActionResult);
-                else
-                    location.href = returnUrl;
-            }
+            if (returnUrl && target && $(target).is("[data-redirect=ajax]"))
+                Action_1.default.ajaxRedirect(returnUrl, $(target), false, false, true, this.invokeAjaxActionResult);
             else
-                history.back();
+                Url_1.default.goBack();
             return false;
         };
         OlivePage.prototype.cleanGetFormSubmit = function (event) {
@@ -268,16 +213,13 @@ define(["require", "exports", "olive/Config", "olive/Components/Form", "olive/Co
             else if (action.Target == '$modal')
                 this.openModal(null, action.Redirect, {});
             else if (action.Target && action.Target != '')
-                this.openWindow(action.Redirect, action.Target);
+                window.open(action.Redirect, action.Target);
             else if (action.WithAjax === false)
                 location.replace(action.Redirect);
             else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true)
                 Action_1.default.ajaxRedirect(action.Redirect, trigger, false, false, true, this.invokeAjaxActionResult);
             else
                 location.replace(action.Redirect);
-        };
-        OlivePage.prototype.openWindow = function (url, target) {
-            window.open(url, target);
         };
         OlivePage.prototype.refresh = function (keepScroll) {
             if (keepScroll === void 0) { keepScroll = false; }

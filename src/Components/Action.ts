@@ -1,5 +1,4 @@
 import Waiting from 'olive/Components/Waiting'
-import WindowContext from 'olive/Components/WindowContext'
 import Validate from 'olive/Components/Validate'
 import Form from 'olive/Components/Form'
 import Config from "olive/Config"
@@ -9,6 +8,7 @@ export default class Action {
     static ajaxChangedUrl = 0;
     static isAjaxRedirecting = false;
     static isAwaitingAjaxResponse = false;
+    static events: { [event: string]: Function[] } = {};
 
     public static ajaxRedirectBackClicked(event, backCallback) {
         if (this.ajaxChangedUrl == 0) return;
@@ -88,7 +88,7 @@ export default class Action {
             url: url,
             type: 'GET',
             success: (response) => {
-                WindowContext.events = {};
+                Action.events = {};
 
                 if (!isBack) {
                     this.ajaxChangedUrl++;

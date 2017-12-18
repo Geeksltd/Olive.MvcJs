@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Components/WindowContext"], function (require, exports, WindowContext_1) {
+define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var SubMenu = /** @class */ (function () {
         function SubMenu(targetMenue) {
@@ -11,7 +11,7 @@ define(["require", "exports", "olive/Components/WindowContext"], function (requi
                 this.menu.addClass("sm-vertical");
             var options = this.menu.attr("data-submenu-options");
             if (options)
-                this.submenuOptions = WindowContext_1.default.toJson(options);
+                this.submenuOptions = JSON.safeParse(options);
             this.menu.smartmenus(this.submenuOptions);
         }
         return SubMenu;

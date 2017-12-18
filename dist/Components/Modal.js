@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Components/WindowContext"], function (require, exports, WindowContext_1) {
+define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var Modal = /** @class */ (function () {
         function Modal(event, targeturl, opt) {
@@ -10,7 +10,7 @@ define(["require", "exports", "olive/Components/WindowContext"], function (requi
             this.url = targeturl ? targeturl : target.attr("href");
             var options = opt ? opt : target.attr("data-modal-options");
             if (options)
-                this.modalOptions = WindowContext_1.default.toJson(options);
+                this.modalOptions = JSON.safeParse(options);
         }
         Modal.initialize = function () {
             window["isModal"] = function () {
