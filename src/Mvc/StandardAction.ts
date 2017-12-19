@@ -1,4 +1,4 @@
-﻿import Alert from 'olive/Components/Alert'
+import Alert from 'olive/Components/Alert'
 import Select from 'olive/Plugins/Select'
 import Waiting from 'olive/Components/Waiting'
 import Modal from 'olive/Components/Modal'
@@ -9,20 +9,20 @@ export default class StandardAction {
     public static runStartup(container: JQuery = null, trigger: any = null, stage: string = "Init") {
         if (container == null) container = $(document);
         if (trigger == null) trigger = $(document);
-        var actions = [];
+        let actions = [];
         $("input[name='Startup.Actions']", container).each((index, item) => {
-            var action = $(item).val();
+            let action = $(item).val();
             if (actions.indexOf(action) === -1)
                 actions.push(action);
         });
 
-        for (var action of actions) {
+        for (let action of actions) {
             if (action && (action.Stage || "Init") == stage) this.runAll(JSON.safeParse(action), trigger);
         }
     }
 
     public static runAll(actions: any, trigger: any = null) {
-        for (var action of actions) {
+        for (let action of actions) {
             if (!this.run(action, trigger)) return;
         }
     }
