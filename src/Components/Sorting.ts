@@ -4,25 +4,25 @@ import FormAction from 'olive/Mvc/FormAction'
 export default class Sorting {
 
     public static enableAjaxSorting(event: JQueryEventObject) {
-        var button = $(event.currentTarget);
-        var sort = button.attr("data-sort");
-        var key = "s";
+        let button = $(event.currentTarget);
+        let sort = button.attr("data-sort");
+        let key = "s";
 
         if (sort.split('=').length > 1) {
             key = sort.split('=')[0];
             sort = sort.split('=')[1];
         }
 
-        var input = $("[name='" + key + "']");
+        let input = $("[name='" + key + "']");
         if (input.val() == sort) sort += ".DESC";
         input.val(sort);
     }
 
     public static setSortHeaderClass(thead: JQuery) {
-        var currentSort = thead.closest("[data-module]").find("#Current-Sort").val() || "";
+        let currentSort = thead.closest("[data-module]").find("#Current-Sort").val() || "";
         if (currentSort == "") return;
 
-        var sortKey = thead.attr('data-sort');
+        let sortKey = thead.attr('data-sort');
         if (sortKey == currentSort && !thead.hasClass('sort-ascending')) {
             thead.addClass("sort-ascending");
             thead.append("<i />");
@@ -35,8 +35,8 @@ export default class Sorting {
 
     public static enableDragSort(container) {
 
-        var isTable = container.is("tbody");
-        var items = isTable ? "> tr" : "> li"; // TODO: Do we need to support any other markup?
+        let isTable = container.is("tbody");
+        let items = isTable ? "> tr" : "> li"; // TODO: Do we need to support any other markup?
 
         container.sortable({
             handle: '[data-sort-item]',
@@ -50,11 +50,11 @@ export default class Sorting {
             },
             stop: (e, ui) => {
 
-                var dropBefore = ui.item.next().find("[data-sort-item]").attr("data-sort-item") || "";
+                let dropBefore = ui.item.next().find("[data-sort-item]").attr("data-sort-item") || "";
 
-                var handle = ui.item.find("[data-sort-item]");
+                let handle = ui.item.find("[data-sort-item]");
 
-                var actionUrl = handle.attr("data-sort-action");
+                let actionUrl = handle.attr("data-sort-action");
                 actionUrl = Url.addQuery(actionUrl, "drop-before", dropBefore);
 
                 FormAction.invokeWithAjax(null/*{ currentTarget: handle.get(0) }*/, actionUrl);

@@ -13,9 +13,9 @@ export default class Modal {
         };
 
         window["getContainerIFrame"] = () => {
-            if (parent == null || parent == self) return null;
+            if (parent == null || parent === self) return null;
             else return <HTMLIFrameElement>$(parent.document).find("iframe")
-                .filter((i, f: any) => (f.contentDocument || f.contentWindow.document) == document).get(0);
+                .filter((i, f: any) => (f.contentDocument || f.contentWindow.document) === document).get(0);
         };
     }
 
@@ -36,13 +36,13 @@ export default class Modal {
         if (true /* TODO: Change to if Internet Explorer only */)
             Modal.current.removeClass("fade");
 
-        var frame = Modal.current.find("iframe");
+        let frame = Modal.current.find("iframe");
 
         frame.attr("src", this.url).on("load", (e) => {
             this.isOpening = false;
-            var isHeightProvided = !!(this.modalOptions && this.modalOptions.height);
+            let isHeightProvided = !!(this.modalOptions && this.modalOptions.height);
             if (!isHeightProvided) {
-                var doc = frame.get(0).contentWindow.document;
+                let doc = frame.get(0).contentWindow.document;
                 setTimeout(() => frame.height(doc.body.offsetHeight), 10); // Timeout is used due to an IE bug.
             }
             Modal.current.find(".modal-body .text-center").remove();
@@ -68,9 +68,9 @@ export default class Modal {
 
     getModalTemplate(options: any) {
 
-        var modalDialogStyle = "";
-        var iframeStyle = "width:100%; border:0;";
-        var iframeAttributes = "";
+        let modalDialogStyle = "";
+        let iframeStyle = "width:100%; border:0;";
+        let iframeAttributes = "";
 
         if (options) {
             if (options.width) {
@@ -106,22 +106,22 @@ export default class Modal {
 
     public static adjustHeight(overflow?: number) {
         if (window.isModal()) {
-            var frame = $(window.getContainerIFrame());
+            let frame = $(window.getContainerIFrame());
             if (frame.attr("data-has-explicit-height") != 'true')
                 frame.height(document.body.offsetHeight + (overflow || 0));
         }
     }
 
     public static expandToFitPicker(target: any) {
-        var datepicker = $(target.currentTarget).siblings('.bootstrap-datetimepicker-widget');
+        let datepicker = $(target.currentTarget).siblings('.bootstrap-datetimepicker-widget');
 
         if (datepicker.length === 0) {
             this.adjustHeight();
             return;
         }
 
-        var offset = Math.ceil(datepicker.offset().top + datepicker[0].offsetHeight) - document.body.offsetHeight + 6;
-        var overflow = Math.max(offset, 0);
+        let offset = Math.ceil(datepicker.offset().top + datepicker[0].offsetHeight) - document.body.offsetHeight + 6;
+        let overflow = Math.max(offset, 0);
         this.adjustHeight(overflow);
     }
 

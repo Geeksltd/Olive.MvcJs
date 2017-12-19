@@ -138,7 +138,7 @@ export default class OlivePage {
     }
 
     goBack(target) {
-        var returnUrl = Url.getQuery("ReturnUrl");
+        let returnUrl = Url.getQuery("ReturnUrl");
 
         if (returnUrl && target && $(target).is("[data-redirect=ajax]"))
             AjaxRedirect.go(returnUrl, $(target), false, false, true);
@@ -149,7 +149,7 @@ export default class OlivePage {
 
     public enableUserHelp(element: JQuery) {
         element.click(() => false);
-        var message = element.attr('data-user-help');  // todo: unescape message and conver to html
+        let message = element.attr('data-user-help');  // todo: unescape message and conver to html
         element['popover']({ trigger: 'focus', content: message });
     }
 }

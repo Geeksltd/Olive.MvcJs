@@ -5,19 +5,19 @@ import AjaxRedirect from 'olive/Mvc/AjaxRedirect'
 
 export default class Form {
     static merge(items: JQuerySerializeArrayElement[]): JQuerySerializeArrayElement[] {
-        var result: JQuerySerializeArrayElement[] = [];
+        let result: JQuerySerializeArrayElement[] = [];
 
-        var groupedByKeys = Array.groupBy(items, i => i.name.toLowerCase());
+        let groupedByKeys = Array.groupBy(items, i => i.name.toLowerCase());
 
-        for (var i in groupedByKeys) {
+        for (let i in groupedByKeys) {
 
-            var group = groupedByKeys[i];
+            let group = groupedByKeys[i];
 
             if (typeof (group) == 'function') continue;
 
-            var key = group[0].name;
+            let key = group[0].name;
 
-            var values = group.map(item => item.value).filter((v) => v);
+            let values = group.map(item => item.value).filter((v) => v);
 
             // Fix for MVC checkboxes:
             if ($("input[name='" + key + "']").is(":checkbox") && values.length == 2 && values[1] == 'false'
@@ -34,11 +34,11 @@ export default class Form {
     };
 
     public static getPostData(trigger: JQuery): JQuerySerializeArrayElement[] {
-        var form = trigger.closest("[data-module]");
+        let form = trigger.closest("[data-module]");
         if (!form.is("form")) form = $("<form />").append(form.clone(true));
-        var data = Form.merge(form.serializeArray());
+        let data = Form.merge(form.serializeArray());
         // If it's master-details, then we need the index.
-        var subFormContainer = trigger.closest(".subform-item");
+        let subFormContainer = trigger.closest(".subform-item");
         if (subFormContainer != null) {
             data.push({
                 name: "subFormIndex",
@@ -52,8 +52,8 @@ export default class Form {
 
     public static onDefaultButtonKeyPress(event: JQueryEventObject): boolean {
         if (event.which === 13) {
-            var target = $(event.currentTarget);
-            var button = target.closest("[data-module]").find('[default-button]:first'); // Same module
+            let target = $(event.currentTarget);
+            let button = target.closest("[data-module]").find('[default-button]:first'); // Same module
             if (button.length == 0) button = $('[default-button]:first') // anywhere
             button.click();
             return false;
@@ -61,23 +61,23 @@ export default class Form {
     }
 
     public static cleanUpNumberField(field: JQuery) {
-        var domElement = <HTMLInputElement>field.get(0);
+        let domElement = <HTMLInputElement>field.get(0);
         field.val(field.val().replace(/[^\d.-]/g, ""));
     }
 
     public static submitCleanGet(event: JQueryEventObject) {
-        var form = $(event.currentTarget);
+        let form = $(event.currentTarget);
         if (Validate.validateForm(form) == false) { Waiting.hide(); return false; }
 
-        var formData = Form.merge(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
+        let formData = Form.merge(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
 
-        var url = Url.removeEmptyQueries(form.attr('action'));
+        let url = Url.removeEmptyQueries(form.attr('action'));
 
         try {
 
             form.find("input:checkbox:unchecked").each((ind, e) => url = Url.removeQuery(url, $(e).attr("name")));
 
-            for (var item of formData)
+            for (let item of formData)
                 url = Url.updateQuery(url, item.name, item.value);
 
             url = Url.removeEmptyQueries(url);

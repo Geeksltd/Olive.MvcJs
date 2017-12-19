@@ -1,13 +1,13 @@
 export default class Alert {
 
     public static enableAlert() {
-        var w: any = window;
+        let w: any = window;
         w.alert = (text: string, callback) => this.alert(text, null, callback);
     }
 
     public static alert(text: string, style?: string, callback?: Function) {
 
-        if (text == undefined) text = "";
+        if (text === undefined) text = "";
         text = text.trim();
 
         if (text.indexOf("<") != 0) {
