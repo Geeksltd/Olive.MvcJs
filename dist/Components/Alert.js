@@ -9,7 +9,7 @@ define(["require", "exports"], function (require, exports) {
             w.alert = function (text, callback) { return _this.alert(text, null, callback); };
         };
         Alert.alert = function (text, style, callback) {
-            if (text == undefined)
+            if (text === undefined)
                 text = "";
             text = text.trim();
             if (text.indexOf("<") != 0) {

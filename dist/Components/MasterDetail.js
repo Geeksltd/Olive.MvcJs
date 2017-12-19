@@ -9,7 +9,7 @@ define(["require", "exports"], function (require, exports) {
             $("input[name*=MustBeDeleted][value=True]").closest('[data-subform]').hide();
             // hide empty headers
             $(".horizontal-subform thead").each(function (i, e) {
-                $(e).css('visibility', (countItems(e) > 0) ? 'visible' : 'hidden');
+                return $(e).css('visibility', (countItems(e) > 0) ? 'visible' : 'hidden');
             });
             // Hide add buttons
             $("[data-subform-max]").each(function (i, e) {

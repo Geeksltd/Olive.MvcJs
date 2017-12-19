@@ -17,11 +17,11 @@ define(["require", "exports"], function (require, exports) {
                 return true;
             };
             window["getContainerIFrame"] = function () {
-                if (parent == null || parent == self)
+                if (parent == null || parent === self)
                     return null;
                 else
                     return $(parent.document).find("iframe")
-                        .filter(function (i, f) { return (f.contentDocument || f.contentWindow.document) == document; }).get(0);
+                        .filter(function (i, f) { return (f.contentDocument || f.contentWindow.document) === document; }).get(0);
             };
         };
         Modal.prototype.open = function () {
@@ -38,8 +38,8 @@ define(["require", "exports"], function (require, exports) {
                 _this.isOpening = false;
                 var isHeightProvided = !!(_this.modalOptions && _this.modalOptions.height);
                 if (!isHeightProvided) {
-                    var doc = frame.get(0).contentWindow.document;
-                    setTimeout(function () { return frame.height(doc.body.offsetHeight); }, 10); // Timeout is used due to an IE bug.
+                    var doc_1 = frame.get(0).contentWindow.document;
+                    setTimeout(function () { return frame.height(doc_1.body.offsetHeight); }, 10); // Timeout is used due to an IE bug.
                 }
                 Modal.current.find(".modal-body .text-center").remove();
             });
