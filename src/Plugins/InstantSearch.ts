@@ -15,13 +15,13 @@
     }
 
     onChanged(event: any) {
-        var keywords = this.input.val().toLowerCase().split(' ');
-        var rows = this.input.closest('[data-module]').find(".grid > tbody > tr");
+        let keywords = this.input.val().toLowerCase().split(' ');
+        let rows = this.input.closest('[data-module]').find(".grid > tbody > tr");
 
         rows.each((index, e) => {
-            var row = $(e);
-            var content = row.text().toLowerCase();
-            var hasAllKeywords = keywords.filter((i) => content.indexOf(i) == -1).length == 0;
+            let row = $(e);
+            let content = row.text().toLowerCase();
+            let hasAllKeywords = keywords.filter((i) => content.indexOf(i) == -1).length == 0;
             if (hasAllKeywords) row.show(); else row.hide();
         });
     }
