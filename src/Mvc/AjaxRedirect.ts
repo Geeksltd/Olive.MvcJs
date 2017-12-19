@@ -1,4 +1,4 @@
-﻿import Waiting from 'olive/Components/Waiting'
+import Waiting from 'olive/Components/Waiting'
 import FormAction from 'olive/Mvc/FormAction'
 
 export default class AjaxRedirect {
@@ -8,8 +8,8 @@ export default class AjaxRedirect {
 
     public static enable(event: JQueryEventObject) {
         if (event.ctrlKey || event.button === 1) return true;
-        var link = $(event.currentTarget);
-        var url = link.attr('href');
+        let link = $(event.currentTarget);
+        let url = link.attr('href');
         this.go(url, link, false, false, true);
         return false;
     }
@@ -27,7 +27,7 @@ export default class AjaxRedirect {
         if (window.stop) window.stop();
         else if (document.execCommand !== undefined) document.execCommand("Stop", false);
 
-        var scrollTopBefore;
+        let scrollTopBefore;
         if (keepScroll) {
             scrollTopBefore = $(document).scrollTop();
         }
