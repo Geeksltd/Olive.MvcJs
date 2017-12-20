@@ -2,7 +2,9 @@
 export default class SubMenu {
     menu: any;
     submenuOptions: any;
-
+    
+    public static enable(selector:JQuery){selector.each((i,e)=> new SubMenu($(e)));}
+    
     constructor(targetMenue: any) {
         this.menu = targetMenue;
         this.submenuOptions = { showTimeout: 0, hideTimeout: 0 };
