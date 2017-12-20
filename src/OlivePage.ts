@@ -99,7 +99,7 @@ export default class OlivePage {
         DatePicker.enable($("[data-control=date-picker],[data-control=calendar]"));
         TimeControl.enable($("[data-control='date-picker|time-picker']"));
         TimeControl.enable($("[data-control=time-picker]"));
-        $("[data-control=date-drop-downs]").each((i, e) => DateDropdown.enable($(e)));
+        DateDropdown.enable($("[data-control=date-drop-downs]"));
         $("[data-control=html-editor]").each((i, e) => new HtmlEditor($(e)).enable());
         $("[data-control=numeric-up-down]").each((i, e) => new NumbericUpDown($(e)).enable());
         $("[data-control=range-slider],[data-control=slider]").each((i, e) => new Slider($(e)).enable());
