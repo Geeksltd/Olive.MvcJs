@@ -1,10 +1,18 @@
 ﻿export default class PasswordStength {
-    public static enable(container: any) {
+   container: any;
+    
+    public static enable(selector:JQuery){selector.each((i,e)=> new PasswordStength($(e)));}
+    
+    constructor(targetContainer:any){
+        this.container=targetContainer;
+    }
+
+    enable() {
         // for configuration options : https://github.com/ablanco/jquery.pwstrength.bootstrap/blob/master/OPTIONS.md
 
-        if (container.find(".progress").length !== 0) return;
+        if (this.container.find(".progress").length !== 0) return;
 
-        let formGroup = container.closest(".form-group");
+        let formGroup = this.container.closest(".form-group");
 
         let options = {
             common: {},
@@ -16,7 +24,7 @@
                 showPopover: false,
                 showErrors: false,
                 viewports: {
-                    progress: container
+                    progress: this.container
                 },
                 verdicts: [
                     "<span class='fa fa-exclamation-triangle'></span> Weak",
@@ -30,7 +38,7 @@
         let password = formGroup.find(":password");
         if (password.length == 0) {
             console.log('Error: no password field found for password strength.');
-            console.log(container);
+            console.log(this.container);
         }
         else password.pwstrength(options);
     }
