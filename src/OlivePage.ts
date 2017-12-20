@@ -30,6 +30,7 @@ import ConfirmBox from 'olive/Plugins/ConfirmBox'
 import SubMenu from 'olive/Plugins/SubMenu'
 import InstantSearch from 'olive/Plugins/InstantSearch'
 import DateDropdown from 'olive/Plugins/DateDropdown'
+import {Enums} from 'olive/Extensions/Enums'
 
 export default class OlivePage {
 
@@ -73,11 +74,11 @@ export default class OlivePage {
         this._preInitializeActions.forEach((action) => action());
 
         // =================== Standard Features ====================
-        $(".select-cols .apply").off("click.apply-columns").on("click.apply-columns", (e) => Grid.applyColumns(e));
+        Grid.enable($(".select-cols .apply"),Enums.GridAction.applyColumns);
         $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", (e) => MasterDetail.deleteSubForm(e));
         $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
-        $(".select-grid-cols .group-control").each((i, e) => Grid.enableSelectColumns($(e)));
-        $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", (e) => Grid.enableSelectAllToggle(e));
+        Grid.enable($(".select-grid-cols .group-control"),Enums.GridAction.enableSelectColumns);
+        Grid.enable($("th.select-all > input:checkbox"),Enums.GridAction.enableSelectAllToggle);
         $("[data-user-help]").each((i, e) => this.enableUserHelp($(e)));
         $("form input, form select").off("keypress.default-button").on("keypress.default-button", (e) => Form.onDefaultButtonKeyPress(e));
         $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", (e) => Paging.onSizeChanged(e));
