@@ -4,9 +4,9 @@ export default class Validate {
 
     public static configure() {
 
-        var methods: any = $.validator.methods;
+        let methods: any = $.validator.methods;
 
-        var format = Config.DATE_FORMAT;
+        let format = Config.DATE_FORMAT;
 
         methods.date = function (value, element) {
             if (this.optional(element)) return true;
@@ -19,11 +19,11 @@ export default class Validate {
     public static validateForm(trigger) {
 
         if (trigger.is("[formnovalidate]")) return true;
-        var form = trigger.closest("form");
-        var validator = form.validate();
+        let form = trigger.closest("form");
+        let validator = form.validate();
 
         if (!validator.form()) {
-            var alertUntyped: any = alert;
+            let alertUntyped: any = alert;
             if (form.is("[data-validation-style*=message-box]"))
                 alertUntyped(validator.errorList.map(err => err.message).join('\r\n'), () => { setTimeout(() => validator.focusInvalid(), 0); });
             validator.focusInvalid();
