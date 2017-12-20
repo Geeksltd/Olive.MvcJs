@@ -105,7 +105,7 @@ export default class OlivePage {
         Slider.enable($("[data-control=range-slider],[data-control=slider]"));
         FileUpload.enable($(".file-upload input:file"));
         ConfirmBox.enable($("[data-confirm-question]"));
-        $(".password-strength").each((i, e) => PasswordStength.enable($(e)));
+        PasswordStength.enable($(".password-strength"));
         $(".with-submenu").each((i, e) => new SubMenu($(e)));
 
         // =================== Request lifecycle ====================
