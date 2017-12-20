@@ -111,20 +111,20 @@ define(["require", "exports", "olive/Components/Waiting", "olive/Components/Vali
             element.find("script[src]").remove();
             $("main").replaceWith(element);
             if (referencedScripts.length) {
-                var expectedScripts = referencedScripts.length;
-                var loadedScripts = 0;
+                var expectedScripts_1 = referencedScripts.length;
+                var loadedScripts_1 = 0;
                 referencedScripts.each(function (index, item) {
                     var url = '' + item;
                     if (_this.dynamicallyLoadedScriptFiles.indexOf(url) > -1) {
-                        loadedScripts++;
-                        if (loadedScripts == expectedScripts)
+                        loadedScripts_1++;
+                        if (loadedScripts_1 == expectedScripts_1)
                             _this.raiseViewChanged(element, trigger, true);
                     }
                     else {
                         _this.dynamicallyLoadedScriptFiles.push(url);
                         $.getScript(url, function () {
-                            loadedScripts++;
-                            if (loadedScripts == expectedScripts)
+                            loadedScripts_1++;
+                            if (loadedScripts_1 == expectedScripts_1)
                                 _this.raiseViewChanged(element, trigger, true);
                         });
                     }

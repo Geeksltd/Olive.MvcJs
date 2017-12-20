@@ -28,7 +28,7 @@ export default class Modal {
 
     open() {
         this.isOpening = true;
-        if (Modal.current != null)
+        if (Modal.current)
             if (Modal.close() === false) return false;
 
         Modal.current = $(this.getModalTemplate(this.modalOptions));

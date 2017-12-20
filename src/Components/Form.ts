@@ -39,7 +39,7 @@ export default class Form {
         let data = Form.merge(form.serializeArray());
         // If it's master-details, then we need the index.
         let subFormContainer = trigger.closest(".subform-item");
-        if (subFormContainer != null) {
+        if (subFormContainer) {
             data.push({
                 name: "subFormIndex",
                 value: subFormContainer.closest(".horizontal-subform, .vertical-subform").find(".subform-item").index(subFormContainer).toString()

@@ -19,13 +19,16 @@ export default class FileUpload {
         container.find('.bootstrap-filestyle > input:text').wrap($("<div class='progress'></div>"));
         container.find('.bootstrap-filestyle > .progress').prepend(progressBar);
 
+        let currentFile = null;
+        let inputControl = null;
+
         if (idInput.val() != "REMOVE") {
-            let currentFile = container.find('.current-file > a');
-            let inputControl = container.find('.bootstrap-filestyle > .progress > input:text');
+            currentFile = container.find('.current-file > a');
+            inputControl = container.find('.bootstrap-filestyle > .progress > input:text');
         }
 
         let currentFileName = currentFile ? currentFile.text() : null;
-        let hasExistingFile = currentFileName != "«UNCHANGED»" && (currentFileName != "NoFile.Empty" && currentFileName != null);
+        let hasExistingFile = currentFileName != "«UNCHANGED»" && (currentFileName != "NoFile.Empty" && currentFileName);
 
         if (hasExistingFile && inputControl.val() == "") {
             del.show();

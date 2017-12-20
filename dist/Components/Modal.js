@@ -27,7 +27,7 @@ define(["require", "exports"], function (require, exports) {
         Modal.prototype.open = function () {
             var _this = this;
             this.isOpening = true;
-            if (Modal.current != null)
+            if (Modal.current)
                 if (Modal.close() === false)
                     return false;
             Modal.current = $(this.getModalTemplate(this.modalOptions));

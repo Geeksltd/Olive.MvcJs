@@ -16,12 +16,14 @@ define(["require", "exports", "olive/Mvc/FormAction"], function (require, export
             control.filestyle({ buttonBefore: true });
             container.find('.bootstrap-filestyle > input:text').wrap($("<div class='progress'></div>"));
             container.find('.bootstrap-filestyle > .progress').prepend(progressBar);
+            var currentFile = null;
+            var inputControl = null;
             if (idInput.val() != "REMOVE") {
-                var currentFile = container.find('.current-file > a');
-                var inputControl = container.find('.bootstrap-filestyle > .progress > input:text');
+                currentFile = container.find('.current-file > a');
+                inputControl = container.find('.bootstrap-filestyle > .progress > input:text');
             }
             var currentFileName = currentFile ? currentFile.text() : null;
-            var hasExistingFile = currentFileName != "«UNCHANGED»" && (currentFileName != "NoFile.Empty" && currentFileName != null);
+            var hasExistingFile = currentFileName != "«UNCHANGED»" && (currentFileName != "NoFile.Empty" && currentFileName);
             if (hasExistingFile && inputControl.val() == "") {
                 del.show();
                 progressBar.width('100%');
