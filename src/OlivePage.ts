@@ -106,7 +106,7 @@ export default class OlivePage {
         FileUpload.enable($(".file-upload input:file"));
         ConfirmBox.enable($("[data-confirm-question]"));
         PasswordStength.enable($(".password-strength"));
-        $(".with-submenu").each((i, e) => new SubMenu($(e)));
+        SubMenu.enable($(".with-submenu")); 
 
         // =================== Request lifecycle ====================
         $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => AjaxRedirect.back(e));
