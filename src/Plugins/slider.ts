@@ -11,7 +11,7 @@ export default class Slider {
 
     enable() {
 
-        var data_options = this.input.attr("data-options") ? JSON.parse(Form.cleanJson(this.input.attr("data-options"))) : null;
+        let data_options = this.input.attr("data-options") ? JSON.parse(Form.cleanJson(this.input.attr("data-options"))) : null;
         if (data_options) $.extend(true, this.options, data_options);
 
         this.options.range = this.input.attr("data-control") == "range-slider";
@@ -20,7 +20,7 @@ export default class Slider {
                 this.options.formatter = v => v[0] + " - " + v[1];
 
             if (this.input.attr("id").endsWith("Max")) return;
-            var maxInput = $('[name="' + this.input.attr("id").split('.')[0] + "." + this.options.upper + '\"]');
+            let maxInput = $('[name="' + this.input.attr("id").split('.')[0] + "." + this.options.upper + '\"]');
             if (maxInput.length == 0)
                 maxInput = $('[name="' + (this.options.upper || (this.input.attr("id") + 'Max')) + '\"]');
 
@@ -29,10 +29,10 @@ export default class Slider {
 
             // Standard SEARCH min and max.														 
             // TODO: Change the following to first detect if we're in a search control context and skip the following otherwise.
-            var container = $(this.input).closest(".group-control");
+            let container = $(this.input).closest(".group-control");
             if (container.length == 0) container = this.input.parent();
             container.children().each((i, e) => $(e).hide());
-            var rangeSlider = $("<input type='text' class='range-slider'/>").attr("id", this.input.attr("id") + "_slider").appendTo(container);
+            let rangeSlider = $("<input type='text' class='range-slider'/>").attr("id", this.input.attr("id") + "_slider").appendTo(container);
             (<any>rangeSlider).slider(this.options).on('change', ev => { this.input.val(ev.value.newValue[0]); maxInput.val(ev.value.newValue[1]); });   ///// Updated ***********
         }
         else {

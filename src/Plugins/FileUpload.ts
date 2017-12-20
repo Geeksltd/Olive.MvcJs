@@ -8,11 +8,11 @@ export default class FileUpload {
 
     public enable() {
 
-        var control = this.input;
-        var container: JQuery = this.input.closest(".file-upload");
-        var del = container.find(".delete-file");
-        var idInput = container.find("input.file-id");
-        var progressBar = container.find(".progress-bar");
+        let control = this.input;
+        let container: JQuery = this.input.closest(".file-upload");
+        let del = container.find(".delete-file");
+        let idInput = container.find("input.file-id");
+        let progressBar = container.find(".progress-bar");
         control.attr("data-url", "/file/upload");
         // Config http://markusslima.github.io/bootstrap-filestyle/ & https://blueimp.github.io/jQuery-File-Upload/
         control.filestyle({ buttonBefore: true });
@@ -20,12 +20,12 @@ export default class FileUpload {
         container.find('.bootstrap-filestyle > .progress').prepend(progressBar);
 
         if (idInput.val() != "REMOVE") {
-            var currentFile = container.find('.current-file > a');
-            var inputControl = container.find('.bootstrap-filestyle > .progress > input:text');
+            let currentFile = container.find('.current-file > a');
+            let inputControl = container.find('.bootstrap-filestyle > .progress > input:text');
         }
 
-        var currentFileName = currentFile ? currentFile.text() : null;
-        var hasExistingFile = currentFileName != "«UNCHANGED»" && (currentFileName != "NoFile.Empty" && currentFileName != null);
+        let currentFileName = currentFile ? currentFile.text() : null;
+        let hasExistingFile = currentFileName != "«UNCHANGED»" && (currentFileName != "NoFile.Empty" && currentFileName != null);
 
         if (hasExistingFile && inputControl.val() == "") {
             del.show();
@@ -34,7 +34,7 @@ export default class FileUpload {
             inputControl.val(currentFile.text()).removeAttr('disabled').addClass('file-target').click(() => currentFile[0].click());
         }
 
-        var handleCurrentFileChange = () => {
+        let handleCurrentFileChange = () => {
             if (hasExistingFile) {
                 inputControl.removeClass('file-target').attr('disabled', 'true').off();
                 hasExistingFile = false;
@@ -49,7 +49,7 @@ export default class FileUpload {
             handleCurrentFileChange();
         });
 
-        var fileLabel = control.parent().find(':text');
+        let fileLabel = control.parent().find(':text');
         this.input.fileupload({
             dataType: 'json',
             dropZone: container,
@@ -62,7 +62,7 @@ export default class FileUpload {
             },
             change: (e, data) => { progressBar.width(0); handleCurrentFileChange(); },
             progressall: (e, data: any) => {
-                var progress = parseInt((data.loaded / data.total * 100).toString(), 10);
+                let progress = parseInt((data.loaded / data.total * 100).toString(), 10);
                 progressBar.width(progress + '%');
             },
             error: (response) => { FormAction.onAjaxResponseError(response); fileLabel.val(''); },

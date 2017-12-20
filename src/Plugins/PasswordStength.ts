@@ -4,9 +4,9 @@
 
         if (container.find(".progress").length !== 0) return;
 
-        var formGroup = container.closest(".form-group");
+        let formGroup = container.closest(".form-group");
 
-        var options = {
+        let options = {
             common: {},
             rules: {},
             ui: {
@@ -27,7 +27,7 @@
             }
         };
 
-        var password = formGroup.find(":password");
+        let password = formGroup.find(":password");
         if (password.length == 0) {
             console.log('Error: no password field found for password strength.');
             console.log(container);

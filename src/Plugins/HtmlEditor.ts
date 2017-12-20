@@ -1,4 +1,4 @@
-﻿import Config from "olive/Config"
+import Config from "olive/Config"
 import Modal from "olive/Components/Modal"
 
 export default class HtmlEditor {
@@ -20,7 +20,7 @@ export default class HtmlEditor {
     onJQueryAdapterScriptReady() {
         CKEDITOR.config.contentsCss = Config.CK_EDITOR_BASE_PATH + 'contents.css';
 
-        var editor = CKEDITOR.replace($(this.input).attr('id'), this.getEditorSettings());
+        let editor = CKEDITOR.replace($(this.input).attr('id'), this.getEditorSettings());
 
         editor.on('change', (evt) => evt.editor.updateElement());
         editor.on("instanceReady", (event) => Modal.adjustHeight());

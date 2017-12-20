@@ -22,15 +22,15 @@ export default class FormAction {
     public static onViewChanged = new LiteEvent<IViewUpdatedEventArgs>();
 
     public static invokeWithPost(event) {
-        var trigger = $(event.currentTarget);
-        var containerModule = trigger.closest("[data-module]");
+        let trigger = $(event.currentTarget);
+        let containerModule = trigger.closest("[data-module]");
         if (containerModule.is("form") && Validate.validateForm(trigger) == false) return false;
 
-        var data = Form.getPostData(trigger);
-        var url = trigger.attr("formaction");
-        var form = $("<form method='post' />").hide().appendTo($("body"));
+        let data = Form.getPostData(trigger);
+        let url = trigger.attr("formaction");
+        let form = $("<form method='post' />").hide().appendTo($("body"));
 
-        for (var item of data)
+        for (let item of data)
             $("<input type='hidden'/>").attr("name", item.name).val(item.value).appendTo(form);
         form.attr("action", url).submit();
         return false;
@@ -38,13 +38,13 @@ export default class FormAction {
 
     public static invokeWithAjax(event, actionUrl, syncCall = false) {
 
-        var trigger = $(event.currentTarget);
-        var triggerUniqueSelector = trigger.getUniqueSelector();
-        var containerModule = trigger.closest("[data-module]");
+        let trigger = $(event.currentTarget);
+        let triggerUniqueSelector = trigger.getUniqueSelector();
+        let containerModule = trigger.closest("[data-module]");
 
         if (Validate.validateForm(trigger) == false) { Waiting.hide(); return false; }
-        var data_before_disable = Form.getPostData(trigger);
-        var disableToo = Config.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
+        let data_before_disable = Form.getPostData(trigger);
+        let disableToo = Config.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
         if (disableToo) trigger.attr('disabled', 'disabled');
         trigger.addClass('loading-action-result');
         this.isAwaitingAjaxResponse = true;
@@ -60,7 +60,7 @@ export default class FormAction {
                 this.isAwaitingAjaxResponse = false;
                 trigger.removeClass('loading-action-result');
                 if (disableToo) trigger.removeAttr('disabled');
-                var triggerTabIndex = $(":focusable").index($(triggerUniqueSelector));
+                let triggerTabIndex = $(":focusable").index($(triggerUniqueSelector));
                 if (triggerTabIndex > -1) $(":focusable").eq(triggerTabIndex + 1).focus();
             }
         });
@@ -72,12 +72,12 @@ export default class FormAction {
         Waiting.hide();
         console.error(response);
 
-        var text = response.responseText;
+        let text = response.responseText;
         if (text.indexOf("<html") > -1) {
             document.write(text);
         }
         else if (text.indexOf("<form") > -1) {
-            var form = $("form", document);
+            let form = $("form", document);
             if (form.length) form.replaceWith($(text));
             else document.write(text);
         }
@@ -86,7 +86,7 @@ export default class FormAction {
 
     public static processAjaxResponse(response, containerModule, trigger) {
 
-        var asElement = $(response);
+        let asElement = $(response);
 
         if (asElement.is("main")) {
             this.replaceMain(asElement, trigger);
@@ -107,8 +107,8 @@ export default class FormAction {
         }
 
         if (trigger && trigger.is("[data-add-subform]")) {
-            var subFormName = trigger.attr("data-add-subform");
-            var container = containerModule.find("[data-subform=" + subFormName + "] > table tbody:first");
+            let subFormName = trigger.attr("data-add-subform");
+            let container = containerModule.find("[data-subform=" + subFormName + "] > table tbody:first");
 
             if (container.length == 0)
                 container = containerModule.find("[data-subform=" + subFormName + "]:first");
@@ -129,16 +129,16 @@ export default class FormAction {
     }
 
     static replaceMain(element: JQuery, trigger) {
-        var referencedScripts = element.find("script[src]").map((i, s) => $(s).attr("src"));
+        let referencedScripts = element.find("script[src]").map((i, s) => $(s).attr("src"));
         element.find("script[src]").remove();
 
         $("main").replaceWith(element);
 
         if (referencedScripts.length) {
-            var expectedScripts = referencedScripts.length;
-            var loadedScripts = 0;
+            let expectedScripts = referencedScripts.length;
+            let loadedScripts = 0;
             referencedScripts.each((index, item) => {
-                var url = '' + item;
+                let url = '' + item;
                 if (this.dynamicallyLoadedScriptFiles.indexOf(url) > -1) {
                     loadedScripts++;
                     if (loadedScripts == expectedScripts)
