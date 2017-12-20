@@ -96,17 +96,17 @@ export default class OlivePage {
         // =================== Plug-ins ====================
         InstantSearch.enable($("[name=InstantSearch]"));
         AutoComplete.enable($("input[autocomplete-source]"));
-        $("[data-control=date-picker],[data-control=calendar]").each((i, e) => new DatePicker($(e)));
-        $("[data-control='date-picker|time-picker']").each((i, e) => new TimeControl($(e)));
-        $("[data-control=time-picker]").each((i, e) => new TimeControl($(e)));
-        $("[data-control=date-drop-downs]").each((i, e) => DateDropdown.enable($(e)));
-        $("[data-control=html-editor]").each((i, e) => new HtmlEditor($(e)).enable());
-        $("[data-control=numeric-up-down]").each((i, e) => new NumbericUpDown($(e)).enable());
-        $("[data-control=range-slider],[data-control=slider]").each((i, e) => new Slider($(e)).enable());
-        $(".file-upload input:file").each((i, e) => new FileUpload($(e)).enable());
-        $("[data-confirm-question]").each((i, e) => new ConfirmBox($(e)).enable());
-        $(".password-strength").each((i, e) => PasswordStength.enable($(e)));
-        $(".with-submenu").each((i, e) => new SubMenu($(e)));
+        DatePicker.enable($("[data-control=date-picker],[data-control=calendar]"));
+        TimeControl.enable($("[data-control='date-picker|time-picker']"));
+        TimeControl.enable($("[data-control=time-picker]"));
+        DateDropdown.enable($("[data-control=date-drop-downs]"));
+        HtmlEditor.enable($("[data-control=html-editor]")); 
+        NumbericUpDown.enable($("[data-control=numeric-up-down]"));
+        Slider.enable($("[data-control=range-slider],[data-control=slider]"));
+        FileUpload.enable($(".file-upload input:file"));
+        ConfirmBox.enable($("[data-confirm-question]"));
+        PasswordStength.enable($(".password-strength"));
+        SubMenu.enable($(".with-submenu")); 
 
         // =================== Request lifecycle ====================
         $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => AjaxRedirect.back(e));
