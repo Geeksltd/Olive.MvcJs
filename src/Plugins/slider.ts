@@ -4,6 +4,9 @@ import Form from "olive/Components/Form"
 export default class Slider {
     input: any;
     options;
+    
+    public static enable(selector:JQuery){selector.each((i,e)=> new Slider($(e)).enable());}
+    
     constructor(targetInput: any) {
         this.input = targetInput;
         this.options = { min: 0, max: 100, value: null, range: false, formatter: null, tooltip: 'always', upper: null, tooltip_split: false };

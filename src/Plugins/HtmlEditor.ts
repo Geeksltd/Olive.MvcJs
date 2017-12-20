@@ -4,12 +4,14 @@ import Modal from "olive/Components/Modal"
 export default class HtmlEditor {
 
     input: any;
+    
+    public static enable(selector:JQuery){selector.each((i,e)=> new HtmlEditor($(e)).enable())}
 
     constructor(targetInput: any) {
         this.input = targetInput;
     }
 
-    public enable( ) {
+    enable( ) {
         $.getScript(Config.CK_EDITOR_BASE_PATH + "ckeditor.js", this.onCkEditorScriptReady);
     }
 

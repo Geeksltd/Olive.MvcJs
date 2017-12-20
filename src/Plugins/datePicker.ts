@@ -4,7 +4,9 @@ import Config from "olive/Config"
 
 export default class DatePicker {
     input: any;
-
+    
+    public static enable(selector:JQuery){ selector.each((i,e) => new DatePicker($(e)).show());}
+    
     constructor(targetInput: any) {
         this.input = targetInput;
     }

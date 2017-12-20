@@ -2,11 +2,14 @@ import FormAction from "olive/Mvc/FormAction"
 
 export default class FileUpload {
     input: any;
+    
+    public static enable(selector:JQuery){selector.each((i,e)=> new FileUpload($(e)).enable());}
+    
     constructor(targetInput: any) {
         this.input = targetInput;
     }
 
-    public enable() {
+    enable() {
 
         let control = this.input;
         let container: JQuery = this.input.closest(".file-upload");
