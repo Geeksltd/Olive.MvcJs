@@ -100,7 +100,7 @@ export default class OlivePage {
         TimeControl.enable($("[data-control='date-picker|time-picker']"));
         TimeControl.enable($("[data-control=time-picker]"));
         DateDropdown.enable($("[data-control=date-drop-downs]"));
-        $("[data-control=html-editor]").each((i, e) => new HtmlEditor($(e)).enable());
+        HtmlEditor.enable($("[data-control=html-editor]")); 
         $("[data-control=numeric-up-down]").each((i, e) => new NumbericUpDown($(e)).enable());
         $("[data-control=range-slider],[data-control=slider]").each((i, e) => new Slider($(e)).enable());
         $(".file-upload input:file").each((i, e) => new FileUpload($(e)).enable());
