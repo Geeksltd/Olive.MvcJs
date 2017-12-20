@@ -19,8 +19,8 @@ export default class DatePicker {
         }
 
         this.input.attr("data-autofocus", "disabled");
-        var control = this.input.attr("data-control");
-        var viewMode = this.input.attr("data-view-mode") || 'days';
+        let control = this.input.attr("data-control");
+        let viewMode = this.input.attr("data-view-mode") || 'days';
 
         if (control == "date-picker") {
             (<any>this.input).datetimepicker({

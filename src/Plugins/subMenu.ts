@@ -14,7 +14,7 @@ export default class SubMenu {
         if (this.menu.is(".nav-stacked.dropped-submenu"))
             this.menu.addClass("sm-vertical");
 
-        var options = this.menu.attr("data-submenu-options");
+        let options = this.menu.attr("data-submenu-options");
         if (options) this.submenuOptions = JSON.safeParse(options);
         this.menu.smartmenus(this.submenuOptions);
     }

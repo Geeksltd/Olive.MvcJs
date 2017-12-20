@@ -6,11 +6,11 @@
 
     public static replaceSource(controlId: string, items) {
 
-        var $control = $('#' + controlId);
+        let $control = $('#' + controlId);
 
         if ($control.is("select")) {
             $control.empty();
-            for (var i = 0; i < items.length; i++) {
+            for (let i = 0; i < items.length; i++) {
                 $control.append($("<option value='" + items[i].Value + "'>" + items[i].Text + "</option>"));
             }
 

@@ -20,10 +20,10 @@ export default class AutoComplete {
         this.valueField = $("[name='" + this.input.attr("name").slice(0, -5) + "']");
         if (this.valueField.length == 0) console.log('Could not find the value field for auto-complete.');
 
-        var dataSource = this.getData;
+        let dataSource = this.getData;
 
 
-        var dataset = {
+        let dataset = {
             displayKey: 'Text', source: dataSource,
             templates: { suggestion: (item) => item.Display, empty: "<div class='tt-suggestion'>Not found</div>" }
         };
@@ -53,8 +53,8 @@ export default class AutoComplete {
     itemBlured(e: any, item: any) {
         if (this.valueField.val() == "" && this.input.val() != "") {
             // this hack is so when you paste something a focus out, it should set the hidden field
-            var suggested = this.input.closest(".twitter-typeahead").find(".tt-suggestion");
-            var filtered = suggested.filter((e, obj) => (obj.innerText === this.input.val()));
+            let suggested = this.input.closest(".twitter-typeahead").find(".tt-suggestion");
+            let filtered = suggested.filter((e, obj) => (obj.innerText === this.input.val()));
 
             if (filtered.length === 0 && suggested.length === 0) {
                 // the suggestion list has never been shown
@@ -81,9 +81,9 @@ export default class AutoComplete {
 
     getData(query: any, callback: any) {
         this.awaitingAutocompleteResponses++;
-        var url = this.input.attr("autocomplete-source");
+        let url = this.input.attr("autocomplete-source");
         url = Url.removeQuery(url, this.input.attr('name')); // Remove old text.
-        var data = Form.getPostData(this.input);
+        let data = Form.getPostData(this.input);
 
         setTimeout(() => {
             if (this.awaitingAutocompleteResponses > 1) {

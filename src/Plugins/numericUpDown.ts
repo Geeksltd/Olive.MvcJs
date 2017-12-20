@@ -8,9 +8,10 @@ export default class NumbericUpDown {
         this.input = targetInput;          
     }
 
-    enable() {
-        var min = this.input.attr("data-val-range-min");
-        var max = this.input.attr("data-val-range-max");
+    public enable() {
+        let min = this.input.attr("data-val-range-min");
+        let max = this.input.attr("data-val-range-max");
+
         this.input.spinedit({
             minimum: parseFloat(min),
             maximum: parseFloat(max),
