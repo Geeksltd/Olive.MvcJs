@@ -3,7 +3,7 @@
     public static show(blockScreen: boolean = false) {
 
         if (!$(document.forms[0]).valid()) return;
-        var screen = $("<div class='wait-screen' />").appendTo("body");
+        let screen = $("<div class='wait-screen' />").appendTo("body");
         if (blockScreen) {
             $("<div class='cover' />")
                 .width(Math.max($(document).width(), $(window).width()))
