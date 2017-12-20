@@ -2,7 +2,8 @@ import Modal from "olive/Components/Modal"
 import Config from "olive/Config";
 
 export default class TimeControl {
-
+    public static enable(selector:JQuery){selector.each((i,e) => new TimeControl($(e)));}
+    
     constructor(targetInput: any) {
         let input = targetInput;
 
