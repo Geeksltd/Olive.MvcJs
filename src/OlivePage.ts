@@ -102,7 +102,7 @@ export default class OlivePage {
         DateDropdown.enable($("[data-control=date-drop-downs]"));
         HtmlEditor.enable($("[data-control=html-editor]")); 
         NumbericUpDown.enable($("[data-control=numeric-up-down]"));
-        $("[data-control=range-slider],[data-control=slider]").each((i, e) => new Slider($(e)).enable());
+        Slider.enable($("[data-control=range-slider],[data-control=slider]"));
         $(".file-upload input:file").each((i, e) => new FileUpload($(e)).enable());
         $("[data-confirm-question]").each((i, e) => new ConfirmBox($(e)).enable());
         $(".password-strength").each((i, e) => PasswordStength.enable($(e)));
