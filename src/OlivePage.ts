@@ -104,7 +104,7 @@ export default class OlivePage {
         NumbericUpDown.enable($("[data-control=numeric-up-down]"));
         Slider.enable($("[data-control=range-slider],[data-control=slider]"));
         FileUpload.enable($(".file-upload input:file"));
-        $("[data-confirm-question]").each((i, e) => new ConfirmBox($(e)).enable());
+        ConfirmBox.enable($("[data-confirm-question]"));
         $(".password-strength").each((i, e) => PasswordStength.enable($(e)));
         $(".with-submenu").each((i, e) => new SubMenu($(e)));
 
