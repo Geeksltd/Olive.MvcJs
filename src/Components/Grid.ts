@@ -1,4 +1,31 @@
+import {Enums} from 'olive/Extensions/Enums'
+
 export default class Grid {
+
+    public static enable(element:any,targetAction){
+        switch(targetAction){
+            case Enums.GridAction.applyColumns: {
+                element.off("click.apply-columns").on("click.apply-columns",(e) => this.applyColumns(e));
+                break;
+            }
+            case Enums.GridAction.enableSelectAllToggle:{
+                element.off("click.select-all").on("click.select-all",(e) => this.enableSelectAllToggle(e));
+                break;
+            }
+            case Enums.GridAction.enableSelectColumns:{
+                let target = element as JQuery;
+                target.each((i,e)=> this.enableSelectColumns($(e)));
+                break;
+            }
+            case Enums.GridAction.highlightRow:{
+               this.highlightRow(element);
+               break;
+            }
+            default:{                
+                break;
+            }
+        }
+    }
 
     public static applyColumns(event: JQueryEventObject) {
         let button = $(event.currentTarget);
@@ -25,3 +52,4 @@ export default class Grid {
         target.addClass('highlighted');
     }
 }
+
