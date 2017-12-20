@@ -94,8 +94,8 @@ export default class OlivePage {
         //$.validator.unobtrusive.parse('form');
 
         // =================== Plug-ins ====================
-        $("[name=InstantSearch]").each((i, e) => new InstantSearch($(e)).enable());
-        $("input[autocomplete-source]").each((i, e) => new AutoComplete($(e)).handle());
+        InstantSearch.enable($("[name=InstantSearch]"));
+        AutoComplete.enable($("input[autocomplete-source]"));
         $("[data-control=date-picker],[data-control=calendar]").each((i, e) => new DatePicker($(e)));
         $("[data-control='date-picker|time-picker']").each((i, e) => new TimeControl($(e)));
         $("[data-control=time-picker]").each((i, e) => new TimeControl($(e)));

@@ -56,8 +56,8 @@ define(["require", "exports", "olive/Config", "olive/Mvc/FormAction", "olive/Mvc
             $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", function (e) { return $(e.currentTarget).height(e.currentTarget.contentWindow.document.body.scrollHeight); });
             //$.validator.unobtrusive.parse('form');
             // =================== Plug-ins ====================
-            $("[name=InstantSearch]").each(function (i, e) { return new InstantSearch_1.default($(e)).enable(); });
-            $("input[autocomplete-source]").each(function (i, e) { return new AutoComplete_1.default($(e)).handle(); });
+            InstantSearch_1.default.enable($("[name=InstantSearch]"));
+            AutoComplete_1.default.enable($("input[autocomplete-source]"));
             $("[data-control=date-picker],[data-control=calendar]").each(function (i, e) { return new DatePicker_1.default($(e)); });
             $("[data-control='date-picker|time-picker']").each(function (i, e) { return new TimeControl_1.default($(e)); });
             $("[data-control=time-picker]").each(function (i, e) { return new TimeControl_1.default($(e)); });

@@ -4,6 +4,7 @@ define(["require", "exports"], function (require, exports) {
         function InstantSearch(targetInput) {
             this.input = targetInput;
         }
+        InstantSearch.enable = function (selector) { selector.each(function (i, e) { return new InstantSearch($(e)).enable(); }); };
         InstantSearch.prototype.enable = function () {
             // TODO: Make it work with List render mode too.
             this.input.off("keyup.immediate-filter").on("keyup.immediate-filter", this.onChanged);

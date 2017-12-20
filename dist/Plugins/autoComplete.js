@@ -5,7 +5,8 @@ define(["require", "exports", "olive/Components/Url", "olive/Components/Form", "
             this.awaitingAutocompleteResponses = 0;
             this.input = targetInput;
         }
-        AutoComplete.prototype.handle = function () {
+        AutoComplete.enable = function (selector) { selector.each(function (i, e) { return new AutoComplete($(e)).enable(); }); };
+        AutoComplete.prototype.enable = function () {
             if (this.input.is('[data-typeahead-enabled=true]'))
                 return;
             else

@@ -1,11 +1,12 @@
-﻿export default class InstantSearch {
+﻿
+export default class InstantSearch {
     input: any;
 
-    constructor(targetInput: any) {
-        this.input = targetInput;
-    }
+    public static enable(selector: JQuery) { selector.each((i, e) => new InstantSearch($(e)).enable()); }
 
-    public enable() {
+    constructor(targetInput: any) { this.input = targetInput; }
+
+    enable() {
         // TODO: Make it work with List render mode too.
         this.input.off("keyup.immediate-filter").on("keyup.immediate-filter", this.onChanged);
 

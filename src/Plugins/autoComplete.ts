@@ -7,13 +7,13 @@ import FormAction from "olive/Mvc/FormAction"
 export default class AutoComplete {
     input: any;
     awaitingAutocompleteResponses: number = 0;
-    valueField: JQuery
+    valueField: JQuery;
 
-    constructor(targetInput: any) {
-        this.input = targetInput;
-    }
+    public static enable(selector: JQuery) { selector.each((i, e) => new AutoComplete($(e)).enable()); }
 
-    public handle() {
+    constructor(targetInput: any) { this.input = targetInput; }
+
+    enable() {
 
         if (this.input.is('[data-typeahead-enabled=true]')) return;
         else this.input.attr('data-typeahead-enabled', true);
