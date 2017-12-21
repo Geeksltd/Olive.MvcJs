@@ -9,7 +9,7 @@ export default class ConfirmBox {
     }
 
     enable() {
-        this.button.off("click.confirm-question").bindFirst("click.confirm-question", (e) => {
+        this.button.off("click.confirm-question").bindFirst("click.confirm-question", e => {
             e.stopImmediatePropagation();
 
             alertify.set({
@@ -29,7 +29,7 @@ export default class ConfirmBox {
     }
 
     public showConfirm(text, yesCallback) {
-        alertify.confirm(text.replace(/\r/g, "<br />"), (e) => {
+        alertify.confirm(text.replace(/\r/g, "<br />"), e => {
             if (e) yesCallback();
             else return false;
         });

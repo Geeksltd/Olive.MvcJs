@@ -40,7 +40,7 @@ export default class Modal {
 
         let frame = Modal.current.find("iframe");
 
-        frame.attr("src", this.url).on("load", (e) => {
+        frame.attr("src", this.url).on("load", e => {
             this.isOpening = false;
             let isHeightProvided = !!(this.modalOptions && this.modalOptions.height);
             if (!isHeightProvided) {

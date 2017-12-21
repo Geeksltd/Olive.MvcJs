@@ -47,7 +47,7 @@ export default class FileUpload {
             }
         };
 
-        del.click((e) => {
+        del.click(e => {
             del.hide();
             idInput.val("REMOVE");
             progressBar.width(0);

@@ -4,6 +4,7 @@ export default class Modal {
     static isClosingModal: boolean;
     url: string;
     modalOptions: any;
+    static enalbeEnsureHeight(selector: JQuery): void;
     static initialize(): void;
     constructor(event?: JQueryEventObject, targeturl?: string, opt?: any);
     open(): boolean;

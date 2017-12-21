@@ -5,6 +5,7 @@ define(["require", "exports", "olive/Components/Form"], function (require, expor
             this.input = targetInput;
             this.options = { min: 0, max: 100, value: null, range: false, formatter: null, tooltip: 'always', upper: null, tooltip_split: false };
         }
+        Slider.enable = function (selector) { selector.each(function (i, e) { return new Slider($(e)).enable(); }); };
         Slider.prototype.enable = function () {
             var _this = this;
             var data_options = this.input.attr("data-options") ? JSON.parse(Form_1.default.cleanJson(this.input.attr("data-options"))) : null;

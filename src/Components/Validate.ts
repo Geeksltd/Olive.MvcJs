@@ -25,7 +25,8 @@ export default class Validate {
         if (!validator.form()) {
             let alertUntyped: any = alert;
             if (form.is("[data-validation-style*=message-box]"))
-                alertUntyped(validator.errorList.map(err => err.message).join('\r\n'), () => { setTimeout(() => validator.focusInvalid(), 0); });
+                alertUntyped(validator.errorList.map(err => err.message).join('\r\n'),
+                    () => { setTimeout(() => validator.focusInvalid(), 0); });
             validator.focusInvalid();
             return false;
         }

@@ -4,6 +4,7 @@ define(["require", "exports", "olive/Components/Modal", "olive/Config"], functio
         function DatePicker(targetInput) {
             this.input = targetInput;
         }
+        DatePicker.enable = function (selector) { selector.each(function (i, e) { return new DatePicker($(e)).show(); }); };
         DatePicker.prototype.show = function () {
             var _this = this;
             if (window.isModal()) {

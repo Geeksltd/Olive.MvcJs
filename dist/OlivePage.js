@@ -1,4 +1,4 @@
-define(["require", "exports", "olive/Config", "olive/Mvc/FormAction", "olive/Mvc/AjaxRedirect", "olive/Mvc/StandardAction", "olive/Components/Form", "olive/Components/Url", "olive/Extensions/SystemExtensins", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Sorting", "olive/Components/Paging", "olive/Components/MasterDetail", "olive/Components/Alert", "olive/Components/Grid", "olive/Plugins/Select", "olive/Plugins/PasswordStength", "olive/Plugins/HtmlEditor", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Plugins/InstantSearch", "olive/Plugins/DateDropdown"], function (require, exports, Config_1, FormAction_1, AjaxRedirect_1, StandardAction_1, Form_1, Url_1, SystemExtensins_1, Modal_1, Validate_1, Sorting_1, Paging_1, MasterDetail_1, Alert_1, Grid_1, Select_1, PasswordStength_1, HtmlEditor_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, InstantSearch_1, DateDropdown_1) {
+define(["require", "exports", "olive/Config", "olive/Mvc/FormAction", "olive/Mvc/AjaxRedirect", "olive/Mvc/StandardAction", "olive/Components/Form", "olive/Components/Url", "olive/Extensions/SystemExtensins", "olive/Components/Modal", "olive/Components/Validate", "olive/Components/Sorting", "olive/Components/Paging", "olive/Components/MasterDetail", "olive/Components/Alert", "olive/Components/Grid", "olive/Plugins/Select", "olive/Plugins/PasswordStength", "olive/Plugins/HtmlEditor", "olive/Plugins/TimeControl", "olive/Plugins/AutoComplete", "olive/Plugins/Slider", "olive/Plugins/DatePicker", "olive/Plugins/NumericUpDown", "olive/Plugins/FileUpload", "olive/Plugins/ConfirmBox", "olive/Plugins/SubMenu", "olive/Plugins/InstantSearch", "olive/Plugins/DateDropdown", "olive/Plugins/UserHelp"], function (require, exports, Config_1, FormAction_1, AjaxRedirect_1, StandardAction_1, Form_1, Url_1, SystemExtensins_1, Modal_1, Validate_1, Sorting_1, Paging_1, MasterDetail_1, Alert_1, Grid_1, Select_1, PasswordStength_1, HtmlEditor_1, TimeControl_1, AutoComplete_1, Slider_1, DatePicker_1, NumericUpDown_1, FileUpload_1, ConfirmBox_1, SubMenu_1, InstantSearch_1, DateDropdown_1, UserHelp_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var OlivePage = /** @class */ (function () {
         function OlivePage() {
@@ -38,45 +38,45 @@ define(["require", "exports", "olive/Config", "olive/Mvc/FormAction", "olive/Mvc
             var _this = this;
             this._preInitializeActions.forEach(function (action) { return action(); });
             // =================== Standard Features ====================
-            $(".select-cols .apply").off("click.apply-columns").on("click.apply-columns", function (e) { return Grid_1.default.applyColumns(e); });
-            $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", function (e) { return MasterDetail_1.default.deleteSubForm(e); });
+            Grid_1.default.enableColumn($(".select-cols .apply"));
+            Grid_1.default.enableSelectCol($(".select-grid-cols .group-control"));
+            Grid_1.default.enableToggle($("th.select-all > input:checkbox"));
+            MasterDetail_1.default.enable($("[data-delete-subform]"));
+            Form_1.default.enableDefaultButtonKeyPress($("form input, form select"));
+            Paging_1.default.enableOnSizeChanged($("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']"));
+            Sorting_1.default.enableDragSort($("[data-sort-item]").parents("tbody"));
+            Paging_1.default.enableWithAjax($("a[data-pagination]"));
+            Sorting_1.default.enableAjaxSorting($("a[data-sort]"));
+            Sorting_1.default.setSortHeaderClass($("th[data-sort]"));
+            Form_1.default.enablecleanUpNumberField($("[data-val-number]"));
+            Modal_1.default.enalbeEnsureHeight($("[data-toggle=tab]"));
+            Select_1.default.enableEnhance($("select.form-control"));
+            UserHelp_1.default.enable($("[data-user-help]"));
             $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", function (e) { return _this.openLinkModal(e); });
-            $(".select-grid-cols .group-control").each(function (i, e) { return Grid_1.default.enableSelectColumns($(e)); });
-            $("th.select-all > input:checkbox").off("click.select-all").on("click.select-all", function (e) { return Grid_1.default.enableSelectAllToggle(e); });
-            $("[data-user-help]").each(function (i, e) { return _this.enableUserHelp($(e)); });
-            $("form input, form select").off("keypress.default-button").on("keypress.default-button", function (e) { return Form_1.default.onDefaultButtonKeyPress(e); });
-            $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", function (e) { return Paging_1.default.onSizeChanged(e); });
-            $("[data-sort-item]").parents("tbody").each(function (i, e) { return Sorting_1.default.enableDragSort($(e)); });
-            $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", function (e) { return Paging_1.default.enableWithAjax(e); });
-            $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", function (e) { return Sorting_1.default.enableAjaxSorting(e); });
-            $("th[data-sort]").each(function (i, e) { return Sorting_1.default.setSortHeaderClass($(e)); });
-            $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", function (e) { return Form_1.default.cleanUpNumberField($(e.currentTarget)); });
-            $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", function () { return Modal_1.default.ensureHeight(); });
-            $("select.form-control").each(function (i, e) { return Select_1.default.enhance($(e)); });
             $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", function (e) { return $(e.currentTarget).height(e.currentTarget.contentWindow.document.body.scrollHeight); });
             //$.validator.unobtrusive.parse('form');
             // =================== Plug-ins ====================
             InstantSearch_1.default.enable($("[name=InstantSearch]"));
             AutoComplete_1.default.enable($("input[autocomplete-source]"));
-            $("[data-control=date-picker],[data-control=calendar]").each(function (i, e) { return new DatePicker_1.default($(e)); });
-            $("[data-control='date-picker|time-picker']").each(function (i, e) { return new TimeControl_1.default($(e)); });
-            $("[data-control=time-picker]").each(function (i, e) { return new TimeControl_1.default($(e)); });
-            $("[data-control=date-drop-downs]").each(function (i, e) { return DateDropdown_1.default.enable($(e)); });
-            $("[data-control=html-editor]").each(function (i, e) { return new HtmlEditor_1.default($(e)).enable(); });
-            $("[data-control=numeric-up-down]").each(function (i, e) { return new NumericUpDown_1.default($(e)).enable(); });
-            $("[data-control=range-slider],[data-control=slider]").each(function (i, e) { return new Slider_1.default($(e)).enable(); });
-            $(".file-upload input:file").each(function (i, e) { return new FileUpload_1.default($(e)).enable(); });
-            $("[data-confirm-question]").each(function (i, e) { return new ConfirmBox_1.default($(e)).enable(); });
-            $(".password-strength").each(function (i, e) { return PasswordStength_1.default.enable($(e)); });
-            $(".with-submenu").each(function (i, e) { return new SubMenu_1.default($(e)); });
+            DatePicker_1.default.enable($("[data-control=date-picker],[data-control=calendar]"));
+            TimeControl_1.default.enable($("[data-control='date-picker|time-picker']"));
+            TimeControl_1.default.enable($("[data-control=time-picker]"));
+            DateDropdown_1.default.enable($("[data-control=date-drop-downs]"));
+            HtmlEditor_1.default.enable($("[data-control=html-editor]"));
+            NumericUpDown_1.default.enable($("[data-control=numeric-up-down]"));
+            Slider_1.default.enable($("[data-control=range-slider],[data-control=slider]"));
+            FileUpload_1.default.enable($(".file-upload input:file"));
+            ConfirmBox_1.default.enable($("[data-confirm-question]"));
+            PasswordStength_1.default.enable($(".password-strength"));
+            SubMenu_1.default.enable($(".with-submenu"));
             // =================== Request lifecycle ====================
-            $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", function (e) { return AjaxRedirect_1.default.back(e); });
-            $("a[data-redirect=ajax]").off("click.ajax-redirect").on("click.ajax-redirect", function (e) { return AjaxRedirect_1.default.enable(e); });
-            $('form[method=get]').off("submit.clean-up").on("submit.clean-up", function (e) { return Form_1.default.submitCleanGet(e); });
-            $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", function (e) { return FormAction_1.default.invokeWithAjax(e, $(e.currentTarget).attr("formaction"), false); });
-            $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", function (e) { return FormAction_1.default.invokeWithPost(e); });
-            $("[data-change-action]").off("change.data-action").on("change.data-action", function (e) { return FormAction_1.default.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false); });
-            $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", function (e) { return FormAction_1.default.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false); });
+            AjaxRedirect_1.default.enableBack($(window));
+            AjaxRedirect_1.default.enableRedirect($("a[data-redirect=ajax]"));
+            Form_1.default.enablesubmitCleanGet($('form[method=get]'));
+            FormAction_1.default.enableInvokeWithAjax($("[formaction]").not("[formmethod=post]"), "click.formaction", "formaction");
+            FormAction_1.default.enableinvokeWithPost($("[formaction][formmethod=post]"));
+            FormAction_1.default.enableInvokeWithAjax($("[data-change-action]"), "change.data-action", "change.data-action");
+            FormAction_1.default.enableInvokeWithAjax($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]"), "dp.change.data-action", "data-change-action");
             MasterDetail_1.default.updateSubFormStates();
             Modal_1.default.adjustHeight();
             this._initializeActions.forEach(function (action) { return action(); });
@@ -99,11 +99,6 @@ define(["require", "exports", "olive/Config", "olive/Mvc/FormAction", "olive/Mvc
             else
                 Url_1.default.goBack();
             return false;
-        };
-        OlivePage.prototype.enableUserHelp = function (element) {
-            element.click(function () { return false; });
-            var message = element.attr('data-user-help'); // todo: unescape message and conver to html
-            element['popover']({ trigger: 'focus', content: message });
         };
         return OlivePage;
     }());

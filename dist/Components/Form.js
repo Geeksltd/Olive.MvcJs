@@ -3,6 +3,18 @@ define(["require", "exports", "olive/Components/Url", "olive/Components/Validate
     var Form = /** @class */ (function () {
         function Form() {
         }
+        Form.enableDefaultButtonKeyPress = function (selector) {
+            var _this = this;
+            selector.off("keypress.default-button").on("keypress.default-button", function (e) { return _this.DefaultButtonKeyPress(e); });
+        };
+        Form.enablecleanUpNumberField = function (selector) {
+            var _this = this;
+            selector.off("blur.cleanup-number").on("blur.cleanup-number", function (e) { return _this.cleanUpNumberField($(e.currentTarget)); });
+        };
+        Form.enablesubmitCleanGet = function (selector) {
+            var _this = this;
+            selector.off("submit.clean-up").on("submit.clean-up", function (e) { return _this.submitCleanGet(e); });
+        };
         Form.merge = function (items) {
             var result = [];
             var groupedByKeys = Array.groupBy(items, function (i) { return i.name.toLowerCase(); });
@@ -40,7 +52,7 @@ define(["require", "exports", "olive/Components/Url", "olive/Components/Validate
             data.push({ name: "current.request.url", value: window.location.pathAndQuery() });
             return data;
         };
-        Form.onDefaultButtonKeyPress = function (event) {
+        Form.DefaultButtonKeyPress = function (event) {
             if (event.which === 13) {
                 var target = $(event.currentTarget);
                 var button = target.closest("[data-module]").find('[default-button]:first'); // Same module

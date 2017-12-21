@@ -4,6 +4,7 @@ define(["require", "exports"], function (require, exports) {
         function NumbericUpDown(targetInput) {
             this.input = targetInput;
         }
+        NumbericUpDown.enable = function (selector) { selector.each(function (i, e) { return new NumbericUpDown($(e)).enable(); }); };
         NumbericUpDown.prototype.enable = function () {
             var min = this.input.attr("data-val-range-min");
             var max = this.input.attr("data-val-range-max");

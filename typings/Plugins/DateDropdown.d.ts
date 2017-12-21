@@ -1,3 +1,6 @@
 export default class DateDropdown {
-    static enable(input: any): void;
+    input: any;
+    static enable(selector: JQuery): void;
+    constructor(targetInput: any);
+    enable(): void;
 }

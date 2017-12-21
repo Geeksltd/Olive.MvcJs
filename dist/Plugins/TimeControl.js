@@ -17,6 +17,7 @@ define(["require", "exports", "olive/Components/Modal", "olive/Config"], functio
             }).data("DateTimePicker").keyBinds().clear = null;
             input.parent().find(".fa-clock-o").parent(".input-group-addon").click(function () { input.focus(); });
         }
+        TimeControl.enable = function (selector) { selector.each(function (i, e) { return new TimeControl($(e)); }); };
         return TimeControl;
     }());
     exports.default = TimeControl;

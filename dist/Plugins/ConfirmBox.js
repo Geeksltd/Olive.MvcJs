@@ -4,6 +4,7 @@ define(["require", "exports"], function (require, exports) {
         function ConfirmBox(targetButton) {
             this.button = targetButton;
         }
+        ConfirmBox.enable = function (selector) { selector.each(function (i, e) { return new ConfirmBox($(e)).enable(); }); };
         ConfirmBox.prototype.enable = function () {
             var _this = this;
             this.button.off("click.confirm-question").bindFirst("click.confirm-question", function (e) {

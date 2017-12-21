@@ -89,7 +89,7 @@ export default class OlivePage {
         Select.enableEnhance($("select.form-control"));
         UserHelp.enable($("[data-user-help]"));
         
-        $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
+        $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", e => this.openLinkModal(e));
 
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust",
             (e: any) => $(e.currentTarget).height(e.currentTarget.contentWindow.document.body.scrollHeight));

@@ -3,6 +3,21 @@ define(["require", "exports"], function (require, exports) {
     var Grid = /** @class */ (function () {
         function Grid() {
         }
+        Grid.enableColumn = function (element) {
+            var _this = this;
+            element.off("click.apply-columns").on("click.apply-columns", function (e) { return _this.applyColumns(e); });
+        };
+        Grid.enableToggle = function (element) {
+            var _this = this;
+            element.off("click.select-all").on("click.select-all", function (e) { return _this.enableSelectAllToggle(e); });
+        };
+        Grid.enableHlightRow = function (element) {
+            this.highlightRow(element);
+        };
+        Grid.enableSelectCol = function (selector) {
+            var _this = this;
+            selector.each(function (i, e) { return _this.enableSelectColumns($(e)); });
+        };
         Grid.applyColumns = function (event) {
             var button = $(event.currentTarget);
             var checkboxes = button.closest(".select-cols").find(":checkbox");

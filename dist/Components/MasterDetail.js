@@ -3,6 +3,10 @@ define(["require", "exports"], function (require, exports) {
     var MasterDetail = /** @class */ (function () {
         function MasterDetail() {
         }
+        MasterDetail.enable = function (selector) {
+            var _this = this;
+            selector.off("click.delete-subform").on("click.delete-subform", function (e) { return _this.deleteSubForm(e); });
+        };
         MasterDetail.updateSubFormStates = function () {
             var countItems = function (element) { return $(element).parent().find(".subform-item:visible").length; };
             // Hide removed items

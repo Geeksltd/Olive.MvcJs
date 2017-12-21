@@ -1,13 +1,15 @@
 define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var PasswordStength = /** @class */ (function () {
-        function PasswordStength() {
+        function PasswordStength(targetContainer) {
+            this.container = targetContainer;
         }
-        PasswordStength.enable = function (container) {
+        PasswordStength.enable = function (selector) { selector.each(function (i, e) { return new PasswordStength($(e)); }); };
+        PasswordStength.prototype.enable = function () {
             // for configuration options : https://github.com/ablanco/jquery.pwstrength.bootstrap/blob/master/OPTIONS.md
-            if (container.find(".progress").length !== 0)
+            if (this.container.find(".progress").length !== 0)
                 return;
-            var formGroup = container.closest(".form-group");
+            var formGroup = this.container.closest(".form-group");
             var options = {
                 common: {},
                 rules: {},
@@ -18,7 +20,7 @@ define(["require", "exports"], function (require, exports) {
                     showPopover: false,
                     showErrors: false,
                     viewports: {
-                        progress: container
+                        progress: this.container
                     },
                     verdicts: [
                         "<span class='fa fa-exclamation-triangle'></span> Weak",
@@ -32,7 +34,7 @@ define(["require", "exports"], function (require, exports) {
             var password = formGroup.find(":password");
             if (password.length == 0) {
                 console.log('Error: no password field found for password strength.');
-                console.log(container);
+                console.log(this.container);
             }
             else
                 password.pwstrength(options);

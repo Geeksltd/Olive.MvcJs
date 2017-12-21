@@ -1,14 +1,19 @@
 export default class Paging {
-    
-    public static enableOnSizeChanged(selector:JQuery){selector.off("change.pagination-size").on("change.pagination-size",(e)=> this.WithAjax(e));}
 
-    public static enableWithAjax(selector:JQuery){selector.off("click.ajax-paging").on("click.ajax-paging",(e)=> this.WithAjax(e));}
-    
+    public static enableOnSizeChanged(selector: JQuery) {
+        selector.off("change.pagination-size").on("change.pagination-size", e => this.onSizeChanged(e));
+    }
+
+    public static enableWithAjax(selector: JQuery) {
+        selector.off("click.ajax-paging").on("click.ajax-paging",
+            e => this.withAjax(e));
+    }
+
     static onSizeChanged(event: Event) {
         $(event.currentTarget).closest("form").submit();
     }
 
-    static enableWithAjax(event: JQueryEventObject) {
+    static withAjax(event: JQueryEventObject) {
         let button = $(event.currentTarget);
         let page = button.attr("data-pagination");
         let key = "p";

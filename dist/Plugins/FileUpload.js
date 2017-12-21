@@ -4,6 +4,7 @@ define(["require", "exports", "olive/Mvc/FormAction"], function (require, export
         function FileUpload(targetInput) {
             this.input = targetInput;
         }
+        FileUpload.enable = function (selector) { selector.each(function (i, e) { return new FileUpload($(e)).enable(); }); };
         FileUpload.prototype.enable = function () {
             var _this = this;
             var control = this.input;

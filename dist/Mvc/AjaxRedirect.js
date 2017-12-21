@@ -3,7 +3,15 @@ define(["require", "exports", "olive/Components/Waiting", "olive/Mvc/FormAction"
     var AjaxRedirect = /** @class */ (function () {
         function AjaxRedirect() {
         }
-        AjaxRedirect.enable = function (event) {
+        AjaxRedirect.enableBack = function (selector) {
+            var _this = this;
+            selector.off("popstate.ajax-redirect").on("popstate.ajax-redirect", function (e) { return _this.back(e); });
+        };
+        AjaxRedirect.enableRedirect = function (selector) {
+            var _this = this;
+            selector.off("click.ajax-redirect").on("click.ajax-redirect", function (e) { return _this.redirect(e); });
+        };
+        AjaxRedirect.redirect = function (event) {
             if (event.ctrlKey || event.button === 1)
                 return true;
             var link = $(event.currentTarget);

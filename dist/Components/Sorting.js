@@ -3,7 +3,22 @@ define(["require", "exports", "olive/Components/Url", "olive/Mvc/FormAction"], f
     var Sorting = /** @class */ (function () {
         function Sorting() {
         }
-        Sorting.enableAjaxSorting = function (event) {
+        Sorting.enableDragSort = function (selector) {
+            var _this = this;
+            selector.each(function (i, e) { return _this.DragSort($(e)); });
+        };
+        ;
+        Sorting.enablesetSortHeaderClass = function (selector) {
+            var _this = this;
+            selector.each(function (i, e) { return _this.setSortHeaderClass($(e)); });
+        };
+        ;
+        Sorting.enableAjaxSorting = function (selector) {
+            var _this = this;
+            selector.off("click.ajax-sorting").on("click.ajax-sorting", function (e) { return _this.AjaxSorting(e); });
+        };
+        ;
+        Sorting.AjaxSorting = function (event) {
             var button = $(event.currentTarget);
             var sort = button.attr("data-sort");
             var key = "s";
@@ -30,7 +45,7 @@ define(["require", "exports", "olive/Components/Url", "olive/Mvc/FormAction"], f
                 thead.append("<i />");
             }
         };
-        Sorting.enableDragSort = function (container) {
+        Sorting.DragSort = function (container) {
             var isTable = container.is("tbody");
             var items = isTable ? "> tr" : "> li"; // TODO: Do we need to support any other markup?
             container.sortable({

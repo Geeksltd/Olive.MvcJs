@@ -10,6 +10,10 @@ define(["require", "exports"], function (require, exports) {
             if (options)
                 this.modalOptions = JSON.safeParse(options);
         }
+        Modal.enalbeEnsureHeight = function (selector) {
+            var _this = this;
+            selector.off("click.tab-toggle").on("click.tab-toggle", function () { return _this.ensureHeight(); });
+        };
         Modal.initialize = function () {
             window["isModal"] = function () {
                 if ($(window.getContainerIFrame()).closest(".modal").length === 0)

@@ -1,3 +1,6 @@
 export default class PasswordStength {
-    static enable(container: any): void;
+    container: any;
+    static enable(selector: JQuery): void;
+    constructor(targetContainer: any);
+    enable(): void;
 }

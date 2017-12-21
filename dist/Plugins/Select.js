@@ -3,6 +3,10 @@ define(["require", "exports"], function (require, exports) {
     var Select = /** @class */ (function () {
         function Select() {
         }
+        Select.enableEnhance = function (selector) {
+            var _this = this;
+            selector.each(function (i, e) { return _this.enhance($(e)); });
+        };
         Select.enhance = function (selectControl) {
             selectControl.chosen({ disable_search_threshold: 5 });
         };

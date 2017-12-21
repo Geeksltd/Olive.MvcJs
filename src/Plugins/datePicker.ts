@@ -14,8 +14,8 @@ export default class DatePicker {
     show() {
 
         if (window.isModal()) {
-            this.input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", (e) => Modal.expandToFitPicker(e));
-            this.input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", (e) => Modal.expandToFitPicker(e));
+            this.input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", e => Modal.expandToFitPicker(e));
+            this.input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", e => Modal.expandToFitPicker(e));
         }
 
         this.input.attr("data-autofocus", "disabled");

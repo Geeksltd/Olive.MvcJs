@@ -4,13 +4,13 @@ import Waiting from 'olive/Components/Waiting'
 import AjaxRedirect from 'olive/Mvc/AjaxRedirect'
 
 export default class Form {
-    
-    public static enableDefaultButtonKeyPress(selector:JQuery){ selector.off("keypress.default-button").on("keypress.default-button",(e)=> this.DefaultButtonKeyPress(e));}
-    
-    public static enablecleanUpNumberField(selector:JQuery){ selector.off("blur.cleanup-number").on("blur.cleanup-number",(e)=> this.cleanUpNumberField($(e.currentTarget)));}
-    
-    public static enablesubmitCleanGet(selector:JQuery){ selector.off("submit.clean-up").on("submit.clean-up",(e)=> this.submitCleanGet(e));}
-    
+
+    public static enableDefaultButtonKeyPress(selector: JQuery) { selector.off("keypress.default-button").on("keypress.default-button", (e) => this.DefaultButtonKeyPress(e)); }
+
+    public static enablecleanUpNumberField(selector: JQuery) { selector.off("blur.cleanup-number").on("blur.cleanup-number", (e) => this.cleanUpNumberField($(e.currentTarget))); }
+
+    public static enablesubmitCleanGet(selector: JQuery) { selector.off("submit.clean-up").on("submit.clean-up", (e) => this.submitCleanGet(e)); }
+
     static merge(items: JQuerySerializeArrayElement[]): JQuerySerializeArrayElement[] {
         let result: JQuerySerializeArrayElement[] = [];
 
@@ -20,7 +20,7 @@ export default class Form {
             let group = groupedByKeys[i];
             if (typeof (group) == 'function') continue;
             let key = group[0].name;
-            let values = group.map(item => item.value).filter((v) => v);
+            let values = group.map(item => item.value).filter(v => v);
             // Fix for MVC checkboxes:
             if ($("input[name='" + key + "']").is(":checkbox") && values.length == 2 && values[1] == 'false'
                 && (values[0] == 'true' || values[0] == 'false')) values.pop();

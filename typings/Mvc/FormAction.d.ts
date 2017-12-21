@@ -11,6 +11,8 @@ export default class FormAction {
     };
     static dynamicallyLoadedScriptFiles: any[];
     static onViewChanged: LiteEvent<IViewUpdatedEventArgs>;
+    static enableInvokeWithAjax(selector: JQuery, event: string, attrName: string): void;
+    static enableinvokeWithPost(selector: JQuery): void;
     static invokeWithPost(event: any): boolean;
     static invokeWithAjax(event: any, actionUrl: any, syncCall?: boolean): boolean;
     static onAjaxResponseError(response: any): void;

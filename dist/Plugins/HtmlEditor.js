@@ -4,6 +4,7 @@ define(["require", "exports", "olive/Config", "olive/Components/Modal"], functio
         function HtmlEditor(targetInput) {
             this.input = targetInput;
         }
+        HtmlEditor.enable = function (selector) { selector.each(function (i, e) { return new HtmlEditor($(e)).enable(); }); };
         HtmlEditor.prototype.enable = function () {
             $.getScript(Config_1.default.CK_EDITOR_BASE_PATH + "ckeditor.js", this.onCkEditorScriptReady);
         };

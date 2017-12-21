@@ -3,6 +3,14 @@ define(["require", "exports", "olive/Components/Waiting", "olive/Components/Vali
     var FormAction = /** @class */ (function () {
         function FormAction() {
         }
+        FormAction.enableInvokeWithAjax = function (selector, event, attrName) {
+            var _this = this;
+            selector.off(event).on(event, function (e) { return _this.invokeWithAjax(e, $(e.currentTarget).attr(attrName), false); });
+        };
+        FormAction.enableinvokeWithPost = function (selector) {
+            var _this = this;
+            selector.off("click.formaction").on("click.formaction", function (e) { return _this.invokeWithPost(e); });
+        };
         FormAction.invokeWithPost = function (event) {
             var trigger = $(event.currentTarget);
             var containerModule = trigger.closest("[data-module]");

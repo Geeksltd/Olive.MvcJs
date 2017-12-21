@@ -3,13 +3,15 @@ import Url from 'olive/Components/Url'
 import FormAction from 'olive/Mvc/FormAction'
 
 export default class Sorting {
-    
-    public static enableDragSort(selector:JQuery){selector.each((i,e)=> this.DragSort($(e)))};
 
-    public static enablesetSortHeaderClass(selector:JQuery){selector.each((i,e)=> this.setSortHeaderClass($(e)))};
+    public static enableDragSort(selector: JQuery) { selector.each((i, e) => this.DragSort($(e))) };
 
-    public static enableAjaxSorting(selector:JQuery){selector.off("click.ajax-sorting").on("click.ajax-sorting",(e) => this.AjaxSorting(e))};
-    
+    public static enablesetSortHeaderClass(selector: JQuery) { selector.each((i, e) => this.setSortHeaderClass($(e))) };
+
+    public static enableAjaxSorting(selector: JQuery) {
+        selector.off("click.ajax-sorting").on("click.ajax-sorting", e => this.AjaxSorting(e))
+    };
+
     static AjaxSorting(event: JQueryEventObject) {
         let button = $(event.currentTarget);
         let sort = button.attr("data-sort");

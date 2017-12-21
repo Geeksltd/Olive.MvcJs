@@ -3,10 +3,18 @@ define(["require", "exports"], function (require, exports) {
     var Paging = /** @class */ (function () {
         function Paging() {
         }
+        Paging.enableOnSizeChanged = function (selector) {
+            var _this = this;
+            selector.off("change.pagination-size").on("change.pagination-size", function (e) { return _this.onSizeChanged(e); });
+        };
+        Paging.enableWithAjax = function (selector) {
+            var _this = this;
+            selector.off("click.ajax-paging").on("click.ajax-paging", function (e) { return _this.withAjax(e); });
+        };
         Paging.onSizeChanged = function (event) {
             $(event.currentTarget).closest("form").submit();
         };
-        Paging.enableWithAjax = function (event) {
+        Paging.withAjax = function (event) {
             var button = $(event.currentTarget);
             var page = button.attr("data-pagination");
             var key = "p";

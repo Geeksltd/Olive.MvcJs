@@ -14,6 +14,7 @@ define(["require", "exports"], function (require, exports) {
                 this.submenuOptions = JSON.safeParse(options);
             this.menu.smartmenus(this.submenuOptions);
         }
+        SubMenu.enable = function (selector) { selector.each(function (i, e) { return new SubMenu($(e)); }); };
         return SubMenu;
     }());
     exports.default = SubMenu;

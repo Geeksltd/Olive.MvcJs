@@ -1,12 +1,12 @@
 export default class MasterDetail {
-    public static enable(selector:JQuery){selector.off("click.delete-subform").on("click.delete-subform",(e)=>this.deleteSubForm(e));}
-    
+    public static enable(selector: JQuery) { selector.off("click.delete-subform").on("click.delete-subform", (e) => this.deleteSubForm(e)); }
+
     static updateSubFormStates() {
-        let countItems = (element) => $(element).parent().find(".subform-item:visible").length;
+        let countItems = element => $(element).parent().find(".subform-item:visible").length;
         // Hide removed items
         $("input[name*=MustBeDeleted][value=True]").closest('[data-subform]').hide();
         // hide empty headers
-        $(".horizontal-subform thead").each((i, e) => 
+        $(".horizontal-subform thead").each((i, e) =>
             $(e).css('visibility', (countItems(e) > 0) ? 'visible' : 'hidden'));
         // Hide add buttons
         $("[data-subform-max]").each((i, e) => {

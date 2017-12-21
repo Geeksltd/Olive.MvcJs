@@ -1,21 +1,21 @@
 
 export default class Grid {
 
-  
-    public static enableColumn(element:any){
-        element.off("click.apply-columns").on("click.apply-columns",(e) => this.applyColumns(e));
-    } 
 
-    public static  enableToggle(element:any){
-        element.off("click.select-all").on("click.select-all",(e) => this.enableSelectAllToggle(e));
+    public static enableColumn(element: any) {
+        element.off("click.apply-columns").on("click.apply-columns", e => this.applyColumns(e));
     }
 
-    public static enableHlightRow(element:any){
+    public static enableToggle(element: any) {
+        element.off("click.select-all").on("click.select-all", e => this.enableSelectAllToggle(e));
+    }
+
+    public static enableHlightRow(element: any) {
         this.highlightRow(element);
     }
 
-    public static enableSelectCol(selector:JQuery){
-        selector.each((i,e)=> this.enableSelectColumns($(e)));
+    public static enableSelectCol(selector: JQuery) {
+        selector.each((i, e) => this.enableSelectColumns($(e)));
     }
 
 
@@ -27,7 +27,7 @@ export default class Grid {
             .appendTo(button.parent());
     }
 
-    static  enableSelectColumns(container) {
+    static enableSelectColumns(container) {
         let columns = container.find("div.select-cols");
         container.find("a.select-cols").click(() => { columns.show(); return false; });
         columns.find('.cancel').click(() => columns.hide());
@@ -38,7 +38,7 @@ export default class Grid {
         trigger.closest("table").find("td.select-row > input:checkbox").prop('checked', trigger.is(":checked"));
     }
 
-     static highlightRow(element: any) {
+    static highlightRow(element: any) {
         let target = $(element.closest("tr"));
         target.siblings('tr').removeClass('highlighted');
         target.addClass('highlighted');
