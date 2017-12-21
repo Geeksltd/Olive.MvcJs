@@ -31,6 +31,7 @@ import SubMenu from 'olive/Plugins/SubMenu'
 import InstantSearch from 'olive/Plugins/InstantSearch'
 import DateDropdown from 'olive/Plugins/DateDropdown'
 import {Enums} from 'olive/Extensions/Enums'
+import UserHelp from 'olive/Plugins/UserHelp'
 
 export default class OlivePage {
 
@@ -79,7 +80,7 @@ export default class OlivePage {
         $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
         Grid.enable($(".select-grid-cols .group-control"),Enums.GridAction.enableSelectColumns);
         Grid.enable($("th.select-all > input:checkbox"),Enums.GridAction.enableSelectAllToggle);
-        $("[data-user-help]").each((i, e) => this.enableUserHelp($(e)));
+        UserHelp.enable($("[data-user-help]"));
         $("form input, form select").off("keypress.default-button").on("keypress.default-button", (e) => Form.onDefaultButtonKeyPress(e));
         $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", (e) => Paging.onSizeChanged(e));
         $("[data-sort-item]").parents("tbody").each((i, e) => Sorting.enableDragSort($(e)));
@@ -146,11 +147,5 @@ export default class OlivePage {
         else Url.goBack();
 
         return false;
-    }
-
-    public enableUserHelp(element: JQuery) {
-        element.click(() => false);
-        let message = element.attr('data-user-help');  // todo: unescape message and conver to html
-        element['popover']({ trigger: 'focus', content: message });
     }
 }
