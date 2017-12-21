@@ -81,9 +81,9 @@ export default class OlivePage {
         Grid.enable($("th.select-all > input:checkbox"),Enums.GridAction.enableSelectAllToggle);
         $("[data-user-help]").each((i, e) => this.enableUserHelp($(e)));
         Form.enableDefaultButtonKeyPress($("form input, form select"));
-        $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", (e) => Paging.onSizeChanged(e));
+        Paging.enableOnSizeChanged($("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']"));
         $("[data-sort-item]").parents("tbody").each((i, e) => Sorting.enableDragSort($(e)));
-        $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", (e) => Paging.enableWithAjax(e));
+        Paging.enableWithAjax($("a[data-pagination]"));
         $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", (e) => Sorting.enableAjaxSorting(e));
         $("th[data-sort]").each((i, e) => Sorting.setSortHeaderClass($(e)));
         Form.enablecleanUpNumberField($("[data-val-number]"));
