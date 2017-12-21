@@ -114,7 +114,7 @@ export default class OlivePage {
         // =================== Request lifecycle ====================
         AjaxRedirect.enableBack($(window));
         AjaxRedirect.enableRedirect($("a[data-redirect=ajax]"));
-        $('form[method=get]').off("submit.clean-up").on("submit.clean-up", (e) => Form.submitCleanGet(e));
+        Form.enablesubmitCleanGet($('form[method=get]'));
         $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", (e) => FormAction.invokeWithAjax(e, $(e.currentTarget).attr("formaction"), false));
         $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", (e) => FormAction.invokeWithPost(e));
         $("[data-change-action]").off("change.data-action").on("change.data-action", (e) => FormAction.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false));
