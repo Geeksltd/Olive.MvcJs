@@ -88,8 +88,7 @@ export default class OlivePage {
         Modal.enalbeEnsureHeight($("[data-toggle=tab]"));
         Select.enableEnhance($("select.form-control"));
         UserHelp.enable($("[data-user-help]"));
-        
-        $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", e => this.openLinkModal(e));
+        StandardAction.enableLinkModal($("[target='$modal'][href]"));
 
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust",
             (e: any) => $(e.currentTarget).height(e.currentTarget.contentWindow.document.body.scrollHeight));
@@ -133,11 +132,6 @@ export default class OlivePage {
         });
 
         window["open"] = (url, r, f, re) => { location.replace(url); return window; };
-    }
-
-    openLinkModal(event: JQueryEventObject) {
-        StandardAction.openModal(event);
-        return false;
     }
 
     goBack(target) {
