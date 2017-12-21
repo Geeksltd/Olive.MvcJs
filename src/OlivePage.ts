@@ -125,15 +125,6 @@ export default class OlivePage {
         this._initializeActions.forEach((action) => action());
     }
 
-    skipNewWindows() {
-        // Remove the target attribute from links:
-        $(window).off('click.SanityAdapter').on('click.SanityAdapter', e => {
-            $(e.target).filter('a').removeAttr('target');
-        });
-
-        window["open"] = (url, r, f, re) => { location.replace(url); return window; };
-    }
-
     goBack(target) {
         let returnUrl = Url.getQuery("ReturnUrl");
 
