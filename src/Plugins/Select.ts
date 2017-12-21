@@ -1,6 +1,8 @@
 ﻿export default class Select {
-
-    public static enhance(selectControl: JQuery) {
+     
+    public static enableEnhance(selector:JQuery){selector.each((i,e)=> this.enhance($(e)));}
+     
+    static enhance(selectControl: JQuery) {
         selectControl.chosen({ disable_search_threshold: 5 });
     }
 

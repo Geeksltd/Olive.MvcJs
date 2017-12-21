@@ -1,9 +1,16 @@
-﻿import Url from 'olive/Components/Url'
+
+import Url from 'olive/Components/Url'
 import FormAction from 'olive/Mvc/FormAction'
 
 export default class Sorting {
+    
+    public static enableDragSort(selector:JQuery){selector.each((i,e)=> this.DragSort($(e)))};
 
-    public static enableAjaxSorting(event: JQueryEventObject) {
+    public static enablesetSortHeaderClass(selector:JQuery){selector.each((i,e)=> this.setSortHeaderClass($(e)))};
+
+    public static enableAjaxSorting(selector:JQuery){selector.off("click.ajax-sorting").on("click.ajax-sorting",(e) => this.AjaxSorting(e))};
+    
+    static AjaxSorting(event: JQueryEventObject) {
         let button = $(event.currentTarget);
         let sort = button.attr("data-sort");
         let key = "s";
@@ -18,7 +25,7 @@ export default class Sorting {
         input.val(sort);
     }
 
-    public static setSortHeaderClass(thead: JQuery) {
+    static setSortHeaderClass(thead: JQuery) {
         let currentSort = thead.closest("[data-module]").find("#Current-Sort").val() || "";
         if (currentSort == "") return;
 
@@ -33,7 +40,7 @@ export default class Sorting {
         }
     }
 
-    public static enableDragSort(container) {
+    static DragSort(container) {
 
         let isTable = container.is("tbody");
         let items = isTable ? "> tr" : "> li"; // TODO: Do we need to support any other markup?

@@ -30,6 +30,7 @@ import ConfirmBox from 'olive/Plugins/ConfirmBox'
 import SubMenu from 'olive/Plugins/SubMenu'
 import InstantSearch from 'olive/Plugins/InstantSearch'
 import DateDropdown from 'olive/Plugins/DateDropdown'
+import UserHelp from 'olive/Plugins/UserHelp'
 
 export default class OlivePage {
 
@@ -74,20 +75,22 @@ export default class OlivePage {
 
         // =================== Standard Features ====================
         Grid.enableColumn($(".select-cols .apply"));
-        $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", (e) => MasterDetail.deleteSubForm(e));
-        $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
         Grid.enableSelectCol($(".select-grid-cols .group-control"));
-        Grid.enableToggle($("th.select-all > input:checkbox"));
-        $("[data-user-help]").each((i, e) => this.enableUserHelp($(e)));
-        $("form input, form select").off("keypress.default-button").on("keypress.default-button", (e) => Form.onDefaultButtonKeyPress(e));
-        $("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']").off("change.pagination-size").on("change.pagination-size", (e) => Paging.onSizeChanged(e));
-        $("[data-sort-item]").parents("tbody").each((i, e) => Sorting.enableDragSort($(e)));
-        $("a[data-pagination]").off("click.ajax-paging").on("click.ajax-paging", (e) => Paging.enableWithAjax(e));
-        $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", (e) => Sorting.enableAjaxSorting(e));
-        $("th[data-sort]").each((i, e) => Sorting.setSortHeaderClass($(e)));
-        $("[data-val-number]").off("blur.cleanup-number").on("blur.cleanup-number", (e) => Form.cleanUpNumberField($(e.currentTarget)));
-        $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => Modal.ensureHeight());
-        $("select.form-control").each((i, e) => Select.enhance($(e)));
+        Grid.enableToggle($("th.select-all > input:checkbox"));        
+        MasterDetail.enable($("[data-delete-subform]"));
+        Form.enableDefaultButtonKeyPress($("form input, form select"));
+        Paging.enableOnSizeChanged($("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']"));
+        Sorting.enableDragSort($("[data-sort-item]").parents("tbody"));
+        Paging.enableWithAjax($("a[data-pagination]"));
+        Sorting.enableAjaxSorting($("a[data-sort]"));
+        Sorting.setSortHeaderClass($("th[data-sort]"));
+        Form.enablecleanUpNumberField($("[data-val-number]"));
+        Modal.enalbeEnsureHeight($("[data-toggle=tab]"));
+        Select.enableEnhance($("select.form-control"));
+        UserHelp.enable($("[data-user-help]"));
+        
+        $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
+
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust",
             (e: any) => $(e.currentTarget).height(e.currentTarget.contentWindow.document.body.scrollHeight));
 
@@ -145,11 +148,5 @@ export default class OlivePage {
         else Url.goBack();
 
         return false;
-    }
-
-    public enableUserHelp(element: JQuery) {
-        element.click(() => false);
-        let message = element.attr('data-user-help');  // todo: unescape message and conver to html
-        element['popover']({ trigger: 'focus', content: message });
     }
 }
