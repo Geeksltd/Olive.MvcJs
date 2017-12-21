@@ -87,7 +87,7 @@ export default class OlivePage {
         Sorting.enableAjaxSorting($("a[data-sort]"));
         Sorting.setSortHeaderClass($("th[data-sort]"));
         Form.enablecleanUpNumberField($("[data-val-number]"));
-        $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => Modal.ensureHeight());
+        Modal.enalbeEnsureHeight($("[data-toggle=tab]"));
         $("select.form-control").each((i, e) => Select.enhance($(e)));
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust",
             (e: any) => $(e.currentTarget).height(e.currentTarget.contentWindow.document.body.scrollHeight));
