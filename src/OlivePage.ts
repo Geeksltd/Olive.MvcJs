@@ -115,10 +115,10 @@ export default class OlivePage {
         AjaxRedirect.enableBack($(window));
         AjaxRedirect.enableRedirect($("a[data-redirect=ajax]"));
         Form.enablesubmitCleanGet($('form[method=get]'));
-        $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", (e) => FormAction.invokeWithAjax(e, $(e.currentTarget).attr("formaction"), false));
-        $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", (e) => FormAction.invokeWithPost(e));
-        $("[data-change-action]").off("change.data-action").on("change.data-action", (e) => FormAction.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false));
-        $("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]").off("dp.change.data-action").on("dp.change.data-action", (e) => FormAction.invokeWithAjax(e, $(e.currentTarget).attr("data-change-action"), false));
+        FormAction.enableInvokeWithAjax($("[formaction]").not("[formmethod=post]"),"click.formaction","formaction");
+        FormAction.enableinvokeWithPost($("[formaction][formmethod=post]"));
+        FormAction.enableInvokeWithAjax($("[data-change-action]"),"change.data-action","change.data-action");
+        FormAction.enableInvokeWithAjax($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]"),"dp.change.data-action","data-change-action");
 
         MasterDetail.updateSubFormStates();
         Modal.adjustHeight();
