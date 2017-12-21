@@ -5,7 +5,9 @@ export default class Modal {
     static isClosingModal: boolean = false;
     url: string;
     modalOptions: any = {};
-
+    
+    public static enalbeEnsureHeight(selector:JQuery){selector.off("click.tab-toggle").on("click.tab-toggle",()=> this.ensureHeight());}
+    
     static initialize() {
         window["isModal"] = () => {
             if ($(window.getContainerIFrame()).closest(".modal").length === 0) return false;
@@ -100,7 +102,7 @@ export default class Modal {
         </div></div></div>";
     }
 
-    public static ensureHeight() {
+    static ensureHeight() {
         setTimeout(() => this.adjustHeight(), 1);
     }
 

@@ -4,28 +4,25 @@ import Waiting from 'olive/Components/Waiting'
 import AjaxRedirect from 'olive/Mvc/AjaxRedirect'
 
 export default class Form {
+    public static enableDefaultButtonKeyPress(selector:JQuery){ selector.off("keypress.default-button").on("keypress.default-button",(e)=> this.DefaultButtonKeyPress(e));}
+    
+    public static enablecleanUpNumberField(selector:JQuery){ selector.off("blur.cleanup-number").on("blur.cleanup-number",(e)=> this.cleanUpNumberField($(e.currentTarget)));}
+    
     static merge(items: JQuerySerializeArrayElement[]): JQuerySerializeArrayElement[] {
         let result: JQuerySerializeArrayElement[] = [];
 
         let groupedByKeys = Array.groupBy(items, i => i.name.toLowerCase());
 
         for (let i in groupedByKeys) {
-
             let group = groupedByKeys[i];
-
             if (typeof (group) == 'function') continue;
-
             let key = group[0].name;
-
             let values = group.map(item => item.value).filter((v) => v);
-
             // Fix for MVC checkboxes:
             if ($("input[name='" + key + "']").is(":checkbox") && values.length == 2 && values[1] == 'false'
                 && (values[0] == 'true' || values[0] == 'false')) values.pop();
-
             result.push({ name: key, value: values.join("|") });
         }
-
         return result;
     }
 
@@ -50,7 +47,7 @@ export default class Form {
         return data;
     }
 
-    public static onDefaultButtonKeyPress(event: JQueryEventObject): boolean {
+    static DefaultButtonKeyPress(event: JQueryEventObject): boolean {
         if (event.which === 13) {
             let target = $(event.currentTarget);
             let button = target.closest("[data-module]").find('[default-button]:first'); // Same module
@@ -60,7 +57,7 @@ export default class Form {
         } else return true;
     }
 
-    public static cleanUpNumberField(field: JQuery) {
+    static cleanUpNumberField(field: JQuery) {
         let domElement = <HTMLInputElement>field.get(0);
         field.val(field.val().replace(/[^\d.-]/g, ""));
     }
