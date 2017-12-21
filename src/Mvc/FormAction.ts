@@ -20,8 +20,13 @@ export default class FormAction {
     static dynamicallyLoadedScriptFiles = [];
 
     public static onViewChanged = new LiteEvent<IViewUpdatedEventArgs>();
+    
+    
+    public static enableInvokeWithAjax(selector:JQuery,event:string,attrName:string){selector.off(event).on(event,(e)=> this.invokeWithAjax(e, $(e.currentTarget).attr(attrName), false));}
 
-    public static invokeWithPost(event) {
+    public static enableinvokeWithPost(selector:JQuery){selector.off("click.formaction").on("click.formaction",(e)=> this.invokeWithPost(e));}
+
+    static invokeWithPost(event) {
         let trigger = $(event.currentTarget);
         let containerModule = trigger.closest("[data-module]");
         if (containerModule.is("form") && Validate.validateForm(trigger) == false) return false;
@@ -36,7 +41,7 @@ export default class FormAction {
         return false;
     }
 
-    public static invokeWithAjax(event, actionUrl, syncCall = false) {
+   static invokeWithAjax(event, actionUrl, syncCall = false) {
 
         let trigger = $(event.currentTarget);
         let triggerUniqueSelector = trigger.getUniqueSelector();

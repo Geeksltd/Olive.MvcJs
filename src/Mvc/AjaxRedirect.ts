@@ -4,9 +4,12 @@ import FormAction from 'olive/Mvc/FormAction'
 export default class AjaxRedirect {
     static ajaxChangedUrl = 0;
     static isAjaxRedirecting = false;
+    
+    public static enableBack(selector:JQuery){selector.off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => this.back(e));}
 
-
-    public static enable(event: JQueryEventObject) {
+    public static enableRedirect(selector:JQuery){selector.off("click.ajax-redirect").on("click.ajax-redirect", (e) => this.redirect(e));}
+    
+   static redirect(event: JQueryEventObject) {
         if (event.ctrlKey || event.button === 1) return true;
         let link = $(event.currentTarget);
         let url = link.attr('href');
@@ -14,7 +17,7 @@ export default class AjaxRedirect {
         return false;
     }
 
-    public static back(event) {
+   static back(event) {
         if (this.ajaxChangedUrl == 0) return;
         this.ajaxChangedUrl--;
         this.go(location.href, null, true, false, false);
