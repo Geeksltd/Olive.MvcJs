@@ -1,4 +1,5 @@
 export default class StandardAction {
+    static enableLinkModal(selector: JQuery): void;
     static runStartup(container?: JQuery, trigger?: any, stage?: string): void;
     static runAll(actions: any, trigger?: any): void;
     static run(action: any, trigger: any): boolean;

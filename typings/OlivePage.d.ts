@@ -8,7 +8,5 @@ export default class OlivePage {
     onPreInit(action: any): void;
     onViewChanged(container?: JQuery, trigger?: any, newPage?: boolean): void;
     initialize(): void;
-    skipNewWindows(): void;
-    openLinkModal(event: JQueryEventObject): boolean;
     goBack(target: any): boolean;
 }

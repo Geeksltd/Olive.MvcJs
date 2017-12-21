@@ -35,7 +35,6 @@ define(["require", "exports", "olive/Config", "olive/Mvc/FormAction", "olive/Mvc
             }
         };
         OlivePage.prototype.initialize = function () {
-            var _this = this;
             this._preInitializeActions.forEach(function (action) { return action(); });
             // =================== Standard Features ====================
             Grid_1.default.enableColumn($(".select-cols .apply"));
@@ -52,7 +51,7 @@ define(["require", "exports", "olive/Config", "olive/Mvc/FormAction", "olive/Mvc
             Modal_1.default.enalbeEnsureHeight($("[data-toggle=tab]"));
             Select_1.default.enableEnhance($("select.form-control"));
             UserHelp_1.default.enable($("[data-user-help]"));
-            $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", function (e) { return _this.openLinkModal(e); });
+            StandardAction_1.default.enableLinkModal($("[target='$modal'][href]"));
             $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust", function (e) { return $(e.currentTarget).height(e.currentTarget.contentWindow.document.body.scrollHeight); });
             //$.validator.unobtrusive.parse('form');
             // =================== Plug-ins ====================
@@ -80,17 +79,6 @@ define(["require", "exports", "olive/Config", "olive/Mvc/FormAction", "olive/Mvc
             MasterDetail_1.default.updateSubFormStates();
             Modal_1.default.adjustHeight();
             this._initializeActions.forEach(function (action) { return action(); });
-        };
-        OlivePage.prototype.skipNewWindows = function () {
-            // Remove the target attribute from links:
-            $(window).off('click.SanityAdapter').on('click.SanityAdapter', function (e) {
-                $(e.target).filter('a').removeAttr('target');
-            });
-            window["open"] = function (url, r, f, re) { location.replace(url); return window; };
-        };
-        OlivePage.prototype.openLinkModal = function (event) {
-            StandardAction_1.default.openModal(event);
-            return false;
         };
         OlivePage.prototype.goBack = function (target) {
             var returnUrl = Url_1.default.getQuery("ReturnUrl");

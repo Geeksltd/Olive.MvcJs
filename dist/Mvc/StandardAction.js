@@ -3,6 +3,10 @@ define(["require", "exports", "olive/Components/Alert", "olive/Plugins/Select", 
     var StandardAction = /** @class */ (function () {
         function StandardAction() {
         }
+        StandardAction.enableLinkModal = function (selector) {
+            var _this = this;
+            selector.off("click.open-modal").on("click.open-modal", function (e) { _this.openModal(e); return false; });
+        };
         StandardAction.runStartup = function (container, trigger, stage) {
             if (container === void 0) { container = null; }
             if (trigger === void 0) { trigger = null; }
