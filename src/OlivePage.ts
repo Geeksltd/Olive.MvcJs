@@ -30,7 +30,6 @@ import ConfirmBox from 'olive/Plugins/ConfirmBox'
 import SubMenu from 'olive/Plugins/SubMenu'
 import InstantSearch from 'olive/Plugins/InstantSearch'
 import DateDropdown from 'olive/Plugins/DateDropdown'
-import {Enums} from 'olive/Extensions/Enums'
 import UserHelp from 'olive/Plugins/UserHelp'
 
 export default class OlivePage {
@@ -75,12 +74,10 @@ export default class OlivePage {
         this._preInitializeActions.forEach((action) => action());
 
         // =================== Standard Features ====================
-        Grid.enable($(".select-cols .apply"),Enums.GridAction.applyColumns);
+        Grid.enableColumn($(".select-cols .apply"));
+        Grid.enableSelectCol($(".select-grid-cols .group-control"));
+        Grid.enableToggle($("th.select-all > input:checkbox"));        
         MasterDetail.enable($("[data-delete-subform]"));
-        $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
-        Grid.enable($(".select-grid-cols .group-control"),Enums.GridAction.enableSelectColumns);
-        Grid.enable($("th.select-all > input:checkbox"),Enums.GridAction.enableSelectAllToggle);
-
         Form.enableDefaultButtonKeyPress($("form input, form select"));
         Paging.enableOnSizeChanged($("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']"));
         Sorting.enableDragSort($("[data-sort-item]").parents("tbody"));
@@ -91,6 +88,8 @@ export default class OlivePage {
         Modal.enalbeEnsureHeight($("[data-toggle=tab]"));
         Select.enableEnhance($("select.form-control"));
         UserHelp.enable($("[data-user-help]"));
+        
+        $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
 
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust",
             (e: any) => $(e.currentTarget).height(e.currentTarget.contentWindow.document.body.scrollHeight));
