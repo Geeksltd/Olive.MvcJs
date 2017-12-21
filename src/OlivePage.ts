@@ -112,8 +112,8 @@ export default class OlivePage {
         SubMenu.enable($(".with-submenu")); 
 
         // =================== Request lifecycle ====================
-        $(window).off("popstate.ajax-redirect").on("popstate.ajax-redirect", (e) => AjaxRedirect.back(e));
-        $("a[data-redirect=ajax]").off("click.ajax-redirect").on("click.ajax-redirect", (e) => AjaxRedirect.enable(e));
+        AjaxRedirect.enableBack($(window));
+        AjaxRedirect.enableRedirect($("a[data-redirect=ajax]"));
         $('form[method=get]').off("submit.clean-up").on("submit.clean-up", (e) => Form.submitCleanGet(e));
         $("[formaction]").not("[formmethod=post]").off("click.formaction").on("click.formaction", (e) => FormAction.invokeWithAjax(e, $(e.currentTarget).attr("formaction"), false));
         $("[formaction][formmethod=post]").off("click.formaction").on("click.formaction", (e) => FormAction.invokeWithPost(e));
