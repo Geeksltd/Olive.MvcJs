@@ -82,10 +82,10 @@ export default class OlivePage {
         $("[data-user-help]").each((i, e) => this.enableUserHelp($(e)));
         Form.enableDefaultButtonKeyPress($("form input, form select"));
         Paging.enableOnSizeChanged($("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']"));
-        $("[data-sort-item]").parents("tbody").each((i, e) => Sorting.enableDragSort($(e)));
+        Sorting.enableDragSort($("[data-sort-item]").parents("tbody"));
         Paging.enableWithAjax($("a[data-pagination]"));
-        $("a[data-sort]").off("click.ajax-sorting").on("click.ajax-sorting", (e) => Sorting.enableAjaxSorting(e));
-        $("th[data-sort]").each((i, e) => Sorting.setSortHeaderClass($(e)));
+        Sorting.enableAjaxSorting($("a[data-sort]"));
+        Sorting.setSortHeaderClass($("th[data-sort]"));
         Form.enablecleanUpNumberField($("[data-val-number]"));
         $("[data-toggle=tab]").off("click.tab-toggle").on("click.tab-toggle", () => Modal.ensureHeight());
         $("select.form-control").each((i, e) => Select.enhance($(e)));
