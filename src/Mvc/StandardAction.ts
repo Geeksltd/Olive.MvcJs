@@ -5,7 +5,9 @@ import Modal from 'olive/Components/Modal'
 import AjaxRedirect from 'olive/Mvc/AjaxRedirect'
 
 export default class StandardAction {
-
+    
+    public static enableLinkModal(selector:JQuery){selector.off("click.open-modal").on("click.open-modal", (e) =>{this.openModal(e); return false;})}
+    
     public static runStartup(container: JQuery = null, trigger: any = null, stage: string = "Init") {
         if (container == null) container = $(document);
         if (trigger == null) trigger = $(document);
