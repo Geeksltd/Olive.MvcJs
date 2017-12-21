@@ -1,5 +1,7 @@
 export default class MasterDetail {
-    public static updateSubFormStates() {
+    public static enable(selector:JQuery){selector.off("click.delete-subform").on("click.delete-subform",(e)=>this.deleteSubForm(e));}
+    
+    static updateSubFormStates() {
         let countItems = (element) => $(element).parent().find(".subform-item:visible").length;
         // Hide removed items
         $("input[name*=MustBeDeleted][value=True]").closest('[data-subform]').hide();
@@ -18,7 +20,7 @@ export default class MasterDetail {
         });
     }
 
-    public static deleteSubForm(event: JQueryEventObject) {
+    static deleteSubForm(event: JQueryEventObject) {
         let button = $(event.currentTarget);
 
         let container = button.parents(".subform-item");
