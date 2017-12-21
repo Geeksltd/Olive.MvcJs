@@ -75,7 +75,7 @@ export default class OlivePage {
 
         // =================== Standard Features ====================
         Grid.enable($(".select-cols .apply"),Enums.GridAction.applyColumns);
-        $("[data-delete-subform]").off("click.delete-subform").on("click.delete-subform", (e) => MasterDetail.deleteSubForm(e));
+        MasterDetail.enable($("[data-delete-subform]"));
         $("[target='$modal'][href]").off("click.open-modal").on("click.open-modal", (e) => this.openLinkModal(e));
         Grid.enable($(".select-grid-cols .group-control"),Enums.GridAction.enableSelectColumns);
         Grid.enable($("th.select-all > input:checkbox"),Enums.GridAction.enableSelectAllToggle);
