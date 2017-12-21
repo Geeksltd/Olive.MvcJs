@@ -28,7 +28,10 @@ export default class AutoComplete {
             templates: { suggestion: (item) => item.Display, empty: "<div class='tt-suggestion'>Not found</div>" }
         };
 
-        this.input.data("selected-text", "").on('input', this.clearValue).on('blur', this.itemBlured).on('typeahead:selected', this.itemSelected).typeahead({ minLength: 0 }, dataset);
+        this.input.data("selected-text", "").on('input',
+            this.clearValue)
+            .on('blur', this.itemBlured).on('typeahead:selected', this.itemSelected)
+            .typeahead({ minLength: 0 }, dataset);
     }
 
     clearValue(e: any) {

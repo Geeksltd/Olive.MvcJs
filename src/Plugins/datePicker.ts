@@ -4,9 +4,9 @@ import Config from "olive/Config"
 
 export default class DatePicker {
     input: any;
-    
-    public static enable(selector:JQuery){ selector.each((i,e) => new DatePicker($(e)).show());}
-    
+
+    public static enable(selector: JQuery) { selector.each((i, e) => new DatePicker($(e)).show()); }
+
     constructor(targetInput: any) {
         this.input = targetInput;
     }
@@ -33,7 +33,7 @@ export default class DatePicker {
                 locale: Config.DATE_LOCALE
             }).data("DateTimePicker").keyBinds().clear = null;
             // Now make calendar icon clickable as well             
-            this.input.parent().find(".fa-calendar").parent(".input-group-addon").click(() => { this.input.focus(); });
+            this.input.parent().find(".fa-calendar").parent(".input-group-addon").click(() => this.input.focus());
         }
         else alert("Don't know how to handle date control of " + control);
     }

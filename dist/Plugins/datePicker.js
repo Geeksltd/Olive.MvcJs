@@ -25,7 +25,7 @@ define(["require", "exports", "olive/Components/Modal", "olive/Config"], functio
                     locale: Config_1.default.DATE_LOCALE
                 }).data("DateTimePicker").keyBinds().clear = null;
                 // Now make calendar icon clickable as well             
-                this.input.parent().find(".fa-calendar").parent(".input-group-addon").click(function () { _this.input.focus(); });
+                this.input.parent().find(".fa-calendar").parent(".input-group-addon").click(function () { return _this.input.focus(); });
             }
             else
                 alert("Don't know how to handle date control of " + control);

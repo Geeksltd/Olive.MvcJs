@@ -19,7 +19,9 @@ define(["require", "exports", "olive/Components/Url", "olive/Components/Form", "
                 displayKey: 'Text', source: dataSource,
                 templates: { suggestion: function (item) { return item.Display; }, empty: "<div class='tt-suggestion'>Not found</div>" }
             };
-            this.input.data("selected-text", "").on('input', this.clearValue).on('blur', this.itemBlured).on('typeahead:selected', this.itemSelected).typeahead({ minLength: 0 }, dataset);
+            this.input.data("selected-text", "").on('input', this.clearValue)
+                .on('blur', this.itemBlured).on('typeahead:selected', this.itemSelected)
+                .typeahead({ minLength: 0 }, dataset);
         };
         AutoComplete.prototype.clearValue = function (e) {
             if (this.input.val() === "")
