@@ -39,18 +39,18 @@ export function bindFirst(name, fn) {
     return this;
 };
 
-export function clone(original) {
-    var result = original.apply(this, arguments),
-        my_textareas = this.find('textarea').add(this.filter('textarea')),
-        result_textareas = result.find('textarea').add(result.filter('textarea')),
-        my_selects = this.find('select').add(this.filter('select')),
-        result_selects = result.find('select').add(result.filter('select'));
+//export function clone(original) {
+//    var result = original.apply(this, arguments),
+//        my_textareas = this.find('textarea').add(this.filter('textarea')),
+//        result_textareas = result.find('textarea').add(result.filter('textarea')),
+//        my_selects = this.find('select').add(this.filter('select')),
+//        result_selects = result.find('select').add(result.filter('select'));
 
-    for (var i = 0, l = my_textareas.length; i < l; ++i) $(result_textareas[i]).val($(my_textareas[i]).val());
-    for (var i = 0, l = my_selects.length; i < l; ++i) result_selects[i].selectedIndex = my_selects[i].selectedIndex;
+//    for (var i = 0, l = my_textareas.length; i < l; ++i) $(result_textareas[i]).val($(my_textareas[i]).val());
+//    for (var i = 0, l = my_selects.length; i < l; ++i) result_selects[i].selectedIndex = my_selects[i].selectedIndex;
 
-    return result;
-}
+//    return result;
+//}
 
 export function enableValidateForCheckboxList() {
     $.validator.unobtrusive.adapters.add("selection-required", function (options) {
