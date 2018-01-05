@@ -65,8 +65,8 @@ export function enableValidateForCheckboxList() {
 export function raiseEvent(event: string, owner: any, data?: any) {
     let result = true;
 
-    if (owner.events.hasOwnProperty(event)) {
-        owner.events[event].forEach(handler => {
+    if (owner.event.hasOwnProperty(event)) {
+        owner.event[event].forEach(handler => {
             let res = handler(data || {});
             if (res === false) result = false;
         });

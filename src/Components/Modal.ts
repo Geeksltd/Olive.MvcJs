@@ -5,9 +5,9 @@ export default class Modal {
     static isClosingModal: boolean = false;
     url: string;
     modalOptions: any = {};
-    
-    public static enalbeEnsureHeight(selector:JQuery){selector.off("click.tab-toggle").on("click.tab-toggle",()=> this.ensureHeight());}
-    
+
+    public static enalbeEnsureHeight(selector: JQuery) { selector.off("click.tab-toggle").on("click.tab-toggle", () => this.ensureHeight()); }
+
     static initialize() {
         window["isModal"] = () => {
             if ($(window.getContainerIFrame()).closest(".modal").length === 0) return false;
@@ -55,13 +55,13 @@ export default class Modal {
     }
 
     public static close() {
-        if ($.raiseEvent("modal:closing", window) === false) return false;
+        if ($.fn.raiseEvent("modal:closing", window) === false) return false;
         this.isClosingModal = true;
 
         if (this.current) {
             this.current.modal('hide').remove();
             this.current = null;
-            $.raiseEvent("modal:closed", window);
+            $.fn.raiseEvent("modal:closed", window);
         }
 
         this.isClosingModal = false;
