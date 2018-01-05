@@ -37,16 +37,15 @@ define(["require", "exports"], function (require, exports) {
     }
     exports.bindFirst = bindFirst;
     ;
-    //export function clone(original) {
-    //    var result = original.apply(this, arguments),
-    //        my_textareas = this.find('textarea').add(this.filter('textarea')),
-    //        result_textareas = result.find('textarea').add(result.filter('textarea')),
-    //        my_selects = this.find('select').add(this.filter('select')),
-    //        result_selects = result.find('select').add(result.filter('select'));
-    //    for (var i = 0, l = my_textareas.length; i < l; ++i) $(result_textareas[i]).val($(my_textareas[i]).val());
-    //    for (var i = 0, l = my_selects.length; i < l; ++i) result_selects[i].selectedIndex = my_selects[i].selectedIndex;
-    //    return result;
-    //}
+    function clone(original) {
+        var result = original.apply(this, arguments), my_textareas = this.find('textarea').add(this.filter('textarea')), result_textareas = result.find('textarea').add(result.filter('textarea')), my_selects = this.find('select').add(this.filter('select')), result_selects = result.find('select').add(result.filter('select'));
+        for (var i = 0, l = my_textareas.length; i < l; ++i)
+            $(result_textareas[i]).val($(my_textareas[i]).val());
+        for (var i = 0, l = my_selects.length; i < l; ++i)
+            result_selects[i].selectedIndex = my_selects[i].selectedIndex;
+        return result;
+    }
+    exports.clone = clone;
     function enableValidateForCheckboxList() {
         $.validator.unobtrusive.adapters.add("selection-required", function (options) {
             if (options.element.tagName.toUpperCase() == "INPUT" && options.element.type.toUpperCase() == "CHECKBOX") {
@@ -58,10 +57,9 @@ define(["require", "exports"], function (require, exports) {
     }
     exports.enableValidateForCheckboxList = enableValidateForCheckboxList;
     function raiseEvent(event, owner, data) {
-        debugger;
         var result = true;
-        if (owner.event.hasOwnProperty(event)) {
-            owner.event[event].forEach(function (handler) {
+        if (owner.events.hasOwnProperty(event)) {
+            owner.events[event].forEach(function (handler) {
                 var res = handler(data || {});
                 if (res === false)
                     result = false;

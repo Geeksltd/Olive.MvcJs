@@ -19,7 +19,7 @@ define(["require", "exports", "olive/Extensions/JQueryExtensions"], function (re
             $.fn.extend({
                 screenOffset: jq.screenOffset,
                 bindFirst: jq.bindFirst,
-                //clone: jq.clone,
+                clone: jq.clone,
                 raiseEvent: jq.raiseEvent,
                 getUniqueSelector: jq.getUniqueSelector
             });

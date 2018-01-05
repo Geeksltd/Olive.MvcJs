@@ -36,14 +36,13 @@ define(["require", "exports", "olive/Components/Alert", "olive/Plugins/Select", 
             }
         };
         StandardAction.run = function (action, trigger) {
-            debugger;
             if (action.Notify || action.Notify == "")
                 this.notify(action, trigger);
             else if (action.Script)
                 eval(action.Script);
             else if (action.BrowserAction == "Back")
                 window.history.back();
-            else if (action.BrowserAction == "CloseModal" && Modal_1.default.close() === true)
+            else if (action.BrowserAction == "CloseModal" && Modal_1.default.close() === false)
                 return false;
             else if (action.BrowserAction == "CloseModalRefreshParent")
                 return this.refresh();

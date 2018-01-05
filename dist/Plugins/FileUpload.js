@@ -29,11 +29,11 @@ define(["require", "exports", "olive/Mvc/FormAction"], function (require, export
                 dataType: 'json',
                 dropZone: this.container,
                 replaceFileInput: false,
-                drop: this.onDragDropped.bind(this),
-                change: this.onChange.bind(this),
-                progressall: this.onProgressAll.bind(this),
-                error: this.onUploadError.bind(this),
-                success: this.onUploadSuccess.bind(this)
+                drop: this.onDragDropped,
+                change: this.onChange,
+                progressall: this.onProgressAll,
+                error: this.onUploadError,
+                success: this.onUploadSuccess
             });
         };
         FileUpload.prototype.hasExistingFile = function () {
