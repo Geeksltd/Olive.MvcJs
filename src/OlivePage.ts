@@ -76,7 +76,7 @@ export default class OlivePage {
         // =================== Standard Features ====================
         Grid.enableColumn($(".select-cols .apply"));
         Grid.enableSelectCol($(".select-grid-cols .group-control"));
-        Grid.enableToggle($("th.select-all > input:checkbox"));        
+        Grid.enableToggle($("th.select-all > input:checkbox"));
         MasterDetail.enable($("[data-delete-subform]"));
         Form.enableDefaultButtonKeyPress($("form input, form select"));
         Paging.enableOnSizeChanged($("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']"));
@@ -102,22 +102,22 @@ export default class OlivePage {
         TimeControl.enable($("[data-control='date-picker|time-picker']"));
         TimeControl.enable($("[data-control=time-picker]"));
         DateDropdown.enable($("[data-control=date-drop-downs]"));
-        HtmlEditor.enable($("[data-control=html-editor]")); 
+        HtmlEditor.enable($("[data-control=html-editor]"));
         NumbericUpDown.enable($("[data-control=numeric-up-down]"));
         Slider.enable($("[data-control=range-slider],[data-control=slider]"));
         FileUpload.enable($(".file-upload input:file"));
         ConfirmBox.enable($("[data-confirm-question]"));
         PasswordStength.enable($(".password-strength"));
-        SubMenu.enable($(".with-submenu")); 
+        SubMenu.enable($(".with-submenu"));
 
         // =================== Request lifecycle ====================
         AjaxRedirect.enableBack($(window));
         AjaxRedirect.enableRedirect($("a[data-redirect=ajax]"));
         Form.enablesubmitCleanGet($('form[method=get]'));
-        FormAction.enableInvokeWithAjax($("[formaction]").not("[formmethod=post]"),"click.formaction","formaction");
+        FormAction.enableInvokeWithAjax($("[formaction]").not("[formmethod=post]"), "click.formaction", "formaction");
         FormAction.enableinvokeWithPost($("[formaction][formmethod=post]"));
-        FormAction.enableInvokeWithAjax($("[data-change-action]"),"change.data-action","change.data-action");
-        FormAction.enableInvokeWithAjax($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]"),"dp.change.data-action","data-change-action");
+        FormAction.enableInvokeWithAjax($("[data-change-action]"), "change.data-action", "change.data-action");
+        FormAction.enableInvokeWithAjax($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]"), "dp.change.data-action", "data-change-action");
 
         MasterDetail.updateSubFormStates();
         Modal.adjustHeight();

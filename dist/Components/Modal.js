@@ -51,13 +51,10 @@ define(["require", "exports"], function (require, exports) {
             Modal.current.modal('show');
         };
         Modal.close = function () {
-            if ($.fn.raiseEvent("modal:closing", window) === false)
-                return false;
             this.isClosingModal = true;
             if (this.current) {
                 this.current.modal('hide').remove();
                 this.current = null;
-                $.fn.raiseEvent("modal:closed", window);
             }
             this.isClosingModal = false;
             return true;
