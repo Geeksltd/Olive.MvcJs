@@ -11,8 +11,10 @@ export default class Form {
 
     public static enablesubmitCleanGet(selector: JQuery) { selector.off("submit.clean-up").on("submit.clean-up", (e) => this.submitCleanGet(e)); }
 
-    static merge(items: JQuerySerializeArrayElement[]): JQuerySerializeArrayElement[] {
+    static getCleanFormData(form: JQuery): JQuerySerializeArrayElement[] {
         let result: JQuerySerializeArrayElement[] = [];
+
+        let items = form.serializeArray();
 
         let groupedByKeys = Array.groupBy(items, i => i.name.toLowerCase());
 
@@ -21,11 +23,23 @@ export default class Form {
             if (typeof (group) == 'function') continue;
             let key = group[0].name;
             let values = group.map(item => item.value).filter(v => v);
+
             // Fix for MVC checkboxes:
-            if ($("input[name='" + key + "']").is(":checkbox") && values.length == 2 && values[1] == 'false'
+            if ($("input[name='" + key + "']", form).is(":checkbox") && values.length == 2 && values[1] == 'false'
                 && (values[0] == 'true' || values[0] == 'false')) values.pop();
             result.push({ name: key, value: values.join("|") });
         }
+
+        // Fix for multi-select:
+        // If a multi-select control has no value, we should return empty value for it.
+        // The default serializeArray() function just ignores it.
+        $("select[multiple]", form).each((i, e) => {
+            var key = $(e).attr("name");
+            if (result.filter(v => v.name === key).length === 0)
+                result.push({ name: key, value: "" });
+        });
+
+
         return result;
     }
 
@@ -36,7 +50,7 @@ export default class Form {
     public static getPostData(trigger: JQuery): JQuerySerializeArrayElement[] {
         let form = trigger.closest("[data-module]");
         if (!form.is("form")) form = $("<form />").append(form.clone(true));
-        let data = Form.merge(form.serializeArray());
+        let data = Form.getCleanFormData(form);
         // If it's master-details, then we need the index.
         let subFormContainer = trigger.closest(".subform-item");
         if (subFormContainer) {
@@ -69,7 +83,7 @@ export default class Form {
         let form = $(event.currentTarget);
         if (Validate.validateForm(form) == false) { Waiting.hide(); return false; }
 
-        let formData = Form.merge(form.serializeArray()).filter(item => item.name != "__RequestVerificationToken");
+        let formData = Form.getCleanFormData(form).filter(item => item.name != "__RequestVerificationToken");
 
         let url = Url.removeEmptyQueries(form.attr('action'));
 

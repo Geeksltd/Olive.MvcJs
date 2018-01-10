@@ -5,13 +5,12 @@
             "olive/*": [ "src/*" ]
         },
         "module": "amd",
-        "target": "es5",
-        "sourceMap": true,
+        "target": "es5",  
         "outDir": "dist",
         "declaration": true,
         "declarationDir": "typings",
         "noImplicitUseStrict": true,
-        "sourceRoot": "src",
+        "inlineSourceMap": true,
         "noImplicitAny": false,
         "noEmitOnError": true,
         "removeComments": false

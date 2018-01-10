@@ -5,9 +5,9 @@ import Modal from 'olive/Components/Modal'
 import AjaxRedirect from 'olive/Mvc/AjaxRedirect'
 
 export default class StandardAction {
-    
-    public static enableLinkModal(selector:JQuery){selector.off("click.open-modal").on("click.open-modal", (e) =>{this.openModal(e); return false;})}
-    
+
+    public static enableLinkModal(selector: JQuery) { selector.off("click.open-modal").on("click.open-modal", (e) => { this.openModal(e); return false; }) }
+
     public static runStartup(container: JQuery = null, trigger: any = null, stage: string = "Init") {
         if (container == null) container = $(document);
         if (trigger == null) trigger = $(document);
@@ -33,10 +33,13 @@ export default class StandardAction {
         if (action.Notify || action.Notify == "") this.notify(action, trigger);
         else if (action.Script) eval(action.Script);
         else if (action.BrowserAction == "Back") window.history.back();
-        else if (action.BrowserAction == "CloseModal" && Modal.close() === false) return false;
-        else if (action.BrowserAction == "CloseModalRefreshParent") return this.refresh();
+        else if (action.BrowserAction == "CloseModal") { if (parent.page.modal.close() === false) return false; }
+        else if (action.BrowserAction == "CloseModalRefreshParent") {
+            parent.page.refresh();
+            parent.page.modal.close();
+        }
         else if (action.BrowserAction == "Close") window.close();
-        else if (action.BrowserAction == "Refresh") this.refresh();
+        else if (action.BrowserAction == "Refresh") window.page.refresh();
         else if (action.BrowserAction == "Print") window.print();
         else if (action.BrowserAction == "ShowPleaseWait") Waiting.show(action.BlockScreen);
         else if (action.ReplaceSource) Select.replaceSource(action.ReplaceSource, action.Items);
@@ -63,14 +66,6 @@ export default class StandardAction {
         else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true)
             AjaxRedirect.go(action.Redirect, trigger, false, false, true);
         else location.replace(action.Redirect);
-    }
-
-    static refresh(keepScroll = false) {
-        if ($("main").parent().is("body"))
-            AjaxRedirect.go(location.href, null, false /*isBack*/, keepScroll, false);
-        else location.reload();
-
-        return false;
     }
 
     static openModal(event, url?, options?) {

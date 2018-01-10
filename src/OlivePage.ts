@@ -34,7 +34,8 @@ import UserHelp from 'olive/Plugins/UserHelp'
 
 export default class OlivePage {
 
-    public modal() { return Modal; }
+    public modal = Modal;
+    public waiting = Waiting;
 
     constructor() {
         SystemExtensins.initialize();
@@ -131,6 +132,14 @@ export default class OlivePage {
         if (returnUrl && target && $(target).is("[data-redirect=ajax]"))
             AjaxRedirect.go(returnUrl, $(target), false, false, true);
         else Url.goBack();
+
+        return false;
+    }
+
+    refresh(keepScroll = false) {
+        if ($("main").parent().is("body"))
+            AjaxRedirect.go(location.href, null, false /*isBack*/, keepScroll, false);
+        else location.reload();
 
         return false;
     }

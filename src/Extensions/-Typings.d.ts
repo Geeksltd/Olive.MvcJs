@@ -1,9 +1,12 @@
-﻿interface Window {
+﻿
+
+interface Window {
     stop();
     require(moduleName: string): Function;
     isModal(): boolean;
     getContainerIFrame(): HTMLIFrameElement;
     download(url: string);
+    page: any;
 }
 
 interface JSON {
