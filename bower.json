@@ -17,8 +17,10 @@
         "tsconfig.json",
         "Build.bat",
         "LocalTest.bat",
+        "require.config.js.map",
         "require.config.js",
-        "packages.config"
+        "packages.config",
+        "bower.json"
     ],
   "private": false,
   "homepage": "https://github.com/Geeksltd/Olive.MvcJs"
