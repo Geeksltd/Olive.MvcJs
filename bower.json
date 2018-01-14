@@ -1,25 +1,25 @@
 {
   "name": "olive.mvc",
-  "version": "0.3.0",
   "description": "Used js files in the Olive MVC projects.",
   "keywords": [
-    "olive",
-    "mvc",
-    "olive-framework"
+    "olive"
   ],
   "authors": [
     "Geeks Ltd <https://www.geeks.ltd.uk/>"
   ],
-  "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "test",
-    "src",
-    "tests",
-    "tsconfig.json",
-    "Build.bat"
-  ],
+  "license": "GPL",
+    "ignore": [
+        "**/.*",
+        "node_modules",
+        "test",
+        "src",
+        "tests",
+        "tsconfig.json",
+        "Build.bat",
+        "LocalTest.bat",
+        "require.config.js",
+        "packages.config"
+    ],
   "private": false,
   "homepage": "https://github.com/Geeksltd/Olive.MvcJs"
 } 
