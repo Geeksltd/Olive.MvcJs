@@ -11,7 +11,7 @@
                 .appendTo(screen);
         }
 
-        $("<div class='wait-container'><div class='wait-box'><img src='/public/img/loading.gif'/></div>")
+        $("<div class='wait-container'><div class='wait-box'><img src='/img/loading.gif'/></div>")
             .appendTo(screen)
             .fadeIn('slow');
     }
