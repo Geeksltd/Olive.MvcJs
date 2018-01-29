@@ -3,8 +3,7 @@
 interface Window {
     stop();
     require(moduleName: string): Function;
-    isModal(): boolean;
-    getContainerIFrame(): HTMLIFrameElement;
+    isModal(): boolean; 
     download(url: string);
     page: any;
 }

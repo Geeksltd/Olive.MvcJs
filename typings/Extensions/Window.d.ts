@@ -1,8 +1,7 @@
 interface Window {
     stop(): any;
     require(moduleName: string): Function;
-    isModal(): boolean;
-    getContainerIFrame(): HTMLIFrameElement;
+    isModal(): boolean; 
     download(url: string): any;
 }
 interface JSON {
