@@ -9,15 +9,28 @@ export default class Modal {
     public static enalbeEnsureHeight(selector: JQuery) { selector.off("click.tab-toggle").on("click.tab-toggle", () => this.ensureHeight()); }
 
     static initialize() {
-        window["isModal"] = () => {
-            if ($(window.getContainerIFrame()).closest(".modal").length === 0) return false;
-            return true;
-        };
 
-        window["getContainerIFrame"] = () => {
-            if (parent == null || parent === self) return null;
-            else return <HTMLIFrameElement>$(parent.document).find("iframe")
-                .filter((i, f: any) => (f.contentDocument || f.contentWindow.document) === document).get(0);
+        window.addEventListener("message", e => {
+            try {
+                let arg = JSON.parse(e.data);
+
+                if (arg.command !== 'set-iframe-height') return;
+
+                let iframe = $("iframe").filter((i, f) => f["src"] == arg.url);
+
+                if (iframe.attr("data-has-explicit-height") != 'true') return;
+                iframe.height(arg.height);
+            } catch (error) {
+                console.error(error);
+            }
+        }, false);
+
+        window["isModal"] = () => {
+            try {
+                return window.self !== window.parent;
+            } catch (e) {
+                return true;
+            }
         };
     }
 
@@ -107,9 +120,11 @@ export default class Modal {
 
     public static adjustHeight(overflow?: number) {
         if (window.isModal()) {
-            let frame = $(window.getContainerIFrame());
-            if (frame.attr("data-has-explicit-height") != 'true')
-                frame.height(document.body.offsetHeight + (overflow || 0));
+            parent.postMessage(JSON.stringify({
+                command: "set-iframe-height",
+                url: window.location.href,
+                height: document.body.offsetHeight + (overflow || 0)
+            }), "*");
         }
     }
 
