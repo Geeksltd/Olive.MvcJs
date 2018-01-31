@@ -12,6 +12,7 @@ export default class HtmlEditor {
     }
 
     enable() {
+        window["CKEDITOR_BASEPATH"] = Config.CK_EDITOR_BASE_PATH;
         $.getScript(Config.CK_EDITOR_BASE_PATH + "ckeditor.js", () => this.onCkEditorScriptReady());
     }
 
