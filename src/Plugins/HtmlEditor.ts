@@ -12,17 +12,15 @@ export default class HtmlEditor {
     }
 
     enable() {
-        $.getScript(Config.CK_EDITOR_BASE_PATH + "ckeditor.js", this.onCkEditorScriptReady);
+        $.getScript(Config.CK_EDITOR_BASE_PATH + "ckeditor.js", () => this.onCkEditorScriptReady());
     }
 
     onCkEditorScriptReady() {
-        $.getScript(Config.CK_EDITOR_BASE_PATH + "adapters/jquery.js", this.onJQueryAdapterScriptReady);
-    }
+        CKEDITOR.basePath = Config.CK_EDITOR_BASE_PATH;
 
-    onJQueryAdapterScriptReady() {
         CKEDITOR.config.contentsCss = Config.CK_EDITOR_BASE_PATH + 'contents.css';
 
-        let editor = CKEDITOR.replace($(this.input).attr('id'), this.getEditorSettings());
+        let editor = CKEDITOR.replace(this.input.attr('name'), this.getEditorSettings());
 
         editor.on('change', (evt) => evt.editor.updateElement());
         editor.on("instanceReady", (event) => Modal.adjustHeight());
@@ -30,7 +28,7 @@ export default class HtmlEditor {
 
     getEditorSettings() {
         return {
-            toolbar: $(this.input).attr('data-toolbar') || Config.DEFAULT_HTML_EDITOR_MODE,
+            toolbar: this.input.attr('data-toolbar') || Config.DEFAULT_HTML_EDITOR_MODE,
             customConfig: '/Scripts/ckeditor_config.js'
         };
     }

@@ -4,9 +4,8 @@ export default class HtmlEditor {
     constructor(targetInput: any);
     enable(): void;
     onCkEditorScriptReady(): void;
-    onJQueryAdapterScriptReady(): void;
     getEditorSettings(): {
-        toolbar: string;
+        toolbar: any;
         customConfig: string;
     };
 }
