@@ -31,7 +31,7 @@ export default class FileUpload {
     }
 
     enable() {
-        this.input.attr("data-url", "/file/upload");
+        this.input.attr("data-url", "/upload");
         this.input.filestyle({ buttonBefore: true });
         this.container.find('.bootstrap-filestyle > input:text').wrap($("<div class='progress'></div>"));
         this.container.find('.bootstrap-filestyle > .progress').prepend(this.progressBar);
