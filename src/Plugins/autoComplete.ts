@@ -11,7 +11,9 @@ export default class AutoComplete {
 
     public static enable(selector: JQuery) { selector.each((i, e) => new AutoComplete($(e)).enable()); }
 
-    constructor(targetInput: any) { this.input = targetInput; }
+    constructor(targetInput: any) {
+        this.input = targetInput;
+    }
 
     enable() {
 
@@ -23,25 +25,39 @@ export default class AutoComplete {
         let dataSource = this.getData;
 
 
-        let dataset = {
-            displayKey: 'Text', source: dataSource,
-            templates: { suggestion: (item) => item.Display, empty: "<div class='tt-suggestion'>Not found</div>" }
-        };
+        //let dataset = {
+        //    displayKey: 'Text', source: dataSource,
+        //    templates: {
+        //        suggestion: (item) => item.Display,
 
-        this.input.data("selected-text", "").on('input',
-            this.clearValue)
-            .on('blur', this.itemBlured).on('typeahead:selected', this.itemSelected)
-            .typeahead({ minLength: 0 }, dataset);
+        //    }
+        //};
+
+        this.input.data("selected-text", "")
+            .on('input', () => this.clearValue())
+            .on('blur', () => this.itemBlured())
+            .on('typeahead:selected', (e, i) => this.itemSelected(i))
+            .typeahead({
+                minLength: 0,
+                searchOnFocus: true,
+                backdrop: {
+                    "background-color": "#fff"
+                },
+                emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
+                source: dataSource,
+                display: "Display",
+                templateValue: "{{Value}}"
+            });
     }
 
-    clearValue(e: any) {
+    clearValue() {
         if (this.input.val() === "") this.valueField.val("");
         if (this.input.val() !== this.input.data("selected-text")) this.valueField.val("");
     }
 
-    itemSelected(e: any, item: any) {
+    itemSelected(item: any) {
         if (item != undefined) {
-            console.log('setting ' + item.Value);
+
             this.valueField.val(item.Value);
             this.input.data("selected-text", item.Display);
         }
@@ -53,7 +69,7 @@ export default class AutoComplete {
         this.input.trigger('change');
     }
 
-    itemBlured(e: any, item: any) {
+    itemBlured() {
         if (this.valueField.val() == "" && this.input.val() != "") {
             // this hack is so when you paste something a focus out, it should set the hidden field
             let suggested = this.input.closest(".twitter-typeahead").find(".tt-suggestion");
@@ -65,8 +81,7 @@ export default class AutoComplete {
                 this.input.typeahead('val', this.input.val());
                 this.getData(this.input.val(), data => {
                     if (data && data.length === 1) {
-                        this.itemSelected(null, data[0]);
-                        console.log('match text to suggestion finished');
+                        this.itemSelected(data[0]);
                     } else {
                         console.warn("There is none or more than one items in the autocomplete data-source to match the given text. Cannot set the value.");
                     }
@@ -85,7 +100,7 @@ export default class AutoComplete {
     getData(query: any, callback: any) {
         this.awaitingAutocompleteResponses++;
         let url = this.input.attr("autocomplete-source");
-        url = Url.removeQuery(url, this.input.attr('name')); // Remove old text.
+        url = Url.removeQuery(url, this.input.attr('name')); // Remove the previous text.
         let data = Form.getPostData(this.input);
 
         setTimeout(() => {
@@ -94,16 +109,19 @@ export default class AutoComplete {
                 return;
             }
 
-            $.post(url, data).fail(FormAction.onAjaxResponseError).done((result) => {
-                result = result.map((i) => {
-                    return {
-                        Display: i.Display || i.Text || i.Value,
-                        Value: i.Value || i.Text || i.Display,
-                        Text: i.Text || $("<div/>").append($(i.Display)).text() || i.Value
-                    };
+            $.post(url, data)
+                .always(() => this.awaitingAutocompleteResponses--)
+                .fail(FormAction.onAjaxResponseError)
+                .done(result => {
+                    result = result.map((i) => {
+                        return {
+                            Display: i.Display || i.Text || i.Value,
+                            Value: i.Value || i.Text || i.Display,
+                            Text: i.Text || $("<div/>").append($(i.Display)).text() || i.Value
+                        };
+                    });
+                    return callback(result);
                 });
-                return callback(result);
-            }).always(() => this.awaitingAutocompleteResponses--);
         }, Config.AUTOCOMPLETE_INPUT_DELAY);
     }
 }

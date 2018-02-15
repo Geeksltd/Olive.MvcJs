@@ -5,8 +5,8 @@ export default class AutoComplete {
     static enable(selector: JQuery): void;
     constructor(targetInput: any);
     enable(): void;
-    clearValue(e: any): void;
-    itemSelected(e: any, item: any): void;
-    itemBlured(e: any, item: any): void;
+    clearValue(): void;
+    itemSelected(item: any): void;
+    itemBlured(): void;
     getData(query: any, callback: any): void;
 }
