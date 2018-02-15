@@ -20,21 +20,20 @@ export default class FileUpload {
         this.input = targetInput;
         this.container = this.input.closest(".file-upload");
         this.idInput = this.container.find("input.file-id");
-        this.progressBar = this.container.find(".progress-bar");
         this.fileLabel = this.input.parent().find(':text');
         this.deleteButton = this.container.find(".delete-file").click(e => this.onDeleteButtonClicked());
-
-        if (this.idInput.val() != "REMOVE") {
-            this.currentFileLink = this.container.find('.current-file > a');
-            this.existingFileNameInput = this.container.find('.bootstrap-filestyle > .progress > input:text');
-        }
     }
 
     enable() {
         this.input.attr("data-url", "/upload");
         this.input.filestyle({ buttonBefore: true });
         this.container.find('.bootstrap-filestyle > input:text').wrap($("<div class='progress'></div>"));
+        this.progressBar = this.container.find(".progress-bar");
         this.container.find('.bootstrap-filestyle > .progress').prepend(this.progressBar);
+        if (this.idInput.val() != "REMOVE") {
+            this.currentFileLink = this.container.find('.current-file > a');
+            this.existingFileNameInput = this.container.find('.bootstrap-filestyle > .progress > input:text');
+        }
 
         if (this.hasExistingFile() && this.existingFileNameInput.val() == "")
             this.showExistingFile();
