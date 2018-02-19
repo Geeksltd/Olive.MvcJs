@@ -34,7 +34,7 @@ export default class AutoComplete {
 
     //    }
     //};
-    
+
     this.getData(null, result => {
       this.input
         .data("selected-text", "")
@@ -42,7 +42,7 @@ export default class AutoComplete {
         .on("blur", () => this.itemBlured())
         .on("typeahead:selected", (e, i) => this.itemSelected(i))
         .typeahead({
-          minLength: 0,
+          minLength: 0, 
           searchOnFocus: true,
           backdrop: {
             "background-color": "#fff"
