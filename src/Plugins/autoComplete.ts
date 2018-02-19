@@ -35,7 +35,7 @@ export default class AutoComplete {
     //    }
     //};
 
-    this.getData(null, result => {
+    this.getData(null, result => {  
       this.input
         .data("selected-text", "")
         //.on('input', () => this.clearValue())
