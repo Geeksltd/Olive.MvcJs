@@ -1,4 +1,6 @@
-﻿export default class Waiting {
+﻿import Url from 'olive/Components/Url'
+
+export default class Waiting {
 
     public static show(blockScreen: boolean = false) {
 
@@ -11,7 +13,9 @@
                 .appendTo(screen);
         }
 
-        $("<div class='wait-container'><div class='wait-box'><img src='/img/loading.gif'/></div>")
+        var imageUrl = Url.ofContent('/img/loading.gif');
+
+        $("<div class='wait-container'><div class='wait-box'><img src='" + imageUrl + "'/></div>")
             .appendTo(screen)
             .fadeIn('slow');
     }

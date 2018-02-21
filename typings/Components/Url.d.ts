@@ -7,4 +7,6 @@ export default class Url {
     static fullQueryString(url: string): string;
     static addQuery(url: string, key: string, value: any): string;
     static removeEmptyQueries(url: string): string;
+    static baseContentUrl: any;
+    static ofContent(relativeUrl: string): string;
 }

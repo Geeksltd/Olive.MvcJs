@@ -7,7 +7,7 @@
         if (returnUrl) window.location.href = returnUrl;
         else history.back();
     }
-    
+
     static updateQuery(uri, key, value) {
         if (uri == null) uri = window.location.href;
 
@@ -79,4 +79,11 @@
 
         return result;
     }
+
+    static baseContentUrl = window["BaseThemeUrl"] || '/';
+    static ofContent(relativeUrl: string) {
+        let result = this.baseContentUrl + relativeUrl;
+        return result.replace(/\/\//g, "/");
+    }
+
 }
