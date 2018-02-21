@@ -82,8 +82,13 @@
 
     static baseContentUrl = window["BaseThemeUrl"] || '/';
     static ofContent(relativeUrl: string) {
-        let result = this.baseContentUrl + relativeUrl;
-        return result.replace(/\/\//g, "/");
-    }
+        let base = this.baseContentUrl;
+        while (base.length > 0 && base[base.length - 1] === '/')
+            base = base.substring(0, base.length - 1);
 
+        while (relativeUrl.length > 0 && relativeUrl[0] === '/')
+            relativeUrl = relativeUrl.substring(1);
+
+        return base + '/' + relativeUrl;
+    }
 }
