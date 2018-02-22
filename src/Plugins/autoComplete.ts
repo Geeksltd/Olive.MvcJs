@@ -106,7 +106,7 @@ export default class AutoComplete {
 
   getData(query: any, callback: any) {
     this.awaitingAutocompleteResponses++;
-    let url = this.input.attr("autocomplete_source");
+    let url = this.input.attr("autocomplete-source");
     url = Url.removeQuery(url, this.input.attr("name")); // Remove the previous text.
     let data = Form.getPostData(this.input);
 

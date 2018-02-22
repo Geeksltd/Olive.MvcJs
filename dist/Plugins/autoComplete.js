@@ -30,16 +30,16 @@ define(["require", "exports", "olive/Components/Url", "olive/Components/Form", "
                     .on("blur", function () { return _this.itemBlured(); })
                     .on("typeahead:selected", function (e, i) { return _this.itemSelected(i); })
                     .typeahead({
-                    minLength: 0,
-                    searchOnFocus: true,
-                    backdrop: {
-                        "background-color": "#fff"
-                    },
-                    emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
-                    source: result,
-                    display: "Display",
-                    templateValue: "{{Value}}"
-                });
+                        minLength: 0,
+                        searchOnFocus: true,
+                        backdrop: {
+                            "background-color": "#fff"
+                        },
+                        emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
+                        source: result,
+                        display: "Display",
+                        templateValue: "{{Value}}"
+                    });
             });
         };
         AutoComplete.prototype.clearValue = function () {
@@ -93,7 +93,7 @@ define(["require", "exports", "olive/Components/Url", "olive/Components/Form", "
         AutoComplete.prototype.getData = function (query, callback) {
             var _this = this;
             this.awaitingAutocompleteResponses++;
-            var url = this.input.attr("autocomplete_source");
+            var url = this.input.attr("autocomplete-source");
             url = Url_1.default.removeQuery(url, this.input.attr("name")); // Remove the previous text.
             var data = Form_1.default.getPostData(this.input);
             setTimeout(function () {
@@ -105,19 +105,19 @@ define(["require", "exports", "olive/Components/Url", "olive/Components/Form", "
                     .always(function () { return _this.awaitingAutocompleteResponses--; })
                     .fail(FormAction_1.default.onAjaxResponseError)
                     .done(function (result) {
-                    result = result.map(function (i) {
-                        return {
-                            Display: i.Display || i.Text || i.Value,
-                            Value: i.Value || i.Text || i.Display,
-                            Text: i.Text ||
+                        result = result.map(function (i) {
+                            return {
+                                Display: i.Display || i.Text || i.Value,
+                                Value: i.Value || i.Text || i.Display,
+                                Text: i.Text ||
                                 $("<div/>")
                                     .append($(i.Display))
                                     .text() ||
                                 i.Value
-                        };
+                            };
+                        });
+                        return callback(result);
                     });
-                    return callback(result);
-                });
             }, Config_1.default.AUTOCOMPLETE_INPUT_DELAY);
         };
         return AutoComplete;
