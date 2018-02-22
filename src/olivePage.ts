@@ -1,15 +1,15 @@
 
-import Config from "olive/Config"
+import Config from "olive/config"
 
-import FormAction from 'olive/mvc/FormAction'
-import AjaxRedirect from 'olive/mvc/AjaxRedirect'
-import StandardAction from 'olive/mvc/StandardAction'
+import FormAction from 'olive/mvc/formAction'
+import AjaxRedirect from 'olive/mvc/ajaxRedirect'
+import StandardAction from 'olive/mvc/standardAction'
 
-import Form from 'olive/components/Form'
-import Url from 'olive/components/Url'
-import SystemExtensins from 'olive/extensions/SystemExtensins';
-import Modal from 'olive/components/Modal'
-import Validate from 'olive/components/Validate'
+import Form from 'olive/components/form'
+import Url from 'olive/components/url'
+import SystemExtensions from 'olive/extensions/systemExtensions';
+import Modal from 'olive/components/modal'
+import Validate from 'olive/components/validate'
 import Sorting from 'olive/components/sorting'
 import Paging from 'olive/components/paging'
 import MasterDetail from 'olive/components/masterDetail'
@@ -38,7 +38,7 @@ export default class OlivePage {
     public waiting = Waiting;
 
     constructor() {
-        SystemExtensins.initialize();
+        SystemExtensions.initialize();
         Modal.initialize();
 
         $(() => {

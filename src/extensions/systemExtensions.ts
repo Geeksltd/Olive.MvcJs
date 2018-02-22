@@ -1,6 +1,6 @@
 import * as jq from 'olive/extensions/jQueryExtensions'
 
-export default class SystemExtensins {
+export default class SystemExtensions {
 
     static initialize() {
         window.download = this.download;
@@ -8,8 +8,8 @@ export default class SystemExtensins {
         JSON.safeParse = this.safeParse;
 
         if (!String.prototype.endsWith) String.prototype.endsWith = this.stringEndsWith;
-        if (!String.prototype.htmlEncode) String.prototype.htmlEncode = function () { return SystemExtensins.htmlEncode(this) };
-        if (!String.prototype.htmlDecode) String.prototype.htmlDecode = function () { return SystemExtensins.htmlDecode(this) };
+        if (!String.prototype.htmlEncode) String.prototype.htmlEncode = function () { return SystemExtensions.htmlEncode(this) };
+        if (!String.prototype.htmlDecode) String.prototype.htmlDecode = function () { return SystemExtensions.htmlDecode(this) };
 
         window.location.pathAndQuery = () => window.location.pathname + window.location.search;
 
