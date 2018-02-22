@@ -1,4 +1,4 @@
-﻿import Url from 'olive/Components/Url'
+﻿import Url from 'olive/components/url'
 
 export default class Waiting {
 

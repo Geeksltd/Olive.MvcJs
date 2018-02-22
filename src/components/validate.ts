@@ -1,4 +1,4 @@
-﻿import Config from "olive/Config"
+﻿import Config from "olive/config"
 
 export default class Validate {
 

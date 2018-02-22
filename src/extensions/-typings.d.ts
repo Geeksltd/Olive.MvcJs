@@ -1,9 +1,8 @@
 ﻿
-
 interface Window {
     stop();
     require(moduleName: string): Function;
-    isModal(): boolean; 
+    isModal(): boolean;
     download(url: string);
     page: any;
 }

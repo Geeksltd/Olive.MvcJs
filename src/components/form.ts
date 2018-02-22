@@ -1,7 +1,7 @@
-﻿import Url from 'olive/Components/Url'
-import Validate from 'olive/Components/Validate'
-import Waiting from 'olive/Components/Waiting'
-import AjaxRedirect from 'olive/Mvc/AjaxRedirect'
+﻿import Url from 'olive/components/url'
+import Validate from 'olive/components/validate'
+import Waiting from 'olive/components/waiting'
+import AjaxRedirect from 'olive/mvc/ajaxRedirect'
 
 export default class Form {
 

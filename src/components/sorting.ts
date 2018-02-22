@@ -1,6 +1,6 @@
 
-import Url from 'olive/Components/Url'
-import FormAction from 'olive/Mvc/FormAction'
+import Url from 'olive/components/url'
+import FormAction from 'olive/mvc/formAction'
 
 export default class Sorting {
 

@@ -1,36 +1,36 @@
 
 import Config from "olive/Config"
 
-import FormAction from 'olive/Mvc/FormAction'
-import AjaxRedirect from 'olive/Mvc/AjaxRedirect'
-import StandardAction from 'olive/Mvc/StandardAction'
+import FormAction from 'olive/mvc/FormAction'
+import AjaxRedirect from 'olive/mvc/AjaxRedirect'
+import StandardAction from 'olive/mvc/StandardAction'
 
-import Form from 'olive/Components/Form'
-import Url from 'olive/Components/Url'
-import SystemExtensins from 'olive/Extensions/SystemExtensins';
-import Modal from 'olive/Components/Modal'
-import Validate from 'olive/Components/Validate'
-import Sorting from 'olive/Components/Sorting'
-import Paging from 'olive/Components/Paging'
-import MasterDetail from 'olive/Components/MasterDetail'
-import Alert from 'olive/Components/Alert'
-import Waiting from 'olive/Components/Waiting'
-import Grid from 'olive/Components/Grid'
+import Form from 'olive/components/Form'
+import Url from 'olive/components/Url'
+import SystemExtensins from 'olive/extensions/SystemExtensins';
+import Modal from 'olive/components/Modal'
+import Validate from 'olive/components/Validate'
+import Sorting from 'olive/components/sorting'
+import Paging from 'olive/components/paging'
+import MasterDetail from 'olive/components/masterDetail'
+import Alert from 'olive/components/alert'
+import Waiting from 'olive/components/waiting'
+import Grid from 'olive/components/grid'
 
-import Select from 'olive/Plugins/Select'
-import PasswordStength from 'olive/Plugins/PasswordStength'
-import HtmlEditor from 'olive/Plugins/HtmlEditor'
-import TimeControl from 'olive/Plugins/TimeControl'
-import AutoComplete from 'olive/Plugins/AutoComplete'
-import Slider from 'olive/Plugins/Slider'
-import DatePicker from 'olive/Plugins/DatePicker'
-import NumbericUpDown from 'olive/Plugins/NumericUpDown'
-import FileUpload from 'olive/Plugins/FileUpload'
-import ConfirmBox from 'olive/Plugins/ConfirmBox'
-import SubMenu from 'olive/Plugins/SubMenu'
-import InstantSearch from 'olive/Plugins/InstantSearch'
-import DateDropdown from 'olive/Plugins/DateDropdown'
-import UserHelp from 'olive/Plugins/UserHelp'
+import Select from 'olive/plugins/select'
+import PasswordStength from 'olive/plugins/passwordStength'
+import HtmlEditor from 'olive/plugins/htmlEditor'
+import TimeControl from 'olive/plugins/timeControl'
+import AutoComplete from 'olive/plugins/autoComplete'
+import Slider from 'olive/plugins/slider'
+import DatePicker from 'olive/plugins/datePicker'
+import NumbericUpDown from 'olive/plugins/numericUpDown'
+import FileUpload from 'olive/plugins/fileUpload'
+import ConfirmBox from 'olive/plugins/confirmBox'
+import SubMenu from 'olive/plugins/subMenu'
+import InstantSearch from 'olive/plugins/instantSearch'
+import DateDropdown from 'olive/plugins/dateDropdown'
+import UserHelp from 'olive/plugins/userHelp'
 
 export default class OlivePage {
 
@@ -98,7 +98,7 @@ export default class OlivePage {
 
         // =================== Plug-ins ====================
         InstantSearch.enable($("[name=InstantSearch]"));
-        AutoComplete.enable($("input[autocomplete-source]"));  
+        AutoComplete.enable($("input[autocomplete-source]"));
         DatePicker.enable($("[data-control=date-picker],[data-control=calendar]"));
         TimeControl.enable($("[data-control='date-picker|time-picker']"));
         TimeControl.enable($("[data-control=time-picker]"));

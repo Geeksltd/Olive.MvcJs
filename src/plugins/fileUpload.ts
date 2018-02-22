@@ -1,4 +1,4 @@
-import FormAction from "olive/Mvc/FormAction"
+import FormAction from "olive/mvc/formAction"
 
 // For configuration see:
 // http://markusslima.github.io/bootstrap-filestyle/ 

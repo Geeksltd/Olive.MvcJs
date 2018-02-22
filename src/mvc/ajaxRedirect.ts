@@ -1,5 +1,5 @@
-import Waiting from 'olive/Components/Waiting'
-import FormAction from 'olive/Mvc/FormAction'
+import Waiting from 'olive/components/waiting'
+import FormAction from 'olive/mvc/formAction'
 
 export default class AjaxRedirect {
     static ajaxChangedUrl = 0;

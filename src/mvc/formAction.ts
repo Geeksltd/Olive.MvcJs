@@ -1,11 +1,11 @@
-import Waiting from 'olive/Components/Waiting'
-import Validate from 'olive/Components/Validate'
-import MasterDetail from 'olive/Components/MasterDetail'
-import Form from 'olive/Components/Form'
-import Config from "olive/Config"
-import AjaxRedirect from 'olive/Mvc/AjaxRedirect'
-import StandardAction from 'olive/Mvc/StandardAction'
-import LiteEvent from 'olive/Components/LiteEvent'
+import Waiting from 'olive/components/waiting'
+import Validate from 'olive/components/validate'
+import MasterDetail from 'olive/components/masterDetail'
+import Form from 'olive/components/form'
+import Config from "olive/config"
+import AjaxRedirect from 'olive/mvc/ajaxRedirect'
+import StandardAction from 'olive/mvc/standardAction'
+import LiteEvent from 'olive/components/liteEvent'
 
 export interface IViewUpdatedEventArgs {
     container: JQuery;
@@ -20,11 +20,11 @@ export default class FormAction {
     static dynamicallyLoadedScriptFiles = [];
 
     public static onViewChanged = new LiteEvent<IViewUpdatedEventArgs>();
-    
-    
-    public static enableInvokeWithAjax(selector:JQuery,event:string,attrName:string){selector.off(event).on(event,(e)=> this.invokeWithAjax(e, $(e.currentTarget).attr(attrName), false));}
 
-    public static enableinvokeWithPost(selector:JQuery){selector.off("click.formaction").on("click.formaction",(e)=> this.invokeWithPost(e));}
+
+    public static enableInvokeWithAjax(selector: JQuery, event: string, attrName: string) { selector.off(event).on(event, (e) => this.invokeWithAjax(e, $(e.currentTarget).attr(attrName), false)); }
+
+    public static enableinvokeWithPost(selector: JQuery) { selector.off("click.formaction").on("click.formaction", (e) => this.invokeWithPost(e)); }
 
     static invokeWithPost(event) {
         let trigger = $(event.currentTarget);
@@ -41,7 +41,7 @@ export default class FormAction {
         return false;
     }
 
-   static invokeWithAjax(event, actionUrl, syncCall = false) {
+    static invokeWithAjax(event, actionUrl, syncCall = false) {
 
         let trigger = $(event.currentTarget);
         let triggerUniqueSelector = trigger.getUniqueSelector();

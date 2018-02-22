@@ -1,8 +1,8 @@
-import Alert from 'olive/Components/Alert'
-import Select from 'olive/Plugins/Select'
-import Waiting from 'olive/Components/Waiting'
-import Modal from 'olive/Components/Modal'
-import AjaxRedirect from 'olive/Mvc/AjaxRedirect'
+import Alert from 'olive/components/alert'
+import Select from 'olive/plugins/select'
+import Waiting from 'olive/components/waiting'
+import Modal from 'olive/components/modal'
+import AjaxRedirect from 'olive/mvc/ajaxRedirect'
 
 export default class StandardAction {
 

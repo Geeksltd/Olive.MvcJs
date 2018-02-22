@@ -1,5 +1,5 @@
-import Config from "olive/Config"
-import Modal from "olive/Components/Modal"
+import Config from "olive/config"
+import Modal from "olive/components/modal"
 
 export default class HtmlEditor {
 

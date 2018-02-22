@@ -1,5 +1,5 @@
-import Modal from "olive/Components/Modal"
-import Config from "olive/Config";
+import Modal from "olive/components/modal"
+import Config from "olive/config";
 
 export default class TimeControl {
     public static enable(selector: JQuery) { selector.each((i, e) => new TimeControl($(e))); }

@@ -1,4 +1,4 @@
-import * as jq from 'olive/Extensions/JQueryExtensions'
+import * as jq from 'olive/extensions/jQueryExtensions'
 
 export default class SystemExtensins {
 

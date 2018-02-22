@@ -1,6 +1,6 @@
 
-import Modal from "olive/Components/Modal"
-import Config from "olive/Config"
+import Modal from "olive/components/modal"
+import Config from "olive/config"
 
 export default class DatePicker {
     input: any;

@@ -1,5 +1,5 @@
 
-import Form from "olive/Components/Form"
+import Form from "olive/components/form"
 
 export default class Slider {
     input: any;
