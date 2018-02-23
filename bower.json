@@ -12,7 +12,6 @@
         "**/.*",
         "node_modules",
         "test",
-        "src",
         "tests",
         "tsconfig.json",
         "Build.bat",

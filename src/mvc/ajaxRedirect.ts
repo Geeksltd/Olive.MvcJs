@@ -29,6 +29,7 @@ export default class AjaxRedirect {
 
     public static go(url: string, trigger: JQuery = null, isBack: boolean = false, keepScroll: boolean = false,
         addToHistory = true) {
+
         this.isAjaxRedirecting = true;
         FormAction.isAwaitingAjaxResponse = true;
         if (window.stop) window.stop();
@@ -48,7 +49,11 @@ export default class AjaxRedirect {
 
                 if (!isBack) {
                     this.ajaxChangedUrl++;
-                    if (addToHistory) history.pushState({}, $("#page_meta_title").val(), url);
+                    if (addToHistory) {
+                        history.pushState({},
+                            $("#page_meta_title").val(),
+                            trigger.attr("data-addressbar") || url);
+                    }
                 }
 
                 FormAction.isAwaitingAjaxResponse = false;
