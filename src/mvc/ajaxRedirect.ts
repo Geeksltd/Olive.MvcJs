@@ -44,9 +44,8 @@ export default class AjaxRedirect {
         $.ajax({
             url: url,
             type: 'GET',
-            xhrFields: {
-                withCredentials: true
-            },
+            xhrFields: { withCredentials: true },
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
             success: (response) => {
                 FormAction.events = {};
 
