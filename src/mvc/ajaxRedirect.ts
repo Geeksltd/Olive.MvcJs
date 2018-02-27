@@ -44,6 +44,9 @@ export default class AjaxRedirect {
         $.ajax({
             url: url,
             type: 'GET',
+            xhrFields: {
+                withCredentials: true
+            },
             success: (response) => {
                 FormAction.events = {};
 
@@ -62,7 +65,10 @@ export default class AjaxRedirect {
 
                 if (keepScroll) $(document).scrollTop(scrollTopBefore);
             },
-            error: (response) => location.href = url,
+            error: (response) => {
+                if (confirm("Request failed. Do you want to see the error details?"))
+                    open(url, "_blank");
+            },
             complete: (response) => Waiting.hide()
         });
         return false;
