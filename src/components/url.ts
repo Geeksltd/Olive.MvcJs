@@ -1,11 +1,43 @@
 ﻿export default class Url {
 
+    public static getEffectiveUrl(url: string, trigger: JQuery): string {
+        if (this.isAbsolute(url)) return url;
+
+        var containerMain = trigger.closest("main[data-root]");
+        if (containerMain.length === 0) return url;
+
+        var root = containerMain.attr("data-root");
+        if (!root) return url;
+        return this.makeAbsolute(root, url);
+    }
+
+    static makeAbsolute(baseUrl: string, relativeUrl: string): string {
+        baseUrl = baseUrl || window.location.origin;
+        relativeUrl = relativeUrl || '';
+
+        if (relativeUrl.indexOf('/') != 0) relativeUrl = '/' + relativeUrl;
+
+        if (baseUrl.charAt(baseUrl.length - 1) == '/')
+            baseUrl = baseUrl.substring(0, baseUrl.length - 1);
+
+        return baseUrl + relativeUrl;
+    }
+
+    static isAbsolute(url: string): Boolean {
+        if (!url) return false;
+        url = url.toLowerCase();
+        return url.indexOf("http://") === 0 || url.indexOf("https://") === 0;
+    }
+
     static current(): string { return window.location.href; }
 
     static goBack(): void {
-        let returnUrl = Url.getQuery("ReturnUrl");
-        if (returnUrl) window.location.href = returnUrl;
-        else history.back();
+        if (Url.current().indexOf(Url.baseContentUrl + "/##") === 0) history.back();
+        else {
+            let returnUrl = Url.getQuery("ReturnUrl");
+            if (returnUrl) window.location.href = returnUrl;
+            else history.back();
+        }
     }
 
     static updateQuery(uri, key, value) {

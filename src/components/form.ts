@@ -4,7 +4,7 @@ import Waiting from 'olive/components/waiting'
 import AjaxRedirect from 'olive/mvc/ajaxRedirect'
 
 export default class Form {
-
+    
     public static enableDefaultButtonKeyPress(selector: JQuery) { selector.off("keypress.default-button").on("keypress.default-button", (e) => this.DefaultButtonKeyPress(e)); }
 
     public static enablecleanUpNumberField(selector: JQuery) { selector.off("blur.cleanup-number").on("blur.cleanup-number", (e) => this.cleanUpNumberField($(e.currentTarget))); }

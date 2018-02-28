@@ -1,4 +1,5 @@
 import Waiting from 'olive/components/waiting'
+import Url from 'olive/components/Url'
 import FormAction from 'olive/mvc/formAction'
 
 export default class AjaxRedirect {
@@ -30,6 +31,15 @@ export default class AjaxRedirect {
     public static go(url: string, trigger: JQuery = null, isBack: boolean = false, keepScroll: boolean = false,
         addToHistory = true) {
 
+        if (!trigger) trigger = $(window);
+
+        url = Url.getEffectiveUrl(url, trigger);
+
+        if (url.indexOf(Url.baseContentUrl + "/##") == 0) {
+            url = url.substring(Url.baseContentUrl.length).substring(3);
+            console.log("## Redirecting to " + url);
+        }
+
         this.isAjaxRedirecting = true;
         FormAction.isAwaitingAjaxResponse = true;
         if (window.stop) window.stop();
@@ -52,9 +62,17 @@ export default class AjaxRedirect {
                 if (!isBack) {
                     this.ajaxChangedUrl++;
                     if (addToHistory) {
-                        history.pushState({},
-                            $("#page_meta_title").val(),
-                            trigger.attr("data-addressbar") || url);
+
+                        var title = $("#page_meta_title").val()
+
+                        let addressBar = trigger.attr("data-addressbar") || url;
+                        try {
+                            history.pushState({}, title, addressBar);
+                        } catch (error) {
+
+                            addressBar = Url.makeAbsolute(Url.baseContentUrl, "/##" + addressBar);
+                            history.pushState({}, title, addressBar);
+                        }
                     }
                 }
 

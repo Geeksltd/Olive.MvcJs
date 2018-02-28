@@ -2,6 +2,7 @@ import Waiting from 'olive/components/waiting'
 import Validate from 'olive/components/validate'
 import MasterDetail from 'olive/components/masterDetail'
 import Form from 'olive/components/form'
+import Url from 'olive/components/url'
 import Config from "olive/config"
 import AjaxRedirect from 'olive/mvc/ajaxRedirect'
 import StandardAction from 'olive/mvc/standardAction'
@@ -21,8 +22,14 @@ export default class FormAction {
 
     public static onViewChanged = new LiteEvent<IViewUpdatedEventArgs>();
 
-
-    public static enableInvokeWithAjax(selector: JQuery, event: string, attrName: string) { selector.off(event).on(event, (e) => this.invokeWithAjax(e, $(e.currentTarget).attr(attrName), false)); }
+    public static enableInvokeWithAjax(selector: JQuery, event: string, attrName: string) {
+        selector.off(event).on(event,
+            (e) => {
+                let trigger = $(e.currentTarget);
+                let url = Url.getEffectiveUrl(trigger.attr(attrName), trigger);
+                this.invokeWithAjax(e, url, false);
+            });
+    }
 
     public static enableinvokeWithPost(selector: JQuery) { selector.off("click.formaction").on("click.formaction", (e) => this.invokeWithPost(e)); }
 
@@ -32,7 +39,7 @@ export default class FormAction {
         if (containerModule.is("form") && Validate.validateForm(trigger) == false) return false;
 
         let data = Form.getPostData(trigger);
-        let url = trigger.attr("formaction");
+        let url = Url.getEffectiveUrl(trigger.attr("formaction"), trigger);
         let form = $("<form method='post' />").hide().appendTo($("body"));
 
         for (let item of data)
@@ -57,6 +64,7 @@ export default class FormAction {
         $.ajax({
             url: actionUrl,
             type: trigger.attr("data-ajax-method") || 'POST',
+            xhrFields: { withCredentials: true },
             async: !syncCall,
             data: data_before_disable,
             success: (result) => { Waiting.hide(); this.processAjaxResponse(result, containerModule, trigger); },
