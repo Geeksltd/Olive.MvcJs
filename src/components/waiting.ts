@@ -2,9 +2,13 @@
 
 export default class Waiting {
 
-    public static show(blockScreen: boolean = false) {
+    public static show(blockScreen: boolean = false, validate: boolean = true) {
 
-        if (!$(document.forms[0]).valid()) return;
+        if (validate) {
+            for (let i = 0; i < document.forms.length; i++)
+                if (!$(document.forms[i]).valid()) return;
+        }
+
         let screen = $("<div class='wait-screen' />").appendTo("body");
         if (blockScreen) {
             $("<div class='cover' />")

@@ -1,4 +1,4 @@
 export default class Waiting {
-    static show(blockScreen?: boolean): void;
+    static show(blockScreen?: boolean, validate?: boolean): void;
     static hide(): void;
 }

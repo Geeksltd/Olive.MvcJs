@@ -39,13 +39,13 @@ export default class AjaxRedirect {
         if (keepScroll) {
             scrollTopBefore = $(document).scrollTop();
         }
-        Waiting.show();
+
+        Waiting.show(false, false);
 
         $.ajax({
             url: url,
             type: 'GET',
             xhrFields: { withCredentials: true },
-            headers: { 'X-Requested-With': 'XMLHttpRequest' },
             success: (response) => {
                 FormAction.events = {};
 
