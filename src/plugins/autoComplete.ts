@@ -30,13 +30,13 @@ export default class AutoComplete {
         let dataSource = this.getData;
 
         this.getData(null, result => {
-            this.input
+           this.input
                 .data("selected-text", "")
                 .on('input', () => this.clearValue())
                 .on("blur", () => this.itemBlured())
                 .on("typeahead:selected", (e, i) => this.itemSelected(i))
                 .typeahead({
-                    minLength: 0,
+                    minLength: 2,
                     searchOnFocus: true,
                     backdrop: { "background-color": "#fff" },
                     emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
@@ -54,9 +54,11 @@ export default class AutoComplete {
     }
 
     itemSelected(item: any) {
+        
         if (item != undefined) {
             this.valueField.val(item.Value);
             this.input.data("selected-text", item.Display);
+            this.input.val(item.Display);
         } else {
             console.log("Clearing text, item is undefined");
             this.input.data("selected-text", "");
@@ -66,6 +68,7 @@ export default class AutoComplete {
     }
 
     itemBlured() {
+
         if (this.valueField.val() == "" && this.input.val() != "") {
             // this hack is so when you paste something a focus out, it should set the hidden field
             let suggested = this.input.closest(".twitter-typeahead").find(".tt-suggestion");
@@ -88,6 +91,7 @@ export default class AutoComplete {
     }
 
     getData(query: any, callback: any) {
+
         this.awaitingAutocompleteResponses++;
         let url = this.input.attr("autocomplete-source") || '';
         url = Url.removeQuery(url, this.input.attr("name")); // Remove the previous text.
