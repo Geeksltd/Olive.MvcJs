@@ -1,3 +1,4 @@
+import Url from 'olive/components/url'
 
 export default class Modal {
     static current: any = null;
@@ -37,6 +38,9 @@ export default class Modal {
     constructor(event?: JQueryEventObject, targeturl?: string, opt?: any) {
         let target = event ? $(event.currentTarget) : null;
         this.url = targeturl ? targeturl : target.attr("href");
+
+        this.url = Url.getEffectiveUrl(this.url, $(event.target));
+
         let options = opt ? opt : target.attr("data-modal-options");
         if (options) this.modalOptions = JSON.safeParse(options);
     }
