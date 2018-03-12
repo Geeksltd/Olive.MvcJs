@@ -24,6 +24,7 @@ import TimeControl from 'olive/plugins/timeControl'
 import AutoComplete from 'olive/plugins/autoComplete'
 import Slider from 'olive/plugins/slider'
 import DatePicker from 'olive/plugins/datePicker'
+import DateTimePicker from 'olive/plugins/dateTimePicker'
 import NumbericUpDown from 'olive/plugins/numericUpDown'
 import FileUpload from 'olive/plugins/fileUpload'
 import ConfirmBox from 'olive/plugins/confirmBox'
@@ -100,7 +101,7 @@ export default class OlivePage {
         InstantSearch.enable($("[name=InstantSearch]"));
         AutoComplete.enable($("input[autocomplete-source]"));
         DatePicker.enable($("[data-control=date-picker],[data-control=calendar]"));
-        TimeControl.enable($("[data-control='date-picker|time-picker']"));
+        DateTimePicker.enable($("[data-control='date-picker|time-picker']"));
         TimeControl.enable($("[data-control=time-picker]"));
         DateDropdown.enable($("[data-control=date-drop-downs]"));
         HtmlEditor.enable($("[data-control=html-editor]"));
