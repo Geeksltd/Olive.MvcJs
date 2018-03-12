@@ -7,9 +7,7 @@ export default class SystemExtensions {
         Array.groupBy = this.groupBy;
         JSON.safeParse = this.safeParse;
 
-        if (!String.prototype.endsWith) String.prototype.endsWith = this.stringEndsWith;
-        if (!String.prototype.htmlEncode) String.prototype.htmlEncode = function () { return SystemExtensions.htmlEncode(this) };
-        if (!String.prototype.htmlDecode) String.prototype.htmlDecode = function () { return SystemExtensions.htmlDecode(this) };
+        this.extendString();
 
         window.location.pathAndQuery = () => window.location.pathname + window.location.search;
 
@@ -23,6 +21,51 @@ export default class SystemExtensions {
             raiseEvent: jq.raiseEvent,
             getUniqueSelector: jq.getUniqueSelector
         });
+    }
+
+    static extend(type, name: string, implementation: Function) {
+        var proto = type.prototype;
+        if (proto[name]) return; // already defined.
+
+        if (implementation.length == 0) throw new Error("extend function needs at least one argument.");
+        else if (implementation.length == 1) proto[name] = function () { return implementation(this) };
+        else if (implementation.length == 2) proto[name] = function (arg) { return implementation(this, arg) };
+        else if (implementation.length == 3) proto[name] = function (a1, a2) { return implementation(this, a1, a2) };
+    }
+
+    static extendString() {
+
+        this.extend(String, "endsWith",
+            (instance: string, searchString: string) => {
+                var position = instance.length - searchString.length;
+                var lastIndex = instance.indexOf(searchString, position);
+                return lastIndex !== -1 && lastIndex === position;
+            });
+
+        this.extend(String, "htmlEncode", instance => {
+            var a: any = document.createElement('a');
+            a.appendChild(document.createTextNode(instance));
+            return a.innerHTML;
+        });
+
+        this.extend(String, "htmlDecode", instance => {
+            var a = document.createElement('a');
+            a.innerHTML = instance;
+            return a.textContent;
+        });
+
+        this.extend(String, "startsWith", (instance: string, text: string) => instance.indexOf(text) === 0);
+
+        this.extend(String, "withPrefix",
+            (instance: string, prefix: string) => instance.startsWith(prefix) === false ? prefix + instance : instance);
+
+        this.extend(String, "trimText", (instance, text: string) => instance.trimStart(text).trimEnd(text));
+
+        this.extend(String, "trimStart",
+            (instance, text: string) => instance.startsWith(text) ? instance.slice(text.length) : instance);
+
+        this.extend(String, "trimEnd",
+            (instance, text: string) => instance.endsWith(text) ? instance.slice(0, instance.lastIndexOf(text)) : instance);
     }
 
     static safeParse(data) {
@@ -48,24 +91,5 @@ export default class SystemExtensions {
         });
 
         return Object.keys(groups).map((g) => groups[g]);
-    }
-
-    static stringEndsWith(searchString: string): boolean {
-        var subjectString = this.toString();
-        var position = subjectString.length - searchString.length;
-        var lastIndex = subjectString.indexOf(searchString, position);
-        return lastIndex !== -1 && lastIndex === position;
-    }
-
-    static htmlEncode(text: string): string {
-        var a: any = document.createElement('a');
-        a.appendChild(document.createTextNode(text));
-        return a.innerHTML;
-    }
-
-    static htmlDecode(text: string): string {
-        var a = document.createElement('a');
-        a.innerHTML = text;
-        return a.textContent;
     }
 }
