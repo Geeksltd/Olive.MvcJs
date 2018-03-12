@@ -5,6 +5,7 @@ import FormAction from 'olive/mvc/formAction'
 export default class AjaxRedirect {
     static ajaxChangedUrl = 0;
     static isAjaxRedirecting = false;
+    public static redirected: (title: string, url: string) => void;
 
     public static enableBack(selector: JQuery) {
         selector.off("popstate.ajax-redirect").on("popstate.ajax-redirect", e => this.back(e));
@@ -67,7 +68,12 @@ export default class AjaxRedirect {
 
                         let addressBar = trigger.attr("data-addressbar") || url;
                         try {
-                            history.pushState({}, title, addressBar);
+
+                            if (AjaxRedirect.redirected)
+                                AjaxRedirect.redirected(title, addressBar);
+                            else
+                                history.pushState({}, title, addressBar);
+
                         } catch (error) {
 
                             addressBar = Url.makeAbsolute(Url.baseContentUrl, "/##" + addressBar);
