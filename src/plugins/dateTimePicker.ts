@@ -14,7 +14,7 @@ export default class DateTimePicker {
 
         input.attr("data-autofocus", "disabled");
         input.datetimepicker({
-            format: Config.DATE_TIME_FORMAT,
+            format: Config.DATE_FORMAT,
             useCurrent: false,
             keepInvalid: input.closest("form").find("[data-change-action]").length == 0,
             locale: Config.DATE_LOCALE
