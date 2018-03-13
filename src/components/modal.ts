@@ -39,7 +39,7 @@ export default class Modal {
         let target = event ? $(event.currentTarget) : null;
         this.url = targeturl ? targeturl : target.attr("href");
 
-        this.url = Url.getEffectiveUrl(this.url, $(event.target));
+        this.url = Url.effectiveUrlProvider(this.url, $(event.target));
 
         let options = opt ? opt : target.attr("data-modal-options");
         if (options) this.modalOptions = JSON.safeParse(options);

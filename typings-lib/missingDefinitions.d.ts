@@ -41,6 +41,7 @@ interface String {
     startsWith(text: string): boolean;
     trimEnd(text: string): string;
     trimText(text: string): string;
+    contains(text: string): boolean;
 }
 
 interface JQueryStatic {

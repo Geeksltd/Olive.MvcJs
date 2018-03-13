@@ -26,7 +26,7 @@ export default class FormAction {
         selector.off(event).on(event,
             (e) => {
                 let trigger = $(e.currentTarget);
-                let url = Url.getEffectiveUrl(trigger.attr(attrName), trigger);
+                let url = Url.effectiveUrlProvider(trigger.attr(attrName), trigger);
                 this.invokeWithAjax(e, url, false);
             });
     }
@@ -39,7 +39,7 @@ export default class FormAction {
         if (containerModule.is("form") && Validate.validateForm(trigger) == false) return false;
 
         let data = Form.getPostData(trigger);
-        let url = Url.getEffectiveUrl(trigger.attr("formaction"), trigger);
+        let url = Url.effectiveUrlProvider(trigger.attr("formaction"), trigger);
         let form = $("<form method='post' />").hide().appendTo($("body"));
 
         for (let item of data)

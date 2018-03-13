@@ -66,6 +66,8 @@ export default class SystemExtensions {
 
         this.extend(String, "trimEnd",
             (instance, text: string) => instance.endsWith(text) ? instance.slice(0, instance.lastIndexOf(text)) : instance);
+
+        this.extend(String, "contains", (instance, text: string) => instance.indexOf(text) > -1);
     }
 
     static safeParse(data) {
