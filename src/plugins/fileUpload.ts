@@ -45,7 +45,7 @@ export default class FileUpload {
             drop: this.onDragDropped.bind(this),
             change: this.onChange.bind(this),
             progressall: this.onProgressAll.bind(this),
-            error: this.onUploadError.bind(this),
+            error: this.onUploadError,
             success: this.onUploadSuccess.bind(this)
         });
     }
@@ -94,14 +94,14 @@ export default class FileUpload {
         this.progressBar.width(progress + '%');
     }
 
-    onUploadError(response) {
-        FormAction.onAjaxResponseError(response);
+    onUploadError(jqXHR: JQueryXHR, status: string, error: string) {
+        FormAction.onAjaxResponseError(jqXHR, status, error);
         this.fileLabel.val('');
     }
 
     onUploadSuccess(response) {
         if (response.Error) {
-            FormAction.onAjaxResponseError({ responseText: response.Error });
+            FormAction.onAjaxResponseError(<any>{ responseText: response.Error }, "error", response.Error);
             this.fileLabel.val('');
         }
         else {

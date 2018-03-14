@@ -13,13 +13,11 @@ export default class Modal {
 
         window.addEventListener("message", e => {
             try {
+
                 let arg = JSON.parse(e.data);
-
                 if (arg.command !== 'set-iframe-height') return;
-
                 let iframe = $("iframe").filter((i, f) => f["src"] == arg.url);
-
-                if (iframe.attr("data-has-explicit-height") != 'true') return;
+                if (iframe.attr("data-has-explicit-height") === 'true') return;
                 iframe.height(arg.height);
             } catch (error) {
                 console.error(error);
