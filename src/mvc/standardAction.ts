@@ -3,6 +3,7 @@ import Select from 'olive/plugins/select'
 import Waiting from 'olive/components/waiting'
 import Modal from 'olive/components/modal'
 import AjaxRedirect from 'olive/mvc/ajaxRedirect'
+import CrossDomainEvent from 'olive/components/crossDomainEvent'
 
 export default class StandardAction {
 
@@ -33,10 +34,10 @@ export default class StandardAction {
         if (action.Notify || action.Notify == "") this.notify(action, trigger);
         else if (action.Script) eval(action.Script);
         else if (action.BrowserAction == "Back") window.history.back();
-        else if (action.BrowserAction == "CloseModal") { if (parent.page.modal.close() === false) return false; }
+        else if (action.BrowserAction == "CloseModal") { if (window.page.modal.closeMe() === false) return false; }
         else if (action.BrowserAction == "CloseModalRefreshParent") {
-            parent.page.refresh();
-            parent.page.modal.close();
+            CrossDomainEvent.raise(parent, 'refresh-page');
+            window.page.modal.closeMe();
         }
         else if (action.BrowserAction == "Close") window.close();
         else if (action.BrowserAction == "Refresh") window.page.refresh();
