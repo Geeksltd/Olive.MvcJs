@@ -1,15 +1,6 @@
 ﻿export default class Url {
 
-    public static getEffectiveUrl(url: string, trigger: JQuery): string {
-        if (this.isAbsolute(url)) return url;
-
-        var containerMain = trigger.closest("main[data-root]");
-        if (containerMain.length === 0) return url;
-
-        var root = containerMain.attr("data-root");
-        if (!root) return url;
-        return this.makeAbsolute(root, url);
-    }
+    public static effectiveUrlProvider: ((url: string, trigger: JQuery) => string) = (u, t) => u;
 
     static makeAbsolute(baseUrl: string, relativeUrl: string): string {
         baseUrl = baseUrl || window.location.origin;

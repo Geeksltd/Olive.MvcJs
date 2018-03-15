@@ -13,13 +13,11 @@ export default class Modal {
 
         window.addEventListener("message", e => {
             try {
+
                 let arg = JSON.parse(e.data);
-
                 if (arg.command !== 'set-iframe-height') return;
-
                 let iframe = $("iframe").filter((i, f) => f["src"] == arg.url);
-
-                if (iframe.attr("data-has-explicit-height") != 'true') return;
+                if (iframe.attr("data-has-explicit-height") === 'true') return;
                 iframe.height(arg.height);
             } catch (error) {
                 console.error(error);
@@ -39,7 +37,7 @@ export default class Modal {
         let target = event ? $(event.currentTarget) : null;
         this.url = targeturl ? targeturl : target.attr("href");
 
-        this.url = Url.getEffectiveUrl(this.url, $(event.target));
+        this.url = Url.effectiveUrlProvider(this.url, $(event.target));
 
         let options = opt ? opt : target.attr("data-modal-options");
         if (options) this.modalOptions = JSON.safeParse(options);
