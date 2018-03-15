@@ -28,6 +28,7 @@ export default class FormAction {
                 let trigger = $(e.currentTarget);
                 let url = Url.effectiveUrlProvider(trigger.attr(attrName), trigger);
                 this.invokeWithAjax(e, url, false);
+                return false;
             });
     }
 
