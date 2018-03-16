@@ -28,6 +28,7 @@ export default class FormAction {
                 let trigger = $(e.currentTarget);
                 let url = Url.effectiveUrlProvider(trigger.attr(attrName), trigger);
                 this.invokeWithAjax(e, url, false);
+                return false;
             });
     }
 
@@ -68,7 +69,7 @@ export default class FormAction {
             async: !syncCall,
             data: data_before_disable,
             success: (result) => { Waiting.hide(); this.processAjaxResponse(result, containerModule, trigger); },
-            error: (response) => this.onAjaxResponseError(response),
+            error: this.onAjaxResponseError,
             complete: (x) => {
                 this.isAwaitingAjaxResponse = false;
                 trigger.removeClass('loading-action-result');
@@ -81,20 +82,24 @@ export default class FormAction {
         return false;
     }
 
-    public static onAjaxResponseError(response) {
+    public static onAjaxResponseError(jqXHR: JQueryXHR, status: string, error: string) {
         Waiting.hide();
-        console.error(response);
 
-        let text = response.responseText;
-        if (text.indexOf("<html") > -1) {
-            document.write(text);
+        let text = jqXHR.responseText;
+
+        if (text) {
+            if (text.indexOf("<html") > -1) {
+                document.write(text);
+            }
+            else if (text.indexOf("<form") > -1) {
+                let form = $("form", document);
+                if (form.length) form.replaceWith($(text));
+                else document.write(text);
+            }
+            else alert(text);
         }
-        else if (text.indexOf("<form") > -1) {
-            let form = $("form", document);
-            if (form.length) form.replaceWith($(text));
-            else document.write(text);
-        }
-        else alert(text);
+        else if (error) alert(error);
+        else alert("Error: response status: " + status);
     }
 
     public static processAjaxResponse(response, containerModule, trigger) {

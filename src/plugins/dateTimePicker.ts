@@ -22,18 +22,19 @@ export default class DateTimePicker {
 
         this.input.attr("data-autofocus", "disabled");
         let control = this.input.attr("data-control");
-        let viewMode = this.input.attr("data-view-mode") || 'days';
 
         if (control == "date-picker|time-picker") {
-            (<any>this.input).datetimepicker({
-                format: Config.DATE_TIME_FORMAT,
-                useCurrent: false,
-                showTodayButton: true,
-                icons: { today: 'Date' },
-                viewMode: viewMode,
-                keepInvalid: this.input.closest("form").find("[data-change-action]").length == 0,
-                locale: Config.DATE_LOCALE
-            }).data("DateTimePicker").keyBinds().clear = null;
+            (<any>this.input).datetimepicker(
+                 {
+                    sideBySide: true,
+                    format: Config.DATE_TIME_FORMAT,
+                    useCurrent: false,
+                    showTodayButton: true,
+                    icons: { today: 'Date' },
+                    keepInvalid: this.input.closest("form").find("[data-change-action]").length == 0,
+                    locale: Config.DATE_LOCALE
+             }
+        );//.data("DateTimePicker").keyBinds().clear = null;
             // Now make calendar icon clickable as well             
             this.input.parent().find(".fa-calendar").parent(".input-group-addon").click(() => this.input.focus());
         }

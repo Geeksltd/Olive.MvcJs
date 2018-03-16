@@ -1,4 +1,5 @@
-import Url from 'olive/components/url'
+import Url from 'olive/components/url';
+import CrossDomainEvent from 'olive/components/crossDomainEvent';
 
 export default class Modal {
     static current: any = null;
@@ -11,20 +12,8 @@ export default class Modal {
 
     static initialize() {
 
-        window.addEventListener("message", e => {
-            try {
-                let arg = JSON.parse(e.data);
-
-                if (arg.command !== 'set-iframe-height') return;
-
-                let iframe = $("iframe").filter((i, f) => f["src"] == arg.url);
-
-                if (iframe.attr("data-has-explicit-height") != 'true') return;
-                iframe.height(arg.height);
-            } catch (error) {
-                console.error(error);
-            }
-        }, false);
+        CrossDomainEvent.handle('set-iframe-height', x => this.setIFrameHeight(x));
+        CrossDomainEvent.handle('close-modal', x => this.close());
 
         window["isModal"] = () => {
             try {
@@ -33,6 +22,16 @@ export default class Modal {
                 return true;
             }
         };
+    }
+
+    static setIFrameHeight(arg: any) {
+        try {
+            let iframe = $("iframe").filter((i, f) => f["src"] == arg.url);
+            if (iframe.attr("data-has-explicit-height") === 'true') return;
+            iframe.height(arg.height);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     constructor(event?: JQueryEventObject, targeturl?: string, opt?: any) {
@@ -59,11 +58,6 @@ export default class Modal {
 
         frame.attr("src", this.url).on("load", e => {
             this.isOpening = false;
-            let isHeightProvided = !!(this.modalOptions && this.modalOptions.height);
-            if (!isHeightProvided) {
-                let doc = frame.get(0).contentWindow.document;
-                setTimeout(() => frame.height(doc.body.offsetHeight), 10); // Timeout is used due to an IE bug.
-            }
             Modal.current.find(".modal-body .text-center").remove();
         });
 
@@ -71,8 +65,12 @@ export default class Modal {
         Modal.current.modal('show');
     }
 
-    public static close() {
+    public static closeMe() {
+        CrossDomainEvent.raise(parent, "close-modal");
+        return true;
+    }
 
+    public static close() {
         this.isClosingModal = true;
 
         if (this.current) {
@@ -124,11 +122,12 @@ export default class Modal {
 
     public static adjustHeight(overflow?: number) {
         if (window.isModal()) {
-            parent.postMessage(JSON.stringify({
-                command: "set-iframe-height",
-                url: window.location.href,
-                height: document.body.offsetHeight + (overflow || 0)
-            }), "*");
+
+            CrossDomainEvent.raise(parent, "set-iframe-height",
+                {
+                    url: window.location.href,
+                    height: document.body.offsetHeight + (overflow || 0)
+                });
         }
     }
 

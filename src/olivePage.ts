@@ -1,5 +1,6 @@
 
 import Config from "olive/config"
+import CrossDomainEvent from 'olive/components/crossDomainEvent'
 
 import FormAction from 'olive/mvc/formAction'
 import AjaxRedirect from 'olive/mvc/ajaxRedirect'
@@ -7,7 +8,7 @@ import StandardAction from 'olive/mvc/standardAction'
 
 import Form from 'olive/components/form'
 import Url from 'olive/components/url'
-import SystemExtensions from 'olive/extensions/systemExtensions';
+import SystemExtensions from 'olive/extensions/systemExtensions'
 import Modal from 'olive/components/modal'
 import Validate from 'olive/components/validate'
 import Sorting from 'olive/components/sorting'
@@ -53,6 +54,7 @@ export default class OlivePage {
         // TODO: Find a cleaner way.
         window["alertify"] = <alertify.IAlertifyStatic>window.require("alertify")();
         FormAction.onViewChanged.handle(x => this.onViewChanged(x.container, x.trigger, x.isNewPage));
+        CrossDomainEvent.handle('refresh-page', x => this.refresh());
     }
 
     _initializeActions = [];
