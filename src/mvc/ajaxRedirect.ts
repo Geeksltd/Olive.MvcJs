@@ -6,9 +6,15 @@ export default class AjaxRedirect {
     static ajaxChangedUrl = 0;
     static isAjaxRedirecting = false;
     public static onRedirected: ((title: string, url: string) => void) = AjaxRedirect.defaultOnRedirected;
+    public static onRedirectionFailed: ((url: string) => void) = AjaxRedirect.defaultOnRedirectionFailed;
 
     static defaultOnRedirected(title: string, url: string) {
         history.pushState({}, title, url);
+    }
+
+    public static defaultOnRedirectionFailed(url: string) {
+        if (confirm("Request failed. Do you want to see the error details?"))
+            open(url, "_blank");
     }
 
     public static enableBack(selector: JQuery) {
@@ -87,8 +93,7 @@ export default class AjaxRedirect {
                 if (keepScroll) $(document).scrollTop(scrollTopBefore);
             },
             error: (response) => {
-                if (confirm("Request failed. Do you want to see the error details?"))
-                    open(url, "_blank");
+                this.onRedirectionFailed(url);
             },
             complete: (response) => Waiting.hide()
         });
