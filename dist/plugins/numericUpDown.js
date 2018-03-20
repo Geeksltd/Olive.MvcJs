@@ -1,6 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var NumbericUpDown = /** @class */ (function () {
+    var NumbericUpDown = (function () {
         function NumbericUpDown(targetInput) {
             this.input = targetInput;
         }

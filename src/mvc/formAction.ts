@@ -61,6 +61,7 @@ export default class FormAction {
         if (disableToo) trigger.attr('disabled', 'disabled');
         trigger.addClass('loading-action-result');
         this.isAwaitingAjaxResponse = true;
+        actionUrl = Url.effectiveUrlProvider(actionUrl, trigger);
 
         $.ajax({
             url: actionUrl,

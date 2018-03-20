@@ -3,7 +3,7 @@ define(["require", "exports", "olive/mvc/formAction"], function (require, export
     // For configuration see:
     // http://markusslima.github.io/bootstrap-filestyle/ 
     // https://blueimp.github.io/jQuery-File-Upload/
-    var FileUpload = /** @class */ (function () {
+    var FileUpload = (function () {
         function FileUpload(targetInput) {
             var _this = this;
             this.input = targetInput;

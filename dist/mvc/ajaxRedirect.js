@@ -1,6 +1,6 @@
 define(["require", "exports", "olive/components/waiting", "olive/components/url", "olive/mvc/formAction"], function (require, exports, waiting_1, url_1, formAction_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var AjaxRedirect = /** @class */ (function () {
+    var AjaxRedirect = (function () {
         function AjaxRedirect() {
         }
         AjaxRedirect.defaultOnRedirected = function (title, url) {
