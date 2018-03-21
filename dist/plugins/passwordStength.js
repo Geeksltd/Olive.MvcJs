@@ -1,6 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var PasswordStength = (function () {
+    var PasswordStength = /** @class */ (function () {
         function PasswordStength(targetContainer) {
             this.container = targetContainer;
         }

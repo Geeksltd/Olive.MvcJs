@@ -1,6 +1,6 @@
 define(["require", "exports", "olive/components/alert", "olive/plugins/select", "olive/components/waiting", "olive/components/modal", "olive/mvc/ajaxRedirect", "olive/components/crossDomainEvent"], function (require, exports, alert_1, select_1, waiting_1, modal_1, ajaxRedirect_1, crossDomainEvent_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var StandardAction = (function () {
+    var StandardAction = /** @class */ (function () {
         function StandardAction() {
         }
         StandardAction.enableLinkModal = function (selector) {

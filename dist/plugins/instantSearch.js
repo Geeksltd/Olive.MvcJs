@@ -1,6 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var InstantSearch = (function () {
+    var InstantSearch = /** @class */ (function () {
         function InstantSearch(targetInput) {
             this.input = targetInput;
         }

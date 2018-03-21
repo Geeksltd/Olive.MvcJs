@@ -1,6 +1,6 @@
 define(["require", "exports", "olive/components/modal", "olive/config"], function (require, exports, modal_1, config_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var DatePicker = (function () {
+    var DatePicker = /** @class */ (function () {
         function DatePicker(targetInput) {
             this.input = targetInput;
         }
