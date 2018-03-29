@@ -76,7 +76,7 @@ define(["require", "exports", "olive/config", "olive/components/crossDomainEvent
             form_1.default.enablesubmitCleanGet($('form[method=get]'));
             formAction_1.default.enableInvokeWithAjax($("[formaction]").not("[formmethod=post]"), "click.formaction", "formaction");
             formAction_1.default.enableinvokeWithPost($("[formaction][formmethod=post]"));
-            formAction_1.default.enableInvokeWithAjax($("[data-change-action]"), "change.data-action", "change.data-action");
+            formAction_1.default.enableInvokeWithAjax($("[data-change-action]"), "change.data-action", "data-change-action");
             formAction_1.default.enableInvokeWithAjax($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]"), "dp.change.data-action", "data-change-action");
             masterDetail_1.default.updateSubFormStates();
             modal_1.default.adjustHeight();

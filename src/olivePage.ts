@@ -120,7 +120,7 @@ export default class OlivePage {
         Form.enablesubmitCleanGet($('form[method=get]'));
         FormAction.enableInvokeWithAjax($("[formaction]").not("[formmethod=post]"), "click.formaction", "formaction");
         FormAction.enableinvokeWithPost($("[formaction][formmethod=post]"));
-        FormAction.enableInvokeWithAjax($("[data-change-action]"), "change.data-action", "change.data-action");
+        FormAction.enableInvokeWithAjax($("[data-change-action]"), "change.data-action", "data-change-action");
         FormAction.enableInvokeWithAjax($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]"), "dp.change.data-action", "data-change-action");
 
         MasterDetail.updateSubFormStates();
