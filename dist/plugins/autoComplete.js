@@ -1,6 +1,6 @@
 define(["require", "exports", "olive/components/url", "olive/components/form", "olive/config", "olive/mvc/formAction"], function (require, exports, url_1, form_1, config_1, formAction_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var AutoComplete = (function () {
+    var AutoComplete = /** @class */ (function () {
         function AutoComplete(targetInput) {
             this.awaitingAutocompleteResponses = 0;
             this.input = targetInput;
