@@ -16,7 +16,7 @@ export default class FileUpload {
     onDeleteButtonClicked(): void;
     onDragDropped(e: any, data: any): void;
     onProgressAll(e: any, data: any): void;
-    onUploadError(response: any): void;
+    onUploadError(jqXHR: JQueryXHR, status: string, error: string): void;
     onUploadSuccess(response: any): void;
     onChange(e: any, data: any): void;
 }

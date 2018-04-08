@@ -1,10 +1,21 @@
 import Waiting from 'olive/components/waiting'
-import Url from 'olive/components/Url'
+import Url from 'olive/components/url'
 import FormAction from 'olive/mvc/formAction'
 
 export default class AjaxRedirect {
     static ajaxChangedUrl = 0;
     static isAjaxRedirecting = false;
+    public static onRedirected: ((title: string, url: string) => void) = AjaxRedirect.defaultOnRedirected;
+    public static onRedirectionFailed: ((url: string, response: JQueryXHR) => void) = AjaxRedirect.defaultOnRedirectionFailed;
+
+    static defaultOnRedirected(title: string, url: string) {
+        history.pushState({}, title, url);
+    }
+
+    public static defaultOnRedirectionFailed(url: string, response: JQueryXHR) {
+        if (confirm("Request failed. Do you want to see the error details?"))
+            open(url, "_blank");
+    }
 
     public static enableBack(selector: JQuery) {
         selector.off("popstate.ajax-redirect").on("popstate.ajax-redirect", e => this.back(e));
@@ -33,7 +44,7 @@ export default class AjaxRedirect {
 
         if (!trigger) trigger = $(window);
 
-        url = Url.getEffectiveUrl(url, trigger);
+        url = Url.effectiveUrlProvider(url, trigger);
 
         if (url.indexOf(Url.baseContentUrl + "/##") == 0) {
             url = url.substring(Url.baseContentUrl.length).substring(3);
@@ -67,9 +78,8 @@ export default class AjaxRedirect {
 
                         let addressBar = trigger.attr("data-addressbar") || url;
                         try {
-                            history.pushState({}, title, addressBar);
+                            this.onRedirected(title, addressBar);
                         } catch (error) {
-
                             addressBar = Url.makeAbsolute(Url.baseContentUrl, "/##" + addressBar);
                             history.pushState({}, title, addressBar);
                         }
@@ -83,8 +93,7 @@ export default class AjaxRedirect {
                 if (keepScroll) $(document).scrollTop(scrollTopBefore);
             },
             error: (response) => {
-                if (confirm("Request failed. Do you want to see the error details?"))
-                    open(url, "_blank");
+                this.onRedirectionFailed(url, response);
             },
             complete: (response) => Waiting.hide()
         });

@@ -6,8 +6,10 @@ export default class Modal {
     modalOptions: any;
     static enalbeEnsureHeight(selector: JQuery): void;
     static initialize(): void;
+    static setIFrameHeight(arg: any): void;
     constructor(event?: JQueryEventObject, targeturl?: string, opt?: any);
     open(): boolean;
+    static closeMe(): boolean;
     static close(): boolean;
     getModalTemplate(options: any): string;
     static ensureHeight(): void;

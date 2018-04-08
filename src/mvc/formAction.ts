@@ -26,8 +26,9 @@ export default class FormAction {
         selector.off(event).on(event,
             (e) => {
                 let trigger = $(e.currentTarget);
-                let url = Url.getEffectiveUrl(trigger.attr(attrName), trigger);
+                let url = Url.effectiveUrlProvider(trigger.attr(attrName), trigger);
                 this.invokeWithAjax(e, url, false);
+                return false;
             });
     }
 
@@ -39,7 +40,7 @@ export default class FormAction {
         if (containerModule.is("form") && Validate.validateForm(trigger) == false) return false;
 
         let data = Form.getPostData(trigger);
-        let url = Url.getEffectiveUrl(trigger.attr("formaction"), trigger);
+        let url = Url.effectiveUrlProvider(trigger.attr("formaction"), trigger);
         let form = $("<form method='post' />").hide().appendTo($("body"));
 
         for (let item of data)
@@ -60,6 +61,7 @@ export default class FormAction {
         if (disableToo) trigger.attr('disabled', 'disabled');
         trigger.addClass('loading-action-result');
         this.isAwaitingAjaxResponse = true;
+        actionUrl = Url.effectiveUrlProvider(actionUrl, trigger);
 
         $.ajax({
             url: actionUrl,
@@ -68,7 +70,7 @@ export default class FormAction {
             async: !syncCall,
             data: data_before_disable,
             success: (result) => { Waiting.hide(); this.processAjaxResponse(result, containerModule, trigger); },
-            error: (response) => this.onAjaxResponseError(response),
+            error: this.onAjaxResponseError,
             complete: (x) => {
                 this.isAwaitingAjaxResponse = false;
                 trigger.removeClass('loading-action-result');
@@ -81,20 +83,24 @@ export default class FormAction {
         return false;
     }
 
-    public static onAjaxResponseError(response) {
+    public static onAjaxResponseError(jqXHR: JQueryXHR, status: string, error: string) {
         Waiting.hide();
-        console.error(response);
 
-        let text = response.responseText;
-        if (text.indexOf("<html") > -1) {
-            document.write(text);
+        let text = jqXHR.responseText;
+
+        if (text) {
+            if (text.indexOf("<html") > -1) {
+                document.write(text);
+            }
+            else if (text.indexOf("<form") > -1) {
+                let form = $("form", document);
+                if (form.length) form.replaceWith($(text));
+                else document.write(text);
+            }
+            else alert(text);
         }
-        else if (text.indexOf("<form") > -1) {
-            let form = $("form", document);
-            if (form.length) form.replaceWith($(text));
-            else document.write(text);
-        }
-        else alert(text);
+        else if (error) alert(error);
+        else alert("Error: response status: " + status);
     }
 
     public static processAjaxResponse(response, containerModule, trigger) {

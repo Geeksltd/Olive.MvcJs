@@ -1,5 +1,6 @@
 
 import Config from "olive/config"
+import CrossDomainEvent from 'olive/components/crossDomainEvent'
 
 import FormAction from 'olive/mvc/formAction'
 import AjaxRedirect from 'olive/mvc/ajaxRedirect'
@@ -7,7 +8,7 @@ import StandardAction from 'olive/mvc/standardAction'
 
 import Form from 'olive/components/form'
 import Url from 'olive/components/url'
-import SystemExtensions from 'olive/extensions/systemExtensions';
+import SystemExtensions from 'olive/extensions/systemExtensions'
 import Modal from 'olive/components/modal'
 import Validate from 'olive/components/validate'
 import Sorting from 'olive/components/sorting'
@@ -24,6 +25,7 @@ import TimeControl from 'olive/plugins/timeControl'
 import AutoComplete from 'olive/plugins/autoComplete'
 import Slider from 'olive/plugins/slider'
 import DatePicker from 'olive/plugins/datePicker'
+import DateTimePicker from 'olive/plugins/dateTimePicker'
 import NumbericUpDown from 'olive/plugins/numericUpDown'
 import FileUpload from 'olive/plugins/fileUpload'
 import ConfirmBox from 'olive/plugins/confirmBox'
@@ -52,6 +54,7 @@ export default class OlivePage {
         // TODO: Find a cleaner way.
         window["alertify"] = <alertify.IAlertifyStatic>window.require("alertify")();
         FormAction.onViewChanged.handle(x => this.onViewChanged(x.container, x.trigger, x.isNewPage));
+        CrossDomainEvent.handle('refresh-page', x => this.refresh());
     }
 
     _initializeActions = [];
@@ -100,7 +103,7 @@ export default class OlivePage {
         InstantSearch.enable($("[name=InstantSearch]"));
         AutoComplete.enable($("input[autocomplete-source]"));
         DatePicker.enable($("[data-control=date-picker],[data-control=calendar]"));
-        TimeControl.enable($("[data-control='date-picker|time-picker']"));
+        DateTimePicker.enable($("[data-control='date-picker|time-picker']"));
         TimeControl.enable($("[data-control=time-picker]"));
         DateDropdown.enable($("[data-control=date-drop-downs]"));
         HtmlEditor.enable($("[data-control=html-editor]"));

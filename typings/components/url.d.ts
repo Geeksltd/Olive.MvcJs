@@ -1,5 +1,5 @@
 export default class Url {
-    static getEffectiveUrl(url: string, trigger: JQuery): string;
+    static effectiveUrlProvider: ((url: string, trigger: JQuery) => string);
     static makeAbsolute(baseUrl: string, relativeUrl: string): string;
     static isAbsolute(url: string): Boolean;
     static current(): string;
