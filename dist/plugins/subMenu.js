@@ -1,6 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var SubMenu = /** @class */ (function () {
+    var SubMenu = (function () {
         function SubMenu(targetMenue) {
             this.menu = targetMenue;
             this.submenuOptions = { showTimeout: 0, hideTimeout: 0 };

@@ -1,6 +1,6 @@
 define(["require", "exports", "olive/components/waiting", "olive/components/validate", "olive/components/masterDetail", "olive/components/form", "olive/components/url", "olive/config", "olive/mvc/standardAction", "olive/components/liteEvent"], function (require, exports, waiting_1, validate_1, masterDetail_1, form_1, url_1, config_1, standardAction_1, liteEvent_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var FormAction = /** @class */ (function () {
+    var FormAction = (function () {
         function FormAction() {
         }
         FormAction.enableInvokeWithAjax = function (selector, event, attrName) {

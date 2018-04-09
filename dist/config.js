@@ -1,6 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Config = /** @class */ (function () {
+    var Config = (function () {
         function Config() {
         }
         // formats: http://momentjs.com/docs/#/displaying/format/

@@ -1,6 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Alert = /** @class */ (function () {
+    var Alert = (function () {
         function Alert() {
         }
         Alert.enableAlert = function () {
