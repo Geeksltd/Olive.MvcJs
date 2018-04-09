@@ -52,9 +52,14 @@ export default class OlivePage {
         });
 
         // TODO: Find a cleaner way.
-        window["alertify"] = <alertify.IAlertifyStatic>window.require("alertify")();
+        this.fixAlertIssues();
         FormAction.onViewChanged.handle(x => this.onViewChanged(x.container, x.trigger, x.isNewPage));
         CrossDomainEvent.handle('refresh-page', x => this.refresh());
+    }
+
+    fixAlertIssues() {
+        if (!$.fn.tooltip.Constructor) $.fn.tooltip.Constructor = {};
+        window["alertify"] = <alertify.IAlertifyStatic>window.require("alertify")();
     }
 
     _initializeActions = [];
