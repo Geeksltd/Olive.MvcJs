@@ -1,6 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var CrossDomainEvent = (function () {
+    var CrossDomainEvent = /** @class */ (function () {
         function CrossDomainEvent() {
         }
         CrossDomainEvent.handle = function (command, handler) {

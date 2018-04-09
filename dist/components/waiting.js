@@ -1,6 +1,6 @@
 define(["require", "exports", "olive/components/url"], function (require, exports, url_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Waiting = (function () {
+    var Waiting = /** @class */ (function () {
         function Waiting() {
         }
         Waiting.show = function (blockScreen, validate) {

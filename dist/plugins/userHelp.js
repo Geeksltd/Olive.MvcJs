@@ -1,6 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var UserHelp = (function () {
+    var UserHelp = /** @class */ (function () {
         function UserHelp(targetElement) {
             this.element = targetElement;
             this.element.click(function () { return false; });

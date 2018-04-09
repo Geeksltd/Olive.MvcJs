@@ -1,6 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Paging = (function () {
+    var Paging = /** @class */ (function () {
         function Paging() {
         }
         Paging.enableOnSizeChanged = function (selector) {
