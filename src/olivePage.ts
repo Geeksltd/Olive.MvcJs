@@ -52,9 +52,14 @@ export default class OlivePage {
         });
 
         // TODO: Find a cleaner way.
-        window["alertify"] = <alertify.IAlertifyStatic>window.require("alertify")();
+        this.fixAlertIssues();
         FormAction.onViewChanged.handle(x => this.onViewChanged(x.container, x.trigger, x.isNewPage));
         CrossDomainEvent.handle('refresh-page', x => this.refresh());
+    }
+
+    fixAlertIssues() {
+        if (!$.fn.tooltip.Constructor) $.fn.tooltip.Constructor = {};
+        window["alertify"] = <alertify.IAlertifyStatic>window.require("alertify")();
     }
 
     _initializeActions = [];
@@ -120,7 +125,7 @@ export default class OlivePage {
         Form.enablesubmitCleanGet($('form[method=get]'));
         FormAction.enableInvokeWithAjax($("[formaction]").not("[formmethod=post]"), "click.formaction", "formaction");
         FormAction.enableinvokeWithPost($("[formaction][formmethod=post]"));
-        FormAction.enableInvokeWithAjax($("[data-change-action]"), "change.data-action", "change.data-action");
+        FormAction.enableInvokeWithAjax($("[data-change-action]"), "change.data-action", "data-change-action");
         FormAction.enableInvokeWithAjax($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]"), "dp.change.data-action", "data-change-action");
 
         MasterDetail.updateSubFormStates();

@@ -1,4 +1,5 @@
 import FormAction from "olive/mvc/formAction"
+import Url from "olive/components/url"
 
 // For configuration see:
 // http://markusslima.github.io/bootstrap-filestyle/ 
@@ -25,7 +26,7 @@ export default class FileUpload {
     }
 
     enable() {
-        this.input.attr("data-url", "/upload");
+        this.input.attr("data-url", Url.effectiveUrlProvider("/upload", this.input));
         this.input.filestyle({ buttonBefore: true });
         this.container.find('.bootstrap-filestyle > input:text').wrap($("<div class='progress'></div>"));
         this.progressBar = this.container.find(".progress-bar");

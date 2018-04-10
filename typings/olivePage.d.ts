@@ -4,6 +4,7 @@ export default class OlivePage {
     modal: typeof Modal;
     waiting: typeof Waiting;
     constructor();
+    fixAlertIssues(): void;
     _initializeActions: any[];
     onInit(action: any): void;
     _preInitializeActions: any[];
