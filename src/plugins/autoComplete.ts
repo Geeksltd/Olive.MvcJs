@@ -39,7 +39,7 @@ export default class AutoComplete {
                 dynamic: true,
                 debug: true,
                 delay: 500,
-                backdrop: { "background-color": "#fff" },
+                backdrop: false,
                 emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
                 source: {
                     values: {
