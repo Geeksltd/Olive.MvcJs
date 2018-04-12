@@ -7,4 +7,5 @@ export default class AutoComplete {
     enable(): void;
     clearValue(): void;
     itemSelected(item: any): void;
+    toObject(arr: JQuerySerializeArrayElement[]): {};
 }
