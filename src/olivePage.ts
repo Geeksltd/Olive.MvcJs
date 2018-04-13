@@ -86,8 +86,7 @@ export default class OlivePage {
         Grid.enableColumn($(".select-cols .apply"));
         Grid.enableSelectCol($(".select-grid-cols .group-control"));
         Grid.enableToggle($("th.select-all > input:checkbox"));
-        MasterDetail.enable($("[data-delete-subform]"));
-        Form.enableDefaultButtonKeyPress($("form input, form select"));
+        MasterDetail.enable($("[data-delete-subform]"));        
         Paging.enableOnSizeChanged($("form[method=get] .pagination-size").find("select[name=p],select[name$='.p']"));
         Sorting.enableDragSort($("[data-sort-item]").parents("tbody"));
         Paging.enableWithAjax($("a[data-pagination]"));
@@ -96,6 +95,7 @@ export default class OlivePage {
         Form.enablecleanUpNumberField($("[data-val-number]"));
         Modal.enalbeEnsureHeight($("[data-toggle=tab]"));
         Select.enableEnhance($("select.form-control"));
+        Form.enableDefaultButtonKeyPress($("form input, form select"));
         UserHelp.enable($("[data-user-help]"));
         StandardAction.enableLinkModal($("[target='$modal'][href]"));
 
