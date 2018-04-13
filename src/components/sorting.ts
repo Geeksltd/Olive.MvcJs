@@ -28,18 +28,24 @@ export default class Sorting {
     }
 
     static setSortHeaderClass(thead: JQuery) {
-        let currentSort = thead.closest("[data-module]").find("#Current-Sort").val() || "";
+
+        let currentSort: string = thead.closest("[data-module]").find("#Current-Sort").val() || "";
         if (currentSort == "") return;
 
-        let sortKey = thead.attr('data-sort');
-        if (sortKey == currentSort && !thead.hasClass('sort-ascending')) {
-            thead.addClass("sort-ascending");
-            thead.append("<i />");
+        let sortKey = currentSort.replace(".DESC", "").replace(".ASC", "");
+
+        let currentThead = $("[data-sort='" + sortKey + "']");
+
+        if (currentSort.contains(".DESC")) {
+            currentThead.removeClass("sort-ascending");
+            currentThead.addClass("sort-descending");
         }
-        else if (currentSort == sortKey + ".DESC" && !thead.hasClass('sort-descending')) {
-            thead.addClass("sort-descending");
-            thead.append("<i />");
+        else {
+            currentThead.removeClass("sort-descending");
+            currentThead.addClass("sort-ascending");
         }
+
+        currentThead.append("<i />");
     }
 
     static DragSort(container) {
