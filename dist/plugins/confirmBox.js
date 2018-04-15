@@ -1,6 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var ConfirmBox = (function () {
+    var ConfirmBox = /** @class */ (function () {
         function ConfirmBox(targetButton) {
             this.button = targetButton;
         }

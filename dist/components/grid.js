@@ -1,6 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Grid = (function () {
+    var Grid = /** @class */ (function () {
         function Grid() {
         }
         Grid.enableColumn = function (element) {

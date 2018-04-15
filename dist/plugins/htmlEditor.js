@@ -1,6 +1,6 @@
 define(["require", "exports", "olive/config", "olive/components/modal"], function (require, exports, config_1, modal_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var HtmlEditor = (function () {
+    var HtmlEditor = /** @class */ (function () {
         function HtmlEditor(targetInput) {
             this.input = targetInput;
         }

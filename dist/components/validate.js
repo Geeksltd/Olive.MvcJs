@@ -1,6 +1,6 @@
 define(["require", "exports", "olive/config"], function (require, exports, config_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Validate = (function () {
+    var Validate = /** @class */ (function () {
         function Validate() {
         }
         Validate.configure = function () {
