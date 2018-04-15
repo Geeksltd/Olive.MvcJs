@@ -1,6 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var AutoComplete = /** @class */ (function () {
+    var AutoComplete = (function () {
         function AutoComplete(targetInput) {
             this.awaitingAutocompleteResponses = 0;
             this.input = targetInput;

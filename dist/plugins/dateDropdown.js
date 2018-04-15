@@ -1,6 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var DateDropdown = /** @class */ (function () {
+    var DateDropdown = (function () {
         function DateDropdown(targetInput) {
             this.input = targetInput;
         }

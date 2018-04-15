@@ -1,6 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var SanityAdapter = /** @class */ (function () {
+    var SanityAdapter = (function () {
         function SanityAdapter() {
         }
         SanityAdapter.enable = function () {

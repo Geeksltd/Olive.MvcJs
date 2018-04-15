@@ -1,6 +1,6 @@
 define(["require", "exports", "olive/components/url", "olive/components/validate", "olive/components/waiting", "olive/mvc/ajaxRedirect"], function (require, exports, url_1, validate_1, waiting_1, ajaxRedirect_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Form = /** @class */ (function () {
+    var Form = (function () {
         function Form() {
         }
         Form.enableDefaultButtonKeyPress = function (selector) {

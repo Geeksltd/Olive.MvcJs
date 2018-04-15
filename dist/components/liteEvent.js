@@ -1,6 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var LiteEvent = /** @class */ (function () {
+    var LiteEvent = (function () {
         function LiteEvent() {
             this.handlers = [];
         }

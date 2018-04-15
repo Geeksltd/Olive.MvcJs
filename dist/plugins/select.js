@@ -1,6 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var Select = /** @class */ (function () {
+    var Select = (function () {
         function Select() {
         }
         Select.enableEnhance = function (selector) {
