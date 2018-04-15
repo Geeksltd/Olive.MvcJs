@@ -47,7 +47,8 @@ export default class FileUpload {
             change: this.onChange.bind(this),
             progressall: this.onProgressAll.bind(this),
             error: this.onUploadError,
-            success: this.onUploadSuccess.bind(this)
+            success: this.onUploadSuccess.bind(this),
+            xhrFields: {withCredentials: true}
         });
     }
 
