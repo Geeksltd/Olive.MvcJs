@@ -1,7 +1,4 @@
-import Url from "olive/components/url";
 import Form from "olive/components/form";
-import Config from "olive/config";
-import FormAction from "olive/mvc/formAction";
 
 export default class AutoComplete {
     input: any;
@@ -29,43 +26,44 @@ export default class AutoComplete {
 
         let url = this.input.attr("autocomplete-source") || '';
 
-        var postData = {};
+        var postData: any = this.toObject(Form.getPostData(this.input));
+
         postData[this.input.attr("name")] = "{{query}}";
 
         this.input
-                 .data("selected-text", "")
-                 .on('input', () => this.clearValue())
-                 .on("typeahead:selected", (e, i) => this.itemSelected(i))
-                .typeahead({
-                    minLength: 1,
-                    dynamic: true,
-                    debug: true,
-                    delay: 500,
-                    backdrop: { "background-color": "#fff" },
-                    emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
-                    source: {
-                        values: {
-                            display: "Display",
-                            data: [{
-                                "Display": "",
-                                "Text": "",
-                                "Value": ""
-                            }],
-                            ajax: function (query) {
-                                return {
-                                    type: "POST",
-                                    url: url,
-                                    data: postData
-                                };
-                            }
-                        }
-                    },
-                    callback: {
-                        onClick: function (node, query, event) {
-                            $("[name='" + node.attr("name").slice(0, -5) + "']").val(event.Value);
+            .data("selected-text", "")
+            .on('input', () => this.clearValue())
+            .on("typeahead:selected", (e, i) => this.itemSelected(i))
+            .typeahead({
+                minLength: 1,
+                dynamic: true,
+                debug: true,
+                delay: 500,
+                backdrop: false,
+                emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
+                source: {
+                    values: {
+                        display: "Display",
+                        data: [{
+                            "Display": "",
+                            "Text": "",
+                            "Value": ""
+                        }],
+                        ajax: function (query) {
+                            return {
+                                type: "POST",
+                                url: url,
+                                data: postData
+                            };
                         }
                     }
-                });
+                },
+                callback: {
+                    onClick: function (node, query, event) {
+                        $("[name='" + node.attr("name").slice(0, -5) + "']").val(event.Value);
+                    }
+                }
+            });
     }
 
     clearValue() {
@@ -75,7 +73,7 @@ export default class AutoComplete {
     }
 
     itemSelected(item: any) {
-        
+
         if (item != undefined) {
             this.valueField.val(item.Value);
             this.input.data("selected-text", item.Display);
@@ -86,5 +84,13 @@ export default class AutoComplete {
         }
         // This will invoke RunOnLoad M# method as typeahead does not fire textbox change event when it sets its value from drop down
         this.input.trigger("change");
+    }
+
+    // Convert current form array to simple plain object
+    toObject(arr: JQuerySerializeArrayElement[]) {
+        var rv = {};
+        for (var i = 0; i < arr.length; ++i)
+            rv[arr[i].name] = arr[i].value;
+        return rv;
     }
 }
