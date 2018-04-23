@@ -94,7 +94,7 @@ export default class OlivePage {
         Sorting.setSortHeaderClass($("th[data-sort]"));
         Form.enablecleanUpNumberField($("[data-val-number]"));
         Modal.enalbeEnsureHeight($("[data-toggle=tab]"));
-        Select.enableEnhance($("select.form-control"));
+        Select.enableEnhance($("select"));
         Form.enableDefaultButtonKeyPress($("form input, form select"));
         UserHelp.enable($("[data-user-help]"));
         StandardAction.enableLinkModal($("[target='$modal'][href]"));
