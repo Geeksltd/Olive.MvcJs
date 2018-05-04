@@ -25,7 +25,6 @@ export default class SystemExtensions {
 
     static extend(type, name: string, implementation: Function) {
         var proto = type.prototype;
-        if (proto[name]) return; // already defined.
 
         if (implementation.length == 0) throw new Error("extend function needs at least one argument.");
         else if (implementation.length == 1) proto[name] = function () { return implementation(this) };
