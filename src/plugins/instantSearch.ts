@@ -16,6 +16,7 @@ export default class InstantSearch {
     }
 
     onChanged(event: any) {
+        this.input = this.input || $(event.currentTarget);
         let keywords = this.input.val().toLowerCase().split(' ');
         let rows = this.input.closest('[data-module]').find(".grid > tbody > tr");
 
