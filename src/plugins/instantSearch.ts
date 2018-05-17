@@ -18,14 +18,11 @@ export default class InstantSearch {
     onChanged(event: any) {
         this.input = this.input || $(event.currentTarget);
         let keywords = this.input.val().toLowerCase().split(' ');
+        let rows = this.input.closest('[data-module]').find(".grid > tbody > tr");
 
-        let selector = ["[data-module]", ".grid > tbody > tr"];
-
-        if (this.input.attr("selector")) {
-            selector = this.input.attr("selector").split("|"); //Custom selector has been defined, it should be something like  selector=".feature-children | .list-items > .item"
+        if (rows.length == 0) {
+            rows = $(".olive-instant-search-item"); // custom css class
         }
-
-        let rows = this.input.closest(selector[0].trim()).find(selector[1].trim());
 
         rows.each((index, e) => {
             let row = $(e);
