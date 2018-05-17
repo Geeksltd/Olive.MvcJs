@@ -30,7 +30,7 @@ export default class HtmlEditor {
     getEditorSettings() {
         return {
             toolbar: this.input.attr('data-toolbar') || Config.DEFAULT_HTML_EDITOR_MODE,
-            customConfig: '/Scripts/ckeditor_config.js'
+            customConfig: '/scripts/ckeditor_config.js'
         };
     }
 }

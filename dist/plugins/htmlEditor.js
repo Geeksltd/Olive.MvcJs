@@ -20,7 +20,7 @@ define(["require", "exports", "olive/config", "olive/components/modal"], functio
         HtmlEditor.prototype.getEditorSettings = function () {
             return {
                 toolbar: this.input.attr('data-toolbar') || config_1.default.DEFAULT_HTML_EDITOR_MODE,
-                customConfig: '/Scripts/ckeditor_config.js'
+                customConfig: '/scripts/ckeditor_config.js'
             };
         };
         return HtmlEditor;
