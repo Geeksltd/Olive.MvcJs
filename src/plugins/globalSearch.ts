@@ -46,8 +46,8 @@ export default class GlobalSearch {
                         emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
                         display: "Title",
                         template:`<a href="{{Url}}" style="color: inherit;text-decoration:inherit">
-                        <div>
-                          <img style="float: left; max-width: 60px; max-height: 60px" src="{{IconUrl}}" />
+                        <div style="min-width: 500px">
+                          <img style="float: left; max-width: 40px; max-height: 40px" src="{{IconUrl}}" />
                             <div style="margin-left: 65px">
                               <h5>{{Title}}</h5>
                               <p style="font-size: 11px;opacity: 0.85;">{{Description}}</p>
