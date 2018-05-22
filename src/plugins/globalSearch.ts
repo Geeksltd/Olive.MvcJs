@@ -24,107 +24,115 @@ export default class GlobalSearch {
             console.log(this.input);
         }
 
-        let url = this.input.attr("globalsearch-source") || '';
+        let urlsList = this.input.attr("globalsearch-source") || '';
         $.ajax({
-            url: url,
+            url: urlsList,
             type: 'GET',
             xhrFields: { withCredentials: true },
             success: (response) => {
-                for (let item of response) {
+                for(let url of response){
 
-                    var postData: any = this.toObject(Form.getPostData(this.input));
+                    try{
+                        var postData: any = this.toObject(Form.getPostData(this.input));
                     postData[this.input.attr("name")] = "{{query}}";
-
+        
                     this.input
-                        .data("selected-text", "")
-                        .on('input', () => this.clearValue())
-                        .on("typeahead:selected", (e, i) => this.itemSelected(i))
-                        .typeahead({
-                            minLength: 1,
-                            delay: 500,
-                            backdrop: false,
-                            emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
-                            display: "Title",
-                            template: `<a href="{{Url}}" style="color: inherit;text-decoration:inherit">
-                        <div class='item'>
-                          <img class="icon" src="{{IconUrl}}" />
-                            <div class='title-wrapper'>
-                              <div class='title'>{{Title}}</div>
-                              <div class='desc'>{{Description}}</div>
+                    .data("selected-text", "")
+                    .on('input', () => this.clearValue())
+                    .on("typeahead:selected", (e, i) => this.itemSelected(i))
+                    .typeahead({
+                        minLength: 1,
+                        delay: 500,
+                        backdrop: false,
+                        emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
+                        display: "Title",
+                        template:`<a href="{{Url}}" style="color: inherit;text-decoration:inherit">
+                        <div style="min-width: 500px">
+                          <img style="float: left; max-width: 40px; max-height: 40px" src="{{IconUrl}}" />
+                            <div style="margin-left: 65px">
+                              <h5>{{Title}}</h5>
+                              <p style="font-size: 11px;opacity: 0.85;">{{Description}}</p>
                             </div>
                           </div>
                       </a>`,
-                            source: {
-
+                      href: "{{Url}}",
+                        source: {
+                            
                                 data: [{
                                     "Url": "",
                                     "Title": "",
                                     "IconUrl": "",
                                     "Description": ""
                                 }],
-
+                      
                                 ajax: function (query) {
                                     return {
                                         type: "GET",
-                                        url: item,
+                                        url: url+"api/search",
                                         data: postData
                                     };
                                 }
-                            },
-                            callback: {
-                                onNavigateAfter: function (node, lis, a, item, query, event) {
-                                    if (~[38, 40].indexOf(event.keyCode)) {
-                                        var resultList = node.closest("form").find("ul.typeahead__list"),
-                                            activeLi = lis.filter("li.active"),
-                                            offsetTop = activeLi[0] && activeLi[0].offsetTop - (resultList.height() / 2) || 0;
-
-                                        resultList.scrollTop(offsetTop);
-                                    }
-
-                                },
-                                onClickAfter: function (node, a, item, event) {
-
-                                    event.preventDefault();
-
-
-
-                                    $('#result-container').text('');
-
-                                },
-                                onResult: function (node, query, result, resultCount) {
-                                    if (query === "") return;
-
-                                    var text = "";
-                                    if (result.length > 0 && result.length < resultCount) {
-                                        text = "Showing <strong>" + result.length + "</strong> of <strong>" + resultCount + '</strong> elements matching "' + query + '"';
-                                    } else if (result.length > 0) {
-                                        text = 'Showing <strong>' + result.length + '</strong> elements matching "' + query + '"';
-                                    } else {
-                                        text = 'No results matching "' + query + '"';
-                                    }
-                                    $('#result-container').html(text);
-
-                                },
-                                onMouseEnter: function (node, a, item, event) {
-
-                                    if (item.group === "country") {
-                                        $(a).append('<span class="flag-chart flag-' + item.display.replace(' ', '-').toLowerCase() + '"></span>')
-                                    }
-
-                                },
-                                onMouseLeave: function (node, a, item, event) {
-
-                                    $(a).find('.flag-chart').remove();
-
+                        },
+                        callback: {
+                            onNavigateAfter: function (node, lis, a, item, query, event) {
+                                if (~[38,40].indexOf(event.keyCode)) {
+                                    var resultList = node.closest("form").find("ul.typeahead__list"),
+                                        activeLi = lis.filter("li.active"),
+                                        offsetTop = activeLi[0] && activeLi[0].offsetTop - (resultList.height() / 2) || 0;
+                     
+                                    resultList.scrollTop(offsetTop);
                                 }
+                     
+                            },
+                            onClickAfter: function (node, a, item, event) {
+                     
+                                event.preventDefault();
+                     
+                                
+                     
+                                $('#result-container').text('');
+                     
+                            },
+                            onResult: function (node, query, result, resultCount) {
+                                if (query === "") return;
+                     
+                                var text = "";
+                                if (result.length > 0 && result.length < resultCount) {
+                                    text = "Showing <strong>" + result.length + "</strong> of <strong>" + resultCount + '</strong> elements matching "' + query + '"';
+                                } else if (result.length > 0) {
+                                    text = 'Showing <strong>' + result.length + '</strong> elements matching "' + query + '"';
+                                } else {
+                                    text = 'No results matching "' + query + '"';
+                                }
+                                $('#result-container').html(text);
+                     
+                            },
+                            onMouseEnter: function (node, a, item, event) {
+                     
+                                if (item.group === "country") {
+                                    $(a).append('<span class="flag-chart flag-' + item.display.replace(' ', '-').toLowerCase() + '"></span>')
+                                }
+                     
+                            },
+                            onMouseLeave: function (node, a, item, event) {
+                     
+                                $(a).find('.flag-chart').remove();
+                     
                             }
-                        });
+                        }
+                    });
+                    }
+                    catch(e){
 
+                        console.log("Seems that "+ url +" microservice isn't responding.");
+                        console.log(e);
+                    }
+                    
+                    
                 }
-            }
-        });
+        }});
 
-
+        
     }
 
     clearValue() {
