@@ -41,8 +41,9 @@ export default class GlobalSearch {
                             .on('input', () => this.clearValue())
                             .on("typeahead:selected", (e, i) => this.itemSelected(i))
                             .typeahead({
-                                minLength: 1,
-                                delay: 500,
+                                minLength: 2,
+                                delay: 300,
+                                dynamic: true,
                                 backdrop: false,
                                 emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
                                 display: "Title",
