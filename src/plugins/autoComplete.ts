@@ -40,6 +40,7 @@ export default class AutoComplete {
                 debug: true,
                 delay: 500,
                 backdrop: false,
+                correlativeTemplate: true,
                 emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
                 source: {
                     values: {

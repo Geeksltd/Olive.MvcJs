@@ -45,6 +45,7 @@ export default class GlobalSearch {
                                 delay: 300,
                                 dynamic: true,
                                 backdrop: false,
+                                correlativeTemplate: true,
                                 emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
                                 display: "Title",
                                 template: `
