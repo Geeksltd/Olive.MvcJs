@@ -20,61 +20,19 @@ export default class GlobalSearch {
 
         this.valueField = $("[name='" + this.input.attr("name").slice(0, -5) + "']");
         if (this.valueField.length === 0) {
-            console.log("Failed to find the value field for auto-complete:");
+            console.log("Failed to find the value field for global-search:");
             console.log(this.input);
         }
 
         
-        let urlsList = this.input.attr("data-search-source") || '';
-        let isAutoCompleteEnabled = this.input.attr("autocomplete") || '';
-        if(isAutoCompleteEnabled=="on"){
-
-            var postData: any = this.toObject(Form.getPostData(this.input));
-            postData[this.input.attr("name")] = "{{query}}";
-            this.input
-            .data("selected-text", "")
-            .on('input', () => this.clearValue())
-            .on("typeahead:selected", (e, i) => this.itemSelected(i))
-            .typeahead({
-                minLength: 1,
-                dynamic: true,
-                debug: true,
-                delay: 500,
-                backdrop: false,
-                correlativeTemplate: true,
-                emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
-                source: {
-                    values: {
-                        display: "Display",
-                        data: [{
-                            "Display": "",
-                            "Text": "",
-                            "Value": ""
-                        }],
-                        ajax: function (query) {
-                            return {
-                                type: "POST",
-                                url: urlsList,
-                                data: postData
-                            };
-                        }
-                    }
-                },
-                callback: {
-                    onClick: function (node, query, event) {
-                        $("[name='" + node.attr("name").slice(0, -5) + "']").val(event.Value);
-                    }
-                }
-            });
-        }
-        else{
-
-            this.input
-                    .data("selected-text", "")
-                    .on('input', () => this.clearValue())
-                    .on("typeahead:selected", (e, i) => this.itemSelected(i))
-                    .typeahead(this.createTypeaheadSettings(urlsList.split(';')));
-        }
+        let urlsList = (<string>this.input.attr("data-search-source") || '').split(";");
+        
+        this.input
+        .data("selected-text", "")
+        .on('input', () => this.clearValue())
+        .on("typeahead:selected", (e, i) => this.itemSelected(i))
+        .typeahead(this.createTypeaheadSettings(urlsList));
+        
         
     }
 
@@ -96,6 +54,7 @@ export default class GlobalSearch {
         return {
             minLength: 2,
             delay: 300,
+            limit: 30,
             dynamic: true,
             backdrop: false,
             correlativeTemplate: true,
