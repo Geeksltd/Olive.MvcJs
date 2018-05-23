@@ -32,10 +32,10 @@ export default class GlobalSearch {
             success: (response) => {
                 for (let url of response) {
 
-                    try{
+                    try {
                         var postData: any = this.toObject(Form.getPostData(this.input));
                         postData[this.input.attr("name")] = "{{query}}";
-    
+
                         this.input
                             .data("selected-text", "")
                             .on('input', () => this.clearValue())
@@ -55,21 +55,23 @@ export default class GlobalSearch {
                                 </div>
                               </div>
                           `,
-                          href: "{{Url}}",
+                                href: "{{Url}}",
                                 source: {
-    
                                     data: [{
                                         "Url": "",
                                         "Title": "",
                                         "IconUrl": "",
                                         "Description": ""
                                     }],
-    
+
                                     ajax: function (query) {
                                         return {
                                             type: "GET",
                                             url: url,
-                                            data: postData
+                                            data: postData,
+                                            xhrFields: {
+                                                withCredentials: true
+                                            }
                                         };
                                     }
                                 },
@@ -79,23 +81,23 @@ export default class GlobalSearch {
                                             var resultList = node.closest("form").find("ul.typeahead__list"),
                                                 activeLi = lis.filter("li.active"),
                                                 offsetTop = activeLi[0] && activeLi[0].offsetTop - (resultList.height() / 2) || 0;
-    
+
                                             resultList.scrollTop(offsetTop);
                                         }
-    
+
                                     },
                                     onClickAfter: function (node, a, item, event) {
-    
+
                                         event.preventDefault();
                                         window.location.href = item.Url;
-    
-    
+
+
                                         $('#result-container').text('');
-    
+
                                     },
                                     onResult: function (node, query, result, resultCount) {
                                         if (query === "") return;
-    
+
                                         var text = "";
                                         if (result.length > 0 && result.length < resultCount) {
                                             text = "Showing <strong>" + result.length + "</strong> of <strong>" + resultCount + '</strong> elements matching "' + query + '"';
@@ -105,29 +107,29 @@ export default class GlobalSearch {
                                             text = 'No results matching "' + query + '"';
                                         }
                                         $('#result-container').html(text);
-    
+
                                     },
                                     onMouseEnter: function (node, a, item, event) {
-    
+
                                         if (item.group === "country") {
                                             $(a).append('<span class="flag-chart flag-' + item.display.replace(' ', '-').toLowerCase() + '"></span>')
                                         }
-    
+
                                     },
                                     onMouseLeave: function (node, a, item, event) {
-    
+
                                         $(a).find('.flag-chart').remove();
-    
+
                                     }
                                 }
                             });
                     }
-                    catch(e){
+                    catch (e) {
 
-                        console.log("seems that there is a problem with the global search source "+url)
+                        console.log("seems that there is a problem with the global search source " + url)
                         console.log(e);
                     }
-                    
+
 
                 }
             }
