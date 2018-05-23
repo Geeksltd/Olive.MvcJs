@@ -20,16 +20,20 @@ export default class GlobalSearch {
 
         this.valueField = $("[name='" + this.input.attr("name").slice(0, -5) + "']");
         if (this.valueField.length === 0) {
-            console.log("Failed to find the value field for auto-complete:");
+            console.log("Failed to find the value field for global-search:");
             console.log(this.input);
         }
 
-        let urlsList = (<string>this.input.attr("data-search-source") || '').split(';');
+        
+        let urlsList = (<string>this.input.attr("data-search-source") || '').split(";");
+        
         this.input
-            .data("selected-text", "")
-            .on('input', () => this.clearValue())
-            .on("typeahead:selected", (e, i) => this.itemSelected(i))
-            .typeahead(this.createTypeaheadSettings(urlsList));
+        .data("selected-text", "")
+        .on('input', () => this.clearValue())
+        .on("typeahead:selected", (e, i) => this.itemSelected(i))
+        .typeahead(this.createTypeaheadSettings(urlsList));
+        
+        
     }
 
     createTypeaheadSettings(urls: string[]) {
@@ -37,6 +41,9 @@ export default class GlobalSearch {
         let sources = {};
 
         for (let url of urls) {
+            if(url.charAt(0)=='/'){
+                url=window.location.origin+url;
+            }
             sources[url] = {
                 ajax: query => {
                     return { type: "GET", url: url + '?searcher={{query}}', xhrFields: { withCredentials: true } };
@@ -47,6 +54,7 @@ export default class GlobalSearch {
         return {
             minLength: 2,
             delay: 300,
+            limit: 30,
             dynamic: true,
             backdrop: false,
             correlativeTemplate: true,

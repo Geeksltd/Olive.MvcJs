@@ -8,6 +8,7 @@ export default class GlobalSearch {
     createTypeaheadSettings(urls: string[]): {
         minLength: number;
         delay: number;
+        limit: number;
         dynamic: boolean;
         backdrop: boolean;
         correlativeTemplate: boolean;
