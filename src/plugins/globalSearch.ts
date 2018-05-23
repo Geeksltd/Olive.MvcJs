@@ -24,19 +24,13 @@ export default class GlobalSearch {
             console.log(this.input);
         }
 
-        let urlsList = this.input.attr("globalsearch-source") || '';
-        $.ajax({
-            url: urlsList,
-            type: 'GET',
-            xhrFields: { withCredentials: true },
-            success: (response) => {
-                this.input
+        let urlsList = this.input.attr("data-search-source") || '';
+        
+        this.input
                     .data("selected-text", "")
                     .on('input', () => this.clearValue())
                     .on("typeahead:selected", (e, i) => this.itemSelected(i))
-                    .typeahead(this.createTypeaheadSettings(response));
-            }
-        });
+                    .typeahead(this.createTypeaheadSettings(urlsList.split(';')));
     }
 
     createTypeaheadSettings(urls: string[]) {
@@ -44,6 +38,9 @@ export default class GlobalSearch {
         let sources = {};
 
         for (let url of urls) {
+            if(url.charAt(0)=='/'){
+                url=window.location.origin+url;
+            }
             sources[url] = {
                 ajax: query => {
                     return { type: "GET", url: url + '?searcher={{query}}', xhrFields: { withCredentials: true } };
