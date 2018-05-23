@@ -24,19 +24,12 @@ export default class GlobalSearch {
             console.log(this.input);
         }
 
-        let urlsList = this.input.attr("globalsearch-source") || '';
-        $.ajax({
-            url: urlsList,
-            type: 'GET',
-            xhrFields: { withCredentials: true },
-            success: (response) => {
-                this.input
-                    .data("selected-text", "")
-                    .on('input', () => this.clearValue())
-                    .on("typeahead:selected", (e, i) => this.itemSelected(i))
-                    .typeahead(this.createTypeaheadSettings(response));
-            }
-        });
+        let urlsList = (<string>this.input.attr("data-search-source") || '').split(';');
+        this.input
+            .data("selected-text", "")
+            .on('input', () => this.clearValue())
+            .on("typeahead:selected", (e, i) => this.itemSelected(i))
+            .typeahead(this.createTypeaheadSettings(urlsList));
     }
 
     createTypeaheadSettings(urls: string[]) {

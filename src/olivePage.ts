@@ -108,7 +108,7 @@ export default class OlivePage {
         // =================== Plug-ins ====================
         InstantSearch.enable($("[name=InstantSearch]"));
         AutoComplete.enable($("input[autocomplete-source]"));
-        GlobalSearch.enable($("input[globalsearch-source]"));
+        GlobalSearch.enable($("input[data-search-source]"));
         DatePicker.enable($("[data-control=date-picker],[data-control=calendar]"));
         DateTimePicker.enable($("[data-control='date-picker|time-picker']"));
         TimeControl.enable($("[data-control=time-picker]"));
