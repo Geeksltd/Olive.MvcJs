@@ -30,25 +30,36 @@ export default class GlobalSearch {
             type: 'GET',
             xhrFields: { withCredentials: true },
             success: (response) => {
-                for (let url of response) {
+                this.input
+                    .data("selected-text", "")
+                    .on('input', () => this.clearValue())
+                    .on("typeahead:selected", (e, i) => this.itemSelected(i))
+                    .typeahead(this.createTypeaheadSettings(response));
+            }
+        });
+    }
 
-                    try {
-                        var postData: any = this.toObject(Form.getPostData(this.input));
-                        postData[this.input.attr("name")] = "{{query}}";
+    createTypeaheadSettings(urls: string[]) {
 
-                        this.input
-                            .data("selected-text", "")
-                            .on('input', () => this.clearValue())
-                            .on("typeahead:selected", (e, i) => this.itemSelected(i))
-                            .typeahead({
-                                minLength: 2,
-                                delay: 300,
-                                dynamic: true,
-                                backdrop: false,
-                                correlativeTemplate: true,
-                                emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
-                                display: "Title",
-                                template: `
+        let sources = {};
+
+        for (let url of urls) {
+            sources[url] = {
+                ajax: query => {
+                    return { type: "GET", url: url + '?searcher={{query}}', xhrFields: { withCredentials: true } };
+                }
+            };
+        }
+
+        return {
+            minLength: 2,
+            delay: 300,
+            dynamic: true,
+            backdrop: false,
+            correlativeTemplate: true,
+            emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
+            display: "Title",
+            template: `
                             <div class='item'>
                               <img class="icon" src="{{IconUrl}}" />
                                 <div class='title-wrapper'>
@@ -57,88 +68,49 @@ export default class GlobalSearch {
                                 </div>
                               </div>
                           `,
-                                href: "{{Url}}",
-                                source: {
-                                    data: [{
-                                        "Url": "",
-                                        "Title": "",
-                                        "IconUrl": "",
-                                        "Description": ""
-                                    }],
+            href: "{{Url}}",
+            source: sources,
+            callback: {
+                onNavigateAfter: function (node, lis, a, item, query, event) {
+                    if (~[38, 40].indexOf(event.keyCode)) {
+                        var resultList = node.closest("form").find("ul.typeahead__list"),
+                            activeLi = lis.filter("li.active"),
+                            offsetTop = activeLi[0] && activeLi[0].offsetTop - (resultList.height() / 2) || 0;
 
-                                    ajax: function (query) {
-                                        return {
-                                            type: "GET",
-                                            url: url,
-                                            data: postData,
-                                            xhrFields: {
-                                                withCredentials: true
-                                            }
-                                        };
-                                    }
-                                },
-                                callback: {
-                                    onNavigateAfter: function (node, lis, a, item, query, event) {
-                                        if (~[38, 40].indexOf(event.keyCode)) {
-                                            var resultList = node.closest("form").find("ul.typeahead__list"),
-                                                activeLi = lis.filter("li.active"),
-                                                offsetTop = activeLi[0] && activeLi[0].offsetTop - (resultList.height() / 2) || 0;
-
-                                            resultList.scrollTop(offsetTop);
-                                        }
-
-                                    },
-                                    onClickAfter: function (node, a, item, event) {
-
-                                        event.preventDefault();
-                                        window.location.href = item.Url;
-
-
-                                        $('#result-container').text('');
-
-                                    },
-                                    onResult: function (node, query, result, resultCount) {
-                                        if (query === "") return;
-
-                                        var text = "";
-                                        if (result.length > 0 && result.length < resultCount) {
-                                            text = "Showing <strong>" + result.length + "</strong> of <strong>" + resultCount + '</strong> elements matching "' + query + '"';
-                                        } else if (result.length > 0) {
-                                            text = 'Showing <strong>' + result.length + '</strong> elements matching "' + query + '"';
-                                        } else {
-                                            text = 'No results matching "' + query + '"';
-                                        }
-                                        $('#result-container').html(text);
-
-                                    },
-                                    onMouseEnter: function (node, a, item, event) {
-
-                                        if (item.group === "country") {
-                                            $(a).append('<span class="flag-chart flag-' + item.display.replace(' ', '-').toLowerCase() + '"></span>')
-                                        }
-
-                                    },
-                                    onMouseLeave: function (node, a, item, event) {
-
-                                        $(a).find('.flag-chart').remove();
-
-                                    }
-                                }
-                            });
+                        resultList.scrollTop(offsetTop);
                     }
-                    catch (e) {
+                },
+                onClickAfter: function (node, a, item, event) {
+                    event.preventDefault();
+                    window.location.href = item.Url;
+                    $('#result-container').text('');
+                },
+                onResult: function (node, query, result, resultCount) {
+                    if (query === "") return;
 
-                        console.log("seems that there is a problem with the global search source " + url)
-                        console.log(e);
+                    var text = "";
+                    if (result.length > 0 && result.length < resultCount) {
+                        text = "Showing <strong>" + result.length + "</strong> of <strong>" + resultCount + '</strong> elements matching "' + query + '"';
+                    } else if (result.length > 0) {
+                        text = 'Showing <strong>' + result.length + '</strong> elements matching "' + query + '"';
+                    } else {
+                        text = 'No results matching "' + query + '"';
                     }
+                    $('#result-container').html(text);
 
-
+                },
+                onMouseEnter: function (node, a, item, event) {
+                    if (item.group === "country") {
+                        $(a).append('<span class="flag-chart flag-' + item.display.replace(' ', '-').toLowerCase() + '"></span>')
+                    }
+                },
+                onMouseLeave: function (node, a, item, event) {
+                    $(a).find('.flag-chart').remove();
                 }
             }
-        });
-
-
+        }
     }
+
 
     clearValue() {
         if (this.input.val() === "") this.valueField.val("");
