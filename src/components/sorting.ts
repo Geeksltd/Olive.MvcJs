@@ -72,7 +72,7 @@ export default class Sorting {
                 let actionUrl = handle.attr("data-sort-action");
                 actionUrl = Url.addQuery(actionUrl, "drop-before", dropBefore);
 
-                FormAction.invokeWithAjax(null/*{ currentTarget: handle.get(0) }*/, actionUrl);
+                FormAction.invokeWithAjax({ currentTarget: handle.get(0) }, actionUrl);
             }
         });
     }
