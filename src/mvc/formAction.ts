@@ -151,7 +151,18 @@ export default class FormAction {
         let referencedScripts = element.find("script[src]").map((i, s) => $(s).attr("src"));
         element.find("script[src]").remove();
 
-        $("main").replaceWith(element);
+        let width = $(window).width();
+        if (width<=800) {
+            $("main").fadeOut("slow", function(){
+            $("main").hide();
+            $("main").replaceWith(element);
+            $("main").fadeIn("slow");
+            });
+        }
+        else {
+            $("main").replaceWith(element);
+        }
+        
 
         if (referencedScripts.length) {
             let expectedScripts = referencedScripts.length;
