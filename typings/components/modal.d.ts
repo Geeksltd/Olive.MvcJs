@@ -4,10 +4,10 @@ export default class Modal {
     static isClosingModal: boolean;
     url: string;
     modalOptions: any;
+    constructor(event?: JQueryEventObject, targeturl?: string, opt?: any);
     static enalbeEnsureHeight(selector: JQuery): void;
     static initialize(): void;
     static setIFrameHeight(arg: any): void;
-    constructor(event?: JQueryEventObject, targeturl?: string, opt?: any);
     open(): boolean;
     static closeMe(): boolean;
     static close(): boolean;
