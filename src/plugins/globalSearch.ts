@@ -52,9 +52,9 @@ export default class GlobalSearch {
         }
 
         return {
+            maxItem: 50,
             minLength: 2,
             delay: 300,
-            limit: 30,
             dynamic: true,
             backdrop: false,
             correlativeTemplate: true,

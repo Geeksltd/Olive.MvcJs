@@ -6,9 +6,9 @@ export default class GlobalSearch {
     constructor(targetInput: any);
     enable(): void;
     createTypeaheadSettings(urls: string[]): {
+        maxItem: number;
         minLength: number;
         delay: number;
-        limit: number;
         dynamic: boolean;
         backdrop: boolean;
         correlativeTemplate: boolean;
