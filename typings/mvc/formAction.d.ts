@@ -16,7 +16,8 @@ export default class FormAction {
     static invokeWithPost(event: any): boolean;
     static invokeWithAjax(event: any, actionUrl: any, syncCall?: boolean): boolean;
     static onAjaxResponseError(jqXHR: JQueryXHR, status: string, error: string): void;
-    static processAjaxResponse(response: any, containerModule: any, trigger: any): void;
+    static processAjaxResponse(response: any, containerModule: any, trigger: any, args: any): void;
     static raiseViewChanged(container: any, trigger: any, isNewPage?: boolean): void;
-    static replaceMain(element: JQuery, trigger: any): void;
+    static navigate(element: JQuery, trigger: any, args: any): void;
+    private static updateUrl(referencedScripts, element, trigger);
 }

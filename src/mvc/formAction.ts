@@ -69,7 +69,7 @@ export default class FormAction {
             xhrFields: { withCredentials: true },
             async: !syncCall,
             data: data_before_disable,
-            success: (result) => { Waiting.hide(); this.processAjaxResponse(result, containerModule, trigger); },
+            success: (result) => { Waiting.hide(); this.processAjaxResponse(result, containerModule, trigger,null); },
             error: this.onAjaxResponseError,
             complete: (x) => {
                 this.isAwaitingAjaxResponse = false;
@@ -103,12 +103,13 @@ export default class FormAction {
         else alert("Error: response status: " + status);
     }
 
-    public static processAjaxResponse(response, containerModule, trigger) {
+
+    public static processAjaxResponse(response, containerModule, trigger,args) {
 
         let asElement = $(response);
 
         if (asElement.is("main")) {
-            this.replaceMain(asElement, trigger);
+        this.navigate(asElement, trigger,args);
             return;
         }
 
@@ -146,24 +147,38 @@ export default class FormAction {
     static raiseViewChanged(container, trigger, isNewPage: boolean = false) {
         this.onViewChanged.raise({ container: container, trigger: trigger, isNewPage: isNewPage });
     }
+    
 
-    static replaceMain(element: JQuery, trigger) {
+    static navigate(element: JQuery, trigger,args) {
         let referencedScripts = element.find("script[src]").map((i, s) => $(s).attr("src"));
         element.find("script[src]").remove();
-
         let width = $(window).width();
-        if (width<=800) {
-            $("main").fadeOut("slow", function(){
-            $("main").hide();
-            $("main").replaceWith(element);
-            $("main").fadeIn("slow");
-            });
+         if (width<=800) {
+            $("main").attr("id","old");
+            element.attr("id","new").appendTo("service");
+            $("#old").css("position","fixed");
+            if(args=="back"){
+                $("#new").addClass("w3-animate-left"); $("#old").addClass("w3-animate-righter");
+            }
+            else{
+                $("#new").addClass("w3-animate-right"); $("#old").addClass("w3-animate-lefter");
+            }
+            
+            setTimeout(function() {
+                $("#old").remove();
+                $("#new").removeClass("w3-animate-left");
+                $("#new").removeClass("w3-animate-right");
+                FormAction.updateUrl(referencedScripts,element,trigger);
+            }, 400);
         }
         else {
             $("main").replaceWith(element);
+            this.updateUrl(referencedScripts,element,trigger);
         }
         
-
+        
+    }
+    private static updateUrl(referencedScripts,element,trigger){
         if (referencedScripts.length) {
             let expectedScripts = referencedScripts.length;
             let loadedScripts = 0;

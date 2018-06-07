@@ -88,7 +88,12 @@ export default class AjaxRedirect {
 
                 FormAction.isAwaitingAjaxResponse = false;
                 this.isAjaxRedirecting = false;
-                FormAction.processAjaxResponse(response, null, trigger);
+                if (isBack){
+                    FormAction.processAjaxResponse(response, null, trigger,"back");
+                }
+                else{
+                    FormAction.processAjaxResponse(response, null, trigger,null);
+                }
 
                 if (keepScroll) $(document).scrollTop(scrollTopBefore);
             },
