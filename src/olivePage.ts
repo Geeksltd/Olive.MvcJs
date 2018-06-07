@@ -149,7 +149,7 @@ export default class OlivePage {
     }
 
     refresh(keepScroll = false) {
-        if ($("main").parent().is("body"))
+        if ($("main").length == 1)
             AjaxRedirect.go(location.href, null, false /*isBack*/, keepScroll, false);
         else location.reload();
 
