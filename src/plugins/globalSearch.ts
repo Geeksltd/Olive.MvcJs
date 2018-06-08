@@ -19,10 +19,6 @@ export default class GlobalSearch {
         this.input.wrap("<div class='typeahead__container'></div>");
 
         this.valueField = $("[name='" + this.input.attr("name").slice(0, -5) + "']");
-        if (this.valueField.length === 0) {
-            console.log("Failed to find the value field for global-search:");
-            console.log(this.input);
-        }
 
         
         let urlsList = (<string>this.input.attr("data-search-source") || '').split(";");
@@ -52,9 +48,9 @@ export default class GlobalSearch {
         }
 
         return {
+            maxItem: 50,
             minLength: 2,
             delay: 300,
-            limit: 30,
             dynamic: true,
             backdrop: false,
             correlativeTemplate: true,
