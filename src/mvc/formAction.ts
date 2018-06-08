@@ -69,7 +69,7 @@ export default class FormAction {
             xhrFields: { withCredentials: true },
             async: !syncCall,
             data: data_before_disable,
-            success: (result) => { Waiting.hide(); this.processAjaxResponse(result, containerModule, trigger,null); },
+            success: (result) => { Waiting.hide(); this.processAjaxResponse(result, containerModule, trigger, null); },
             error: this.onAjaxResponseError,
             complete: (x) => {
                 this.isAwaitingAjaxResponse = false;
@@ -104,12 +104,12 @@ export default class FormAction {
     }
 
 
-    public static processAjaxResponse(response, containerModule, trigger,args) {
+    public static processAjaxResponse(response, containerModule, trigger, args) {
 
         let asElement = $(response);
 
         if (asElement.is("main")) {
-        this.navigate(asElement, trigger,args);
+            this.navigate(asElement, trigger, args);
             return;
         }
 
@@ -147,39 +147,39 @@ export default class FormAction {
     static raiseViewChanged(container, trigger, isNewPage: boolean = false) {
         this.onViewChanged.raise({ container: container, trigger: trigger, isNewPage: isNewPage });
     }
-    
 
-    static navigate(element: JQuery, trigger,args) {
+
+    static navigate(element: JQuery, trigger, args) {
         let referencedScripts = element.find("script[src]").map((i, s) => $(s).attr("src"));
         element.find("script[src]").remove();
         let width = $(window).width();
-         if (width<=800) {
-             let oldMain = $("main");
+        if (width <= 800) {
+            let oldMain = $("main");
             let newMain = element.appendTo("service");
-            oldMain.css("position","fixed");
-             
-            if(args=="back") {
-                newMain.addClass("w3-animate-left"); 
+            oldMain.css("position", "fixed");
+
+            if (args == "back") {
+                newMain.addClass("w3-animate-left");
                 oldMain.addClass("w3-animate-righter");
             }
-            else{
-                newMain.addClass("w3-animate-right"); 
+            else {
+                newMain.addClass("w3-animate-right");
                 oldMain.addClass("w3-animate-lefter");
             }
-            
-            setTimeout(function() {
+
+            setTimeout(function () {
                 oldMain.remove();
                 newMain.removeClass("w3-animate-left").removeClass("w3-animate-right");
-                FormAction.updateUrl(referencedScripts,element,trigger);
+                FormAction.updateUrl(referencedScripts, element, trigger);
             }, 400);
         }
         else {
             $("main").replaceWith(element);
-            this.updateUrl(referencedScripts,element,trigger);
+            this.updateUrl(referencedScripts, element, trigger);
         }
     }
-    
-    private static updateUrl(referencedScripts,element,trigger){
+
+    private static updateUrl(referencedScripts, element, trigger) {
         if (referencedScripts.length) {
             let expectedScripts = referencedScripts.length;
             let loadedScripts = 0;
