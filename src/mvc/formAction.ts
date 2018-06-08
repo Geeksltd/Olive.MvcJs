@@ -154,20 +154,22 @@ export default class FormAction {
         element.find("script[src]").remove();
         let width = $(window).width();
          if (width<=800) {
-            $("main").attr("id","old");
-            element.attr("id","new").appendTo("service");
-            $("#old").css("position","fixed");
-            if(args=="back"){
-                $("#new").addClass("w3-animate-left"); $("#old").addClass("w3-animate-righter");
+             let oldMain = $("main");
+            let newMain = element.appendTo("service");
+            oldMain.css("position","fixed");
+             
+            if(args=="back") {
+                newMain.addClass("w3-animate-left"); 
+                oldMain.addClass("w3-animate-righter");
             }
             else{
-                $("#new").addClass("w3-animate-right"); $("#old").addClass("w3-animate-lefter");
+                newMain.addClass("w3-animate-right"); 
+                oldMain.addClass("w3-animate-lefter");
             }
             
             setTimeout(function() {
-                $("#old").remove();
-                $("#new").removeClass("w3-animate-left");
-                $("#new").removeClass("w3-animate-right");
+                oldMain.remove();
+                newMain.removeClass("w3-animate-left").removeClass("w3-animate-right");
                 FormAction.updateUrl(referencedScripts,element,trigger);
             }, 400);
         }
@@ -175,9 +177,8 @@ export default class FormAction {
             $("main").replaceWith(element);
             this.updateUrl(referencedScripts,element,trigger);
         }
-        
-        
     }
+    
     private static updateUrl(referencedScripts,element,trigger){
         if (referencedScripts.length) {
             let expectedScripts = referencedScripts.length;
