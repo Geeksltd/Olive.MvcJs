@@ -1,4 +1,5 @@
 export default class Form {
+    static currentRequestUrlProvider: (() => string);
     static enableDefaultButtonKeyPress(selector: JQuery): void;
     static enablecleanUpNumberField(selector: JQuery): void;
     static enablesubmitCleanGet(selector: JQuery): void;
