@@ -8,6 +8,16 @@ export default class Modal {
     url: string;
     modalOptions: any = {};
 
+    constructor(event?: JQueryEventObject, targeturl?: string, opt?: any) {
+        let target = event ? $(event.currentTarget) : null;
+        this.url = targeturl ? targeturl : target.attr("href");
+
+        this.url = Url.effectiveUrlProvider(this.url, target);
+
+        let options = opt ? opt : (target ? target.attr("data-modal-options") : null);
+        if (options) this.modalOptions = JSON.safeParse(options);
+    }
+
     public static enalbeEnsureHeight(selector: JQuery) { selector.off("click.tab-toggle").on("click.tab-toggle", () => this.ensureHeight()); }
 
     static initialize() {
@@ -34,15 +44,7 @@ export default class Modal {
         }
     }
 
-    constructor(event?: JQueryEventObject, targeturl?: string, opt?: any) {
-        let target = event ? $(event.currentTarget) : null;
-        this.url = targeturl ? targeturl : target.attr("href");
 
-        this.url = Url.effectiveUrlProvider(this.url, $(event.target));
-
-        let options = opt ? opt : target.attr("data-modal-options");
-        if (options) this.modalOptions = JSON.safeParse(options);
-    }
 
     open() {
         this.isOpening = true;

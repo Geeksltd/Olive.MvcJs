@@ -23,6 +23,7 @@ import PasswordStength from 'olive/plugins/passwordStength'
 import HtmlEditor from 'olive/plugins/htmlEditor'
 import TimeControl from 'olive/plugins/timeControl'
 import AutoComplete from 'olive/plugins/autoComplete'
+import GlobalSearch from 'olive/plugins/globalSearch'
 import Slider from 'olive/plugins/slider'
 import DatePicker from 'olive/plugins/datePicker'
 import DateTimePicker from 'olive/plugins/dateTimePicker'
@@ -107,6 +108,7 @@ export default class OlivePage {
         // =================== Plug-ins ====================
         InstantSearch.enable($("[name=InstantSearch]"));
         AutoComplete.enable($("input[autocomplete-source]"));
+        GlobalSearch.enable($("input[data-search-source]"));
         DatePicker.enable($("[data-control=date-picker],[data-control=calendar]"));
         DateTimePicker.enable($("[data-control='date-picker|time-picker']"));
         TimeControl.enable($("[data-control=time-picker]"));
@@ -147,7 +149,7 @@ export default class OlivePage {
     }
 
     refresh(keepScroll = false) {
-        if ($("main").parent().is("body"))
+        if ($("main").length == 1)
             AjaxRedirect.go(location.href, null, false /*isBack*/, keepScroll, false);
         else location.reload();
 

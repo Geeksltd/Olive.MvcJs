@@ -19,10 +19,6 @@ export default class AutoComplete {
         this.input.wrap("<div class='typeahead__container'></div>");
 
         this.valueField = $("[name='" + this.input.attr("name").slice(0, -5) + "']");
-        if (this.valueField.length === 0) {
-            console.log("Failed to find the value field for auto-complete:");
-            console.log(this.input);
-        }
 
         let url = this.input.attr("autocomplete-source") || '';
 
@@ -40,6 +36,7 @@ export default class AutoComplete {
                 debug: true,
                 delay: 500,
                 backdrop: false,
+                correlativeTemplate: true,
                 emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
                 source: {
                     values: {
