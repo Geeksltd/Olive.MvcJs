@@ -18,7 +18,6 @@ export default class Grid {
         selector.each((i, e) => this.enableSelectColumns($(e)));
     }
 
-
     static applyColumns(event: JQueryEventObject) {
         let button = $(event.currentTarget);
         let checkboxes = button.closest(".select-cols").find(":checkbox");

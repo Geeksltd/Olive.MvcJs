@@ -153,9 +153,11 @@ export default class FormAction {
         let referencedScripts = element.find("script[src]").map((i, s) => $(s).attr("src"));
         element.find("script[src]").remove();
         let width = $(window).width();
+
+        let oldMain = trigger.closest("main");
+
         if (width <= 800) {
-            let oldMain = $("main");
-            let newMain = element.appendTo("service");
+            let newMain = element.appendTo(oldMain.parent());
             oldMain.css("position", "fixed");
 
             if (args == "back") {
@@ -174,7 +176,7 @@ export default class FormAction {
             }, 400);
         }
         else {
-            $("main").replaceWith(element);
+            oldMain.replaceWith(element);
             this.updateUrl(referencedScripts, element, trigger);
         }
     }
