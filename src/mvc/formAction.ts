@@ -155,6 +155,7 @@ export default class FormAction {
         let width = $(window).width();
 
         let oldMain = trigger.closest("main");
+        if (oldMain.length === 0) oldMain = $("main");
 
         if (width <= 800) {
             let newMain = element.appendTo(oldMain.parent());
