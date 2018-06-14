@@ -106,7 +106,7 @@ define(["require", "exports", "olive/components/url", "olive/components/crossDom
             if (window.isModal()) {
                 crossDomainEvent_1.default.raise(parent, "set-iframe-height", {
                     url: window.location.href,
-                    height: document.body.offsetHeight + (overflow || 0)
+                    height: document.body.scrollHeight + (overflow || 0)
                 });
             }
         };
