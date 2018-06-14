@@ -128,7 +128,7 @@ export default class Modal {
             CrossDomainEvent.raise(parent, "set-iframe-height",
                 {
                     url: window.location.href,
-                    height: document.body.offsetHeight + (overflow || 0)
+                    height: document.body.scrollHeight + (overflow || 0)
                 });
         }
     }
