@@ -2,7 +2,16 @@
     public static handle(command: string, handler: ((arg: any) => void)) {
         window.addEventListener("message", e => {
             try {
-                let info = JSON.parse(e.data);
+                
+                let info = null;
+
+                if (e.data.startsWith('{')) {
+                    info = JSON.parse(e.data);
+                }
+                else {
+                    info = JSON.parse('"' + e.data + '"');
+                }
+
                 if (info.command !== command) return;
 
                 handler(info.arg);
