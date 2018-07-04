@@ -1,4 +1,5 @@
 ﻿import Config from "olive/config"
+import Alert from "olive/components/alert";
 
 export default class Validate {
 
@@ -28,6 +29,15 @@ export default class Validate {
                 alertUntyped(validator.errorList.map(err => err.message).join('\r\n'),
                     () => { setTimeout(() => validator.focusInvalid(), 0); });
             validator.focusInvalid();
+
+            let errorMessage: string = "";
+
+            $.each(validator.errorList, (index, item) => {
+                errorMessage += item.message + "<br/>";
+            });
+
+            Alert.alert(errorMessage, "error");
+
             return false;
         }
         return true;
