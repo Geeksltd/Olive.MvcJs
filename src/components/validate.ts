@@ -30,9 +30,13 @@ export default class Validate {
                     () => { setTimeout(() => validator.focusInvalid(), 0); });
             validator.focusInvalid();
 
+            let errorMessage: string = "";
+
             $.each(validator.errorList, (index, item) => {
-                Alert.alert(item.message, "error");
+                errorMessage += item.message + "<br/>";
             });
+
+            Alert.alert(errorMessage, "error");
 
             return false;
         }
