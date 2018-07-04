@@ -31,7 +31,7 @@ export default class Validate {
             validator.focusInvalid();
 
             $.each(validator.errorList, (index, item) => {
-                Alert.alert(item.message);
+                Alert.alert(item.message, "error");
             });
 
             return false;
