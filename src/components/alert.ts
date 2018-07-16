@@ -20,6 +20,14 @@ export default class Alert {
         }
     }
 
+    public static confirm(text: string, style?: string, callback?: Function) {
+
+        if (text === undefined) text = "";
+        text = text.trim();
+
+        alertify.confirm(text, callback, style);
+    }
+
     public static alertUnobtrusively(message: string, style?: string) {
         alertify.log(message, style);
     }
