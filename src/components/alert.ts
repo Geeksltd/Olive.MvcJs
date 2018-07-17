@@ -19,7 +19,7 @@ export default class Alert {
             $('.alertify-message').empty().append($.parseHTML(text));
         }
     }
-
+    
     public static alertUnobtrusively(message: string, style?: string) {
         alertify.log(message, style);
     }

@@ -38,7 +38,7 @@ export default class Modal {
         try {
             let iframe = $("iframe").filter((i, f) => f["src"] == arg.url);
             if (iframe.attr("data-has-explicit-height") === 'true') return;
-            iframe.height(arg.height);
+            iframe.height(arg.height + 30); //we have 30px padding
         } catch (error) {
             console.error(error);
         }
