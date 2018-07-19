@@ -56,7 +56,8 @@ export default class Sorting {
         container.sortable({
             handle: '[data-sort-item]',
             items: items,
-            containment: "parent",
+            // As it causes a problem for moving items to the bottom of the list I have removed the containment.
+            // containment: "parent",
             axis: 'y',
             helper: (e, ui) => {
                 // prevent TD collapse during drag
