@@ -134,7 +134,9 @@ export default class OlivePage {
         this._initializeActions.forEach((action) => action());
 
         window["IsOliveMvcLoaded"] = true;
-		$.validator.unobtrusive.parse('form');
+		
+		try { $.validator.unobtrusive.parse('form'); }
+        catch (error) { console.error(error); }
     }
 
     goBack(target) {
