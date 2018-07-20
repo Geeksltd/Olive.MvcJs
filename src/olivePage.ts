@@ -103,8 +103,6 @@ export default class OlivePage {
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust",
             (e: any) => $(e.currentTarget).height(e.currentTarget.contentWindow.document.body.scrollHeight));
 
-        //$.validator.unobtrusive.parse('form');
-
         // =================== Plug-ins ====================
         InstantSearch.enable($("[name=InstantSearch]"));
         AutoComplete.enable($("input[autocomplete-source]"));
@@ -136,6 +134,7 @@ export default class OlivePage {
         this._initializeActions.forEach((action) => action());
 
         window["IsOliveMvcLoaded"] = true;
+		$.validator.unobtrusive.parse('form');
     }
 
     goBack(target) {
