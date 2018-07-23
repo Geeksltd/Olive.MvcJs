@@ -63,6 +63,9 @@ export default class FormAction {
         this.isAwaitingAjaxResponse = true;
         actionUrl = Url.effectiveUrlProvider(actionUrl, trigger);
 
+        // If the request is cross domain, jquery won't send the header: X-Requested-With
+        data_before_disable = data_before_disable.concat({ name: ".Olive-Requested-With", value: "XMLHttpRequest" });
+
         $.ajax({
             url: actionUrl,
             type: trigger.attr("data-ajax-method") || 'POST',
