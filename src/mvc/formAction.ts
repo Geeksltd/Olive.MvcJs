@@ -160,7 +160,7 @@ export default class FormAction {
         let oldMain = trigger.closest("main");
         if (oldMain.length === 0) oldMain = $("main");
 
-        if (width <= 800) {
+        if (width <= 800 && trigger.data("transition") == "slide") {
             let newMain = element.appendTo(oldMain.parent());
             oldMain.css("position", "fixed");
 
