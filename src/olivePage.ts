@@ -70,8 +70,13 @@ export default class OlivePage {
     onPreInit(action) { this._preInitializeActions.push(action) }
 
     onViewChanged(container: JQuery = null, trigger: any = null, newPage: boolean = false) {
+
         StandardAction.runStartup(container, trigger, "PreInit");
-        this.initialize();
+        try {
+            this.initialize();
+        } catch (error) {
+            alert("initialization failed: " + error);
+        }
         StandardAction.runStartup(container, trigger, "Init");
 
         if (newPage) {
@@ -134,8 +139,8 @@ export default class OlivePage {
         this._initializeActions.forEach((action) => action());
 
         window["IsOliveMvcLoaded"] = true;
-		
-		try { $.validator.unobtrusive.parse('form'); }
+
+        try { $.validator.unobtrusive.parse('form'); }
         catch (error) { console.error(error); }
     }
 
