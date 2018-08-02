@@ -33,10 +33,12 @@ export default class Validate {
             let errorMessage: string = "";
 
             $.each(validator.errorList, (index, item) => {
-                errorMessage += item.message + "<br/>";
+                if(!$(".tooltip:contains('"+ item.message +"')"))
+                    errorMessage += item.message + "<br/>";
             });
 
-            Alert.alert(errorMessage, "error");
+            if(errorMessage.length > 0)
+                Alert.alert(errorMessage, "error");
 
             return false;
         }
