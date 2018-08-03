@@ -5,5 +5,6 @@ export default class StandardAction {
     static run(action: any, trigger: any): boolean;
     static notify(action: any, trigger: any): void;
     static redirect(action: any, trigger: any): void;
-    static openModal(event: any, url?: any, options?: any): void;
+    static openModal(event: any, url?: any, options?: any): any;
+    static openModaliFrame(event: any, url?: any, options?: any): void;
 }

@@ -1,6 +1,7 @@
 export default class Modal {
     static current: any;
     isOpening: boolean;
+    static isAjaxModal: boolean;
     static isClosingModal: boolean;
     url: string;
     modalOptions: any;
@@ -9,9 +10,11 @@ export default class Modal {
     static initialize(): void;
     static setIFrameHeight(arg: any): void;
     open(): boolean;
+    openiFrame(): boolean;
     static closeMe(): boolean;
     static close(): boolean;
-    getModalTemplate(options: any): string;
+    getModalTemplateForAjax(options: any): string;
+    getModalTemplateForiFrame(options: any): string;
     static ensureHeight(): void;
     static adjustHeight(overflow?: number): void;
     static expandToFitPicker(target: any): void;
