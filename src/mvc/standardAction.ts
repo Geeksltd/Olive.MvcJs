@@ -7,7 +7,17 @@ import CrossDomainEvent from 'olive/components/crossDomainEvent'
 
 export default class StandardAction {
 
-    public static enableLinkModal(selector: JQuery) { selector.off("click.open-modal").on("click.open-modal", (e) => { this.openModal(e); return false; }) }
+    public static enableLinkModal(selector: JQuery) { selector.off("click.open-modal").on("click.open-modal", (e) => {
+        if($(e.currentTarget).attr("data-mode") ==="iframe") {
+            this.openModaliFrame(e);
+        }
+        else{
+            this.openModal(e);
+        }
+        
+        return false; 
+    });
+    }
 
     public static runStartup(container: JQuery = null, trigger: any = null, stage: string = "Init") {
         if (container == null) container = $(document);
@@ -69,8 +79,13 @@ export default class StandardAction {
         else location.replace(action.Redirect);
     }
 
-    static openModal(event, url?, options?) {
+    static openModal(event, url?, options?):any {
         Modal.close();
         new Modal(event, url, options).open();
+    }
+
+    static openModaliFrame(event, url?, options?):void {
+        Modal.close();
+        new Modal(event, url, options).openiFrame();
     }
 }
