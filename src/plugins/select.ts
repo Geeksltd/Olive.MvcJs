@@ -3,7 +3,7 @@
     public static enableEnhance(selector:JQuery){selector.each((i,e)=> this.enhance($(e)));}
      
     static enhance(selectControl: JQuery) {
-        selectControl.chosen({ disable_search_threshold: 5 });
+        selectControl.chosen({ disable_search_threshold: 5, width: "100%" });
     }
 
     public static replaceSource(controlId: string, items) {

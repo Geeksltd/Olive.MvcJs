@@ -155,7 +155,7 @@ export default class OlivePage {
     }
 
     refresh(keepScroll = false) {
-        if ($("main").length == 1)
+        if ($("main").length == 1 || $("main").length === 2) //if there is an ajax modal available, then we have 2 main elements.
             AjaxRedirect.go(location.href, null, false /*isBack*/, keepScroll, false);
         else location.reload();
 

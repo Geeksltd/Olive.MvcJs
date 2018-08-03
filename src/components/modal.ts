@@ -1,9 +1,11 @@
 import Url from 'olive/components/url';
 import CrossDomainEvent from 'olive/components/crossDomainEvent';
+import AjaxRedirect from 'olive/mvc/ajaxRedirect';
 
 export default class Modal {
     static current: any = null;
     isOpening: boolean = false;
+    static isAjaxModal: boolean = false;
     static isClosingModal: boolean = false;
     url: string;
     modalOptions: any = {};
@@ -44,14 +46,27 @@ export default class Modal {
         }
     }
 
+    open():boolean {
+      this.isOpening = true;
+      Modal.isAjaxModal = true;
+      if (Modal.current) { if (Modal.close() === false) { return false; } }
+  
+      Modal.current = $(this.getModalTemplateForAjax(this.modalOptions));
+  
+      AjaxRedirect.go(this.url, $(Modal.current).find("main"), true, false, false);
+  
+      $("body").append(Modal.current);
 
+      Modal.current.modal("show");      
+    }
 
-    open() {
+    openiFrame() {
         this.isOpening = true;
+        Modal.isAjaxModal = false;
         if (Modal.current)
             if (Modal.close() === false) return false;
 
-        Modal.current = $(this.getModalTemplate(this.modalOptions));
+        Modal.current = $(this.getModalTemplateForiFrame(this.modalOptions));
 
         if (true /* TODO: Change to if Internet Explorer only */)
             Modal.current.removeClass("fade");
@@ -68,7 +83,8 @@ export default class Modal {
     }
 
     public static closeMe() {
-        CrossDomainEvent.raise(parent, "close-modal");
+        if(!this.isAjaxModal) { CrossDomainEvent.raise(parent, "close-modal"); }
+        this.close();
         return true;
     }
 
@@ -84,7 +100,37 @@ export default class Modal {
         return true;
     }
 
-    getModalTemplate(options: any) {
+    getModalTemplateForAjax(options: any):string {
+      let modalDialogStyle:string = "";
+  
+      if (options) {
+        if (options.width) {
+          modalDialogStyle += "width:" + options.width + ";";
+        }
+  
+        if (options.height) {
+          modalDialogStyle += "height:" + options.height + ";";
+        }
+      }
+  
+      return (
+        "<div class='modal' id='myModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel'\
+           aria-hidden='true'>\
+              <div class='modal-dialog' style='" + modalDialogStyle + "'>\
+              <div class='modal-content'>\
+              <div class='modal-header'>\
+                  <button type='button' class='close' data-dismiss='modal' aria-label='Close'>\
+                      <i class='fa fa-times-circle'></i>\
+                  </button>\
+              </div>\
+              <div class='modal-body'>\
+                  <main></main>\
+              </div>\
+          </div></div></div>"
+      );
+    }  
+
+    getModalTemplateForiFrame(options: any) {
 
         let modalDialogStyle = "";
         let iframeStyle = "width:100%; border:0;";
