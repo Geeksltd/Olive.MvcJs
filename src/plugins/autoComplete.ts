@@ -1,4 +1,5 @@
 import Form from "olive/components/form";
+import Url from 'olive/components/url'
 
 export default class AutoComplete {
     input: any;
@@ -21,6 +22,7 @@ export default class AutoComplete {
         this.valueField = $("[name='" + this.input.attr("name").slice(0, -5) + "']");
 
         let url = this.input.attr("autocomplete-source") || '';
+        url = Url.effectiveUrlProvider(url, this.input);
 
         var postData: any = this.toObject(Form.getPostData(this.input));
 
@@ -50,7 +52,8 @@ export default class AutoComplete {
                             return {
                                 type: "POST",
                                 url: url,
-                                data: postData
+                                data: postData,
+                                xhrFields: { withCredentials: true }
                             };
                         }
                     }
