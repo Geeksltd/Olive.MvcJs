@@ -19,6 +19,21 @@ export default class Alert {
             $('.alertify-message').empty().append($.parseHTML(text));
         }
     }
+
+    public static confirm(text: string, style?: string, callback?: Function) {
+
+        if (text === undefined) text = "";
+        text = text.trim();
+
+        if (text.indexOf("<") != 0) {
+            text = text.replace(/\r/g, "<br />");
+            alertify.confirm(text, callback, style);
+        }
+        else {
+            alertify.confirm('', callback, style);
+            $('.alertify-message').empty().append($.parseHTML(text));
+        }
+    }
     
     public static alertUnobtrusively(message: string, style?: string) {
         alertify.log(message, style);
