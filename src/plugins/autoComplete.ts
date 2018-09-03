@@ -1,8 +1,9 @@
-import Form from "olive/components/form";
+import Form from "olive/components/form"
 import Url from 'olive/components/url'
+import FormAction from 'olive/mvc/formAction'
 
 export default class AutoComplete {
-    input: any;
+    input: JQuery;
     awaitingAutocompleteResponses: number = 0;
     valueField: JQuery;
 
@@ -10,13 +11,18 @@ export default class AutoComplete {
         selector.each((i, e) => new AutoComplete($(e)).enable());
     }
 
-    constructor(targetInput: any) {
+    constructor(targetInput: JQuery) {
         this.input = targetInput;
     }
 
     enable() {
+
         if (this.input.is("[data-typeahead-enabled=true]")) return;
-        else this.input.attr("data-typeahead-enabled", true);
+        else this.input.attr("data-typeahead-enabled", "true");
+
+        if (this.input.is("[data-change-action]"))
+            FormAction.enableInvokeWithAjax(this.input, "typeahead:select", "data-change-action");
+
         this.input.wrap("<div class='typeahead__container'></div>");
 
         this.valueField = $("[name='" + this.input.attr("name").slice(0, -5) + "']");
@@ -31,7 +37,6 @@ export default class AutoComplete {
         this.input
             .data("selected-text", "")
             .on('input', () => this.clearValue())
-            .on("typeahead:selected", (e, i) => this.itemSelected(i))
             .typeahead({
                 minLength: 1,
                 dynamic: true,
@@ -59,8 +64,12 @@ export default class AutoComplete {
                     }
                 },
                 callback: {
-                    onClick: function (node, query, event) {
+                    onClick: (node, a, item, event) => {
                         $("[name='" + node.attr("name").slice(0, -5) + "']").val(event.Value);
+                    },
+                    onClickAfter: (node, a, item, event) => {
+                        this.itemSelected(item);
+                        this.input.trigger("typeahead:select", { event, item })
                     }
                 }
             });

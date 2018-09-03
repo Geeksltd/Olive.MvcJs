@@ -1,9 +1,9 @@
 export default class AutoComplete {
-    input: any;
+    input: JQuery;
     awaitingAutocompleteResponses: number;
     valueField: JQuery;
     static enable(selector: JQuery): void;
-    constructor(targetInput: any);
+    constructor(targetInput: JQuery);
     enable(): void;
     clearValue(): void;
     itemSelected(item: any): void;

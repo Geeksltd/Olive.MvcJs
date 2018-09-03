@@ -1,3 +1,6 @@
+import Url from 'olive/components/url'
+import FormAction from 'olive/mvc/formAction'
+
 export default class Paging {
 
     public static enableOnSizeChanged(selector: JQuery) {
@@ -10,7 +13,13 @@ export default class Paging {
     }
 
     static onSizeChanged(event: Event) {
-        $(event.currentTarget).closest("form").submit();
+        let form = $(event.currentTarget).closest("form");
+        if (form.length === 0) return;
+        if (form.attr("method") == "get") form.submit();
+        else {
+            let actionUrl = Url.effectiveUrlProvider(form.attr("action"), $(event.currentTarget));
+            FormAction.invokeWithAjax(event, actionUrl);
+        }
     }
 
     static withAjax(event: JQueryEventObject) {
