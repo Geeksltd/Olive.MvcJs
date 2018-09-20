@@ -123,7 +123,7 @@ export default class OlivePage {
         ConfirmBox.enable($("[data-confirm-question]"));
         PasswordStength.enable($(".password-strength"));
         SubMenu.enable($(".with-submenu"));
-        SubMenu.createAccordion($("ul.nav.accordion"));
+        SubMenu.createAccordion($("ul.accordion"));
 
         // =================== Request lifecycle ====================
         AjaxRedirect.enableBack($(window));
