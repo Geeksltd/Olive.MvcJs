@@ -1,6 +1,7 @@
 import Waiting from 'olive/components/waiting'
 import Url from 'olive/components/url'
 import FormAction from 'olive/mvc/formAction'
+import Modal from 'olive/components/modal';
 
 export default class AjaxRedirect {
     static ajaxChangedUrl = 0;
@@ -72,7 +73,7 @@ export default class AjaxRedirect {
 
                 if (!isBack) {
                     this.ajaxChangedUrl++;
-                    if (addToHistory) {
+                    if (addToHistory && !window.isModal()) {
 
                         var title = $("#page_meta_title").val()
 
@@ -86,12 +87,21 @@ export default class AjaxRedirect {
                     }
                 }
 
+                if(addToHistory) {
+                    if(window.isModal() && addToHistory) Modal.changeUrl(url);
+                }
+
                 FormAction.isAwaitingAjaxResponse = false;
                 this.isAjaxRedirecting = false;
                 
-                FormAction.processAjaxResponse(response, null, trigger, isBack ? "back" : null);               
-
+                FormAction.processAjaxResponse(response, null, trigger, isBack ? "back" : null);                
                 if (keepScroll) $(document).scrollTop(scrollTopBefore);
+
+                //this part load modal after page refresh
+                if(!isBack && addToHistory && !window.isModal()  && Url.getQuery("_modal") !== "") {
+                    let url : string = Url.getQuery("_modal");
+                    new Modal(null,url).open(false);
+                }
             },
             error: (response) => {
                 this.onRedirectionFailed(url, response);

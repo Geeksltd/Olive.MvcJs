@@ -8,12 +8,13 @@ export default class Modal {
     static isAjaxModal: boolean = false;
     static isClosingModal: boolean = false;
     url: string;
+    rawUrl : string;
     modalOptions: any = {};
 
     constructor(event?: JQueryEventObject, targeturl?: string, opt?: any) {
         let target = event ? $(event.currentTarget) : null;
         this.url = targeturl ? targeturl : target.attr("href");
-
+        this.rawUrl = this.url;
         this.url = Url.effectiveUrlProvider(this.url, target);
 
         let options = opt ? opt : (target ? target.attr("data-modal-options") : null);
@@ -29,6 +30,7 @@ export default class Modal {
 
         window["isModal"] = () => {
             try {
+                if(Modal.isAjaxModal) return true;
                 return window.self !== window.parent;
             } catch (e) {
                 return true;
@@ -46,18 +48,34 @@ export default class Modal {
         }
     }
 
-    open():boolean {
+    open(changeUrl : boolean = true):boolean {
       this.isOpening = true;
       Modal.isAjaxModal = true;
       if (Modal.current) { if (Modal.close() === false) { return false; } }
   
       Modal.current = $(this.getModalTemplateForAjax(this.modalOptions));
   
-      AjaxRedirect.go(this.url, $(Modal.current).find("main"), true, false, false);
+      AjaxRedirect.go(this.url, $(Modal.current).find("main"), true, false, changeUrl);
   
       $("body").append(Modal.current);
 
-      Modal.current.modal("show");      
+      Modal.current.modal("show");
+
+      Modal.current.on('hidden.bs.modal', () => {
+        CrossDomainEvent.raise(window.self,"close-modal");
+       });
+    }
+
+    public static changeUrl(url:string) {        
+        let currentPath :string = Url.removeQuery(Url.current(), "_modal").replace("?","");
+
+        if(Url.isAbsolute(url)) {
+            let pathArray : Array<string> = url.split("/").splice(3);
+            url = pathArray.join("/");
+        }
+
+        let modalUrl:string = Url.addQuery(currentPath, "_modal", url);
+        AjaxRedirect.defaultOnRedirected("", modalUrl);
     }
 
     openiFrame() {
@@ -92,11 +110,17 @@ export default class Modal {
         this.isClosingModal = true;
 
         if (this.current) {
-            this.current.modal('hide').remove();
+            this.current.modal('hide');
             this.current = null;
         }
 
         this.isClosingModal = false;
+        this.isAjaxModal = false;
+        
+        //remove modal query string
+        var currentPath = Url.removeQuery(Url.current(),"_modal").replace("?","");
+        AjaxRedirect.defaultOnRedirected("", currentPath);
+
         return true;
     }
 
