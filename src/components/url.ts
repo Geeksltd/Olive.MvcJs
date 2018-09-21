@@ -71,6 +71,11 @@
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
+    static goToLoginPage() {
+        let query : string = this.current().split("/").splice(3).join("/");
+        window.location.href = "/login?returnUrl=/" + query.trimStart("/");
+    }
+
     static fullQueryString(url: string): string {
         if (url == undefined || url == null)
             url = Url.current();

@@ -74,6 +74,15 @@ export default class FormAction {
             data: data_before_disable,
             success: (result) => { Waiting.hide(); this.processAjaxResponse(result, containerModule, trigger, null); },
             error: this.onAjaxResponseError,
+            statusCode: {
+                0 : (data)=> {
+                    // we don't have valid HTTP code 0! so here it only happens if we have CORS issue and we need to redirect a user to login page.
+                    Url.goToLoginPage();
+                },
+                401 : (data)=> {
+                    Url.goToLoginPage();
+                }
+            },
             complete: (x) => {
                 this.isAwaitingAjaxResponse = false;
                 trigger.removeClass('loading-action-result');
