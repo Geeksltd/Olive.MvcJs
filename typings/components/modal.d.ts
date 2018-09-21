@@ -4,12 +4,14 @@ export default class Modal {
     static isAjaxModal: boolean;
     static isClosingModal: boolean;
     url: string;
+    rawUrl: string;
     modalOptions: any;
     constructor(event?: JQueryEventObject, targeturl?: string, opt?: any);
     static enalbeEnsureHeight(selector: JQuery): void;
     static initialize(): void;
     static setIFrameHeight(arg: any): void;
-    open(): boolean;
+    open(changeUrl?: boolean): boolean;
+    static changeUrl(url: string): void;
     openiFrame(): boolean;
     static closeMe(): boolean;
     static close(): boolean;
