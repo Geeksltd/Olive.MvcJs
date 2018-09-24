@@ -1,6 +1,7 @@
 ﻿export default class Url {
 
     public static effectiveUrlProvider: ((url: string, trigger: JQuery) => string) = (u, t) => u;
+    public static onAuthenticationFailed : (()=> void) = Url.goToLoginPage;
 
     static makeAbsolute(baseUrl: string, relativeUrl: string): string {
         baseUrl = baseUrl || window.location.origin;
@@ -69,6 +70,11 @@
         let regex = new RegExp("[\\?&]" + name + "=([^&#]*)", "i"),
             results = regex.exec(url);
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
+    static goToLoginPage() {
+        let query : string = this.current().split("/").splice(3).join("/");
+        window.location.href = "/login?returnUrl=/" + query.trimStart("/");
     }
 
     static fullQueryString(url: string): string {
