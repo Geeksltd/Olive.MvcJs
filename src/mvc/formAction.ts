@@ -52,7 +52,7 @@ export default class FormAction {
     static invokeWithAjax(event, actionUrl, syncCall = false) {
 
         let trigger = $(event.currentTarget);
-        let triggerUniqueSelector = trigger.getUniqueSelector();
+        let triggerUniqueSelector : string = trigger.getUniqueSelector();
         let containerModule = trigger.closest("[data-module]");
 
         if (Validate.validateForm(trigger) == false) { Waiting.hide(); return false; }
@@ -87,8 +87,15 @@ export default class FormAction {
                 this.isAwaitingAjaxResponse = false;
                 trigger.removeClass('loading-action-result');
                 if (disableToo) trigger.removeAttr('disabled');
-                let triggerTabIndex = $(":focusable").index($(triggerUniqueSelector));
-                if (triggerTabIndex > -1) $(":focusable").eq(triggerTabIndex + 1).focus();
+                
+                let triggerTabIndex :number = $(":focusable").index($(triggerUniqueSelector));
+
+                if(triggerUniqueSelector.endsWith(">select")) {
+                    //it's an ajax call from a drop-down list so we select next element
+                    triggerTabIndex++;
+                }
+
+                if (triggerTabIndex > -1) $(":focusable").eq(triggerTabIndex).focus();
             }
         });
 
