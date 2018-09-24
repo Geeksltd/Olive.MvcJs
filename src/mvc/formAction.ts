@@ -77,10 +77,10 @@ export default class FormAction {
             statusCode: {
                 0 : (data)=> {
                     // we don't have valid HTTP code 0! so here it only happens if we have CORS issue and we need to redirect a user to login page.
-                    Url.goToLoginPage();
+                    Url.onAuthenticationFailed();
                 },
                 401 : (data)=> {
-                    Url.goToLoginPage();
+                    Url.onAuthenticationFailed();
                 }
             },
             complete: (x) => {

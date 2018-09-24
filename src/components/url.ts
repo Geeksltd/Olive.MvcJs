@@ -1,6 +1,7 @@
 ﻿export default class Url {
 
     public static effectiveUrlProvider: ((url: string, trigger: JQuery) => string) = (u, t) => u;
+    public static onAuthenticationFailed : (()=> void) = Url.goToLoginPage;
 
     static makeAbsolute(baseUrl: string, relativeUrl: string): string {
         baseUrl = baseUrl || window.location.origin;
