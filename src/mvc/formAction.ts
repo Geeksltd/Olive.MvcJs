@@ -75,10 +75,6 @@ export default class FormAction {
             success: (result) => { Waiting.hide(); this.processAjaxResponse(result, containerModule, trigger, null); },
             error: this.onAjaxResponseError,
             statusCode: {
-                0 : (data)=> {
-                    // we don't have valid HTTP code 0! so here it only happens if we have CORS issue and we need to redirect a user to login page.
-                    Url.onAuthenticationFailed();
-                },
                 401 : (data)=> {
                     Url.onAuthenticationFailed();
                 }

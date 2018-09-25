@@ -68,12 +68,6 @@ export default class AjaxRedirect {
             url: url,
             type: 'GET',
             xhrFields: { withCredentials: true },
-            statusCode: {
-                0 : (data)=> {
-                    // we don't have valid HTTP code 0! so here it only happens if we have CORS issue and we need to redirect a user to login page.
-                    Url.onAuthenticationFailed();
-                }
-            },
             success: (response) => {
                 FormAction.events = {};
 
