@@ -52,7 +52,7 @@ export default class FormAction {
     static invokeWithAjax(event, actionUrl, syncCall = false) {
 
         let trigger = $(event.currentTarget);
-        let triggerUniqueSelector = trigger.getUniqueSelector();
+        let triggerUniqueSelector : string = trigger.getUniqueSelector();
         let containerModule = trigger.closest("[data-module]");
 
         if (Validate.validateForm(trigger) == false) { Waiting.hide(); return false; }
@@ -75,10 +75,6 @@ export default class FormAction {
             success: (result) => { Waiting.hide(); this.processAjaxResponse(result, containerModule, trigger, null); },
             error: this.onAjaxResponseError,
             statusCode: {
-                0 : (data)=> {
-                    // we don't have valid HTTP code 0! so here it only happens if we have CORS issue and we need to redirect a user to login page.
-                    Url.onAuthenticationFailed();
-                },
                 401 : (data)=> {
                     Url.onAuthenticationFailed();
                 }
@@ -87,8 +83,15 @@ export default class FormAction {
                 this.isAwaitingAjaxResponse = false;
                 trigger.removeClass('loading-action-result');
                 if (disableToo) trigger.removeAttr('disabled');
-                let triggerTabIndex = $(":focusable").index($(triggerUniqueSelector));
-                if (triggerTabIndex > -1) $(":focusable").eq(triggerTabIndex + 1).focus();
+                
+                let triggerTabIndex :number = $(":focusable").index($(triggerUniqueSelector));
+
+                if(!triggerUniqueSelector.endsWith(">button:eq(1)") && !triggerUniqueSelector.endsWith(">button:eq(2)") && !triggerUniqueSelector.endsWith(">a")) {
+                    //trigger element is not a button, image or link so we should select next element.
+                    triggerTabIndex++;
+                }
+
+                if (triggerTabIndex > -1) $(":focusable").eq(triggerTabIndex).focus();
             }
         });
 

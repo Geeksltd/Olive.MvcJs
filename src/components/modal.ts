@@ -67,7 +67,10 @@ export default class Modal {
     }
 
     public static changeUrl(url:string) {        
-        let currentPath :string = Url.removeQuery(Url.current(), "_modal").replace("?","");
+        let currentPath : string = Url.removeQuery(Url.current(), "_modal");
+
+        if(currentPath.endsWith("?"))
+            currentPath = currentPath.trimEnd("?");
 
         if(Url.isAbsolute(url)) {
             let pathArray : Array<string> = url.split("/").splice(3);
@@ -118,7 +121,11 @@ export default class Modal {
         this.isAjaxModal = false;
         
         //remove modal query string
-        var currentPath = Url.removeQuery(Url.current(),"_modal").replace("?","");
+        var currentPath = Url.removeQuery(Url.current(),"_modal");
+
+        if(currentPath.endsWith("?")) 
+            currentPath = currentPath.trimEnd("?");
+
         AjaxRedirect.defaultOnRedirected("", currentPath);
 
         return true;
