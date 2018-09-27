@@ -114,6 +114,7 @@ export default class Modal {
 
         if (this.current) {
             this.current.modal('hide');
+            this.current.remove();
             this.current = null;
         }
 

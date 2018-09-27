@@ -1,9 +1,11 @@
-import Config from "olive/config"
-import Modal from "olive/components/modal"
+import Config from "olive/config";
+import Modal from "olive/components/modal";
 
 export default class HtmlEditor {
 
     input: any;
+
+    public static editorConfigPath : string = "/scripts/ckeditor_config.js";
 
     public static enable(selector: JQuery) { selector.each((i, e) => new HtmlEditor($(e)).enable()) }
 
@@ -13,7 +15,7 @@ export default class HtmlEditor {
 
     enable() {
         window["CKEDITOR_BASEPATH"] = Config.CK_EDITOR_BASE_PATH;
-        $.getScript(Config.CK_EDITOR_BASE_PATH + "ckeditor.js", () => this.onCkEditorScriptReady());
+        this.onDemandScript(Config.CK_EDITOR_BASE_PATH + "ckeditor.js", () => this.onCkEditorScriptReady());
     }
 
     onCkEditorScriptReady() {
@@ -30,7 +32,19 @@ export default class HtmlEditor {
     getEditorSettings() {
         return {
             toolbar: this.input.attr('data-toolbar') || Config.DEFAULT_HTML_EDITOR_MODE,
-            customConfig: '/scripts/ckeditor_config.js'
+            customConfig: HtmlEditor.editorConfigPath
         };
+    }
+
+    private onDemandScript(url, callback) {
+        callback = (typeof callback !== "undefined") ? callback : {};
+    
+        $.ajax({
+                type: "GET",
+                url: url,
+                success: callback,
+                dataType: "script",
+                cache: true
+           });
     }
 }
