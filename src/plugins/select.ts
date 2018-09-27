@@ -4,8 +4,12 @@
      
     static enhance(selectControl: JQuery) {
         selectControl.chosen({ disable_search_threshold: 5, width: "100%" });
-        //this fix chosen issue with jQuery validation (https://github.com/harvesthq/chosen/issues/515#issuecomment-33214050)
+        //this fix chosen issue with jQuery validation (https://github.com/harvesthq/chosen/issues/515#issuecomment-55901946)
+        selectControl.next(".chosen-container").prepend(selectControl.detach());
         selectControl.attr("style", "display:visible; position:absolute; clip:rect(0,0,0,0)");
+        selectControl.on("click focus keyup change", () => {
+            selectControl.trigger("blur");
+        });
     }
 
     public static replaceSource(controlId: string, items) {
