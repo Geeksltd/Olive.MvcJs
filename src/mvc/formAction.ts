@@ -72,7 +72,7 @@ export default class FormAction {
             xhrFields: { withCredentials: true },
             async: !syncCall,
             data: data_before_disable,
-            success: (result) => { Waiting.hide(); this.processAjaxResponse(result, containerModule, trigger, null); },
+            success: (result) => { $(".tooltip").remove(); Waiting.hide(); this.processAjaxResponse(result, containerModule, trigger, null); },
             error: this.onAjaxResponseError,
             statusCode: {
                 401 : (data)=> {

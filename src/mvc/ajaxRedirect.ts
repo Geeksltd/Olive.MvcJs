@@ -75,7 +75,7 @@ export default class AjaxRedirect {
                     this.ajaxChangedUrl++;
                     if (addToHistory && !window.isModal()) {
 
-                        var title = $("#page_meta_title").val()
+                        var title = $("#page_meta_title").val();
 
                         let addressBar = trigger.attr("data-addressbar") || url;
                         try {
