@@ -104,8 +104,14 @@ export default class Modal {
     }
 
     public static closeMe() {
-        if(!this.isAjaxModal) { CrossDomainEvent.raise(parent, "close-modal"); }
+        if (!this.isAjaxModal) { CrossDomainEvent.raise(parent, "close-modal"); }
         this.close();
+ 
+        $('body > .tooltip').each((index, elem) => {
+            if ($('[aria-discribedby=' + elem.id + ']'))
+                elem.remove();
+        });
+ 
         return true;
     }
 
