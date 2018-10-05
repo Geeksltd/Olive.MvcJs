@@ -21,7 +21,7 @@ export default class Modal {
         if (options) this.modalOptions = JSON.safeParse(options);
     }
 
-    public static enalbeEnsureHeight(selector: JQuery) { selector.off("click.tab-toggle").on("click.tab-toggle", () => this.ensureHeight()); }
+    public static enableEnsureHeight(selector: JQuery) { selector.off("click.tab-toggle").on("click.tab-toggle", () => this.ensureHeight()); }
 
     static initialize() {
 
