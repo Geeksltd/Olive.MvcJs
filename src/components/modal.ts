@@ -49,21 +49,21 @@ export default class Modal {
     }
 
     open(changeUrl : boolean = true):boolean {
-      this.isOpening = true;
-      Modal.isAjaxModal = true;
-      if (Modal.current) { if (Modal.close() === false) { return false; } }
-  
-      Modal.current = $(this.getModalTemplateForAjax(this.modalOptions));
-  
-      AjaxRedirect.go(this.url, $(Modal.current).find("main"), true, false, changeUrl);
-  
-      $("body").append(Modal.current);
+        this.isOpening = true;
+        Modal.isAjaxModal = true;
+        if (Modal.current) { if (Modal.close() === false) { return false; } }
 
-      Modal.current.modal("show");
+        Modal.current = $(this.getModalTemplateForAjax(this.modalOptions));
 
-      Modal.current.on('hidden.bs.modal', () => {
-        CrossDomainEvent.raise(window.self,"close-modal");
-       });
+        AjaxRedirect.go(this.url, $(Modal.current).find("main"), true, false, changeUrl);
+
+        $("body").append(Modal.current);
+
+        Modal.current.modal("show");
+
+        Modal.current.on('hidden.bs.modal', () => {
+          CrossDomainEvent.raise(window.self,"close-modal");
+         });
     }
 
     public static changeUrl(url:string) {        
@@ -106,12 +106,12 @@ export default class Modal {
     public static closeMe() {
         if (!this.isAjaxModal) { CrossDomainEvent.raise(parent, "close-modal"); }
         this.close();
- 
+
         $('body > .tooltip').each((index, elem) => {
             if ($('[aria-discribedby=' + elem.id + ']'))
                 elem.remove();
         });
- 
+
         return true;
     }
 
@@ -123,6 +123,11 @@ export default class Modal {
             this.current.remove();
             this.current = null;
         }
+
+        $('body > .tooltip').each((index, elem) => {
+            if ($('[aria-discribedby=' + elem.id + ']'))
+                elem.remove();
+        });
 
         this.isClosingModal = false;
         this.isAjaxModal = false;
@@ -140,19 +145,19 @@ export default class Modal {
 
     getModalTemplateForAjax(options: any):string {
       let modalDialogStyle:string = "";
-  
-      if (options) {
-        if (options.width) {
-          modalDialogStyle += "width:" + options.width + ";";
+
+        if (options) {
+            if (options.width) {
+                modalDialogStyle += "width:" + options.width + ";";
+            }
+
+            if (options.height) {
+                modalDialogStyle += "height:" + options.height + ";";
+            }
         }
-  
-        if (options.height) {
-          modalDialogStyle += "height:" + options.height + ";";
-        }
-      }
-  
-      return (
-        "<div class='modal' id='myModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel'\
+
+        return (
+            "<div class='modal' id='myModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel'\
            aria-hidden='true'>\
               <div class='modal-dialog' style='" + modalDialogStyle + "'>\
               <div class='modal-content'>\
@@ -165,8 +170,8 @@ export default class Modal {
                   <main></main>\
               </div>\
           </div></div></div>"
-      );
-    }  
+        );
+    }
 
     getModalTemplateForiFrame(options: any) {
 
