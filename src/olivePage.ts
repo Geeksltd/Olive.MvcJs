@@ -34,6 +34,7 @@ import SubMenu from 'olive/plugins/subMenu'
 import InstantSearch from 'olive/plugins/instantSearch'
 import DateDropdown from 'olive/plugins/dateDropdown'
 import UserHelp from 'olive/plugins/userHelp'
+import MergeColumn from "olive/plugins/mergeColumn";
 
 export default class OlivePage {
 
@@ -100,6 +101,7 @@ export default class OlivePage {
         Sorting.setSortHeaderClass($("th[data-sort]"));
         Form.enablecleanUpNumberField($("[data-val-number]"));
         Modal.enalbeEnsureHeight($("[data-toggle=tab]"));
+        MergeColumn.mergeActionButtons();
         Select.enableEnhance($("select"));
         Form.enableDefaultButtonKeyPress($("form input, form select"));
         UserHelp.enable($("[data-user-help]"));
