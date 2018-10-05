@@ -34,6 +34,7 @@ import SubMenu from 'olive/plugins/subMenu'
 import InstantSearch from 'olive/plugins/instantSearch'
 import DateDropdown from 'olive/plugins/dateDropdown'
 import UserHelp from 'olive/plugins/userHelp'
+import MergeColumn from "olive/plugins/mergeColumn";
 
 export default class OlivePage {
 
@@ -89,6 +90,7 @@ export default class OlivePage {
         this._preInitializeActions.forEach((action) => action());
 
         // =================== Standard Features ====================
+        MergeColumn.mergeActionButtons();
         Grid.enableColumn($(".select-cols .apply"));
         Grid.enableSelectCol($(".select-grid-cols .group-control"));
         Grid.enableToggle($("th.select-all > input:checkbox"));
@@ -99,7 +101,7 @@ export default class OlivePage {
         Sorting.enableAjaxSorting($("a[data-sort]"));
         Sorting.setSortHeaderClass($("th[data-sort]"));
         Form.enablecleanUpNumberField($("[data-val-number]"));
-        Modal.enalbeEnsureHeight($("[data-toggle=tab]"));
+        Modal.enalbeEnsureHeight($("[data-toggle=tab]"));        
         Select.enableEnhance($("select"));
         Form.enableDefaultButtonKeyPress($("form input, form select"));
         UserHelp.enable($("[data-user-help]"));
