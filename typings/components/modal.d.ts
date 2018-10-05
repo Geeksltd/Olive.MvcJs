@@ -7,7 +7,7 @@ export default class Modal {
     rawUrl: string;
     modalOptions: any;
     constructor(event?: JQueryEventObject, targeturl?: string, opt?: any);
-    static enalbeEnsureHeight(selector: JQuery): void;
+    static enableEnsureHeight(selector: JQuery): void;
     static initialize(): void;
     static setIFrameHeight(arg: any): void;
     open(changeUrl?: boolean): boolean;

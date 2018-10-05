@@ -7,4 +7,5 @@ export default class Grid {
     static enableSelectColumns(container: any): void;
     static enableSelectAllToggle(event: any): void;
     static highlightRow(element: any): void;
+    static mergeActionButtons(): void;
 }
