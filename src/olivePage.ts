@@ -90,6 +90,7 @@ export default class OlivePage {
         this._preInitializeActions.forEach((action) => action());
 
         // =================== Standard Features ====================
+        MergeColumn.mergeActionButtons();
         Grid.enableColumn($(".select-cols .apply"));
         Grid.enableSelectCol($(".select-grid-cols .group-control"));
         Grid.enableToggle($("th.select-all > input:checkbox"));
@@ -100,8 +101,7 @@ export default class OlivePage {
         Sorting.enableAjaxSorting($("a[data-sort]"));
         Sorting.setSortHeaderClass($("th[data-sort]"));
         Form.enablecleanUpNumberField($("[data-val-number]"));
-        Modal.enalbeEnsureHeight($("[data-toggle=tab]"));
-        MergeColumn.mergeActionButtons();
+        Modal.enalbeEnsureHeight($("[data-toggle=tab]"));        
         Select.enableEnhance($("select"));
         Form.enableDefaultButtonKeyPress($("form input, form select"));
         UserHelp.enable($("[data-user-help]"));

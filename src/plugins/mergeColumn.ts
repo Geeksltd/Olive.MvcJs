@@ -1,5 +1,3 @@
-import AjaxRedirect from "olive/mvc/ajaxRedirect";
-import Modal from "olive/components/modal";
 
 export default class MergeColumn {
 
@@ -19,7 +17,7 @@ export default class MergeColumn {
                 mergedContent = {};
                 current.children("a").each((i, innerLink) => {
                     let selected : any = $(innerLink);
-                    mergedContent[selected.text().trim()] = selected.attr("href").trim() + "#MODAL#" + (selected.attr("target") === "$modal");
+                    mergedContent[selected.text().trim()] = selected.attr("href").trim() + "#ATTRIBUTE#target='" + selected.attr("target") + "' data-redirect='" +  selected.attr("data-redirect") + "'";
                 });
             } else {
                 mergedContent = "";
@@ -33,7 +31,7 @@ export default class MergeColumn {
                     let currentInnerItem : any = $(innerItem);
                     currentInnerItem.children("a").each((i, innerLink) => {
                         let selected : any = $(innerLink);
-                        mergedContent[selected.text().trim()] = selected.attr("href").trim() + "#MODAL#" + (selected.attr("target") === "$modal");
+                        mergedContent[selected.text().trim()] = selected.attr("href").trim() + "#ATTRIBUTE#target='" + selected.attr("target") + "' data-redirect='" +  selected.attr("data-redirect") + "'";
                     });
                 }
             });
@@ -41,20 +39,20 @@ export default class MergeColumn {
             if (typeof mergedContent === "string") {
                 current.html(current.html() + mergedContent);
             } else {
-                var dropDownList :any = $("<select />");
-                $("<option />", { value: 0, text: "---select---" }).appendTo(dropDownList);
+                var dropDownList :string = `<div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Select action
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">`;
+
                 for (var val in mergedContent) {
-                    $("<option />", { value: mergedContent[val], text: val }).appendTo(dropDownList);
+                    let urlAddress = mergedContent[val].split("#ATTRIBUTE#");
+                    dropDownList += `<a class="dropdown-item" href="${urlAddress[0]}" ${urlAddress[1]}>${val}</a>`
                 }
-                dropDownList.change(() => {
-                    let urlToGo : any = dropDownList.val().split("#MODAL#");
-                    if(urlToGo[1] === "true") {
-                        new Modal(null,urlToGo[0],null).open();
-                    } else {
-                        AjaxRedirect.go(dropDownList.val());
-                    }
-                });
-                current.empty().append(dropDownList);
+
+                dropDownList += "</div></div>";
+                
+                current.empty().append($(dropDownList));
             }
 
             current.nextAll(".actions").remove();
