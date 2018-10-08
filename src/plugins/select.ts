@@ -3,6 +3,10 @@
     public static enableEnhance(selector: JQuery) { selector.each((i, e) => this.enhance($(e))); }
 
     static enhance(selectControl: JQuery) {
+        //M# generate 'placeholder' while chosen needs 'data-placeholder' attribute
+        if (selectControl.attr("placeholder") && selectControl.attr("placeholder") !== "") {
+            selectControl.attr("data-placeholder", selectControl.attr("placeholder")).removeAttr("placeholder");
+        }
         selectControl.chosen({ disable_search_threshold: 5, width: "100%" });
         //this fix chosen issue with jQuery validation (https://github.com/harvesthq/chosen/issues/515#issuecomment-55901946)
         if (selectControl.css('display') === 'none') {
