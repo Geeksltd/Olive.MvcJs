@@ -4,7 +4,8 @@ export default class MasterDetail {
     static updateSubFormStates() {
         let countItems = element => $(element).parent().find(".subform-item:visible").length;
         // Hide removed items
-        $("input[name*=MustBeDeleted][value=True]").closest('[data-subform]').hide();
+        $("input[name$=MustBeDeleted][value]").val("true");
+        $("input[name$=MustBeDeleted][value]").closest('[data-subform]').hide();
         // hide empty headers
         $(".horizontal-subform thead").each((i, e) =>
             $(e).css('visibility', (countItems(e) > 0) ? 'visible' : 'hidden'));
@@ -24,7 +25,7 @@ export default class MasterDetail {
         let button = $(event.currentTarget);
 
         let container = button.parents(".subform-item");
-        container.find("input[name*=MustBeDeleted]").val("true");
+        container.find("input[name$=MustBeDeleted]").val("true");
         container.hide();
         this.updateSubFormStates();
         event.preventDefault();
