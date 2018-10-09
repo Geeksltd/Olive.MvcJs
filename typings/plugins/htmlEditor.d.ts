@@ -9,5 +9,5 @@ export default class HtmlEditor {
         toolbar: any;
         customConfig: string;
     };
-    private onDemandScript;
+    private onDemandScript(url, callback);
 }
