@@ -19,5 +19,5 @@ export default class FormAction {
     static processAjaxResponse(response: any, containerModule: any, trigger: any, args: any): void;
     static raiseViewChanged(container: any, trigger: any, isNewPage?: boolean): void;
     static navigate(element: JQuery, trigger: any, args: any): void;
-    private static updateUrl(referencedScripts, element, trigger);
+    private static updateUrl;
 }
