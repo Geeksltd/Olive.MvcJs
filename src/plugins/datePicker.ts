@@ -27,7 +27,11 @@ export default class DatePicker {
                 format: Config.DATE_FORMAT,
                 useCurrent: false,
                 showTodayButton: true,
-                icons: { today: 'today' },
+                icons: { 
+                    today: "fa fa-calendar",
+                    next: "fa fa-chevron-right",
+                    previous: "fa fa-chevron-left"
+                 },
                 viewMode: viewMode,
                 keepInvalid: this.input.closest("form").find("[data-change-action]").length == 0,
                 locale: Config.DATE_LOCALE

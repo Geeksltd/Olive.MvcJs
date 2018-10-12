@@ -1,8 +1,6 @@
 ﻿
 import Modal from "olive/components/modal"
 import Config from "olive/config"
-import DatePicker from "olive/plugins/datePicker";
-import TimeControl from "olive/plugins/timeControl";
 
 export default class DateTimePicker {
     input: any;
@@ -29,8 +27,18 @@ export default class DateTimePicker {
                     sideBySide: true,
                     format: Config.DATE_TIME_FORMAT,
                     useCurrent: false,
-                    showTodayButton: true,
-                    icons: { today: 'Date' },
+                    showTodayButton: true,                    
+                    showClear: true,
+                    icons: { 
+                        today: "fa fa-calendar",
+                        clear: "fa fa-eraser",
+                        time: "fa fa-clock-o",
+                        date: "fa fa-calendar",
+                        up: "fa fa-chevron-up",
+                        down: "fa fa-chevron-down",
+                        next: "fa fa-chevron-right",
+                        previous: "fa fa-chevron-left"
+                     },
                     keepInvalid: this.input.closest("form").find("[data-change-action]").length == 0,
                     locale: Config.DATE_LOCALE
              }
