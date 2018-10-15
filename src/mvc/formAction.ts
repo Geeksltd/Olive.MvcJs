@@ -4,7 +4,6 @@ import MasterDetail from 'olive/components/masterDetail'
 import Form from 'olive/components/form'
 import Url from 'olive/components/url'
 import Config from "olive/config"
-import AjaxRedirect from 'olive/mvc/ajaxRedirect'
 import StandardAction from 'olive/mvc/standardAction'
 import LiteEvent from 'olive/components/liteEvent'
 
