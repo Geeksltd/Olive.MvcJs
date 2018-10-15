@@ -50,33 +50,48 @@ export default class Sorting {
 
     static DragSort(container) {
 
-        let isTable = container.is("tbody");
-        let items = isTable ? "> tr" : "> li"; // TODO: Do we need to support any other markup?
-
-        container.sortable({
+        var config = {
             handle: '[data-sort-item]',
-            items: items,
-            // As it causes a problem for moving items to the bottom of the list I have removed the containment.
-            // containment: "parent",
+            containment: "parent",
             axis: 'y',
-            helper: (e, ui) => {
-                // prevent TD collapse during drag
-                ui.children().each((i, c) => $(c).width($(c).width()));
-                return ui;
-            },
-            stop: (e, ui) => {
+            tolerance: "pointer",
+            scroll: true,
+        }
 
-                let dropBefore = ui.item.next().find("[data-sort-item]").attr("data-sort-item") || "";
+        var itemsSelector = "> li";
+        if (container.is("tbody")) {
+            itemsSelector = "> tr";
+        } else if (container.is(".r-grid-body")) {
+            itemsSelector = "> .r-grid-row";
+            delete config.axis;
+        }
 
-                let handle = ui.item.find("[data-sort-item]");
+        config["items"] = itemsSelector;
 
-                let actionUrl = handle.attr("data-sort-action");
-                actionUrl = Url.addQuery(actionUrl, "drop-before", dropBefore);
+        config["helper"] = (e, ui) => {
+            // prevent TD collapse during drag
+            ui.children().each((i, c) => $(c).width($(c).width()));
+            return ui;
+        };
+        config["stop"] = (e, ui) => {
 
-                actionUrl = Url.effectiveUrlProvider(actionUrl, handle);
+            $(ui).children().removeAttr("style");
+            container.find(itemsSelector).children().removeAttr("style");
 
-                FormAction.invokeWithAjax({ currentTarget: handle.get(0) }, actionUrl);
-            }
-        });
+            let dropBefore = ui.item.next().find("[data-sort-item]").attr("data-sort-item") || "";
+
+            let handle = ui.item.find("[data-sort-item]");
+
+            let actionUrl = handle.attr("data-sort-action");
+            actionUrl = Url.addQuery(actionUrl, "drop-before", dropBefore);
+
+            actionUrl = Url.effectiveUrlProvider(actionUrl, handle);
+
+            FormAction.invokeWithAjax({ currentTarget: handle.get(0) }, actionUrl);
+        };
+
+
+        container.sortable(config);
     }
+
 }

@@ -95,7 +95,7 @@ export default class OlivePage {
         Grid.enableToggle($("th.select-all > input:checkbox"));
         MasterDetail.enable($("[data-delete-subform]"));
         Paging.enableOnSizeChanged($("form .pagination-size").find("select[name=p],select[name$='.p']"));
-        Sorting.enableDragSort($("[data-sort-item]").parents("tbody"));
+        Sorting.enableDragSort($("[data-sort-item]").parents("tbody,.r-grid-body"));
         Paging.enableWithAjax($("a[data-pagination]"));
         Sorting.enableAjaxSorting($("a[data-sort]"));
         Sorting.setSortHeaderClass($("th[data-sort]"));
