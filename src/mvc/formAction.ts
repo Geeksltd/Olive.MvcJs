@@ -83,14 +83,14 @@ export default class FormAction {
                 trigger.removeClass('loading-action-result');
                 if (disableToo) trigger.removeAttr('disabled');
                 
-                let triggerTabIndex :number = $(":focusable").index($(triggerUniqueSelector));
+                let triggerTabIndex :number = $(":focusable").not("[tabindex='-1']").index($(triggerUniqueSelector));
 
                 if(!triggerUniqueSelector.endsWith(">button:eq(1)") && !triggerUniqueSelector.endsWith(">button:eq(2)") && !triggerUniqueSelector.endsWith(">a")) {
                     //trigger element is not a button, image or link so we should select next element.
                     triggerTabIndex++;
                 }
 
-                if (triggerTabIndex > -1) $(":focusable").eq(triggerTabIndex).focus();
+                if (triggerTabIndex > -1) $(":focusable").not("[tabindex='-1']").eq(triggerTabIndex).focus();
             }
         });
 
