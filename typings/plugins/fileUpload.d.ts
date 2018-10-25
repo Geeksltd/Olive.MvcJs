@@ -18,5 +18,6 @@ export default class FileUpload {
     onProgressAll(e: any, data: any): void;
     onUploadError(jqXHR: JQueryXHR, status: string, error: string): void;
     onUploadSuccess(response: any): void;
+    onUploadCompleted(response: any): void;
     onChange(e: any, data: any): void;
 }
