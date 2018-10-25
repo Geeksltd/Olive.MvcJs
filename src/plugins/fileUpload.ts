@@ -1,5 +1,6 @@
 import FormAction from "olive/mvc/formAction"
 import Url from "olive/components/url"
+import CrossDomainEvent from "olive/components/crossDomainEvent";
 
 // For configuration see:
 // http://markusslima.github.io/bootstrap-filestyle/ 
@@ -48,7 +49,8 @@ export default class FileUpload {
             progressall: this.onProgressAll.bind(this),
             error: this.onUploadError,
             success: this.onUploadSuccess.bind(this),
-            xhrFields: {withCredentials: true}
+            xhrFields: {withCredentials: true},
+            complete: this.onUploadCompleted.bind(this)
         });
     }
 
@@ -111,6 +113,10 @@ export default class FileUpload {
             else this.idInput.val("file:" + response.Result.ID);
             this.deleteButton.show();
         }
+    }
+
+    onUploadCompleted(response) {        
+            CrossDomainEvent.raise(parent, "file-uploaded", response);
     }
 
     onChange(e, data) {
