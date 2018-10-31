@@ -33,8 +33,10 @@ export default class AutoComplete {
         var postData: any = this.toObject(Form.getPostData(this.input));
 
         postData[this.input.attr("name")] = "{{query}}";
-
+        
         this.input
+            .wrap("<span class='typehead-chevron-down'></span>")
+            .before('<i class="fas fa-chevron-down"></i>')
             .data("selected-text", "")
             .on('input', () => this.clearValue())
             .typeahead({
