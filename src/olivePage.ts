@@ -44,6 +44,11 @@ export default class OlivePage {
         SystemExtensions.initialize();
         Modal.initialize();
 
+        //ASP.NET needs this config for Request.IsAjaxRequest()
+        $.ajaxSetup({
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+
         $(() => {
             //$.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: this.DEFAULT_MODAL_BACKDROP });
             //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
