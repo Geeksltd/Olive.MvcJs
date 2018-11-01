@@ -1,3 +1,4 @@
+import FormAction from "olive/mvc/formAction";
 
 export default class Grid {
 
@@ -45,7 +46,7 @@ export default class Grid {
 
     public static mergeActionButtons(): void {
 
-        $("table tr > .actions").each((index, item) => {
+        $("table tr > .actions-merge").each((index, item) => {
 
             let current: any = $(item);
 
@@ -60,11 +61,20 @@ export default class Grid {
                     let selected : any = $(innerLink);
                     mergedContent[selected.text().trim()] = selected.attr("href").trim() + "#ATTRIBUTE#target='" + selected.attr("target") + "' data-redirect='" +  selected.attr("data-redirect") + "'";
                 });
-            } else {
+            } if (current.children("button").length > 0){
+                if(!mergedContent)
+                    mergedContent = {};
+
+                current.children("button").each((i, innerLink) => {
+                    let selected : any = $(innerLink);
+                    mergedContent[selected.text().trim()] = selected.attr("formaction").trim() + "#ATTRIBUTE##BUTTON#data-confirm-question='" + selected.attr("data-confirm-question") + "'";
+                });
+            }             
+            else {
                 mergedContent = "";
             }
 
-            current.nextAll(".actions").each((i, innerItem) => {
+            current.nextAll(".actions-merge").each((i, innerItem) => {
 
                 if (typeof mergedContent === "string") 
                     mergedContent += " " + $(innerItem).html();
@@ -73,6 +83,11 @@ export default class Grid {
                     currentInnerItem.children("a").each((i, innerLink) => {
                         let selected : any = $(innerLink);
                         mergedContent[selected.text().trim()] = selected.attr("href").trim() + "#ATTRIBUTE#target='" + selected.attr("target") + "' data-redirect='" +  selected.attr("data-redirect") + "'";
+                    });
+
+                    currentInnerItem.children("button").each((i, innerLink) => {
+                        let selected : any = $(innerLink);
+                        mergedContent[selected.text().trim()] = selected.attr("formaction").trim() + "#ATTRIBUTE##BUTTON#data-confirm-question='" + selected.attr("data-confirm-question") + "'";
                     });
                 }
             });
@@ -88,7 +103,13 @@ export default class Grid {
 
                 for (let val in mergedContent) {
                     let urlAddress = mergedContent[val].split("#ATTRIBUTE#");
-                    dropDownList += `<a class="dropdown-item" href="${urlAddress[0]}" ${urlAddress[1]}>${val}</a>`
+
+                    if(urlAddress[1].startsWith("#BUTTON#")){
+                        urlAddress[1] = urlAddress[1].replace("#BUTTON#" ,"");
+                        dropDownList += `<a class="dropdown-item" href="#" formaction="${urlAddress[0]}" ${urlAddress[1]}>${val}</a>`;
+                    }
+                    else
+                        dropDownList += `<a class="dropdown-item" href="${urlAddress[0]}" ${urlAddress[1]}>${val}</a>`;                    
                 }
 
                 dropDownList += "</div></div>";
@@ -96,7 +117,7 @@ export default class Grid {
                 current.empty().append($(dropDownList));
             }
 
-            current.nextAll(".actions").remove();
+            current.nextAll(".actions-merge").remove();
 
         });
     }
