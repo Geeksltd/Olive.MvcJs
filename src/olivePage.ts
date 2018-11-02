@@ -34,6 +34,7 @@ import SubMenu from 'olive/plugins/subMenu'
 import InstantSearch from 'olive/plugins/instantSearch'
 import DateDropdown from 'olive/plugins/dateDropdown'
 import UserHelp from 'olive/plugins/userHelp'
+import MultiSelect from "./plugins/multiSelect";
 
 export default class OlivePage {
 
@@ -100,8 +101,9 @@ export default class OlivePage {
         Sorting.enableAjaxSorting($("a[data-sort]"));
         Sorting.setSortHeaderClass($("th[data-sort]"));
         Form.enablecleanUpNumberField($("[data-val-number]"));
-        Modal.enableEnsureHeight($("[data-toggle=tab]"));        
-        Select.enableEnhance($("select"));
+        Modal.enableEnsureHeight($("[data-toggle=tab]"));     
+        MultiSelect.enableEnhance($("select[data-control='collapsible-checkboxes']")); 
+        Select.enableEnhance($("select:not([data-control='collapsible-checkboxes'])"));
         Form.enableDefaultButtonKeyPress($("form input, form select"));
         UserHelp.enable($("[data-user-help]"));
         StandardAction.enableLinkModal($("[target='$modal'][href]"));
