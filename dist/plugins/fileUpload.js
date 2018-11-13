@@ -58,6 +58,7 @@ define(["require", "exports", "olive/mvc/formAction", "olive/components/url", "o
                 .val(this.currentFileLink.text())
                 .removeAttr('disabled')
                 .addClass('file-target')
+                .attr('readonly', 'readonly')
                 .click(function () { return _this.currentFileLink[0].click(); });
         };
         FileUpload.prototype.removeExistingFile = function () {

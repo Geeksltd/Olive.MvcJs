@@ -71,6 +71,7 @@ export default class FileUpload {
             .val(this.currentFileLink.text())
             .removeAttr('disabled')
             .addClass('file-target')
+            .attr('readonly', 'readonly')
             .click(() => this.currentFileLink[0].click());
     }
 
