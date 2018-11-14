@@ -46,6 +46,10 @@ export default class StandardAction {
         else if (action.Script) eval(action.Script);
         else if (action.BrowserAction == "Back") window.history.back();
         else if (action.BrowserAction == "CloseModal") { if (window.page.modal.closeMe() === false) return false; }
+        else if (action.BrowserAction == "CloseModalRebind") {
+            if (window.page.modal.closeMe() === false) return false;
+            window.page.refresh();
+        }
         else if (action.BrowserAction == "CloseModalRefreshParent") {
             window.page.modal.closeMe();
             CrossDomainEvent.raise(parent, 'refresh-page');
