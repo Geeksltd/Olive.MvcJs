@@ -46,7 +46,7 @@ export default class StandardAction {
         else if (action.Script) eval(action.Script);
         else if (action.BrowserAction == "Back") window.history.back();
         else if (action.BrowserAction == "CloseModal") { if (window.page.modal.closeMe() === false) return false; }
-        else if (action.BrowserAction == "CloseModalRebind") {
+        else if (action.BrowserAction == "CloseModalRebindParent") {
             if (window.page.modal.closeMe() === false) return false;
             window.page.refresh();
         }
