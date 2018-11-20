@@ -12,7 +12,7 @@ export default class OlivePage {
     onViewChanged(container?: JQuery, trigger?: any, newPage?: boolean): void;
     initialize(): void;
     enableCustomCheckbox(): void;
-    enableRadio(): void;
+    enableCustomRadio(): void;
     goBack(target: any): boolean;
     refresh(keepScroll?: boolean): boolean;
 }

@@ -135,7 +135,7 @@ export default class OlivePage {
         SubMenu.enable($(".with-submenu"));
         SubMenu.createAccordion($("ul.accordion"));
         this.enableCustomCheckbox();
-        this.enableRadio();
+        this.enableCustomRadio();
 
         // =================== Request lifecycle ====================
         AjaxRedirect.enableBack($(window));
@@ -161,7 +161,7 @@ export default class OlivePage {
         CustomCheckbox.enable($("input[type=checkbox]"));
     }
 
-    enableRadio() {
+    enableCustomRadio() {
         CustomRadio.enable($("input[type=radio]"));
     }
 
