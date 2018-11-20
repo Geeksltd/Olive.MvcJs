@@ -35,6 +35,8 @@ import InstantSearch from 'olive/plugins/instantSearch'
 import DateDropdown from 'olive/plugins/dateDropdown'
 import UserHelp from 'olive/plugins/userHelp'
 import MultiSelect from "./plugins/multiSelect";
+import CustomCheckbox from "./plugins/customCheckbox";
+import CustomRadio from "./plugins/customRadio";
 
 export default class OlivePage {
 
@@ -106,8 +108,8 @@ export default class OlivePage {
         Sorting.enableAjaxSorting($("a[data-sort]"));
         Sorting.setSortHeaderClass($("th[data-sort]"));
         Form.enablecleanUpNumberField($("[data-val-number]"));
-        Modal.enableEnsureHeight($("[data-toggle=tab]"));     
-        MultiSelect.enableEnhance($("select[data-control='collapsible-checkboxes']")); 
+        Modal.enableEnsureHeight($("[data-toggle=tab]"));
+        MultiSelect.enableEnhance($("select[data-control='collapsible-checkboxes']"));
         Select.enableEnhance($("select:not([data-control='collapsible-checkboxes'])"));
         Form.enableDefaultButtonKeyPress($("form input, form select"));
         UserHelp.enable($("[data-user-help]"));
@@ -132,6 +134,8 @@ export default class OlivePage {
         PasswordStength.enable($(".password-strength"));
         SubMenu.enable($(".with-submenu"));
         SubMenu.createAccordion($("ul.accordion"));
+        this.enableCustomCheckbox();
+        this.enableRadio();
 
         // =================== Request lifecycle ====================
         AjaxRedirect.enableBack($(window));
@@ -151,6 +155,14 @@ export default class OlivePage {
 
         try { $.validator.unobtrusive.parse('form'); }
         catch (error) { console.error(error); }
+    }
+
+    enableCustomCheckbox() {
+        CustomCheckbox.enable($("input[type=checkbox]"));
+    }
+
+    enableRadio() {
+        CustomRadio.enable($("input[type=radio]"));
     }
 
     goBack(target) {

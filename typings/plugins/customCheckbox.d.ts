@@ -1,3 +1,8 @@
 export default class CustomCheckbox {
-    static enable(customize?: (input: JQuery, helper: JQuery) => void, selector?: string): void;
+    input: any;
+    checkedClassName: string;
+    static handledClassName: string;
+    static enable(selector: JQuery): void;
+    constructor(targetInput: any);
+    enable(): void;
 }

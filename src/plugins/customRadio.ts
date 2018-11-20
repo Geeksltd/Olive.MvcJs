@@ -1,47 +1,31 @@
 export default class CustomRadio {
-    public static enable(customize: (input: JQuery, helper: JQuery) => void = null, selector: string = 'input[type=radio]') { 
-        let checkedClassName = 'checked';
+    input: any;
+    checkedClassName = 'checked';
+    static handledClassName = 'handled';
 
-        let sync = () => {
-            $('input[type=radio].handled').each((index, elem) => {
-                let radio = $(elem).next();
-
-                if ($(elem).is(':checked')) {
-                    radio.addClass(checkedClassName);
-                }
-                else {
-                    radio.removeClass(checkedClassName);
-                }
-            });
-        };
-
-        $(selector + ':not(.handled)').each((index, elem) => {
-            let radio = $('<div class="radio-helper"/>');
-            let input = $(elem);
-
-            radio.attr('tabindex', (typeof input.attr('tabindex') === 'undefined') ? 0 : input.attr('tabindex'));
-                        
-            let check = () => {
-                radio.addClass(checkedClassName);
-                $(elem).prop('checked', true).trigger('change');
-            }
-
-            radio.click(check);
-            radio.keypress((event) => {
-                if(event.keyCode === 32)
-                {
-                    check();
-                    event.preventDefault();
-                }
-            });
-
-            $(elem).change(sync);
-            $(elem).after(radio);
-            $(elem).addClass('handled');
-
-            if(customize) customize(input, radio);
+    public static enable(selector: JQuery) {
+        selector.each((i, e) => {
+            if (!$(e).hasClass(this.handledClassName))
+                new CustomRadio($(e)).enable();
         });
+    }
 
-        sync();
+    constructor(targetInput: any) {
+        this.input = targetInput;
+    }
+
+    enable() {
+        let radio = $('<div class="radio-helper"/>');
+
+        let check = () => {
+            this.input.prop('checked', true).focus();
+
+            if (this.input.data('change-action'))
+                this.input.trigger('change.data-action');
+        }
+
+        radio.click(check);
+        this.input.after(radio);
+        this.input.addClass(CustomRadio.handledClassName);
     }
 }
