@@ -1,5 +1,6 @@
 import Form from "olive/components/form";
 
+
 export default class GlobalSearch {
     input: any;
     awaitingAutocompleteResponses: number = 0;
