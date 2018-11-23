@@ -1,6 +1,6 @@
 export default class AjaxRedirect {
+    static lastWindowStopCall: Date;
     static ajaxChangedUrl: number;
-    static isAjaxRedirecting: boolean;
     static onRedirected: ((title: string, url: string) => void);
     static onRedirectionFailed: ((url: string, response: JQueryXHR) => void);
     static defaultOnRedirected(title: string, url: string): void;

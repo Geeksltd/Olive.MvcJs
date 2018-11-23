@@ -14,8 +14,6 @@ export interface IViewUpdatedEventArgs {
 }
 
 export default class FormAction {
-
-    public static isAwaitingAjaxResponse = false;
     static events: { [event: string]: Function[] } = {};
     static dynamicallyLoadedScriptFiles = [];
 
@@ -51,7 +49,7 @@ export default class FormAction {
     static invokeWithAjax(event, actionUrl, syncCall = false) {
 
         let trigger = $(event.currentTarget);
-        let triggerUniqueSelector : string = trigger.getUniqueSelector();
+        let triggerUniqueSelector: string = trigger.getUniqueSelector();
         let containerModule = trigger.closest("[data-module]");
 
         if (Validate.validateForm(trigger) == false) { Waiting.hide(); return false; }
@@ -59,7 +57,7 @@ export default class FormAction {
         let disableToo = Config.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
         if (disableToo) trigger.attr('disabled', 'disabled');
         trigger.addClass('loading-action-result');
-        this.isAwaitingAjaxResponse = true;
+
         actionUrl = Url.effectiveUrlProvider(actionUrl, trigger);
 
         // If the request is cross domain, jquery won't send the header: X-Requested-With
@@ -74,18 +72,17 @@ export default class FormAction {
             success: (result) => { $(".tooltip").remove(); Waiting.hide(); this.processAjaxResponse(result, containerModule, trigger, null); },
             error: this.onAjaxResponseError,
             statusCode: {
-                401 : (data)=> {
+                401: (data) => {
                     Url.onAuthenticationFailed();
                 }
             },
             complete: (x) => {
-                this.isAwaitingAjaxResponse = false;
                 trigger.removeClass('loading-action-result');
                 if (disableToo) trigger.removeAttr('disabled');
-                
-                let triggerTabIndex :number = $(":focusable").not("[tabindex='-1']").index($(triggerUniqueSelector));
 
-                if(!triggerUniqueSelector.endsWith(">button:eq(1)") && !triggerUniqueSelector.endsWith(">button:eq(2)") && !triggerUniqueSelector.endsWith(">a")) {
+                let triggerTabIndex: number = $(":focusable").not("[tabindex='-1']").index($(triggerUniqueSelector));
+
+                if (!triggerUniqueSelector.endsWith(">button:eq(1)") && !triggerUniqueSelector.endsWith(">button:eq(2)") && !triggerUniqueSelector.endsWith(">a")) {
                     //trigger element is not a button, image or link so we should select next element.
                     triggerTabIndex++;
                 }
@@ -174,7 +171,7 @@ export default class FormAction {
         let tooltips = $('body > .tooltip');
 
         tooltips.each((index, elem) => {
-            if($('[aria-discribedby=' + elem.id + ']'))
+            if ($('[aria-discribedby=' + elem.id + ']'))
                 elem.remove();
         });
 

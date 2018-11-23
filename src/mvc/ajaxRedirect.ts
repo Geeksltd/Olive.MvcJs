@@ -4,8 +4,8 @@ import FormAction from 'olive/mvc/formAction'
 import Modal from 'olive/components/modal';
 
 export default class AjaxRedirect {
+    static lastWindowStopCall: Date;
     static ajaxChangedUrl = 0;
-    static isAjaxRedirecting = false;
     public static onRedirected: ((title: string, url: string) => void) = AjaxRedirect.defaultOnRedirected;
     public static onRedirectionFailed: ((url: string, response: JQueryXHR) => void) = AjaxRedirect.defaultOnRedirectionFailed;
 
@@ -52,8 +52,7 @@ export default class AjaxRedirect {
             console.log("## Redirecting to " + url);
         }
 
-        this.isAjaxRedirecting = true;
-        FormAction.isAwaitingAjaxResponse = true;
+        AjaxRedirect.lastWindowStopCall = new Date();
         if (window.stop) window.stop();
         else if (document.execCommand !== undefined) document.execCommand("Stop", false);
 
@@ -87,24 +86,22 @@ export default class AjaxRedirect {
                     }
                 }
 
-                if(addToHistory) {
-                    if(window.isModal() && addToHistory) Modal.changeUrl(url);
+                if (addToHistory) {
+                    if (window.isModal() && addToHistory) Modal.changeUrl(url);
                 }
 
-                FormAction.isAwaitingAjaxResponse = false;
-                this.isAjaxRedirecting = false;
-                
-                FormAction.processAjaxResponse(response, null, trigger, isBack ? "back" : null);                
+                FormAction.processAjaxResponse(response, null, trigger, isBack ? "back" : null);
                 if (keepScroll) $(document).scrollTop(scrollTopBefore);
 
                 //this part load modal after page refresh
-                if(!isBack && addToHistory && !window.isModal()  && Url.getQuery("_modal") !== "") {
-                    let url : string = Url.getQuery("_modal");
-                    new Modal(null,url).open(false);
+                if (!isBack && addToHistory && !window.isModal() && Url.getQuery("_modal") !== "") {
+                    let url: string = Url.getQuery("_modal");
+                    new Modal(null, url).open(false);
                 }
             },
             error: (response) => {
-                this.onRedirectionFailed(url, response);
+                if (!AjaxRedirect.lastWindowStopCall || AjaxRedirect.lastWindowStopCall.getTime() < new Date().getTime() - 500)
+                    this.onRedirectionFailed(url, response);
             },
             complete: (response) => Waiting.hide()
         });
