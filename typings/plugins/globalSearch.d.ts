@@ -2,9 +2,13 @@ export default class GlobalSearch {
     input: any;
     awaitingAutocompleteResponses: number;
     valueField: JQuery;
+    urlList: string[];
+    isMouseInsideSearchPanel: boolean;
     static enable(selector: JQuery): void;
     constructor(targetInput: any);
     enable(): void;
+    clearSearchComponent(): void;
+    createSearchComponent(urls: string[]): void;
     createTypeaheadSettings(urls: string[]): {
         maxItem: number;
         minLength: number;
