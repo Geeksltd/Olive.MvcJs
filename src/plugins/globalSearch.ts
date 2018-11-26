@@ -3,7 +3,8 @@ import Form from "olive/components/form";
 export default class GlobalSearch {
     input: any;
     awaitingAutocompleteResponses: number = 0;
-    valueField: JQuery;    
+    valueField: JQuery;
+    testvarable: number = 3;
     urlList: string[];
     isMouseInsideSearchPanel: boolean = false;
 
@@ -16,21 +17,10 @@ export default class GlobalSearch {
     }
 
     enable() {
-        //if (this.input.is("[data-typeahead-enabled=true]")) return;
-        //else this.input.attr("data-typeahead-enabled", true);
-        //this.input.wrap("<div class='typeahead__container'></div>");
-        this.input.wrap("<div class='global-search-panel'></div>")
-
-        //this.valueField = $("[name='" + this.input.attr("name").slice(0, -5) + "']");
-
+        this.input.wrap("<div class='global-search-panel'></div>");
 
         let urlsList = (<string>this.input.attr("data-search-source") || '').split(";");
         this.urlList = urlsList;
-        //this.input
-        //    .data("selected-text", "")
-        //    .on('input', () => this.clearValue())
-        //    .on("typeahead:selected", (e, i) => this.itemSelected(i))
-        //    .typeahead(this.createTypeaheadSettings(urlsList));
         this.input.change((function (e) {
             this.createSearchComponent(this.urlList);
         }).bind(this));
@@ -40,8 +30,10 @@ export default class GlobalSearch {
                 this.clearSearchComponent();
             }
         }).bind(this));
+    }
 
-        //this.createSearchComponent(urlsList);
+    inputChangeHandler() {
+        this.createSearchComponent(this.urlList);
     }
 
     clearSearchComponent() {
@@ -73,19 +65,15 @@ export default class GlobalSearch {
                 , state: 0 // 0 means pending, 1 means success, 2 means failed
                 , ajx: {} // the ajax object
                 , displayMessage: "" // message to display on summary
-                , result: { // the ajax response
-                    Data: [{
-                        Title: ""
-                        , Description: ""
-                        , IconUrl: ""
-                        , Url: ""
-                    }]
-                    , TotalCount: 0
-                    , StartIndex: 0
-                    , Size: 0
-                }
+                , result: [{
+                    Title: ""
+                    , Description: ""
+                    , IconUrl: ""
+                    , Url: ""
+                }]
             };
         });
+
         var resultcount = 0;
         for (let tempobj of ajaxlist) {
             tempobj.ajx = $
@@ -94,16 +82,16 @@ export default class GlobalSearch {
                     url: tempobj.url,
                     async: true,
                     // additional data to be send 
-                    data: { searcher: this.input.val(), SortExpression: '', StartIndex: 0, Size: 10 },
+                    data: { searcher: this.input.val() },
                     // if succesfully respond, this callback will be called
                     success: (function (result) {
                         let tpobj = this;
                         tpobj.result = result;
-                        if (result.hasOwnProperty('Data') && result.hasOwnProperty('TotalCount') && result.Data !== null && result.Data !== undefined && typeof (result.Data) === typeof ([])) {
-                            resultcount += result.Data.length;
+                        if (result !== null && result !== undefined && typeof (result) === typeof ([])) {
+                            resultcount += result.length;
                             tpobj.state = 1; // 1 -> success
                             // create UI element based on received data
-                            for (var item of result.Data) {
+                            for (var item of result) {
                                 ul.append($("<li>")
                                     .append($("<a href='" + item.Url + "'>")
                                         .append($("<div class='item-div' title='Load this item from " + tpobj.url + "'>")
@@ -118,7 +106,7 @@ export default class GlobalSearch {
                             console.log(tpobj);
                         } else {
                             tpobj.state = 2; // 2 -> fail
-                            console.log("ajax success but failed to decode the response -> wellform expcted response is like this: {Data:[{Title:'',Description:'',IconUrl:'',Url:''}] , TotalCount:number}");
+                            console.log("ajax success but failed to decode the response -> wellform expcted response is like this: [{Title:'',Description:'',IconUrl:'',Url:''}] ");
                             console.log(result);
                         }
                     }).bind(tempobj)
@@ -149,9 +137,9 @@ export default class GlobalSearch {
                         // put summary of alternative sources based on the result
                         for (var aj of ajaxlist) {
                             // if found data from that source
-                            if (aj.state === 1 && aj.result.Data !== null && aj.result.Data !== undefined && aj.result.Data.length > 0) {
+                            if (aj.state === 1 && aj.result !== null && aj.result !== undefined && aj.result.length > 0) {
                                 divsummary.append($("<div class='summary-element success'>")
-                                    .append($("<span>").html('Showing <strong>' + aj.result.Data.length + '</strong> of <strong>' + aj.result.TotalCount + '</strong>'))
+                                    .append($("<span>").html('Showing <strong>' + aj.result.length + '</strong>'))
                                     .append($('<span>').html(' from: ' + aj.url)));
                             }
                             // if nothing found from that source
@@ -169,83 +157,6 @@ export default class GlobalSearch {
             console.log('ajax send to: ' + tempobj.url);
         }
     }
-
-    createTypeaheadSettings(urls: string[]) {
-
-        let sources = {};
-
-        for (let url of urls) {
-            if (url.charAt(0) == '/') {
-                url = window.location.origin + url;
-            }
-            sources[url] = {
-                ajax: query => {
-                    return { type: "GET", url: url + '?searcher={{query}}', xhrFields: { withCredentials: true } };
-                }
-            };
-        }
-
-        return {
-            maxItem: 50,
-            minLength: 2,
-            delay: 300,
-            dynamic: true,
-            backdrop: false,
-            correlativeTemplate: true,
-            emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
-            display: "Title",
-            template: `
-                            <div class='item'>
-                              <img class="icon" src="{{IconUrl}}" />
-                                <div class='title-wrapper'>
-                                  <div class='title'>{{Title}}</div>
-                                  <div class='desc'>{{Description}}</div>
-                                </div>
-                              </div>
-                          `,
-            href: "{{Url}}",
-            source: sources,
-            callback: {
-                onNavigateAfter: function (node, lis, a, item, query, event) {
-                    if (~[38, 40].indexOf(event.keyCode)) {
-                        var resultList = node.closest("form").find("ul.typeahead__list"),
-                            activeLi = lis.filter("li.active"),
-                            offsetTop = activeLi[0] && activeLi[0].offsetTop - (resultList.height() / 2) || 0;
-
-                        resultList.scrollTop(offsetTop);
-                    }
-                },
-                onClickAfter: function (node, a, item, event) {
-                    event.preventDefault();
-                    window.location.href = item.Url;
-                    $('#result-container').text('');
-                },
-                onResult: function (node, query, result, resultCount) {
-                    if (query === "") return;
-
-                    var text = "";
-                    if (result.length > 0 && result.length < resultCount) {
-                        text = "Showing <strong>" + result.length + "</strong> of <strong>" + resultCount + '</strong> elements matching "' + query + '"';
-                    } else if (result.length > 0) {
-                        text = 'Showing <strong>' + result.length + '</strong> elements matching "' + query + '"';
-                    } else {
-                        text = 'No results matching "' + query + '"';
-                    }
-                    $('#result-container').html(text);
-
-                },
-                onMouseEnter: function (node, a, item, event) {
-                    if (item.group === "country") {
-                        $(a).append('<span class="flag-chart flag-' + item.display.replace(' ', '-').toLowerCase() + '"></span>')
-                    }
-                },
-                onMouseLeave: function (node, a, item, event) {
-                    $(a).find('.flag-chart').remove();
-                }
-            }
-        }
-    }
-
 
     clearValue() {
         if (this.input.val() === "") this.valueField.val("");
