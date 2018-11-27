@@ -19,9 +19,7 @@ export default class CustomCheckbox {
 
         let toggle = () => {
             this.input.prop('checked', !this.input.is(':checked')).focus();
-
-            if (this.input.data('change-action'))
-                this.input.trigger('change.data-action');
+            this.input.trigger('change');
         };
 
         checkBox.click(toggle);

@@ -19,9 +19,7 @@ export default class CustomRadio {
 
         let check = () => {
             this.input.prop('checked', true).focus();
-
-            if (this.input.data('change-action'))
-                this.input.trigger('change.data-action');
+            this.input.trigger('change');
         }
 
         radio.click(check);
