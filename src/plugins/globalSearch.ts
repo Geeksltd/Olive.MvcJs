@@ -21,7 +21,8 @@ export default class GlobalSearch {
 
         let urlsList = (<string>this.input.attr("data-search-source") || '').split(";");
         this.urlList = urlsList;
-        this.input.change((function (e) {
+
+        this.input.keypress((function (e) {
             this.createSearchComponent(this.urlList);
         }).bind(this));
 
@@ -95,7 +96,7 @@ export default class GlobalSearch {
                                 ul.append($("<li>")
                                     .append($("<a href='" + item.Url + "'>")
                                         .append($("<div class='item-div' title='Load this item from " + tpobj.url + "'>")
-                                            .append($("<div class='item-icon'>").append($("<img class='icon' src='" + item.IconUrl + "'>")))
+                                            .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<div class='item-icon'>") : $("<div class='item-icon'>").append($("<img class='icon' src='" + item.IconUrl + "'>")))
                                             .append($("<div class='item-title-wrapper'>")
                                                 .append($("<div class='item-title'>").html(item.Title))
                                                 .append($("<div class='item-description'>").append($("<p>").html(item.Description)))))));
@@ -148,7 +149,7 @@ export default class GlobalSearch {
                             }
                             // if the source did not respond properly
                             else {
-                                divsummary.append($("<div class='summary-element error'>").html('Failed to load data from : ' + aj.url));
+                                divsummary.append($("<div class='summary-element failed'>").html('Failed to load data from : ' + aj.url));
                             }
                         }
 
