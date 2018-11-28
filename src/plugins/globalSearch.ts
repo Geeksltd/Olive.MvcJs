@@ -17,12 +17,14 @@ export default class GlobalSearch {
     }
 
     enable() {
+        if (this.input.is("[data-globalsearch-enabled=true]")) return;
+        else this.input.attr("data-globalsearch-enabled", true);
         this.input.wrap("<div class='global-search-panel'></div>");
 
         let urlsList = (<string>this.input.attr("data-search-source") || '').split(";");
         this.urlList = urlsList;
 
-        this.input.keypress((function (e) {
+        this.input.keydown((function (e) {
             this.createSearchComponent(this.urlList);
         }).bind(this));
 
@@ -63,6 +65,7 @@ export default class GlobalSearch {
         var ajaxlist = urls.map(p => {
             return {
                 url: p
+                , text: this.input.val()
                 , state: 0 // 0 means pending, 1 means success, 2 means failed
                 , ajx: {} // the ajax object
                 , displayMessage: "" // message to display on summary
@@ -81,9 +84,10 @@ export default class GlobalSearch {
                 .ajax({
                     dataType: "json",
                     url: tempobj.url,
+                    xhrFields: { withCredentials: true },
                     async: true,
                     // additional data to be send 
-                    data: { searcher: this.input.val() },
+                    data: { searcher: tempobj.text },
                     // if succesfully respond, this callback will be called
                     success: (function (result) {
                         let tpobj = this;
@@ -92,15 +96,16 @@ export default class GlobalSearch {
                             resultcount += result.length;
                             tpobj.state = 1; // 1 -> success
                             // create UI element based on received data
-                            for (var item of result) {
+                            for (var i = 0; i < result.length && i < 20; i++) {
+                                var item = result[i];
                                 ul.append($("<li>")
                                     .append($("<a href='" + item.Url + "'>")
-                                        .append($("<div class='item-div' title='Load this item from " + tpobj.url + "'>")
-                                            .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<div class='item-icon'>") : $("<div class='item-icon'>").append($("<img class='icon' src='" + item.IconUrl + "'>")))
-                                            .append($("<div class='item-title-wrapper'>")
-                                                .append($("<div class='item-title'>").html(item.Title))
-                                                .append($("<div class='item-description'>").append($("<p>").html(item.Description)))))));
-
+                                        .append($("<div class='item'>")
+                                            .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<span>") : $("<img class='icon' src='" + item.IconUrl + "'>"))
+                                            .append($("<div class='title-wrapper'>")
+                                                .append($("<div class='title'>").html(item.Title))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>')))
+                                                .append($(" <div class='desc'>").html(item.Description))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>'))
+                                            ))));
                             }
                             console.log("ajax succeeded for: " + tpobj.url);
                             console.log(result);
@@ -131,28 +136,10 @@ export default class GlobalSearch {
                             divsummary.html('Found nothing');
                             console.log("Found nothing");
                         } else {
-                            divsummary.html('Total Found: ' + resultcount);
+                            divsummary.empty();
+                            //divsummary.html('Total Found: ' + resultcount);
                             console.log('Total Found: ' + resultcount);
                         }
-
-                        // put summary of alternative sources based on the result
-                        for (var aj of ajaxlist) {
-                            // if found data from that source
-                            if (aj.state === 1 && aj.result !== null && aj.result !== undefined && aj.result.length > 0) {
-                                divsummary.append($("<div class='summary-element success'>")
-                                    .append($("<span>").html('Showing <strong>' + aj.result.length + '</strong>'))
-                                    .append($('<span>').html(' from: ' + aj.url)));
-                            }
-                            // if nothing found from that source
-                            else if (aj.state === 1) {
-                                divsummary.append($("<div class='summary-element warning'>").html('Found nothing from: ' + aj.url));
-                            }
-                            // if the source did not respond properly
-                            else {
-                                divsummary.append($("<div class='summary-element failed'>").html('Failed to load data from : ' + aj.url));
-                            }
-                        }
-
                     }
                 }).bind(tempobj));
             console.log('ajax send to: ' + tempobj.url);
