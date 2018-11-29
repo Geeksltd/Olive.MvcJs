@@ -4,6 +4,8 @@ import Waiting from 'olive/components/waiting'
 import Modal from 'olive/components/modal'
 import AjaxRedirect from 'olive/mvc/ajaxRedirect'
 import CrossDomainEvent from 'olive/components/crossDomainEvent'
+import Form from 'olive/components/form'
+import FormAction from './formAction';
 
 export default class StandardAction {
 
@@ -47,8 +49,12 @@ export default class StandardAction {
         else if (action.BrowserAction == "Back") window.history.back();
         else if (action.BrowserAction == "CloseModal") { if (window.page.modal.closeMe() === false) return false; }
         else if (action.BrowserAction == "CloseModalRebindParent") {
+            let opener = Modal.currentModal.opener;
             if (window.page.modal.closeMe() === false) return false;
-            window.page.refresh();
+            let data = Form.getPostData(opener.parents('form'));
+            $.post(window.location.href, data, function (response) {
+                FormAction.processAjaxResponse(response, null, opener, null);
+            });
         }
         else if (action.BrowserAction == "CloseModalRefreshParent") {
             window.page.modal.closeMe();

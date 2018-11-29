@@ -1,8 +1,10 @@
 export default class Modal {
     static current: any;
+    static currentModal: Modal;
     isOpening: boolean;
     static isAjaxModal: boolean;
     static isClosingModal: boolean;
+    opener: JQuery;
     url: string;
     rawUrl: string;
     modalOptions: any;

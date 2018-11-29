@@ -4,15 +4,18 @@ import AjaxRedirect from 'olive/mvc/ajaxRedirect';
 
 export default class Modal {
     static current: any = null;
+    static currentModal: Modal = null;
     isOpening: boolean = false;
     static isAjaxModal: boolean = false;
     static isClosingModal: boolean = false;
+    opener: JQuery;
     url: string;
-    rawUrl : string;
+    rawUrl: string;
     modalOptions: any = {};
 
     constructor(event?: JQueryEventObject, targeturl?: string, opt?: any) {
         let target = event ? $(event.currentTarget) : null;
+        this.opener = target;
         this.url = targeturl ? targeturl : target.attr("href");
         this.rawUrl = this.url;
         this.url = Url.effectiveUrlProvider(this.url, target);
@@ -30,7 +33,7 @@ export default class Modal {
 
         window["isModal"] = () => {
             try {
-                if(Modal.isAjaxModal) return true;
+                if (Modal.isAjaxModal) return true;
                 return window.self !== window.parent;
             } catch (e) {
                 return true;
@@ -48,12 +51,13 @@ export default class Modal {
         }
     }
 
-    open(changeUrl : boolean = true):boolean {
+    open(changeUrl: boolean = true): boolean {
         this.isOpening = true;
         Modal.isAjaxModal = true;
         if (Modal.current) { if (Modal.close() === false) { return false; } }
 
         Modal.current = $(this.getModalTemplateForAjax(this.modalOptions));
+        Modal.currentModal = this;
 
         AjaxRedirect.go(this.url, $(Modal.current).find("main"), true, false, changeUrl);
 
@@ -62,22 +66,22 @@ export default class Modal {
         Modal.current.modal("show");
 
         Modal.current.on('hidden.bs.modal', () => {
-          CrossDomainEvent.raise(window.self,"close-modal");
-         });
+            CrossDomainEvent.raise(window.self, "close-modal");
+        });
     }
 
-    public static changeUrl(url:string) {        
-        let currentPath : string = Url.removeQuery(Url.current(), "_modal");
+    public static changeUrl(url: string) {
+        let currentPath: string = Url.removeQuery(Url.current(), "_modal");
 
-        if(currentPath.endsWith("?"))
+        if (currentPath.endsWith("?"))
             currentPath = currentPath.trimEnd("?");
 
-        if(Url.isAbsolute(url)) {
-            let pathArray : Array<string> = url.split("/").splice(3);
+        if (Url.isAbsolute(url)) {
+            let pathArray: Array<string> = url.split("/").splice(3);
             url = pathArray.join("/");
         }
 
-        let modalUrl:string = Url.addQuery(currentPath, "_modal", url);
+        let modalUrl: string = Url.addQuery(currentPath, "_modal", url);
         AjaxRedirect.defaultOnRedirected("", modalUrl);
     }
 
@@ -122,6 +126,7 @@ export default class Modal {
             this.current.modal('hide');
             this.current.remove();
             this.current = null;
+            this.currentModal = null;
         }
 
         $('body > .tooltip').each((index, elem) => {
@@ -131,11 +136,11 @@ export default class Modal {
 
         this.isClosingModal = false;
         this.isAjaxModal = false;
-        
-        //remove modal query string
-        var currentPath = Url.removeQuery(Url.current(),"_modal");
 
-        if(currentPath.endsWith("?")) 
+        //remove modal query string
+        var currentPath = Url.removeQuery(Url.current(), "_modal");
+
+        if (currentPath.endsWith("?"))
             currentPath = currentPath.trimEnd("?");
 
         AjaxRedirect.defaultOnRedirected("", currentPath);
@@ -143,8 +148,8 @@ export default class Modal {
         return true;
     }
 
-    getModalTemplateForAjax(options: any):string {
-      let modalDialogStyle:string = "";
+    getModalTemplateForAjax(options: any): string {
+        let modalDialogStyle: string = "";
 
         if (options) {
             if (options.width) {
