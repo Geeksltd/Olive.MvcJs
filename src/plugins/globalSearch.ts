@@ -42,6 +42,8 @@ export default class GlobalSearch {
         else this.input.attr("data-globalsearch-enabled", true);
         this.input.wrap("<div class='global-search-panel'></div>");
 
+
+
         let urlsList = (<string>this.input.attr("data-search-source") || '').split(";");
         this.urlList = urlsList;
 
@@ -82,10 +84,19 @@ export default class GlobalSearch {
             .mouseenter(() => this.isMouseInsideSearchPanel = true)
             .mouseleave(() => this.isMouseInsideSearchPanel = false);
         var ul = $("<ul>");
+
+        // loading icon
+        if ($(".global-search-panel .loading-div").length > 0) {
+            $(".global-search-panel .loading-div").empty();
+            $(".global-search-panel .loading-div").remove();
+        }
+        $(".global-search-panel").append($("<div class='loading-div'>")
+            .append($("<i class= 'loading-icon fa fa-spinner fa-spin' > </i><div>")));
+
         //resultPanel.append(ul);
         searchPanel.append(resultPanel);
-        var divsummary = $("<div class='summary'>").html('loading data...');
-        resultPanel.append(divsummary);
+        //var divsummary = $("<div class='summary'>").html('loading data...');        
+        //resultPanel.append(divsummary);
 
         var ajaxlist = urls.map(p => {
             return {
@@ -163,17 +174,20 @@ export default class GlobalSearch {
                     if (ajaxlist.filter(p => p.state === 0).length === 0) {
                         console.log('All ajax completed');
                         //tempobj.clearPanelMethod()
-                        tempobj.resultPanelElement.append(tempobj.ulElement);
+                        $(".global-search-panel .loading-div").empty();
+                        $(".global-search-panel .loading-div").remove();
 
+                        resultPanel.hide();
+                        resultPanel.empty();
                         if (resultcount === 0) {
-                            divsummary.html('Found nothing');
+                            resultPanel.append($("<div class='summary'>").html('Found nothing'));
                             console.log("Found nothing");
                         } else {
-                            divsummary.empty();
-                            divsummary.remove();
-                            //divsummary.html('Total Found: ' + resultcount);
+                            resultPanel.append(ul);
                             console.log('Total Found: ' + resultcount);
                         }
+                        resultPanel.slideDown();
+
                     }
                 }).bind(tempobj));
             console.log('ajax send to: ' + tempobj.url);
