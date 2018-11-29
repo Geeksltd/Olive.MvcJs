@@ -24,8 +24,12 @@ export default class GlobalSearch {
         let urlsList = (<string>this.input.attr("data-search-source") || '').split(";");
         this.urlList = urlsList;
 
-        this.input.keydown((function (e) {
-            this.createSearchComponent(this.urlList);
+        var timeout = null;
+        this.input.keyup((function (e) {
+            clearTimeout(timeout);
+            timeout = setTimeout((function () {
+                this.createSearchComponent(this.urlList)
+            }).bind(this), 300);
         }).bind(this));
 
         this.input.on("blur", (function (e) {
@@ -59,7 +63,7 @@ export default class GlobalSearch {
         var ul = $("<ul>");
         listHolder.append(ul);
         inputholder.append(listHolder);
-        var divsummary = $("<div class='summary'>").html('Please wait we are loading data...');
+        var divsummary = $("<div class='summary'>").html('loading data...');
         listHolder.append(divsummary);
 
         var ajaxlist = urls.map(p => {
@@ -93,15 +97,17 @@ export default class GlobalSearch {
                         let tpobj = this;
                         tpobj.result = result;
                         if (result !== null && result !== undefined && typeof (result) === typeof ([])) {
-                            resultcount += result.length;
                             tpobj.state = 1; // 1 -> success
+                            // filter in client side
+                            result = result.filter(p => p.Title.match(new RegExp(tpobj.text, 'gi')));
                             // create UI element based on received data
                             for (var i = 0; i < result.length && i < 20; i++) {
+                                resultcount++;
                                 var item = result[i];
                                 ul.append($("<li>")
                                     .append($("<a href='" + item.Url + "'>")
                                         .append($("<div class='item'>")
-                                            .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<span>") : $("<img class='icon' src='" + item.IconUrl + "'>"))
+                                            .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<div class='icon'>") : $("<div class='icon'>").append($("<img src='" + item.IconUrl + "'>")))
                                             .append($("<div class='title-wrapper'>")
                                                 .append($("<div class='title'>").html(item.Title))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>')))
                                                 .append($(" <div class='desc'>").html(item.Description))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>'))
@@ -137,6 +143,7 @@ export default class GlobalSearch {
                             console.log("Found nothing");
                         } else {
                             divsummary.empty();
+                            divsummary.remove();
                             //divsummary.html('Total Found: ' + resultcount);
                             console.log('Total Found: ' + resultcount);
                         }
