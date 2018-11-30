@@ -6,6 +6,7 @@ export default class GlobalSearch {
     urlList: string[];
     isMouseInsideSearchPanel: boolean;
     static enable(selector: JQuery): void;
+    static boldSearch(str: string, searchText: string): string;
     constructor(targetInput: any);
     enable(): void;
     inputChangeHandler(): void;

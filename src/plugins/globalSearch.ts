@@ -12,6 +12,27 @@ export default class GlobalSearch {
         selector.each((i, e) => new GlobalSearch($(e)).enable());
     }
 
+    public static boldSearch(str: string, searchText: string) {
+        var ix = -1;
+        var result: string = "";
+        if (str !== null && str !== undefined) {
+            var strlower = str.toLowerCase();
+            var stxt = searchText.toLowerCase();
+            if (searchText !== "" && searchText !== null && searchText !== undefined) {
+                do {
+                    let ix_next = strlower.indexOf(stxt, ix);
+                    if (ix_next < 0)
+                        break;
+                    if (ix < 0) result = str.substr(0, ix_next);
+                    result += (ix >= 0 ? str.substr(ix, ix_next - ix) : "") + "<strong>" + str.substr(ix_next, stxt.length) + "</strong>";
+                    ix = ix_next + stxt.length;
+                } while (true);
+            }
+            result += (ix < 0 ? str : str.substr(ix, str.length - ix));
+        }
+        return result;
+    }
+
     constructor(targetInput: any) {
         this.input = targetInput;
     }
@@ -20,6 +41,8 @@ export default class GlobalSearch {
         if (this.input.is("[data-globalsearch-enabled=true]")) return;
         else this.input.attr("data-globalsearch-enabled", true);
         this.input.wrap("<div class='global-search-panel'></div>");
+
+
 
         let urlsList = (<string>this.input.attr("data-search-source") || '').split(";");
         this.urlList = urlsList;
@@ -56,19 +79,32 @@ export default class GlobalSearch {
 
     createSearchComponent(urls: string[]) {
         this.clearSearchComponent();
-        var inputholder = this.input.parent();
-        var listHolder = $("<div class='global-search-result-panel'>")
+        var searchPanel = this.input.parent();
+        var resultPanel = $("<div class='global-search-result-panel'>")
             .mouseenter(() => this.isMouseInsideSearchPanel = true)
             .mouseleave(() => this.isMouseInsideSearchPanel = false);
         var ul = $("<ul>");
-        listHolder.append(ul);
-        inputholder.append(listHolder);
-        var divsummary = $("<div class='summary'>").html('loading data...');
-        listHolder.append(divsummary);
+
+        // loading icon
+        if ($(".global-search-panel .loading-div").length > 0) {
+            $(".global-search-panel .loading-div").empty();
+            $(".global-search-panel .loading-div").remove();
+        }
+        $(".global-search-panel").append($("<div class='loading-div'>")
+            .append($("<i class= 'loading-icon fa fa-spinner fa-spin' > </i><div>")));
+
+        //resultPanel.append(ul);
+        searchPanel.append(resultPanel);
+        //var divsummary = $("<div class='summary'>").html('loading data...');        
+        //resultPanel.append(divsummary);
 
         var ajaxlist = urls.map(p => {
             return {
                 url: p
+                , clearPanelMethod: this.clearSearchComponent
+                , resultPanelElement: resultPanel
+                , searchPanelElement: searchPanel
+                , ulElement: ul
                 , text: this.input.val()
                 , state: 0 // 0 means pending, 1 means success, 2 means failed
                 , ajx: {} // the ajax object
@@ -99,22 +135,22 @@ export default class GlobalSearch {
                         if (result !== null && result !== undefined && typeof (result) === typeof ([])) {
                             tpobj.state = 1; // 1 -> success
                             // filter in client side
-                            result = result.filter(p => p.Title.match(new RegExp(tpobj.text, 'gi')));
+                            let resultfiltered = result.filter(p => (p.Description !== null && p.Description !== undefined && p.Description.match(new RegExp(tpobj.text, 'gi'))) || p.Title.match(new RegExp(tpobj.text, 'gi')));
                             // create UI element based on received data
-                            for (var i = 0; i < result.length && i < 20; i++) {
+                            for (var i = 0; i < resultfiltered.length && i < 20; i++) {
                                 resultcount++;
-                                var item = result[i];
+                                var item = resultfiltered[i];
                                 ul.append($("<li>")
                                     .append($("<a href='" + item.Url + "'>")
                                         .append($("<div class='item'>")
                                             .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<div class='icon'>") : $("<div class='icon'>").append($("<img src='" + item.IconUrl + "'>")))
                                             .append($("<div class='title-wrapper'>")
-                                                .append($("<div class='title'>").html(item.Title))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>')))
-                                                .append($(" <div class='desc'>").html(item.Description))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>'))
+                                                .append($("<div class='title'>").html(GlobalSearch.boldSearch(item.Title, tpobj.text)))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>')))
+                                                .append($(" <div class='desc'>").html(GlobalSearch.boldSearch(item.Description, tpobj.text)))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>'))
                                             ))));
                             }
                             console.log("ajax succeeded for: " + tpobj.url);
-                            console.log(result);
+                            console.log(resultfiltered);
                             console.log(tpobj);
                         } else {
                             tpobj.state = 2; // 2 -> fail
@@ -137,16 +173,21 @@ export default class GlobalSearch {
                     // check all ajax finished            
                     if (ajaxlist.filter(p => p.state === 0).length === 0) {
                         console.log('All ajax completed');
+                        //tempobj.clearPanelMethod()
+                        $(".global-search-panel .loading-div").empty();
+                        $(".global-search-panel .loading-div").remove();
 
+                        resultPanel.hide();
+                        resultPanel.empty();
                         if (resultcount === 0) {
-                            divsummary.html('Found nothing');
+                            resultPanel.append($("<div class='summary'>").html('Found nothing'));
                             console.log("Found nothing");
                         } else {
-                            divsummary.empty();
-                            divsummary.remove();
-                            //divsummary.html('Total Found: ' + resultcount);
+                            resultPanel.append(ul);
                             console.log('Total Found: ' + resultcount);
                         }
+                        resultPanel.slideDown();
+
                     }
                 }).bind(tempobj));
             console.log('ajax send to: ' + tempobj.url);
