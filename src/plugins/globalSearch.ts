@@ -1,4 +1,4 @@
-import Form from "olive/components/form";
+﻿import Form from "olive/components/form";
 
 export default class GlobalSearch {
     input: any;
@@ -16,9 +16,23 @@ export default class GlobalSearch {
         var ix = -1;
         var result: string = "";
         if (str !== null && str !== undefined) {
+            str = str
+                .replace(/<strong>/gi, '↨↨').replace(/<\/strong>/gi, '↑↑')
+                .replace(/<contact>/gi, '☺☺').replace(/<\/contact>/gi, '☻☻')
+                .replace(/<user>/gi, '♥♥').replace(/<\/user>/gi, '♦♦')
+                .replace(/<project>/gi, '♣♣').replace(/<\/project>/gi, '♠♠')
+                .replace(/<candidate>/gi, '••').replace(/<\/candidate>/gi, '◘◘')
+                .replace(/<employee>/gi, '○○').replace(/<\/employee>/gi, '◙◙')
+                .replace(/<lead>/gi, '♂♂').replace(/<\/lead>/gi, '♀♀')
+                .replace(/<test>/gi, '♪♪').replace(/<\/test>/gi, '♫♫')
+                .replace(/<account>/gi, '☼☼').replace(/<\/account>/gi, '►►')
+                .replace(/<know>/gi, '◄◄').replace(/<\/know>/gi, '↕↕')
+                .replace(/<span class='clarify'>/gi, '‼‼').replace(/<span class="clarify">/gi, '‼‼').replace(/<\/span>/gi, '¶¶')
+                .replace(/<casestudy>/gi, '§§').replace(/<\/casestudy>/gi, '▬▬');
+
             var strlower = str.toLowerCase();
-            var stxt = searchText.toLowerCase();
             if (searchText !== "" && searchText !== null && searchText !== undefined) {
+                var stxt = searchText.toLowerCase();
                 do {
                     let ix_next = strlower.indexOf(stxt, ix);
                     if (ix_next < 0)
@@ -29,6 +43,31 @@ export default class GlobalSearch {
                 } while (true);
             }
             result += (ix < 0 ? str : str.substr(ix, str.length - ix));
+            //result = result.replace(/♦♦♦♦♦♦♦♦/gi, '<strong>').replace(/♣♣♣♣♣♣♣♣/gi, '</strong>');
+            result = result
+                .replace(/↨↨/gi, '<strong>').replace(/↑↑/gi, '</strong>')
+                .replace(/☺☺/gi, '<contact>').replace(/☻☻/gi, '</contact>')
+                .replace(/♥♥/gi, '<user>').replace(/♦♦/gi, '</user>')
+                .replace(/♣♣/gi, '<project>').replace(/♠♠/gi, '</project>')
+                .replace(/••/gi, '<candidate>').replace(/◘◘/gi, '</candidate>')
+                .replace(/○○/gi, '<employee>').replace(/◙◙/gi, '</employee>')
+                .replace(/♂♂/gi, '<lead>').replace(/♀♀/gi, '</lead>')
+                .replace(/♪♪/gi, '<test>').replace(/♫♫/gi, '</test>')
+                .replace(/☼☼/gi, '<account>').replace(/►►/gi, '</account>')
+                .replace(/◄◄/gi, '<know>').replace(/↕↕/gi, '</know>')
+                .replace(/‼‼/gi, '<span class="clarify">').replace(/¶¶/gi, '</span>')
+                .replace(/§§/gi, '<casestudy>').replace(/▬▬/gi, '</casestudy>');
+        }
+        return result;
+    }
+
+    public static boldSearchAll(str: string, searchText: string) {
+        var result: string = str;
+        if (searchText != null && searchText != undefined) {
+            var splitedsearchtext = searchText.split(' ');
+            for (var strST of splitedsearchtext) {
+                result = this.boldSearch(result, strST);
+            }
         }
         return result;
     }
@@ -105,7 +144,7 @@ export default class GlobalSearch {
                 , resultPanelElement: resultPanel
                 , searchPanelElement: searchPanel
                 , ulElement: ul
-                , text: this.input.val()
+                , text: this.input.val().trim()
                 , state: 0 // 0 means pending, 1 means success, 2 means failed
                 , ajx: {} // the ajax object
                 , displayMessage: "" // message to display on summary
@@ -133,9 +172,23 @@ export default class GlobalSearch {
                         let tpobj = this;
                         tpobj.result = result;
                         if (result !== null && result !== undefined && typeof (result) === typeof ([])) {
-                            tpobj.state = 1; // 1 -> success
+                            tpobj.state = 1; // 1 -> success                           
                             // filter in client side
-                            let resultfiltered = result.filter(p => (p.Description !== null && p.Description !== undefined && p.Description.match(new RegExp(tpobj.text, 'gi'))) || p.Title.match(new RegExp(tpobj.text, 'gi')));
+                            let resultfiltered = result.filter(p => {
+                                let resfilter = false;
+                                if (tpobj.text != null && tpobj.text != undefined && tpobj.text !== '') {
+                                    var arfilter = tpobj.text.split(' ');
+                                    for (var strfilter of arfilter) {
+                                        if (((p.Description !== null && p.Description !== undefined && p.Description.match(new RegExp(strfilter, 'gi')) != null) || p.Title.match(new RegExp(strfilter, 'gi')) != null)) {
+                                            resfilter = true;
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    resfilter = true;
+                                }
+                                return resfilter;
+                            });
                             // create UI element based on received data
                             for (var i = 0; i < resultfiltered.length && i < 20; i++) {
                                 resultcount++;
@@ -145,8 +198,8 @@ export default class GlobalSearch {
                                         .append($("<div class='item'>")
                                             .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<div class='icon'>") : $("<div class='icon'>").append($("<img src='" + item.IconUrl + "'>")))
                                             .append($("<div class='title-wrapper'>")
-                                                .append($("<div class='title'>").html(GlobalSearch.boldSearch(item.Title, tpobj.text)))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>')))
-                                                .append($(" <div class='desc'>").html(GlobalSearch.boldSearch(item.Description, tpobj.text)))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>'))
+                                                .append($("<div class='title'>").html(GlobalSearch.boldSearchAll(item.Title, tpobj.text)))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>')))
+                                                .append($(" <div class='desc'>").html(GlobalSearch.boldSearchAll(item.Description, tpobj.text)))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>'))
                                             ))));
                             }
                             console.log("ajax succeeded for: " + tpobj.url);
@@ -177,7 +230,7 @@ export default class GlobalSearch {
                         $(".global-search-panel .loading-div").empty();
                         $(".global-search-panel .loading-div").remove();
 
-                        resultPanel.hide();
+                        //resultPanel.hide();
                         resultPanel.empty();
                         if (resultcount === 0) {
                             resultPanel.append($("<div class='summary'>").html('Found nothing'));
@@ -186,7 +239,7 @@ export default class GlobalSearch {
                             resultPanel.append(ul);
                             console.log('Total Found: ' + resultcount);
                         }
-                        resultPanel.slideDown();
+                        //resultPanel.slideDown();
 
                     }
                 }).bind(tempobj));
