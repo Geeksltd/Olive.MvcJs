@@ -17,19 +17,7 @@ export default class GlobalSearch {
         var result: string = "";
         if (str !== null && str !== undefined) {
             str = str
-                .replace(/<strong>/gi, '↨↨').replace(/<\/strong>/gi, '↑↑')
-                .replace(/<contact>/gi, '☺☺').replace(/<\/contact>/gi, '☻☻')
-                .replace(/<user>/gi, '♥♥').replace(/<\/user>/gi, '♦♦')
-                .replace(/<project>/gi, '♣♣').replace(/<\/project>/gi, '♠♠')
-                .replace(/<candidate>/gi, '••').replace(/<\/candidate>/gi, '◘◘')
-                .replace(/<employee>/gi, '○○').replace(/<\/employee>/gi, '◙◙')
-                .replace(/<lead>/gi, '♂♂').replace(/<\/lead>/gi, '♀♀')
-                .replace(/<test>/gi, '♪♪').replace(/<\/test>/gi, '♫♫')
-                .replace(/<account>/gi, '☼☼').replace(/<\/account>/gi, '►►')
-                .replace(/<know>/gi, '◄◄').replace(/<\/know>/gi, '↕↕')
-                .replace(/<span class='clarify'>/gi, '‼‼').replace(/<span class="clarify">/gi, '‼‼').replace(/<\/span>/gi, '¶¶')
-                .replace(/<casestudy>/gi, '§§').replace(/<\/casestudy>/gi, '▬▬');
-
+                .replace(/<strong>/gi, '↨↨').replace(/<\/strong>/gi, '↑↑');
             var strlower = str.toLowerCase();
             if (searchText !== "" && searchText !== null && searchText !== undefined) {
                 var stxt = searchText.toLowerCase();
@@ -43,20 +31,8 @@ export default class GlobalSearch {
                 } while (true);
             }
             result += (ix < 0 ? str : str.substr(ix, str.length - ix));
-            //result = result.replace(/♦♦♦♦♦♦♦♦/gi, '<strong>').replace(/♣♣♣♣♣♣♣♣/gi, '</strong>');
             result = result
-                .replace(/↨↨/gi, '<strong>').replace(/↑↑/gi, '</strong>')
-                .replace(/☺☺/gi, '<contact>').replace(/☻☻/gi, '</contact>')
-                .replace(/♥♥/gi, '<user>').replace(/♦♦/gi, '</user>')
-                .replace(/♣♣/gi, '<project>').replace(/♠♠/gi, '</project>')
-                .replace(/••/gi, '<candidate>').replace(/◘◘/gi, '</candidate>')
-                .replace(/○○/gi, '<employee>').replace(/◙◙/gi, '</employee>')
-                .replace(/♂♂/gi, '<lead>').replace(/♀♀/gi, '</lead>')
-                .replace(/♪♪/gi, '<test>').replace(/♫♫/gi, '</test>')
-                .replace(/☼☼/gi, '<account>').replace(/►►/gi, '</account>')
-                .replace(/◄◄/gi, '<know>').replace(/↕↕/gi, '</know>')
-                .replace(/‼‼/gi, '<span class="clarify">').replace(/¶¶/gi, '</span>')
-                .replace(/§§/gi, '<casestudy>').replace(/▬▬/gi, '</casestudy>');
+                .replace(/↨↨/gi, '<strong>').replace(/↑↑/gi, '</strong>');
         }
         return result;
     }
@@ -173,7 +149,7 @@ export default class GlobalSearch {
                         tpobj.result = result;
                         if (result !== null && result !== undefined && typeof (result) === typeof ([])) {
                             tpobj.state = 1; // 1 -> success                           
-                            // filter in client side
+                            // filter in client side                           
                             let resultfiltered = result.filter(p => {
                                 let resfilter = false;
                                 if (tpobj.text != null && tpobj.text != undefined && tpobj.text !== '') {
@@ -199,7 +175,7 @@ export default class GlobalSearch {
                                             .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<div class='icon'>") : $("<div class='icon'>").append($("<img src='" + item.IconUrl + "'>")))
                                             .append($("<div class='title-wrapper'>")
                                                 .append($("<div class='title'>").html(GlobalSearch.boldSearchAll(item.Title, tpobj.text)))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>')))
-                                                .append($(" <div class='desc'>").html(GlobalSearch.boldSearchAll(item.Description, tpobj.text)))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>'))
+                                                .append($(" <div class='desc'>").html(item.Description))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>'))
                                             ))));
                             }
                             console.log("ajax succeeded for: " + tpobj.url);
