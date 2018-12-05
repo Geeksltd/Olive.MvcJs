@@ -7,6 +7,7 @@ export default class GlobalSearch {
     testvarable: number = 3;
     urlList: string[];
     isMouseInsideSearchPanel: boolean = false;
+    isTyping: boolean = false;
 
     public static enable(selector: JQuery) {
         selector.each((i, e) => new GlobalSearch($(e)).enable());
@@ -64,8 +65,10 @@ export default class GlobalSearch {
 
         var timeout = null;
         this.input.keyup((function (e) {
+            this.isTyping = true;
             clearTimeout(timeout);
             timeout = setTimeout((function () {
+                this.isTyping = false;
                 this.createSearchComponent(this.urlList)
             }).bind(this), 300);
         }).bind(this));
@@ -116,6 +119,7 @@ export default class GlobalSearch {
         var ajaxlist = urls.map(p => {
             return {
                 url: p
+                , globalsearchRef: this
                 , clearPanelMethod: this.clearSearchComponent
                 , resultPanelElement: resultPanel
                 , searchPanelElement: searchPanel
@@ -146,45 +150,48 @@ export default class GlobalSearch {
                     // if succesfully respond, this callback will be called
                     success: (function (result) {
                         let tpobj = this;
-                        tpobj.result = result;
-                        if (result !== null && result !== undefined && typeof (result) === typeof ([])) {
-                            tpobj.state = 1; // 1 -> success                           
-                            // filter in client side                           
-                            let resultfiltered = result.filter(p => {
-                                let resfilter = false;
-                                if (tpobj.text != null && tpobj.text != undefined && tpobj.text !== '') {
-                                    var arfilter = tpobj.text.split(' ');
-                                    for (var strfilter of arfilter) {
-                                        if (((p.Description !== null && p.Description !== undefined && p.Description.match(new RegExp(strfilter, 'gi')) != null) || p.Title.match(new RegExp(strfilter, 'gi')) != null)) {
-                                            resfilter = true;
-                                            break;
+                        if (tpobj.globalsearchRef.isTyping == false) {
+                            tpobj.result = result;
+                            if (result !== null && result !== undefined && typeof (result) === typeof ([])) {
+                                tpobj.state = 1; // 1 -> success                           
+                                // filter in client side                           
+                                let resultfiltered = result.filter(p => {
+                                    let resfilter = false;
+                                    if (tpobj.text != null && tpobj.text != undefined && tpobj.text !== '') {
+                                        var arfilter = tpobj.text.split(' ');
+                                        for (var strfilter of arfilter) {
+                                            if (((p.Description !== null && p.Description !== undefined && p.Description.match(new RegExp(strfilter, 'gi')) != null) || p.Title.match(new RegExp(strfilter, 'gi')) != null)) {
+                                                resfilter = true;
+                                                break;
+                                            }
                                         }
+                                    } else {
+                                        resfilter = true;
                                     }
-                                } else {
-                                    resfilter = true;
+                                    return resfilter;
+                                });
+                                // create UI element based on received data
+                                for (var i = 0; i < resultfiltered.length && i < 20; i++) {
+                                    resultcount++;
+                                    var item = resultfiltered[i];
+                                    ul.append($("<li>")
+                                        .append($("<a href='" + item.Url + "'>")
+                                            .append($("<div class='item'>")
+                                                .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<div class='icon'>") : $("<div class='icon'>").append($("<img src='" + item.IconUrl + "'>")))
+                                                .append($("<div class='title-wrapper'>")
+                                                    .append($("<div class='title'>").html(GlobalSearch.boldSearchAll(item.Title, tpobj.text)))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>')))
+                                                    .append($(" <div class='desc'>").html(item.Description))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>'))
+                                                ))));
                                 }
-                                return resfilter;
-                            });
-                            // create UI element based on received data
-                            for (var i = 0; i < resultfiltered.length && i < 20; i++) {
-                                resultcount++;
-                                var item = resultfiltered[i];
-                                ul.append($("<li>")
-                                    .append($("<a href='" + item.Url + "'>")
-                                        .append($("<div class='item'>")
-                                            .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<div class='icon'>") : $("<div class='icon'>").append($("<img src='" + item.IconUrl + "'>")))
-                                            .append($("<div class='title-wrapper'>")
-                                                .append($("<div class='title'>").html(GlobalSearch.boldSearchAll(item.Title, tpobj.text)))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>')))
-                                                .append($(" <div class='desc'>").html(item.Description))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>'))
-                                            ))));
+                                if (resultfiltered.length > 0 && (!resultPanel.has("ul") || resultPanel.has("ul").length == 0)) resultPanel.append(ul);
+                                console.log("ajax succeeded for: " + tpobj.url);
+                                console.log(resultfiltered);
+                                console.log(tpobj);
+                            } else {
+                                tpobj.state = 2; // 2 -> fail
+                                console.log("ajax success but failed to decode the response -> wellform expcted response is like this: [{Title:'',Description:'',IconUrl:'',Url:''}] ");
+                                console.log(result);
                             }
-                            console.log("ajax succeeded for: " + tpobj.url);
-                            console.log(resultfiltered);
-                            console.log(tpobj);
-                        } else {
-                            tpobj.state = 2; // 2 -> fail
-                            console.log("ajax success but failed to decode the response -> wellform expcted response is like this: [{Title:'',Description:'',IconUrl:'',Url:''}] ");
-                            console.log(result);
                         }
                     }).bind(tempobj)
                 })
@@ -207,12 +214,13 @@ export default class GlobalSearch {
                         $(".global-search-panel .loading-div").remove();
 
                         //resultPanel.hide();
-                        resultPanel.empty();
+
                         if (resultcount === 0) {
+                            resultPanel.empty();
                             resultPanel.append($("<div class='summary'>").html('Found nothing'));
                             console.log("Found nothing");
                         } else {
-                            resultPanel.append(ul);
+                            // resultPanel.append(ul);
                             console.log('Total Found: ' + resultcount);
                         }
                         //resultPanel.slideDown();
