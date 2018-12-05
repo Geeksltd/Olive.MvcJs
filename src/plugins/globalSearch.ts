@@ -8,6 +8,7 @@ export default class GlobalSearch {
     urlList: string[];
     isMouseInsideSearchPanel: boolean = false;
     isTyping: boolean = false;
+    searchedText: string = null;
 
     public static enable(selector: JQuery) {
         selector.each((i, e) => new GlobalSearch($(e)).enable());
@@ -69,7 +70,9 @@ export default class GlobalSearch {
             clearTimeout(timeout);
             timeout = setTimeout((function () {
                 this.isTyping = false;
-                this.createSearchComponent(this.urlList)
+                if (this.searchedText != this.input.val().trim()) {
+                    this.createSearchComponent(this.urlList);
+                }
             }).bind(this), 300);
         }).bind(this));
 
@@ -96,13 +99,19 @@ export default class GlobalSearch {
     }
 
     createSearchComponent(urls: string[]) {
-        this.clearSearchComponent();
+        this.searchedText = this.input.val().trim();
         var searchPanel = this.input.parent();
-        var resultPanel = $("<div class='global-search-result-panel'>")
-            .mouseenter(() => this.isMouseInsideSearchPanel = true)
-            .mouseleave(() => this.isMouseInsideSearchPanel = false);
-        var ul = $("<ul>");
+        var resultPanel = searchPanel.find(".global-search-result-panel");
 
+        if (resultPanel == undefined || resultPanel == null || resultPanel.length == 0) {
+            resultPanel = $("<div class='global-search-result-panel'>")
+                .mouseenter(() => this.isMouseInsideSearchPanel = true)
+                .mouseleave(() => this.isMouseInsideSearchPanel = false);
+            searchPanel.append(resultPanel);
+        }
+        resultPanel.empty();
+        var beginSearchStarted = true;
+        var ul = $("<ul>");
         // loading icon
         if ($(".global-search-panel .loading-div").length > 0) {
             $(".global-search-panel .loading-div").empty();
@@ -111,20 +120,11 @@ export default class GlobalSearch {
         $(".global-search-panel").append($("<div class='loading-div'>")
             .append($("<i class= 'loading-icon fa fa-spinner fa-spin' > </i><div>")));
 
-        //resultPanel.append(ul);
-        searchPanel.append(resultPanel);
-        //var divsummary = $("<div class='summary'>").html('loading data...');        
-        //resultPanel.append(divsummary);
-
         var ajaxlist = urls.map(p => {
             return {
                 url: p
                 , globalsearchRef: this
-                , clearPanelMethod: this.clearSearchComponent
-                , resultPanelElement: resultPanel
-                , searchPanelElement: searchPanel
-                , ulElement: ul
-                , text: this.input.val().trim()
+                , text: this.searchedText
                 , state: 0 // 0 means pending, 1 means success, 2 means failed
                 , ajx: {} // the ajax object
                 , displayMessage: "" // message to display on summary
@@ -183,7 +183,11 @@ export default class GlobalSearch {
                                                     .append($(" <div class='desc'>").html(item.Description))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>'))
                                                 ))));
                                 }
-                                if (resultfiltered.length > 0 && (!resultPanel.has("ul") || resultPanel.has("ul").length == 0)) resultPanel.append(ul);
+                                if (beginSearchStarted && resultfiltered.length > 0) {
+                                    beginSearchStarted = false;
+                                    resultPanel.empty();
+                                    resultPanel.append(ul);
+                                }
                                 console.log("ajax succeeded for: " + tpobj.url);
                                 console.log(resultfiltered);
                                 console.log(tpobj);
@@ -209,22 +213,15 @@ export default class GlobalSearch {
                     // check all ajax finished            
                     if (ajaxlist.filter(p => p.state === 0).length === 0) {
                         console.log('All ajax completed');
-                        //tempobj.clearPanelMethod()
                         $(".global-search-panel .loading-div").empty();
                         $(".global-search-panel .loading-div").remove();
-
-                        //resultPanel.hide();
-
                         if (resultcount === 0) {
                             resultPanel.empty();
-                            resultPanel.append($("<div class='summary'>").html('Found nothing'));
+                            resultPanel.html('<p>Found Nothing</p>');
                             console.log("Found nothing");
                         } else {
-                            // resultPanel.append(ul);
                             console.log('Total Found: ' + resultcount);
                         }
-                        //resultPanel.slideDown();
-
                     }
                 }).bind(tempobj));
             console.log('ajax send to: ' + tempobj.url);
