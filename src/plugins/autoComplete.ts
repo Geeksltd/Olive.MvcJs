@@ -33,7 +33,7 @@ export default class AutoComplete {
         var postData: any = this.toObject(Form.getPostData(this.input));
 
         postData[this.input.attr("name")] = "{{query}}";
-        
+
         this.input
             .wrap("<span class='typehead-chevron-down'></span>")
             .before('<i class="fas fa-chevron-down"></i>')
@@ -86,9 +86,10 @@ export default class AutoComplete {
     itemSelected(item: any) {
 
         if (item != undefined) {
+            var txt = (item.Text == null || item.Text == undefined || item.Text.trim() == "") ? item.Display : item.Text;
             this.valueField.val(item.Value);
-            this.input.data("selected-text", item.Display);
-            this.input.val(item.Display);
+            this.input.data("selected-text", txt);
+            this.input.val(txt);
         } else {
             console.log("Clearing text, item is undefined");
             this.input.data("selected-text", "");
