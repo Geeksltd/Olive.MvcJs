@@ -92,12 +92,6 @@ export default class AjaxRedirect {
 
                 FormAction.processAjaxResponse(response, null, trigger, isBack ? "back" : null);
                 if (keepScroll) $(document).scrollTop(scrollTopBefore);
-
-                //this part load modal after page refresh
-                if (!isBack && addToHistory && !window.isModal() && Url.getQuery("_modal") !== "") {
-                    let url: string = Url.getQuery("_modal");
-                    new Modal(null, url).open(false);
-                }
             },
             error: (response) => {
                 if (!AjaxRedirect.lastWindowStopCall || AjaxRedirect.lastWindowStopCall.getTime() < new Date().getTime() - 500)

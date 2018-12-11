@@ -6,6 +6,7 @@ import Url from 'olive/components/url'
 import Config from "olive/config"
 import StandardAction from 'olive/mvc/standardAction'
 import LiteEvent from 'olive/components/liteEvent'
+import Modal from 'olive/components/modal';
 
 export interface IViewUpdatedEventArgs {
     container: JQuery;
@@ -161,10 +162,35 @@ export default class FormAction {
 
 
     static navigate(element: JQuery, trigger, args) {
+        
         let referencedScripts = element.find("script[src]").map((i, s) => $(s).attr("src"));
+        let referencedCss = element.find("link[rel='stylesheet']").map((i, s) => $(s).attr("href"));
         element.find("script[src]").remove();
-        let width = $(window).width();
+        element.find("link[rel='stylesheet']").remove();  
+        
+        //check for CSS links in the main tag after ajax call
+        if(referencedCss.length > 0) {
+            referencedCss.each((i , item: any) => {
 
+                if($("link[href='" + item +"']") && $("link[href='" + item +"']").length === 0 )
+                {
+                    //first add CSS files and then load content.
+                    $("head").append( $('<link rel="stylesheet" type="text/css" />')
+                        .attr("href", item).load(item, () => { this.processWithTheContent(trigger,element,args,referencedScripts); }));
+                }
+                else
+                    this.processWithTheContent(trigger,element,args,referencedScripts);
+            
+            }); 
+        }
+        else
+            this.processWithTheContent(trigger,element,args,referencedScripts);
+    }
+
+    private static processWithTheContent(trigger,element,args,referencedScripts) {
+
+        let width = $(window).width();
+    
         let oldMain = trigger.closest("main");
         if (oldMain.length === 0) oldMain = $("main");
 
@@ -223,6 +249,12 @@ export default class FormAction {
         }
         else this.raiseViewChanged(element, trigger, true);
 
-        document.title = $("#page_meta_title").val();
+        document.title = $("#page_meta_title").val();  
+
+        //open modal if needed
+        if (!window.isModal() && Url.getQuery("_modal") !== "") {
+                    let url: string = Url.getQuery("_modal");
+                    new Modal(null, url).open(false);
+        }
     }
 }
