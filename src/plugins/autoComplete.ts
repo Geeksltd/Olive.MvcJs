@@ -85,8 +85,9 @@ export default class AutoComplete {
 
     itemSelected(item: any) {
 
-        if (item != undefined) {
+        if (item) {
             var txt = (item.Text == null || item.Text == undefined || item.Text.trim() == "") ? item.Display : item.Text;
+            if (txt) txt = $("<div/>").html(txt).text();
             this.valueField.val(item.Value);
             this.input.data("selected-text", txt);
             this.input.val(txt);
