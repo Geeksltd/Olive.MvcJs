@@ -40,9 +40,10 @@ export default class AutoComplete {
             .data("selected-text", "")
             .on('input', () => this.clearValue())
             .typeahead({
-                minLength: 1,
+                minLength: 0,
                 dynamic: true,
-                debug: true,
+                searchOnFocus: true,
+                debug: false,
                 delay: 500,
                 backdrop: false,
                 correlativeTemplate: true,
