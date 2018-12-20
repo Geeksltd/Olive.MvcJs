@@ -28,8 +28,21 @@ export default class StandardAction {
         let actions = [];
         $("input[name='Startup.Actions']", container).each((index, item) => {
             let action = $(item).val();
-            if (actions.indexOf(action) === -1)
-                actions.push(action);
+            if (actions.indexOf(action) === -1) {
+                //sometimes, we have a duplicate route in the action string, so we should remove them manually.
+                let names = action.trimStart("[{").trimEnd("}]").split("},{");
+                let uniqueNames = [];
+                $.each(names, (i, el) => {
+                    if($.inArray(el, uniqueNames) === -1) uniqueNames.push(el);
+                });
+                let stringResult = "[{";
+                $.each(uniqueNames,(i, itm)=> {
+                    stringResult += itm + "},{";
+                });
+                stringResult = stringResult.trimEnd(",{") + "]";
+                actions.push(stringResult);
+            }
+                
         });
 
         for (let action of actions) {
