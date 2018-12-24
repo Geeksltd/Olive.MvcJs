@@ -170,17 +170,25 @@ export default class FormAction {
         
         //check for CSS links in the main tag after ajax call
         if(referencedCss.length > 0) {
+            let contentLoaded : boolean = false;
             referencedCss.each((i , item: any) => {
 
-                if($("link[href='" + item +"']") && $("link[href='" + item +"']").length === 0 )
+                if($("link[href='" + item +"']") && $("link[href='" + item +"']").length === 0 && !contentLoaded)
                 {
                     //first add CSS files and then load content.
                     $("head").append( $('<link rel="stylesheet" type="text/css" />')
-                        .attr("href", item).load(item, () => { this.processWithTheContent(trigger,element,args,referencedScripts); }));
+                        .attr("href", item).load(item, () => { this.processWithTheContent(trigger,element,args,referencedScripts); }));                       
                 }
                 else
-                    this.processWithTheContent(trigger,element,args,referencedScripts);
-            
+                {
+                    if($("link[href='" + item +"']").length === 0)
+                        $("head").append( $('<link rel="stylesheet" type="text/css" />').attr("href", item));
+                    
+                     if(!contentLoaded)
+                        this.processWithTheContent(trigger,element,args,referencedScripts);
+                }
+
+                contentLoaded = true;            
             }); 
         }
         else
