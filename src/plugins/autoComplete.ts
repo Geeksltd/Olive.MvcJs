@@ -34,6 +34,8 @@ export default class AutoComplete {
 
         postData[this.input.attr("name")] = "{{query}}";
 
+        let clientSideSearch = this.input.attr("clientside") || false;
+
         this.input
             .wrap("<span class='typehead-chevron-down'></span>")
             .before('<i class="fas fa-chevron-down"></i>')
@@ -41,7 +43,7 @@ export default class AutoComplete {
             .on('input', () => this.clearValue())
             .typeahead({
                 minLength: 0,
-                dynamic: true,
+                dynamic: !clientSideSearch,
                 searchOnFocus: true,
                 debug: false,
                 delay: 500,
