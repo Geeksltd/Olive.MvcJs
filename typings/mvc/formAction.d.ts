@@ -5,6 +5,7 @@ export interface IViewUpdatedEventArgs {
     isNewPage: boolean;
 }
 export default class FormAction {
+    static isAwaitingAjaxResponse: boolean;
     static events: {
         [event: string]: Function[];
     };

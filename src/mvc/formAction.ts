@@ -15,6 +15,7 @@ export interface IViewUpdatedEventArgs {
 }
 
 export default class FormAction {
+    public static isAwaitingAjaxResponse = false;
     static events: { [event: string]: Function[] } = {};
     static dynamicallyLoadedScriptFiles = [];
 
@@ -58,6 +59,7 @@ export default class FormAction {
         let disableToo = Config.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
         if (disableToo) trigger.attr('disabled', 'disabled');
         trigger.addClass('loading-action-result');
+        this.isAwaitingAjaxResponse = true;
 
         actionUrl = Url.effectiveUrlProvider(actionUrl, trigger);
 
@@ -78,6 +80,7 @@ export default class FormAction {
                 }
             },
             complete: (x) => {
+                this.isAwaitingAjaxResponse = false;
                 trigger.removeClass('loading-action-result');
                 if (disableToo) trigger.removeAttr('disabled');
 

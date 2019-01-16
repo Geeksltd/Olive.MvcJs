@@ -6,6 +6,7 @@ import Modal from 'olive/components/modal';
 export default class AjaxRedirect {
     static lastWindowStopCall: Date;
     static ajaxChangedUrl = 0;
+    static isAjaxRedirecting = false;
     public static onRedirected: ((title: string, url: string) => void) = AjaxRedirect.defaultOnRedirected;
     public static onRedirectionFailed: ((url: string, response: JQueryXHR) => void) = AjaxRedirect.defaultOnRedirectionFailed;
 
@@ -52,6 +53,8 @@ export default class AjaxRedirect {
             console.log("## Redirecting to " + url);
         }
 
+        this.isAjaxRedirecting = true;
+        FormAction.isAwaitingAjaxResponse = true;
         AjaxRedirect.lastWindowStopCall = new Date();
         if (window.stop) window.stop();
         else if (document.execCommand !== undefined) document.execCommand("Stop", false);
@@ -89,6 +92,9 @@ export default class AjaxRedirect {
                 if (addToHistory) {
                     if (window.isModal() && addToHistory) Modal.changeUrl(url);
                 }
+
+                FormAction.isAwaitingAjaxResponse = false;
+                this.isAjaxRedirecting = false;
 
                 FormAction.processAjaxResponse(response, null, trigger, isBack ? "back" : null);
                 if (keepScroll) $(document).scrollTop(scrollTopBefore);
