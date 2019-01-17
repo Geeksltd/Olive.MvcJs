@@ -26,7 +26,6 @@ export default class MasterDetail {
 
         let container = button.parents(".subform-item");
         container.find("input[name$=MustBeDeleted]").val("true");
-        container.hide();
         this.updateSubFormStates();
         event.preventDefault();
     }
