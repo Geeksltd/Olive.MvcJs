@@ -16,7 +16,11 @@ export default class Form {
     static getCleanFormData(form: JQuery): JQuerySerializeArrayElement[] {
         let result: JQuerySerializeArrayElement[] = [];
 
+        let disabledOnes = form.find(":disabled").removeAttr('disabled')
+
         let items = form.serializeArray();
+
+        disabledOnes.attr('disabled', 'disabled');
 
         let groupedByKeys = Array.groupBy(items, i => i.name.toLowerCase());
 
