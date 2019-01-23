@@ -20,6 +20,7 @@ export default class FileUpload {
 
     constructor(targetInput: JQuery) {
         this.input = targetInput;
+        this.input.before(this.input.siblings('input'));
         this.container = this.input.closest(".file-upload");
         this.idInput = this.container.find("input.file-id");
         this.fileLabel = this.input.parent().find(':text');
@@ -49,7 +50,7 @@ export default class FileUpload {
             progressall: this.onProgressAll.bind(this),
             error: this.onUploadError,
             success: this.onUploadSuccess.bind(this),
-            xhrFields: {withCredentials: true},
+            xhrFields: { withCredentials: true },
             complete: this.onUploadCompleted.bind(this)
         });
     }
@@ -116,8 +117,8 @@ export default class FileUpload {
         }
     }
 
-    onUploadCompleted(response) {        
-            CrossDomainEvent.raise(parent, "file-uploaded", response);
+    onUploadCompleted(response) {
+        CrossDomainEvent.raise(parent, "file-uploaded", response);
     }
 
     onChange(e, data) {
