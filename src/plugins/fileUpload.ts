@@ -83,7 +83,10 @@ export default class FileUpload {
 
     onDeleteButtonClicked() {
         this.deleteButton.hide();
-        this.idInput.val("REMOVE");
+        if (!this.idInput.data('val-required'))
+            this.idInput.val("REMOVE");
+        else
+            this.idInput.val('');
         this.progressBar.width(0);
         this.input.filestyle('clear');
         this.removeExistingFile();
