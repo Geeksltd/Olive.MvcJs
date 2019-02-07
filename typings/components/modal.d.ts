@@ -8,6 +8,7 @@ export default class Modal {
     url: string;
     rawUrl: string;
     modalOptions: any;
+    scrollPosition: number;
     constructor(event?: JQueryEventObject, targeturl?: string, opt?: any);
     static enableEnsureHeight(selector: JQuery): void;
     static initialize(): void;

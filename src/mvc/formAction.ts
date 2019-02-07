@@ -66,6 +66,8 @@ export default class FormAction {
         // If the request is cross domain, jquery won't send the header: X-Requested-With
         data_before_disable = data_before_disable.concat({ name: ".Olive-Requested-With", value: "XMLHttpRequest" });
 
+        const scrollPosition = $(window).scrollTop();
+
         $.ajax({
             url: actionUrl,
             type: trigger.attr("data-ajax-method") || 'POST',
@@ -92,6 +94,7 @@ export default class FormAction {
                 }
 
                 if (triggerTabIndex > -1) $(":focusable").not("[tabindex='-1']").eq(triggerTabIndex).focus();
+                $(window).scrollTop(scrollPosition);
             }
         });
 
@@ -165,43 +168,41 @@ export default class FormAction {
 
 
     static navigate(element: JQuery, trigger, args) {
-        
+
         let referencedScripts = element.find("script[src]").map((i, s) => $(s).attr("src"));
         let referencedCss = element.find("link[rel='stylesheet']").map((i, s) => $(s).attr("href"));
         element.find("script[src]").remove();
-        element.find("link[rel='stylesheet']").remove();  
-        
+        element.find("link[rel='stylesheet']").remove();
+
         //check for CSS links in the main tag after ajax call
-        if(referencedCss.length > 0) {
-            let contentLoaded : boolean = false;
-            referencedCss.each((i , item: any) => {
+        if (referencedCss.length > 0) {
+            let contentLoaded: boolean = false;
+            referencedCss.each((i, item: any) => {
 
-                if($("link[href='" + item +"']") && $("link[href='" + item +"']").length === 0 && !contentLoaded)
-                {
+                if ($("link[href='" + item + "']") && $("link[href='" + item + "']").length === 0 && !contentLoaded) {
                     //first add CSS files and then load content.
-                    $("head").append( $('<link rel="stylesheet" type="text/css" />')
-                        .attr("href", item).load(item, () => { this.processWithTheContent(trigger,element,args,referencedScripts); }));                       
+                    $("head").append($('<link rel="stylesheet" type="text/css" />')
+                        .attr("href", item).load(item, () => { this.processWithTheContent(trigger, element, args, referencedScripts); }));
                 }
-                else
-                {
-                    if($("link[href='" + item +"']").length === 0)
-                        $("head").append( $('<link rel="stylesheet" type="text/css" />').attr("href", item));
-                    
-                     if(!contentLoaded)
-                        this.processWithTheContent(trigger,element,args,referencedScripts);
+                else {
+                    if ($("link[href='" + item + "']").length === 0)
+                        $("head").append($('<link rel="stylesheet" type="text/css" />').attr("href", item));
+
+                    if (!contentLoaded)
+                        this.processWithTheContent(trigger, element, args, referencedScripts);
                 }
 
-                contentLoaded = true;            
-            }); 
+                contentLoaded = true;
+            });
         }
         else
-            this.processWithTheContent(trigger,element,args,referencedScripts);
+            this.processWithTheContent(trigger, element, args, referencedScripts);
     }
 
-    private static processWithTheContent(trigger,element,args,referencedScripts) {
+    private static processWithTheContent(trigger, element, args, referencedScripts) {
 
         let width = $(window).width();
-    
+
         let oldMain = trigger.closest("main");
         if (oldMain.length === 0) oldMain = $("main");
 
@@ -260,12 +261,12 @@ export default class FormAction {
         }
         else this.raiseViewChanged(element, trigger, true);
 
-        document.title = $("#page_meta_title").val();  
+        document.title = $("#page_meta_title").val();
 
         //open modal if needed
         if (!window.isModal() && Url.getQuery("_modal") !== "") {
-                    let url: string = Url.getQuery("_modal");
-                    new Modal(null, url).open(false);
+            let url: string = Url.getQuery("_modal");
+            new Modal(null, url).open(false);
         }
     }
 }

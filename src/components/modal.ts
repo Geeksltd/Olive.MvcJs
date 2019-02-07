@@ -12,6 +12,7 @@ export default class Modal {
     url: string;
     rawUrl: string;
     modalOptions: any = {};
+    scrollPosition: number;
 
     constructor(event?: JQueryEventObject, targeturl?: string, opt?: any) {
         let target = event ? $(event.currentTarget) : null;
@@ -58,6 +59,7 @@ export default class Modal {
 
         Modal.current = $(this.getModalTemplateForAjax(this.modalOptions));
         Modal.currentModal = this;
+        this.scrollPosition = $(window).scrollTop();
 
         AjaxRedirect.go(this.url, $(Modal.current).find("main"), true, false, changeUrl);
 
@@ -123,6 +125,7 @@ export default class Modal {
         this.isClosingModal = true;
 
         if (this.current) {
+            $(window).scrollTop(this.currentModal.scrollPosition);
             this.current.modal('hide');
             this.current.remove();
             this.current = null;
