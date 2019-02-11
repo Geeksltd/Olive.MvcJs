@@ -8,7 +8,7 @@ export default class Grid {
     }
 
     public static enableToggle(element: any) {
-        element.off("click.select-all").on("click.select-all", e => this.enableSelectAllToggle(e));
+        element.off("change.select-all").on("change.select-all", e => this.enableSelectAllToggle(e));
     }
 
     public static enableHlightRow(element: any) {
@@ -50,43 +50,43 @@ export default class Grid {
 
             let current: any = $(item);
 
-            if (current.next().length === 0 && current.children("a").length <= 1)                
+            if (current.next().length === 0 && current.children("a").length <= 1)
                 return;
 
-            var mergedContent:any;
+            var mergedContent: any;
 
             if (current.children("a").length > 0) {
                 mergedContent = {};
                 current.children("a").each((i, innerLink) => {
-                    let selected : any = $(innerLink);
-                    mergedContent[selected.text().trim()] = selected.attr("href").trim() + "#ATTRIBUTE#target='" + selected.attr("target") + "' data-redirect='" +  selected.attr("data-redirect") + "'";
+                    let selected: any = $(innerLink);
+                    mergedContent[selected.text().trim()] = selected.attr("href").trim() + "#ATTRIBUTE#target='" + selected.attr("target") + "' data-redirect='" + selected.attr("data-redirect") + "'";
                 });
-            } if (current.children("button").length > 0){
-                if(!mergedContent)
+            } if (current.children("button").length > 0) {
+                if (!mergedContent)
                     mergedContent = {};
 
                 current.children("button").each((i, innerLink) => {
-                    let selected : any = $(innerLink);
+                    let selected: any = $(innerLink);
                     mergedContent[selected.text().trim()] = selected.attr("formaction").trim() + "#ATTRIBUTE##BUTTON#data-confirm-question='" + selected.attr("data-confirm-question") + "'";
                 });
-            }             
+            }
             else {
                 mergedContent = "";
             }
 
             current.nextAll(".actions-merge").each((i, innerItem) => {
 
-                if (typeof mergedContent === "string") 
+                if (typeof mergedContent === "string")
                     mergedContent += " " + $(innerItem).html();
                 else {
-                    let currentInnerItem : any = $(innerItem);
+                    let currentInnerItem: any = $(innerItem);
                     currentInnerItem.children("a").each((i, innerLink) => {
-                        let selected : any = $(innerLink);
-                        mergedContent[selected.text().trim()] = selected.attr("href").trim() + "#ATTRIBUTE#target='" + selected.attr("target") + "' data-redirect='" +  selected.attr("data-redirect") + "'";
+                        let selected: any = $(innerLink);
+                        mergedContent[selected.text().trim()] = selected.attr("href").trim() + "#ATTRIBUTE#target='" + selected.attr("target") + "' data-redirect='" + selected.attr("data-redirect") + "'";
                     });
 
                     currentInnerItem.children("button").each((i, innerLink) => {
-                        let selected : any = $(innerLink);
+                        let selected: any = $(innerLink);
                         mergedContent[selected.text().trim()] = selected.attr("formaction").trim() + "#ATTRIBUTE##BUTTON#data-confirm-question='" + selected.attr("data-confirm-question") + "'";
                     });
                 }
@@ -95,7 +95,7 @@ export default class Grid {
             if (typeof mergedContent === "string")
                 current.html(current.html() + mergedContent);
             else {
-                let dropDownList :string = `<div class="dropdown">
+                let dropDownList: string = `<div class="dropdown">
                 <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Select action
                 </button>
@@ -104,16 +104,16 @@ export default class Grid {
                 for (let val in mergedContent) {
                     let urlAddress = mergedContent[val].split("#ATTRIBUTE#");
 
-                    if(urlAddress[1].startsWith("#BUTTON#")){
-                        urlAddress[1] = urlAddress[1].replace("#BUTTON#" ,"");
+                    if (urlAddress[1].startsWith("#BUTTON#")) {
+                        urlAddress[1] = urlAddress[1].replace("#BUTTON#", "");
                         dropDownList += `<a class="dropdown-item" href="#" formaction="${urlAddress[0]}" ${urlAddress[1]}>${val}</a>`;
                     }
                     else
-                        dropDownList += `<a class="dropdown-item" href="${urlAddress[0]}" ${urlAddress[1]}>${val}</a>`;                    
+                        dropDownList += `<a class="dropdown-item" href="${urlAddress[0]}" ${urlAddress[1]}>${val}</a>`;
                 }
 
                 dropDownList += "</div></div>";
-                
+
                 current.empty().append($(dropDownList));
             }
 
