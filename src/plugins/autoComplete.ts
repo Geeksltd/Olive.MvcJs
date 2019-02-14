@@ -75,6 +75,10 @@ export default class AutoComplete {
                     onClickAfter: (node, a, item, event) => {
                         this.itemSelected(item);
                         this.input.trigger("typeahead:select", { event, item })
+                    },
+                    onHideLayout() {
+                        if (this.input.data("strict") === "true" && this.valueField.val() === "")
+                            this.input.val("");
                     }
                 }
             });
