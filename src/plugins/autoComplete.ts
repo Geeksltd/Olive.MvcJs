@@ -36,6 +36,25 @@ export default class AutoComplete {
 
         let clientSideSearch = this.input.attr("clientside") || false;
 
+        let callback = {
+            onClick: (node, a, item, event) => {
+                $("[name='" + node.attr("name").slice(0, -5) + "']").val(event.Value);
+            },
+            onClickAfter: (node, a, item, event) => {
+                this.itemSelected(item);
+                this.input.trigger("typeahead:select", { event, item })
+            }
+        };
+
+        if (this.input.data("strict") === true) {
+            callback = $.extend(callback, {
+                onHideLayout: () => {
+                    if (this.valueField.val() === "")
+                        this.input.val("");
+                }
+            });
+        }
+
         this.input
             .wrap("<span class='typehead-chevron-down'></span>")
             .before('<i class="fas fa-chevron-down"></i>')
@@ -68,19 +87,7 @@ export default class AutoComplete {
                         }
                     }
                 },
-                callback: {
-                    onClick: (node, a, item, event) => {
-                        $("[name='" + node.attr("name").slice(0, -5) + "']").val(event.Value);
-                    },
-                    onClickAfter: (node, a, item, event) => {
-                        this.itemSelected(item);
-                        this.input.trigger("typeahead:select", { event, item })
-                    },
-                    onHideLayout() {
-                        if (this.input.data("strict") === "true" && this.valueField.val() === "")
-                            this.input.val("");
-                    }
-                }
+                callback: callback
             });
     }
 
