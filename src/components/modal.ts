@@ -94,6 +94,8 @@ export default class Modal {
             if (Modal.close() === false) return false;
 
         Modal.current = $(this.getModalTemplateForiFrame(this.modalOptions));
+        Modal.currentModal = this;
+        this.scrollPosition = $(window).scrollTop();
 
         if (true /* TODO: Change to if Internet Explorer only */)
             Modal.current.removeClass("fade");
