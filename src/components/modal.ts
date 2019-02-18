@@ -61,7 +61,7 @@ export default class Modal {
         Modal.currentModal = this;
         this.scrollPosition = $(window).scrollTop();
 
-        AjaxRedirect.go(this.url, $(Modal.current).find("main"), true, false, changeUrl);
+        AjaxRedirect.go(this.url, $(Modal.current).find("main"), true, this.shouldKeepScroll() , changeUrl);
 
         $("body").append(Modal.current);
 
@@ -127,7 +127,9 @@ export default class Modal {
         this.isClosingModal = true;
 
         if (this.current) {
+            if (this.currentModal.shouldKeepScroll()) {
             $(window).scrollTop(this.currentModal.scrollPosition);
+            }
             this.current.modal('hide');
             this.current.remove();
             this.current = null;
@@ -150,6 +152,15 @@ export default class Modal {
 
         AjaxRedirect.defaultOnRedirected("", currentPath);
 
+        return true;
+    }
+
+    shouldKeepScroll(): boolean {
+        if (this.modalOptions) {
+            if (this.modalOptions.keepScroll) {
+                return this.modalOptions.keepScroll;
+            }
+        }
         return true;
     }
 
