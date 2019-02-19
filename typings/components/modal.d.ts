@@ -18,6 +18,7 @@ export default class Modal {
     openiFrame(): boolean;
     static closeMe(): boolean;
     static close(): boolean;
+    shouldKeepScroll(): boolean;
     getModalTemplateForAjax(options: any): string;
     getModalTemplateForiFrame(options: any): string;
     static ensureHeight(): void;
