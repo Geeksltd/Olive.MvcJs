@@ -1,6 +1,7 @@
 
 import Url from 'olive/components/url'
 import FormAction from 'olive/mvc/formAction'
+import 'jquery-sortable'
 
 export default class Sorting {
 

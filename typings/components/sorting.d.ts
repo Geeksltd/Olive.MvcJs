@@ -1,3 +1,4 @@
+import 'jquery-sortable';
 export default class Sorting {
     static enableDragSort(selector: JQuery): void;
     static enablesetSortHeaderClass(selector: JQuery): void;
