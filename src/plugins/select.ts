@@ -1,4 +1,6 @@
-﻿export default class Select {
+﻿import 'bootstrap-select'
+
+export default class Select {
     //https://developer.snapappointments.com/bootstrap-select/
 
     public static enableEnhance(selector: JQuery) { selector.each((i, e) => this.enhance($(e))); }
