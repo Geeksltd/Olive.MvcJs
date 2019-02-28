@@ -130,6 +130,10 @@ export default class Modal {
             if (this.currentModal.shouldKeepScroll()) {
             $(window).scrollTop(this.currentModal.scrollPosition);
             }
+
+            var onClosingEvent = new CustomEvent('onClosingEvent');
+            this.current[0].dispatchEvent(onClosingEvent);
+
             this.current.modal('hide');
             this.current.remove();
             this.current = null;
