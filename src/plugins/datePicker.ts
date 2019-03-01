@@ -1,48 +1,19 @@
-
-import Modal from "olive/components/modal"
 import Config from "olive/config"
+import dateTimePickerBase from "./dateTimePickerBase";
 
-export default class DatePicker {
-    input: any;
+export default class DatePicker extends dateTimePickerBase {
+    controlType = "date-picker";
+    format = Config.DATE_FORMAT;
 
     public static enable(selector: JQuery) { selector.each((i, e) => new DatePicker($(e)).show()); }
 
-    constructor(targetInput: any) {
-        this.input = targetInput;
+    constructor(targetInput: JQuery) {
+        super(targetInput);
     }
 
-    show() {
-
-        if (window.isModal()) {
-            this.input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", e => Modal.expandToFitPicker(e));
-            this.input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", e => Modal.expandToFitPicker(e));
-        }
-
-        this.input.attr("data-autofocus", "disabled");
-        let control = this.input.attr("data-control");
-        let viewMode = this.input.attr("data-view-mode") || 'days';
-
-        if (control == "date-picker") {
-            (<any>this.input).datetimepicker({
-                format: Config.DATE_FORMAT,
-                useCurrent: false,
-                showTodayButton: true,
-                icons: { 
-                    today: "fa fa-calendar",
-                    next: "fa fa-chevron-right",
-                    previous: "fa fa-chevron-left"
-                 },
-                viewMode: viewMode,
-                keepInvalid: this.input.closest("form").find("[data-change-action]").length == 0,
-                locale: Config.DATE_LOCALE
-            }).data("DateTimePicker").keyBinds().clear = null;
-            // Now make calendar icon clickable as well             
-            this.input.parent().find(".fa-calendar").parent(".input-group-addon").click(() => this.input.focus());
-        }
-        else alert("Don't know how to handle date control of " + control);
+    modifyOptions(options: any): void {
+        $.extend(options, {
+            viewMode: this.input.attr("data-view-mode") || 'days'
+        });
     }
 }
-
-
-
-
