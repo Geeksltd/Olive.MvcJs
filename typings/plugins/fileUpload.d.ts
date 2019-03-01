@@ -10,6 +10,7 @@ export default class FileUpload {
     static enable(selector: JQuery): void;
     constructor(targetInput: JQuery);
     enable(): void;
+    fixMasterDetailsInputName(): void;
     hasExistingFile(): boolean;
     showExistingFile(): void;
     removeExistingFile(): void;
