@@ -1,46 +1,32 @@
-define(["require", "exports", "olive/components/modal", "olive/config"], function (require, exports, modal_1, config_1) {
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+define(["require", "exports", "./dateTimePickerBase", "olive/config"], function (require, exports, dateTimePickerBase_1, config_1) {
     Object.defineProperty(exports, "__esModule", { value: true });
-    var DateTimePicker = /** @class */ (function () {
+    var DateTimePicker = /** @class */ (function (_super) {
+        __extends(DateTimePicker, _super);
         function DateTimePicker(targetInput) {
-            this.input = targetInput;
+            var _this = _super.call(this, targetInput) || this;
+            _this.controlType = "date-picker|time-picker";
+            _this.format = config_1.default.DATE_TIME_FORMAT;
+            return _this;
         }
         DateTimePicker.enable = function (selector) { selector.each(function (i, e) { return new DateTimePicker($(e)).show(); }); };
-        DateTimePicker.prototype.show = function () {
-            var _this = this;
-            if (window.isModal()) {
-                this.input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", function (e) { return modal_1.default.expandToFitPicker(e); });
-                this.input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", function (e) { return modal_1.default.expandToFitPicker(e); });
-            }
-            this.input.attr("data-autofocus", "disabled");
-            var control = this.input.attr("data-control");
-            if (control == "date-picker|time-picker") {
-                this.input.datetimepicker({
-                    sideBySide: true,
-                    format: config_1.default.DATE_TIME_FORMAT,
-                    useCurrent: false,
-                    showTodayButton: true,
-                    showClear: true,
-                    icons: {
-                        today: "fa fa-calendar",
-                        clear: "fa fa-eraser",
-                        time: "fa fa-clock-o",
-                        date: "fa fa-calendar",
-                        up: "fa fa-chevron-up",
-                        down: "fa fa-chevron-down",
-                        next: "fa fa-chevron-right",
-                        previous: "fa fa-chevron-left"
-                    },
-                    keepInvalid: this.input.closest("form").find("[data-change-action]").length == 0,
-                    locale: config_1.default.DATE_LOCALE
-                }); //.data("DateTimePicker").keyBinds().clear = null;
-                // Now make calendar icon clickable as well             
-                this.input.parent().find(".fa-calendar").parent(".input-group-addon").click(function () { return _this.input.focus(); });
-            }
-            else
-                alert("Don't know how to handle date control of " + control);
+        DateTimePicker.prototype.modifyOptions = function (options) {
+            $.extend(options, {
+                sideBySide: true,
+                showClear: true,
+            });
         };
         return DateTimePicker;
-    }());
+    }(dateTimePickerBase_1.default));
     exports.default = DateTimePicker;
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZGF0ZVRpbWVQaWNrZXIuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi9zcmMvcGx1Z2lucy9kYXRlVGltZVBpY2tlci50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztJQUlBO1FBS0ksd0JBQVksV0FBZ0I7WUFDeEIsSUFBSSxDQUFDLEtBQUssR0FBRyxXQUFXLENBQUM7UUFDN0IsQ0FBQztRQUphLHFCQUFNLEdBQXBCLFVBQXFCLFFBQWdCLElBQUksUUFBUSxDQUFDLElBQUksQ0FBQyxVQUFDLENBQUMsRUFBRSxDQUFDLElBQUssT0FBQSxJQUFJLGNBQWMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxJQUFJLEVBQUUsRUFBL0IsQ0FBK0IsQ0FBQyxDQUFDLENBQUMsQ0FBQztRQU1wRyw2QkFBSSxHQUFKO1lBQUEsaUJBb0NDO1lBbENHLElBQUksTUFBTSxDQUFDLE9BQU8sRUFBRSxFQUFFO2dCQUNsQixJQUFJLENBQUMsS0FBSyxDQUFDLEdBQUcsQ0FBQyxzQkFBc0IsQ0FBQyxDQUFDLEVBQUUsQ0FBQyxzQkFBc0IsRUFBRSxVQUFBLENBQUMsSUFBSSxPQUFBLGVBQUssQ0FBQyxpQkFBaUIsQ0FBQyxDQUFDLENBQUMsRUFBMUIsQ0FBMEIsQ0FBQyxDQUFDO2dCQUNuRyxJQUFJLENBQUMsS0FBSyxDQUFDLEdBQUcsQ0FBQyxzQkFBc0IsQ0FBQyxDQUFDLEVBQUUsQ0FBQyxzQkFBc0IsRUFBRSxVQUFBLENBQUMsSUFBSSxPQUFBLGVBQUssQ0FBQyxpQkFBaUIsQ0FBQyxDQUFDLENBQUMsRUFBMUIsQ0FBMEIsQ0FBQyxDQUFDO2FBQ3RHO1lBRUQsSUFBSSxDQUFDLEtBQUssQ0FBQyxJQUFJLENBQUMsZ0JBQWdCLEVBQUUsVUFBVSxDQUFDLENBQUM7WUFDOUMsSUFBSSxPQUFPLEdBQUcsSUFBSSxDQUFDLEtBQUssQ0FBQyxJQUFJLENBQUMsY0FBYyxDQUFDLENBQUM7WUFFOUMsSUFBSSxPQUFPLElBQUkseUJBQXlCLEVBQUU7Z0JBQ2hDLElBQUksQ0FBQyxLQUFNLENBQUMsY0FBYyxDQUMzQjtvQkFDRyxVQUFVLEVBQUUsSUFBSTtvQkFDaEIsTUFBTSxFQUFFLGdCQUFNLENBQUMsZ0JBQWdCO29CQUMvQixVQUFVLEVBQUUsS0FBSztvQkFDakIsZUFBZSxFQUFFLElBQUk7b0JBQ3JCLFNBQVMsRUFBRSxJQUFJO29CQUNmLEtBQUssRUFBRTt3QkFDSCxLQUFLLEVBQUUsZ0JBQWdCO3dCQUN2QixLQUFLLEVBQUUsY0FBYzt3QkFDckIsSUFBSSxFQUFFLGVBQWU7d0JBQ3JCLElBQUksRUFBRSxnQkFBZ0I7d0JBQ3RCLEVBQUUsRUFBRSxrQkFBa0I7d0JBQ3RCLElBQUksRUFBRSxvQkFBb0I7d0JBQzFCLElBQUksRUFBRSxxQkFBcUI7d0JBQzNCLFFBQVEsRUFBRSxvQkFBb0I7cUJBQ2hDO29CQUNGLFdBQVcsRUFBRSxJQUFJLENBQUMsS0FBSyxDQUFDLE9BQU8sQ0FBQyxNQUFNLENBQUMsQ0FBQyxJQUFJLENBQUMsc0JBQXNCLENBQUMsQ0FBQyxNQUFNLElBQUksQ0FBQztvQkFDaEYsTUFBTSxFQUFFLGdCQUFNLENBQUMsV0FBVztpQkFDaEMsQ0FDTCxDQUFDLENBQUEsa0RBQWtEO2dCQUNoRCx3REFBd0Q7Z0JBQ3hELElBQUksQ0FBQyxLQUFLLENBQUMsTUFBTSxFQUFFLENBQUMsSUFBSSxDQUFDLGNBQWMsQ0FBQyxDQUFDLE1BQU0sQ0FBQyxvQkFBb0IsQ0FBQyxDQUFDLEtBQUssQ0FBQyxjQUFNLE9BQUEsS0FBSSxDQUFDLEtBQUssQ0FBQyxLQUFLLEVBQUUsRUFBbEIsQ0FBa0IsQ0FBQyxDQUFDO2FBQ3pHOztnQkFDSSxLQUFLLENBQUMsMkNBQTJDLEdBQUcsT0FBTyxDQUFDLENBQUM7UUFDdEUsQ0FBQztRQUNMLHFCQUFDO0lBQUQsQ0FBQyxBQTlDRCxJQThDQyJ9
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZGF0ZVRpbWVQaWNrZXIuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi9zcmMvcGx1Z2lucy9kYXRlVGltZVBpY2tlci50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7SUFHQTtRQUE0QyxrQ0FBa0I7UUFNMUQsd0JBQVksV0FBbUI7WUFBL0IsWUFDSSxrQkFBTSxXQUFXLENBQUMsU0FDckI7WUFQRCxpQkFBVyxHQUFHLHlCQUF5QixDQUFDO1lBQ3hDLFlBQU0sR0FBRyxnQkFBTSxDQUFDLGdCQUFnQixDQUFDOztRQU1qQyxDQUFDO1FBSmEscUJBQU0sR0FBcEIsVUFBcUIsUUFBZ0IsSUFBSSxRQUFRLENBQUMsSUFBSSxDQUFDLFVBQUMsQ0FBQyxFQUFFLENBQUMsSUFBSyxPQUFBLElBQUksY0FBYyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLElBQUksRUFBRSxFQUEvQixDQUErQixDQUFDLENBQUMsQ0FBQyxDQUFDO1FBTXBHLHNDQUFhLEdBQWIsVUFBYyxPQUFZO1lBQ3RCLENBQUMsQ0FBQyxNQUFNLENBQUMsT0FBTyxFQUFFO2dCQUNkLFVBQVUsRUFBRSxJQUFJO2dCQUNoQixTQUFTLEVBQUUsSUFBSTthQUNsQixDQUFDLENBQUM7UUFDUCxDQUFDO1FBQ0wscUJBQUM7SUFBRCxDQUFDLEFBaEJELENBQTRDLDRCQUFrQixHQWdCN0QifQ==

@@ -20,6 +20,7 @@ export default class FileUpload {
 
     constructor(targetInput: JQuery) {
         this.input = targetInput;
+        this.fixMasterDetailsInputName();
         this.input.before(this.input.siblings('input'));
         this.container = this.input.closest(".file-upload");
         this.idInput = this.container.find("input.file-id");
@@ -53,6 +54,11 @@ export default class FileUpload {
             xhrFields: { withCredentials: true },
             complete: this.onUploadCompleted.bind(this)
         });
+    }
+
+    fixMasterDetailsInputName(): void {
+        let nameParts = this.input.attr('name').split('.');
+        this.input.attr('name', nameParts[nameParts.length - 1]);
     }
 
     hasExistingFile(): boolean {
