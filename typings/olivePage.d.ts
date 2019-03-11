@@ -14,5 +14,6 @@ export default class OlivePage {
     enableCustomCheckbox(): void;
     enableCustomRadio(): void;
     goBack(target: any): boolean;
+    customizeValidationTooltip(): void;
     refresh(keepScroll?: boolean): boolean;
 }

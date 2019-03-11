@@ -1,7 +1,9 @@
 ﻿import Config from "olive/config"
 import Alert from "olive/components/alert";
+import { TooltipOption } from "typings-lib/bootstrap/index";
 
 export default class Validate {
+    private static tooltipOptions: TooltipOption;
 
     public static configure() {
 
@@ -17,11 +19,19 @@ export default class Validate {
         // TODO: datetime, time
     }
 
-    public static validateForm(trigger) {
+    public static setTooltipOptions(options: TooltipOption) {
+        Validate.tooltipOptions = options;
+    }
+
+    public static validateForm(trigger: JQuery) {
 
         if (trigger.is("[formnovalidate]")) return true;
         let form = trigger.closest("form");
         let validator = form.validate();
+
+        $.extend(validator.settings, {
+            tooltip_options: { _all_: Validate.tooltipOptions }
+        })
 
         if (!validator.form()) {
             let alertUntyped: any = alert;
@@ -33,11 +43,11 @@ export default class Validate {
             let errorMessage: string = "";
 
             $.each(validator.errorList, (index, item) => {
-                if(!$(".tooltip:contains('"+ item.message +"')"))
+                if (!$(".tooltip:contains('" + item.message + "')"))
                     errorMessage += item.message + "<br/>";
             });
 
-            if(errorMessage.length > 0)
+            if (errorMessage.length > 0)
                 Alert.alert(errorMessage, "error");
 
             return false;

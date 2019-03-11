@@ -136,6 +136,7 @@ export default class OlivePage {
         SubMenu.createAccordion($("ul.accordion"));
         this.enableCustomCheckbox();
         this.enableCustomRadio();
+        this.customizeValidationTooltip();
 
         // =================== Request lifecycle ====================
         AjaxRedirect.enableBack($(window));
@@ -173,6 +174,10 @@ export default class OlivePage {
         else Url.goBack();
 
         return false;
+    }
+
+    customizeValidationTooltip() {
+
     }
 
     refresh(keepScroll = false) {
