@@ -43,6 +43,14 @@ export default class AutoComplete {
             onClickAfter: (node, a, item, event) => {
                 this.itemSelected(item);
                 this.input.trigger("typeahead:select", { event, item })
+            },
+            onPopulateSource: (node, data) => {
+                let text = this.input.val();
+                let index = data.findIndex(x => x.Text.trim().toLowerCase() === text.toLowerCase().trim());
+                if (index >= 0)
+                    this.valueField.val(data[index].Value);
+
+                return data;
             }
         };
 
