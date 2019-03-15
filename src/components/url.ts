@@ -1,7 +1,7 @@
 ﻿export default class Url {
 
     public static effectiveUrlProvider: ((url: string, trigger: JQuery) => string) = (u, t) => u;
-    public static onAuthenticationFailed : (()=> void) = Url.goToLoginPage;
+    public static onAuthenticationFailed: (() => void) = Url.goToLoginPage;
 
     static makeAbsolute(baseUrl: string, relativeUrl: string): string {
         baseUrl = baseUrl || window.location.origin;
@@ -63,7 +63,7 @@
         }
     }
 
-    static getQuery(name: string, url: string = null): string {
+    public static getQuery(name: string, url: string = null): string {
         if (url) url = Url.fullQueryString(url); else url = location.search;
 
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -73,7 +73,7 @@
     }
 
     static goToLoginPage() {
-        let query : string = this.current().split("/").splice(3).join("/");
+        let query: string = this.current().split("/").splice(3).join("/");
         window.location.href = "/login?returnUrl=/" + query.trimStart("/");
     }
 

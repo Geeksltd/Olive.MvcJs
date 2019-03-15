@@ -37,6 +37,7 @@ import UserHelp from 'olive/plugins/userHelp'
 import MultiSelect from "./plugins/multiSelect";
 import CustomCheckbox from "./plugins/customCheckbox";
 import CustomRadio from "./plugins/customRadio";
+import CKEditorFileManager from "./plugins/ckEditorFileManager";
 
 export default class OlivePage {
 
@@ -121,6 +122,7 @@ export default class OlivePage {
         // =================== Plug-ins ====================
         InstantSearch.enable($("[name=InstantSearch]"));
         AutoComplete.enable($("input[autocomplete-source]"));
+        CKEditorFileManager.enable($(".ckeditor-file-uri"));
         GlobalSearch.enable($("input[data-search-source]"));
         DatePicker.enable($("[data-control=date-picker],[data-control=calendar]"));
         DateTimePicker.enable($("[data-control='date-picker|time-picker']"));
