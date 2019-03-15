@@ -98,7 +98,7 @@ define(["require", "exports", "olive/config", "olive/components/crossDomainEvent
             formAction_1.default.enableInvokeWithAjax($("[formaction]").not("[formmethod=post]"), "click.formaction", "formaction");
             formAction_1.default.enableinvokeWithPost($("[formaction][formmethod=post]"));
             formAction_1.default.enableInvokeWithAjax($("[data-change-action]:not([autocomplete-source])"), "change.data-action", "data-change-action");
-            formAction_1.default.enableInvokeWithAjax($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar]"), "dp.change.data-action", "data-change-action");
+            formAction_1.default.enableInvokeWithAjax($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar],[data-change-action][data-control=time-picker]"), "dp.change.data-action", "data-change-action");
             masterDetail_1.default.updateSubFormStates();
             modal_1.default.adjustHeight();
             this._initializeActions.forEach(function (action) { return action(); });
@@ -128,7 +128,7 @@ define(["require", "exports", "olive/config", "olive/components/crossDomainEvent
         };
         OlivePage.prototype.refresh = function (keepScroll) {
             if (keepScroll === void 0) { keepScroll = false; }
-            if ($("main").length == 1 || $("main").length === 2)
+            if ($("main").length == 1 || $("main").length === 2) //if there is an ajax modal available, then we have 2 main elements.
                 ajaxRedirect_1.default.go(location.href, null, false /*isBack*/, keepScroll, false);
             else
                 location.reload();
