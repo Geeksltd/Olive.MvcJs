@@ -69,6 +69,7 @@ export default class AutoComplete {
             .data("selected-text", "")
             .on('input', () => this.clearValue())
             .typeahead({
+                input: this.input.getUniqueSelector(),
                 minLength: 0,
                 dynamic: !clientSideSearch,
                 searchOnFocus: true,
