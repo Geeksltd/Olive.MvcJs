@@ -30,7 +30,20 @@ export default class FileUpload {
 
     enable() {
         this.input.attr("data-url", Url.effectiveUrlProvider("/upload", this.input));
-        this.input.filestyle({ buttonBefore: true });
+        const options = {
+            'input': this.input.attr('data-input') !== 'false',
+            'htmlIcon': this.input.attr('data-icon'),
+            'buttonBefore': this.input.attr('data-buttonBefore') ? this.input.attr('data-buttonBefore') !== 'false' : true,
+            'disabled': this.input.attr('data-disabled') === 'true',
+            'size': this.input.attr('data-size'),
+            'text': this.input.attr('data-text'),
+            'btnClass': this.input.attr('data-btnClass'),
+            'badge': this.input.attr('data-badge') === 'true',
+            'dragdrop': this.input.attr('data-dragdrop') !== 'false',
+            'badgeName': this.input.attr('data-badgeName'),
+            'placeholder': this.input.attr('data-placeholder')
+        };
+        this.input.filestyle(options);
         this.container.find('.bootstrap-filestyle > input:text').wrap($("<div class='progress'></div>"));
         this.progressBar = this.container.find(".progress-bar");
         this.container.find('.bootstrap-filestyle > .progress').prepend(this.progressBar);
