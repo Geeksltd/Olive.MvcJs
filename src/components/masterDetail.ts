@@ -12,7 +12,7 @@ export default class MasterDetail {
         // Hide add buttons
         $("[data-subform-max]").each((i, e) => {
             let show = countItems(e) < parseInt($(e).attr('data-subform-max'));
-            $(e).find("[data-add-subform=" + $(e).attr("data-subform") + "]").toggle(show);
+            $(e).closest('[data-module]').find("[data-add-subform=" + $(e).attr("data-subform") + "]").toggle(show);
         });
         // Hide delete buttons
         $("[data-subform-min]").each((i, e) => {
