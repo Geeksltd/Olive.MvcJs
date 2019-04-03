@@ -57,7 +57,7 @@ export default class FileUpload {
 
         this.input.fileupload({
             dataType: 'json',
-            dropZone: this.container,
+            dropZone: this.container.find('*'),
             replaceFileInput: false,
             drop: this.onDragDropped.bind(this),
             change: this.onChange.bind(this),
