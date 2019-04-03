@@ -2,7 +2,12 @@ import 'bootstrap-select'
 
 export default class MultiSelect {
   //https://developer.snapappointments.com/bootstrap-select/
-  private static options: any;
+  private static defaultOptions = {
+    actionsBox: true,
+    liveSearch: true,
+    selectedTextFormat: "count"
+  };
+  private static options: any = MultiSelect.defaultOptions;
 
   public static enableEnhance(selector: JQuery) {
     if ($.fn.selectpicker)
@@ -11,11 +16,7 @@ export default class MultiSelect {
   }
 
   public static setOptions(options: any): void {
-    MultiSelect.options = $.extend({
-      actionsBox: true,
-      liveSearch: true,
-      selectedTextFormat: "count"
-    }, options)
+    MultiSelect.options = $.extend(MultiSelect.defaultOptions, options)
   }
 
   static enhance(selectControl: JQuery) {
