@@ -3,9 +3,15 @@ import Url from 'olive/components/url'
 import FormAction from 'olive/mvc/formAction'
 
 export default class AutoComplete {
+    private static customOptions: RunningCoder.Typeahead.Options;
+
     input: JQuery;
     awaitingAutocompleteResponses: number = 0;
     valueField: JQuery;
+
+    public static setOptions(options: RunningCoder.Typeahead.Options) {
+        AutoComplete.customOptions = options;
+    }
 
     public static enable(selector: JQuery) {
         selector.each((i, e) => new AutoComplete($(e)).enable());
@@ -36,9 +42,10 @@ export default class AutoComplete {
 
         let clientSideSearch = this.input.attr("clientside") || false;
 
-        let callback = {
+        let callback: RunningCoder.Typeahead.Callback = {
             onClick: (node, a, item, event) => {
-                $("[name='" + node.attr("name").slice(0, -5) + "']").val(event.Value);
+                // The following line is a compile error.
+                // $("[name='" + node.attr("name").slice(0, -5) + "']").val(event.Value);
             },
             onClickAfter: (node, a, item, event) => {
                 this.itemSelected(item);
@@ -46,7 +53,7 @@ export default class AutoComplete {
             },
             onPopulateSource: (node, data) => {
                 let text = this.input.val();
-                let index = data.findIndex(x => x.Text.trim().toLowerCase() === text.toLowerCase().trim());
+                let index = (<any>data).findIndex(x => x.Text.trim().toLowerCase() === text.toLowerCase().trim());
                 if (index >= 0)
                     this.valueField.val(data[index].Value);
 
@@ -63,41 +70,45 @@ export default class AutoComplete {
             });
         }
 
+        let defaultOptions: RunningCoder.Typeahead.Options = {
+            minLength: 0,
+            dynamic: !clientSideSearch,
+            searchOnFocus: true,
+            debug: false,
+            delay: 500,
+            backdrop: false,
+            correlativeTemplate: true,
+            emptyTemplate: "<div class='tt-suggestion'>Not found</div>"
+        };
+
+        let mandatoryOptions: RunningCoder.Typeahead.Options = {
+            source: {
+                values: {
+                    display: "Display",
+                    data: [{
+                        "Display": "",
+                        "Text": "",
+                        "Value": ""
+                    }],
+                    ajax: function (query) {
+                        return {
+                            type: "POST",
+                            url: url,
+                            data: postData,
+                            xhrFields: { withCredentials: true }
+                        };
+                    }
+                }
+            },
+            callback: callback
+        };
+
         this.input
             .wrap("<span class='typehead-chevron-down'></span>")
             .before('<i class="fas fa-chevron-down"></i>')
             .data("selected-text", "")
             .on('input', () => this.clearValue())
-            .typeahead({
-                input: this.input.getUniqueSelector(),
-                minLength: 0,
-                dynamic: !clientSideSearch,
-                searchOnFocus: true,
-                debug: false,
-                delay: 500,
-                backdrop: false,
-                correlativeTemplate: true,
-                emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
-                source: {
-                    values: {
-                        display: "Display",
-                        data: [{
-                            "Display": "",
-                            "Text": "",
-                            "Value": ""
-                        }],
-                        ajax: function (query) {
-                            return {
-                                type: "POST",
-                                url: url,
-                                data: postData,
-                                xhrFields: { withCredentials: true }
-                            };
-                        }
-                    }
-                },
-                callback: callback
-            });
+            .typeahead($.extend(defaultOptions, AutoComplete.customOptions, mandatoryOptions));
     }
 
     clearValue() {
