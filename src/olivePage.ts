@@ -58,7 +58,7 @@ export default class OlivePage {
             //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
             Alert.enableAlert();
             Validate.configure();
-            this.onViewChanged(null, null, true);
+            this.onViewChanged(null, null, true, true);
         });
 
         // TODO: Find a cleaner way.
@@ -78,7 +78,7 @@ export default class OlivePage {
     _preInitializeActions = [];
     onPreInit(action) { this._preInitializeActions.push(action) }
 
-    onViewChanged(container: JQuery = null, trigger: any = null, newPage: boolean = false) {
+    onViewChanged(container: JQuery = null, trigger: any = null, newPage: boolean = false, firstTime: boolean = false) {
 
         StandardAction.runStartup(container, trigger, "PreInit");
         try {
@@ -91,6 +91,12 @@ export default class OlivePage {
         if (newPage) {
             $('[autofocus]:not([data-autofocus=disabled]):first').focus();
             if (Config.REDIRECT_SCROLLS_UP) $(window).scrollTop(0);
+        }
+
+        if (firstTime) {
+            if (Modal.urlContainsModal()) {
+                new Modal(null, Modal.getModalUrl()).open(false);
+            }
         }
     }
 

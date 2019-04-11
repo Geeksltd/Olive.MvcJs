@@ -9,7 +9,7 @@ export default class OlivePage {
     onInit(action: any): void;
     _preInitializeActions: any[];
     onPreInit(action: any): void;
-    onViewChanged(container?: JQuery, trigger?: any, newPage?: boolean): void;
+    onViewChanged(container?: JQuery, trigger?: any, newPage?: boolean, firstTime?: boolean): void;
     initialize(): void;
     enableCustomCheckbox(): void;
     enableCustomRadio(): void;

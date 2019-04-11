@@ -64,10 +64,15 @@ export default class StandardAction {
         else if (action.BrowserAction == "CloseModalRebindParent") {
             let opener = Modal.currentModal.opener;
             if (window.page.modal.closeMe() === false) return false;
-            let data = Form.getPostData(opener.parents('form'));
-            $.post(window.location.href, data, function (response) {
-                FormAction.processAjaxResponse(response, opener.closest("[data-module]"), opener, null);
-            });
+            if (opener) {
+                let data = Form.getPostData(opener.parents('form'));
+                $.post(window.location.href, data, function (response) {
+                    FormAction.processAjaxResponse(response, opener.closest("[data-module]"), opener, null);
+                });
+            }
+            else {
+                CrossDomainEvent.raise(parent, 'refresh-page');
+            }
         }
         else if (action.BrowserAction == "CloseModalRefreshParent") {
             window.page.modal.closeMe();

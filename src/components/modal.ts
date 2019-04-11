@@ -61,7 +61,7 @@ export default class Modal {
         Modal.currentModal = this;
         this.scrollPosition = $(window).scrollTop();
 
-        AjaxRedirect.go(this.url, $(Modal.current).find("main"), true, this.shouldKeepScroll() , changeUrl);
+        AjaxRedirect.go(this.url, $(Modal.current).find("main"), true, this.shouldKeepScroll(), changeUrl);
 
         $("body").append(Modal.current);
 
@@ -85,6 +85,14 @@ export default class Modal {
 
         let modalUrl: string = Url.addQuery(currentPath, "_modal", url);
         AjaxRedirect.defaultOnRedirected("", modalUrl);
+    }
+
+    public static urlContainsModal(): boolean {
+        return Url.current().contains("_modal");
+    }
+
+    static getModalUrl(): string {
+        return Url.getQuery("_modal");
     }
 
     openiFrame() {
@@ -128,7 +136,7 @@ export default class Modal {
 
         if (this.current) {
             if (this.currentModal.shouldKeepScroll()) {
-            $(window).scrollTop(this.currentModal.scrollPosition);
+                $(window).scrollTop(this.currentModal.scrollPosition);
             }
 
             var onClosingEvent = new CustomEvent('onClosingEvent');
