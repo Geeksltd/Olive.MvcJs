@@ -94,8 +94,8 @@ export default class OlivePage {
         }
 
         if (firstTime) {
-            if (Modal.urlContainsModal()) {
-                new Modal(null, Modal.getModalUrl()).open(false);
+            if (Modal.urlContainsModal() && !Modal.modalPageExists()) {
+                Modal.openWithUrl();
             }
         }
     }
