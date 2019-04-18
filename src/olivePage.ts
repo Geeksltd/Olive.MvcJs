@@ -38,6 +38,7 @@ import MultiSelect from "./plugins/multiSelect";
 import CustomCheckbox from "./plugins/customCheckbox";
 import CustomRadio from "./plugins/customRadio";
 import CKEditorFileManager from "./plugins/ckEditorFileManager";
+import Grouping from "./components/grouping";
 
 export default class OlivePage {
 
@@ -121,6 +122,7 @@ export default class OlivePage {
         Form.enableDefaultButtonKeyPress($("form input, form select"));
         UserHelp.enable($("[data-user-help]"));
         StandardAction.enableLinkModal($("[target='$modal'][href]"));
+        Grouping.enable($(".form-group #GroupBy"));
 
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust",
             (e: any) => $(e.currentTarget).height(e.currentTarget.contentWindow.document.body.scrollHeight));
