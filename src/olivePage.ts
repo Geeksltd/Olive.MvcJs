@@ -94,11 +94,11 @@ export default class OlivePage {
             if (Config.REDIRECT_SCROLLS_UP) $(window).scrollTop(0);
         }
 
-        if (firstTime) {
-            if (Modal.urlContainsModal() && !Modal.modalPageExists()) {
-                Modal.openWithUrl();
-            }
-        }
+        //if (firstTime) {
+        //    if (Modal.urlContainsModal() && !Modal.modalPageExists()) {
+        //        Modal.openWithUrl();
+        //    }
+        //}
     }
 
     initialize() {
