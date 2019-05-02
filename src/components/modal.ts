@@ -61,7 +61,7 @@ export default class Modal {
         Modal.currentModal = this;
         this.scrollPosition = $(window).scrollTop();
 
-        AjaxRedirect.go(this.url, $(Modal.current).find("main"), true, this.shouldKeepScroll() , changeUrl);
+        AjaxRedirect.go(this.url, $(Modal.current).find("main"), true, this.shouldKeepScroll(), changeUrl);
 
         $("body").append(Modal.current);
 
@@ -72,8 +72,9 @@ export default class Modal {
         });
     }
 
-    public static changeUrl(url: string) {
+    public static changeUrl(url: string, iframe: boolean = false) {
         let currentPath: string = Url.removeQuery(Url.current(), "_modal");
+        currentPath = Url.removeQuery(currentPath, "_iframe");
 
         if (currentPath.endsWith("?"))
             currentPath = currentPath.trimEnd("?");
@@ -84,10 +85,32 @@ export default class Modal {
         }
 
         let modalUrl: string = Url.addQuery(currentPath, "_modal", url);
+
+        if (iframe) {
+            modalUrl = Url.addQuery(modalUrl, "_iframe", "true");
+        }
+
         AjaxRedirect.defaultOnRedirected("", modalUrl);
     }
 
-    openiFrame() {
+    public static urlContainsModal(): boolean {
+        return Url.current().contains("_modal");
+    }
+
+    static modalPageExists(): boolean {
+        return $('.modal-dialog').length > 0;
+    }
+
+    static openWithUrl(): void {
+        if (Url.getQuery("_iframe") === "true") {
+            new Modal(null, Url.getQuery("_modal")).openiFrame(false);
+        }
+        else {
+            new Modal(null, Url.getQuery("_modal")).open(false);
+        }
+    }
+
+    openiFrame(changeUrl: boolean = true) {
         this.isOpening = true;
         Modal.isAjaxModal = false;
         if (Modal.current)
@@ -102,13 +125,21 @@ export default class Modal {
 
         let frame = Modal.current.find("iframe");
 
-        frame.attr("src", this.url).on("load", e => {
+        const url = this.url;
+
+        frame.attr("src", url).on("load", e => {
             this.isOpening = false;
+            if (changeUrl) {
+                Modal.changeUrl(url, true);
+            }
             Modal.current.find(".modal-body .text-center").remove();
         });
 
         $("body").append(Modal.current);
         Modal.current.modal('show');
+        Modal.current.on('hidden.bs.modal', () => {
+            CrossDomainEvent.raise(window.self, "close-modal");
+        });
     }
 
     public static closeMe() {
@@ -123,12 +154,12 @@ export default class Modal {
         return true;
     }
 
-    public static close() {
+    public static close(): boolean {
         this.isClosingModal = true;
 
         if (this.current) {
             if (this.currentModal.shouldKeepScroll()) {
-            $(window).scrollTop(this.currentModal.scrollPosition);
+                $(window).scrollTop(this.currentModal.scrollPosition);
             }
 
             var onClosingEvent = new CustomEvent('onClosingEvent');
@@ -150,6 +181,7 @@ export default class Modal {
 
         //remove modal query string
         var currentPath = Url.removeQuery(Url.current(), "_modal");
+        var currentPath = Url.removeQuery(currentPath, "_iframe");
 
         if (currentPath.endsWith("?"))
             currentPath = currentPath.trimEnd("?");

@@ -33,16 +33,16 @@ export default class StandardAction {
                 let names = action.trimStart("[{").trimEnd("}]").split("},{");
                 let uniqueNames = [];
                 $.each(names, (i, el) => {
-                    if($.inArray(el, uniqueNames) === -1) uniqueNames.push(el);
+                    if ($.inArray(el, uniqueNames) === -1) uniqueNames.push(el);
                 });
                 let stringResult = "[{";
-                $.each(uniqueNames,(i, itm)=> {
+                $.each(uniqueNames, (i, itm) => {
                     stringResult += itm + "},{";
                 });
                 stringResult = stringResult.trimEnd(",{") + "]";
                 actions.push(stringResult);
             }
-                
+
         });
 
         for (let action of actions) {
@@ -64,10 +64,15 @@ export default class StandardAction {
         else if (action.BrowserAction == "CloseModalRebindParent") {
             let opener = Modal.currentModal.opener;
             if (window.page.modal.closeMe() === false) return false;
-            let data = Form.getPostData(opener.parents('form'));
-            $.post(window.location.href, data, function (response) {
-                FormAction.processAjaxResponse(response, null, opener, null);
-            });
+            if (opener) {
+                let data = Form.getPostData(opener.parents('form'));
+                $.post(window.location.href, data, function (response) {
+                    FormAction.processAjaxResponse(response, opener.closest("[data-module]"), opener, null);
+                });
+            }
+            else {
+                CrossDomainEvent.raise(parent, 'refresh-page');
+            }
         }
         else if (action.BrowserAction == "CloseModalRefreshParent") {
             window.page.modal.closeMe();

@@ -179,20 +179,16 @@ export default class FormAction {
             let contentLoaded: boolean = false;
             referencedCss.each((i, item: any) => {
 
-                if ($("link[href='" + item + "']") && $("link[href='" + item + "']").length === 0 && !contentLoaded) {
+                if (!contentLoaded) {
                     //first add CSS files and then load content.
                     $("head").append($('<link rel="stylesheet" type="text/css" />')
                         .attr("href", item).load(item, () => { this.processWithTheContent(trigger, element, args, referencedScripts); }));
-                }
-                else {
-                    if ($("link[href='" + item + "']").length === 0)
-                        $("head").append($('<link rel="stylesheet" type="text/css" />').attr("href", item));
 
-                    if (!contentLoaded)
-                        this.processWithTheContent(trigger, element, args, referencedScripts);
+                    contentLoaded = true;
                 }
-
-                contentLoaded = true;
+                else if ($("link[href='" + item + "']") && $("link[href='" + item + "']").length === 0) {
+                    $("head").append($('<link rel="stylesheet" type="text/css" />').attr("href", item));
+                }
             });
         }
         else

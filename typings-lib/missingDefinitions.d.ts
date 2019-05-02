@@ -4,7 +4,7 @@
 
 interface JQuery {
     screenOffset(): any;
-    getUniqueSelector(): any;
+    getUniqueSelector(): string;
 }
 
 declare var CKEDITOR;
