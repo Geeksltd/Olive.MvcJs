@@ -50,7 +50,7 @@ export default class Grid {
 
             let current: any = $(item);
 
-            if (current.next().length === 0 && current.children("a").length <= 1)
+            if (current.next().length === 0 && current.children("a,button").length <= 1)
                 return;
 
             var mergedContent: any;
