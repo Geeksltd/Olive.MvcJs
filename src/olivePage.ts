@@ -154,7 +154,8 @@ export default class OlivePage {
         Form.enablesubmitCleanGet($('form[method=get]'));
         FormAction.enableInvokeWithAjax($("[formaction]").not("[formmethod=post]"), "click.formaction", "formaction");
         FormAction.enableinvokeWithPost($("[formaction][formmethod=post]"));
-        FormAction.enableInvokeWithAjax($("[data-change-action]:not([autocomplete-source])"), "change.data-action", "data-change-action");
+        FormAction.enableInvokeWithAjax($("[data-change-action]:not([autocomplete-source]):not([data-control=collapsible-checkboxes])"), "change.data-action", "data-change-action");
+        FormAction.enableInvokeWithAjax($("[data-change-action][data-control=collapsible-checkboxes]"), "hidden.bs.select", "data-change-action");
         FormAction.enableInvokeWithAjax($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar],[data-change-action][data-control=time-picker]"), "dp.change.data-action", "data-change-action");
 
         MasterDetail.updateSubFormStates();
