@@ -71,7 +71,8 @@ export default class Grid {
                 });
             }
             else {
-                mergedContent = "";
+                if (!mergedContent)
+                    mergedContent = "";
             }
 
             current.nextAll(".actions-merge").each((i, innerItem) => {
