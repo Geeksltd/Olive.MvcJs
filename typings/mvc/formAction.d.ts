@@ -1,4 +1,5 @@
 import LiteEvent from 'olive/components/liteEvent';
+import OlivePage from 'olive/olivePage';
 export interface IViewUpdatedEventArgs {
     container: JQuery;
     trigger: any;
@@ -10,6 +11,7 @@ export default class FormAction {
         [event: string]: Function[];
     };
     static dynamicallyLoadedScriptFiles: any[];
+    static readonly page: OlivePage;
     static onViewChanged: LiteEvent<IViewUpdatedEventArgs>;
     static enableInvokeWithAjax(selector: JQuery, event: string, attrName: string): void;
     static enableinvokeWithPost(selector: JQuery): void;

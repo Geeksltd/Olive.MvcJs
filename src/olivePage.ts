@@ -94,11 +94,7 @@ export default class OlivePage {
             if (Config.REDIRECT_SCROLLS_UP) $(window).scrollTop(0);
         }
 
-        //if (firstTime) {
-        //    if (Modal.urlContainsModal() && !Modal.modalPageExists()) {
-        //        Modal.openWithUrl();
-        //    }
-        //}
+        if (firstTime && !this.runByHub) Modal.openInitialModalIfExists();
     }
 
     initialize() {
@@ -195,6 +191,10 @@ export default class OlivePage {
             AjaxRedirect.go(location.href, null, false /*isBack*/, keepScroll, false);
         else location.reload();
 
+        return false;
+    }
+
+    get runByHub(): boolean {
         return false;
     }
 }

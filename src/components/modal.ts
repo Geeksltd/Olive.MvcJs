@@ -296,4 +296,11 @@ export default class Modal {
         if (window.isModal())
             parent.window.location.href = location.href;
     }
+
+
+    public static openInitialModalIfExists(): any {
+        if (Modal.urlContainsModal() && !Modal.modalPageExists()) {
+            Modal.openWithUrl();
+        }
+    }
 }

@@ -28,4 +28,5 @@ export default class Modal {
     static adjustHeight(overflow?: number): void;
     static expandToFitPicker(target: any): void;
     static ensureNonModal(): void;
+    static openInitialModalIfExists(): any;
 }

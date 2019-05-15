@@ -16,4 +16,5 @@ export default class OlivePage {
     goBack(target: any): boolean;
     customizeValidationTooltip(): void;
     refresh(keepScroll?: boolean): boolean;
+    readonly runByHub: boolean;
 }
