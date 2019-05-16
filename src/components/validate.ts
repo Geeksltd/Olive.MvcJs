@@ -60,4 +60,11 @@ export default class Validate {
         //$.validator.unobtrusive.parse(form);
     }
 
+    public static removeTooltipsRelatedTo(parent: JQuery) {
+        parent.find('[aria-describedby]').each((_, elem) => {
+            const id = $(elem).attr('aria-describedby');
+
+            $(`body > #${id}.tooltip`).tooltip('hide');
+        });
+    }
 }

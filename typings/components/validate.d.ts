@@ -5,4 +5,5 @@ export default class Validate {
     static setTooltipOptions(options: TooltipOption): void;
     static validateForm(trigger: JQuery): boolean;
     static reloadRules(form: JQuery): void;
+    static removeTooltipsRelatedTo(parent: JQuery): void;
 }

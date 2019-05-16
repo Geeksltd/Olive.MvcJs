@@ -172,7 +172,7 @@ export default class Modal {
         }
 
         $('body > .tooltip').each((index, elem) => {
-            if ($('[aria-discribedby=' + elem.id + ']'))
+            if ($('[aria-describedby=' + elem.id + ']'))
                 elem.remove();
         });
 

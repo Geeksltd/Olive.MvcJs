@@ -145,7 +145,7 @@ define(["require", "exports", "olive/components/url", "olive/components/crossDom
                 this.currentModal = null;
             }
             $('body > .tooltip').each(function (index, elem) {
-                if ($('[aria-discribedby=' + elem.id + ']'))
+                if ($('[aria-describedby=' + elem.id + ']'))
                     elem.remove();
             });
             this.isClosingModal = false;
