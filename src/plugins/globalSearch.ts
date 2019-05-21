@@ -185,7 +185,6 @@ export default class GlobalSearch {
                                 }
                                 if (beginSearchStarted && resultfiltered.length > 0) {
                                     beginSearchStarted = false;
-                                    resultPanel.empty();
                                     resultPanel.append(ul);
                                 }
                                 console.log("ajax succeeded for: " + tpobj.url);
@@ -203,6 +202,11 @@ export default class GlobalSearch {
                 .fail((function (e) {
                     let tpobj = this;
                     tpobj.state = 2;
+
+                    let ulFail = $("<ul>");
+                    ulFail.append("<li>").append("<span>").html('ajax failed Loading data from source [' + tpobj.url + ']');
+                    resultPanel.append(ulFail);
+                    
                     console.log('ajax failed Loading data from source [' + tpobj.url + ']');
                     console.log(e);
                 }).bind(tempobj))
@@ -215,10 +219,13 @@ export default class GlobalSearch {
                         console.log('All ajax completed');
                         $(".global-search-panel .loading-div").empty();
                         $(".global-search-panel .loading-div").remove();
-                        if (resultcount === 0) {
-                            resultPanel.empty();
-                            resultPanel.html('<p>Found Nothing</p>');
+                        if (resultcount === 0) {                                                        
                             console.log("Found nothing");
+
+                            let ulNothing = $("<ul>");
+                            ulNothing.append("<li>").append("<span>").html('Nothing found');
+                            resultPanel.append(ulNothing);
+                                
                         } else {
                             console.log('Total Found: ' + resultcount);
                         }

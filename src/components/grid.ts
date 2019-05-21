@@ -70,9 +70,8 @@ export default class Grid {
                     mergedContent[selected.text().trim()] = selected.attr("formaction").trim() + "#ATTRIBUTE##BUTTON#data-confirm-question='" + selected.attr("data-confirm-question") + "'";
                 });
             }
-            else {
-                if (!mergedContent)
-                    mergedContent = "";
+            else if (!mergedContent) {
+                mergedContent = "";
             }
 
             current.nextAll(".actions-merge").each((i, innerItem) => {
