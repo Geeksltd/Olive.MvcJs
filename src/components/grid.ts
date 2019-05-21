@@ -46,7 +46,7 @@ export default class Grid {
 
     public static mergeActionButtons(): void {
 
-        $("table tr > .actions-merge").each((index, item) => {
+        $("table tr > .actions-merge, .r-grid .r-grid-row > .actions-merge").each((index, item) => {
 
             let current: any = $(item);
 
