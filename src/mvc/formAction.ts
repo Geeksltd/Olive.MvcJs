@@ -88,7 +88,7 @@ export default class FormAction {
 
                 let triggerTabIndex: number = $(":focusable").not("[tabindex='-1']").index($(triggerUniqueSelector));
 
-                if (!triggerUniqueSelector.endsWith(">button:eq(1)") && !triggerUniqueSelector.endsWith(">button:eq(2)") && !triggerUniqueSelector.endsWith(">a")) {
+                if (!trigger.is("button") && !trigger.is("a")) {
                     //trigger element is not a button, image or link so we should select next element.
                     triggerTabIndex++;
                 }
