@@ -54,7 +54,6 @@ export default class Grid {
                 return;
 
             var mergedContent: any;
-
             if (current.children("a").length > 0) {
                 mergedContent = {};
                 current.children("a").each((i, innerLink) => {
@@ -67,7 +66,11 @@ export default class Grid {
 
                 current.children("button").each((i, innerLink) => {
                     let selected: any = $(innerLink);
-                    mergedContent[selected.text().trim()] = selected.attr("formaction").trim() + "#ATTRIBUTE##BUTTON#data-confirm-question='" + selected.attr("data-confirm-question") + "'";
+                    mergedContent[selected.text().trim()] = selected.attr("formaction").trim() + "#ATTRIBUTE##BUTTON#";
+                    if (selected.attr("data-confirm-question"))
+                        mergedContent[selected.text().trim()] += "data-confirm-question='" + selected.attr("data-confirm-question") + "'";
+                    if (selected.attr("formmethod"))
+                        mergedContent[selected.text().trim()] += "formmethod='" + selected.attr("formmethod") + "'";
                 });
             }
             else if (!mergedContent) {
@@ -87,7 +90,11 @@ export default class Grid {
 
                     currentInnerItem.children("button").each((i, innerLink) => {
                         let selected: any = $(innerLink);
-                        mergedContent[selected.text().trim()] = selected.attr("formaction").trim() + "#ATTRIBUTE##BUTTON#data-confirm-question='" + selected.attr("data-confirm-question") + "'";
+                        mergedContent[selected.text().trim()] = selected.attr("formaction").trim() + "#ATTRIBUTE##BUTTON#";
+                        if (selected.attr("data-confirm-question")) 
+                            mergedContent[selected.text().trim()] += "data-confirm-question='" + selected.attr("data-confirm-question") + "'";
+                        if (selected.attr("formmethod"))
+                            mergedContent[selected.text().trim()] += "formmethod='" + selected.attr("formmethod") + "'";
                     });
                 }
             });
