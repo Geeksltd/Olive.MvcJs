@@ -1,5 +1,4 @@
-﻿import Form from "olive/components/form";
-
+﻿
 export default class GlobalSearch {
     input: any;
     awaitingAutocompleteResponses: number = 0;
@@ -111,7 +110,7 @@ export default class GlobalSearch {
         }
         resultPanel.empty();
         var beginSearchStarted = true;
-        var ul = $("<ul>");
+        var searchHolder = $("<div class='search-container'>");
         // loading icon
         if ($(".global-search-panel .loading-div").length > 0) {
             $(".global-search-panel .loading-div").empty();
@@ -121,24 +120,29 @@ export default class GlobalSearch {
             .append($("<i class= 'loading-icon fa fa-spinner fa-spin' > </i><div>")));
 
         var ajaxlist = urls.map(p => {
+            let icon = p.split("#")[1].trim();
             return {
-                url: p
-                , globalsearchRef: this
-                , text: this.searchedText
-                , state: 0 // 0 means pending, 1 means success, 2 means failed
-                , ajx: {} // the ajax object
-                , displayMessage: "" // message to display on summary
-                , result: [{
+                url: p.split("#")[0].trim(),
+                icon: icon,
+                globalsearchRef: this,
+                text: this.searchedText,
+                state: 0, // 0 means pending, 1 means success, 2 means failed
+                ajx: {}, // the ajax object
+                displayMessage: "", // message to display on summary
+                result: [{
                     Title: ""
                     , Description: ""
                     , IconUrl: ""
                     , Url: ""
-                }]
+                }],
+                template: jQuery
             };
         });
 
         var resultcount = 0;
+
         for (let tempobj of ajaxlist) {
+
             tempobj.ajx = $
                 .ajax({
                     dataType: "json",
@@ -170,30 +174,41 @@ export default class GlobalSearch {
                                     }
                                     return resfilter;
                                 });
-                                // create UI element based on received data
-                                for (var i = 0; i < resultfiltered.length && i < 20; i++) {
+
+                                let searchItem = $("<div class='search-item'>");
+
+                                let groupTitle = tpobj.url.split(".")[0].replace("https://", "").replace("http://", "").toUpperCase();
+
+                                let searhTitle = $("<div class='search-title'>").append($("<i>").attr("class", tpobj.icon)).append(groupTitle);
+
+                                searchItem.append(searhTitle);
+
+                                let childrenItems = $("<ul>");
+
+                                for (var i = 0; i < resultfiltered.length && i < 10; i++) {
                                     resultcount++;
                                     var item = resultfiltered[i];
-                                    ul.append($("<li>")
+
+                                    childrenItems.append($("<li>")
                                         .append($("<a href='" + item.Url + "'>")
-                                            .append($("<div class='item'>")
-                                                .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<div class='icon'>") : $("<div class='icon'>").append($("<img src='" + item.IconUrl + "'>")))
-                                                .append($("<div class='title-wrapper'>")
-                                                    .append($("<div class='title'>").html(GlobalSearch.boldSearchAll(item.Title, tpobj.text)))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>')))
-                                                    .append($(" <div class='desc'>").html(item.Description))//.replace(new RegExp(tpobj.text, 'gi'), '<strong>' + tpobj.text + '</strong>'))
-                                                ))));
+                                            .html(GlobalSearch.boldSearchAll(item.Title, tpobj.text))));
                                 }
+
+                                searchItem.append(childrenItems);
+
+                                if (resultfiltered.length === 0)
+                                    searchItem.addClass("d-none");
+
+                                searchHolder.append(searchItem);
+
                                 if (beginSearchStarted && resultfiltered.length > 0) {
                                     beginSearchStarted = false;
-                                    resultPanel.append(ul);
+                                    resultPanel.append(searchHolder);
                                 }
-                                console.log("ajax succeeded for: " + tpobj.url);
-                                console.log(resultfiltered);
-                                console.log(tpobj);
+
                             } else {
                                 tpobj.state = 2; // 2 -> fail
                                 console.log("ajax success but failed to decode the response -> wellform expcted response is like this: [{Title:'',Description:'',IconUrl:'',Url:''}] ");
-                                console.log(result);
                             }
                         }
                     }).bind(tempobj)
@@ -204,9 +219,9 @@ export default class GlobalSearch {
                     tpobj.state = 2;
 
                     let ulFail = $("<ul>");
-                    ulFail.append("<li>").append("<span>").html('ajax failed Loading data from source [' + tpobj.url + ']');
+                    ulFail.append($("<li>").append($("<span>").html('ajax failed Loading data from source [' + tpobj.url + ']')));
                     resultPanel.append(ulFail);
-                    
+
                     console.log('ajax failed Loading data from source [' + tpobj.url + ']');
                     console.log(e);
                 }).bind(tempobj))
@@ -219,13 +234,13 @@ export default class GlobalSearch {
                         console.log('All ajax completed');
                         $(".global-search-panel .loading-div").empty();
                         $(".global-search-panel .loading-div").remove();
-                        if (resultcount === 0) {                                                        
+                        if (resultcount === 0) {
                             console.log("Found nothing");
 
                             let ulNothing = $("<ul>");
                             ulNothing.append("<li>").append("<span>").html('Nothing found');
                             resultPanel.append(ulNothing);
-                                
+
                         } else {
                             console.log('Total Found: ' + resultcount);
                         }
