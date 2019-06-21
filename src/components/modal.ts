@@ -93,13 +93,9 @@ export default class Modal {
         AjaxRedirect.defaultOnRedirected("", modalUrl);
     }
 
-    public static urlContainsModal(): boolean {
-        return Url.current().contains("_modal");
-    }
 
-    static modalPageExists(): boolean {
-        return $('.modal-dialog').length > 0;
-    }
+
+
 
     static openWithUrl(): void {
         if (Url.getQuery("_iframe") === "true") {
@@ -295,5 +291,10 @@ export default class Modal {
     public static ensureNonModal() {
         if (window.isModal())
             parent.window.location.href = location.href;
+    }
+
+    public static tryOpenFromUrl() {
+        if (Url.getQuery("_modal") && $('.modal-dialog').length == 0)
+            this.openWithUrl();
     }
 }

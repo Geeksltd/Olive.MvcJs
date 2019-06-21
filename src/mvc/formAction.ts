@@ -6,7 +6,7 @@ import Url from 'olive/components/url'
 import Config from "olive/config"
 import StandardAction from 'olive/mvc/standardAction'
 import LiteEvent from 'olive/components/liteEvent'
-import Modal from 'olive/components/modal';
+import Modal from '../components/modal';
 
 export interface IViewUpdatedEventArgs {
     container: JQuery;
@@ -260,9 +260,10 @@ export default class FormAction {
         document.title = $("#page_meta_title").val();
 
         //open modal if needed
-        if (!window.isModal() && Url.getQuery("_modal") !== "") {
-            let url: string = Url.getQuery("_modal");
-            new Modal(null, url).open(false);
-        }
+        Modal.tryOpenFromUrl();
+        //if (!window.isModal() && Url.getQuery("_modal") !== "") {
+        //    let url: string = Url.getQuery("_modal");
+        //    new Modal(null, url).open(false);
+        //}
     }
 }
