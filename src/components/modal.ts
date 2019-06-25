@@ -73,6 +73,7 @@ export default class Modal {
     }
 
     public static changeUrl(url: string, iframe: boolean = false) {
+
         let currentPath: string = Url.removeQuery(Url.current(), "_modal");
         currentPath = Url.removeQuery(currentPath, "_iframe");
 
@@ -98,6 +99,7 @@ export default class Modal {
 
 
     static openWithUrl(): void {
+
         if (Url.getQuery("_iframe") === "true") {
             new Modal(null, Url.getQuery("_modal")).openiFrame(false);
         }
@@ -176,8 +178,8 @@ export default class Modal {
         this.isAjaxModal = false;
 
         //remove modal query string
-        var currentPath = Url.removeQuery(Url.current(), "_modal");
-        var currentPath = Url.removeQuery(currentPath, "_iframe");
+        let currentPath = Url.removeQuery(Url.current(), "_modal");
+        currentPath = Url.removeQuery(currentPath, "_iframe");
 
         if (currentPath.endsWith("?"))
             currentPath = currentPath.trimEnd("?");
