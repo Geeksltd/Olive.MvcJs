@@ -36,9 +36,13 @@ export default class AjaxRedirect {
     }
 
     static back(event) {
-        if (this.ajaxChangedUrl == 0) return;
-        this.ajaxChangedUrl--;
-        this.go(location.href, null, true, false, false);
+        if (Modal.isOrGoingToBeModal())
+            window.location.reload();
+        else {
+            if (this.ajaxChangedUrl == 0) return;
+            this.ajaxChangedUrl--;
+            this.go(location.href, null, true, false, false);
+        }
     }
 
     public static go(url: string, trigger: JQuery = null, isBack: boolean = false, keepScroll: boolean = false,

@@ -95,7 +95,9 @@ export default class Modal {
     }
 
 
-
+    public static isOrGoingToBeModal(): boolean {
+        return window.isModal() || !!Url.getQuery("_modal");
+    }
 
 
     static openWithUrl(): void {

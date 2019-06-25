@@ -15,6 +15,7 @@ export default class Modal {
     static setIFrameHeight(arg: any): void;
     open(changeUrl?: boolean): boolean;
     static changeUrl(url: string, iframe?: boolean): void;
+    static isOrGoingToBeModal(): boolean;
     static openWithUrl(): void;
     openiFrame(changeUrl?: boolean): boolean;
     static closeMe(): boolean;
