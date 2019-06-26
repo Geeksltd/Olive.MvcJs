@@ -1,5 +1,5 @@
 export default class AjaxRedirect {
-    static lastWindowStopCall: Date;
+    static requestCounter: number;
     static ajaxChangedUrl: number;
     static isAjaxRedirecting: boolean;
     static onRedirected: ((title: string, url: string) => void);

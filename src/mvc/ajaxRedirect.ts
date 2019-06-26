@@ -4,7 +4,7 @@ import FormAction from 'olive/mvc/formAction'
 import Modal from 'olive/components/modal';
 
 export default class AjaxRedirect {
-    static lastWindowStopCall: Date;
+    static requestCounter = 0;
     static ajaxChangedUrl = 0;
     static isAjaxRedirecting = false;
     public static onRedirected: ((title: string, url: string) => void) = AjaxRedirect.defaultOnRedirected;
@@ -59,7 +59,8 @@ export default class AjaxRedirect {
 
         this.isAjaxRedirecting = true;
         FormAction.isAwaitingAjaxResponse = true;
-        AjaxRedirect.lastWindowStopCall = new Date();
+
+        const requestCounter = ++AjaxRedirect.requestCounter;
         if (window.stop) window.stop();
         else if (document.execCommand !== undefined) document.execCommand("Stop", false);
 
@@ -104,7 +105,7 @@ export default class AjaxRedirect {
                 if (keepScroll) $(document).scrollTop(scrollTopBefore);
             },
             error: (response) => {
-                if (!AjaxRedirect.lastWindowStopCall || AjaxRedirect.lastWindowStopCall.getTime() < new Date().getTime() - 500)
+                if (AjaxRedirect.requestCounter == requestCounter)
                     this.onRedirectionFailed(url, response);
             },
             complete: (response) => Waiting.hide()
