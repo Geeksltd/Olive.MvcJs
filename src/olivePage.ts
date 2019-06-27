@@ -94,7 +94,7 @@ export default class OlivePage {
             if (Config.REDIRECT_SCROLLS_UP) $(window).scrollTop(0);
         }
 
-        if (firstTime) Modal.tryOpenFromUrl();
+        //if (firstTime) Modal.tryOpenFromUrl();
     }
 
     initialize() {
