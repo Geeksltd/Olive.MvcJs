@@ -187,8 +187,10 @@ export default class GlobalSearch {
                                     var item = resultfiltered[i];
 
                                     childrenItems.append($("<li>")
+                                    .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<div class='icon'>") : $("<div class='icon'>").append($("<img src='" + item.IconUrl + "'>")))
                                         .append($("<a href='" + item.Url + "'>")
-                                            .html(GlobalSearch.boldSearchAll(item.Title, tpobj.text))));
+                                            .html(GlobalSearch.boldSearchAll(item.Title, tpobj.text)))
+                                            .append($(" <div class='desc'>").html(item.Description)));
                                 }
 
                                 searchItem.append(childrenItems);
