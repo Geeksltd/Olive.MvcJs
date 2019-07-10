@@ -1,3 +1,3 @@
-interface OutParam<T> {
+interface IOutParam<T> {
     value?: T;
 }

@@ -25,6 +25,7 @@ const Services = {
     DateTimePicker: "dateTimePicker",
     DateTimePickerBase: "dateTimePickerBase",
     FileUpload: "fileUpload",
+    FileUploadFactory: "fileUploadFactory",
     GlobalSearch: "globalSearch",
     HtmlEditor: "htmlEditor",
     InstantSearch: "instantSearch",

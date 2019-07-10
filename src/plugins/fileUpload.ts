@@ -6,6 +6,14 @@ import CrossDomainEvent from "olive/components/crossDomainEvent";
 // http://markusslima.github.io/bootstrap-filestyle/ 
 // https://blueimp.github.io/jQuery-File-Upload/
 
+export class FileUploadFactory implements IService {
+
+    constructor(private url: Url,
+        private formAction: FormAction) { }
+
+    public enable(selector: JQuery) { selector.each((i, e) => new FileUpload($(e), this.url, this.formAction).enable()); }
+}
+
 export default class FileUpload {
     input: JQuery;
     container: JQuery;
@@ -16,9 +24,7 @@ export default class FileUpload {
     existingFileNameInput: JQuery;
     fileLabel: JQuery;
 
-    public static enable(selector: JQuery) { selector.each((i, e) => new FileUpload($(e)).enable()); }
-
-    constructor(targetInput: JQuery) {
+    constructor(targetInput: JQuery, private url: Url, private formAction: FormAction) {
         this.input = targetInput;
         this.fixMasterDetailsInputName();
         this.input.before(this.input.siblings('input'));
@@ -29,7 +35,7 @@ export default class FileUpload {
     }
 
     enable() {
-        this.input.attr("data-url", Url.effectiveUrlProvider("/upload", this.input));
+        this.input.attr("data-url", this.url.effectiveUrlProvider("/upload", this.input));
         const options = {
             'input': this.input.attr('data-input') !== 'false',
             'htmlIcon': this.input.attr('data-icon'),
@@ -123,13 +129,13 @@ export default class FileUpload {
     }
 
     onUploadError(jqXHR: JQueryXHR, status: string, error: string) {
-        FormAction.onAjaxResponseError(jqXHR, status, error);
+        this.formAction.onAjaxResponseError(jqXHR, status, error);
         this.fileLabel.val('');
     }
 
     onUploadSuccess(response) {
         if (response.Error) {
-            FormAction.onAjaxResponseError(<any>{ responseText: response.Error }, "error", response.Error);
+            this.formAction.onAjaxResponseError(<any>{ responseText: response.Error }, "error", response.Error);
             this.fileLabel.val('');
         }
         else {

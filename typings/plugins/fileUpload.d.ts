@@ -1,4 +1,14 @@
+import FormAction from "olive/mvc/formAction";
+import Url from "olive/components/url";
+export declare class FileUploadFactory implements IService {
+    private url;
+    private formAction;
+    constructor(url: Url, formAction: FormAction);
+    enable(selector: JQuery): void;
+}
 export default class FileUpload {
+    private url;
+    private formAction;
     input: JQuery;
     container: JQuery;
     idInput: JQuery;
@@ -7,8 +17,7 @@ export default class FileUpload {
     currentFileLink: JQuery;
     existingFileNameInput: JQuery;
     fileLabel: JQuery;
-    static enable(selector: JQuery): void;
-    constructor(targetInput: JQuery);
+    constructor(targetInput: JQuery, url: Url, formAction: FormAction);
     enable(): void;
     fixMasterDetailsInputName(): void;
     hasExistingFile(): boolean;

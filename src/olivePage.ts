@@ -28,7 +28,7 @@ import Slider from 'olive/plugins/slider'
 import DatePicker from 'olive/plugins/datePicker'
 import DateTimePicker from 'olive/plugins/dateTimePicker'
 import NumbericUpDown from 'olive/plugins/numericUpDown'
-import FileUpload from 'olive/plugins/fileUpload'
+import { FileUploadFactory } from 'olive/plugins/fileUpload'
 import ConfirmBox from 'olive/plugins/confirmBox'
 import SubMenu from 'olive/plugins/subMenu'
 import InstantSearch from 'olive/plugins/instantSearch'
@@ -99,6 +99,10 @@ export default class OlivePage {
         }
 
         if (services.tryAddSingleton(Services.Paging, (url: Url, formAction: FormAction) => new Paging(url, formAction), out)) {
+            out.value.withDependencies(Services.Url, Services.FormAction);
+        }
+
+        if (services.tryAddSingleton(Services.FileUploadFactory, (url: Url, formAction: FormAction) => new FileUploadFactory(url, formAction), out)) {
             out.value.withDependencies(Services.Url, Services.FormAction);
         }
 
@@ -226,7 +230,7 @@ export default class OlivePage {
         HtmlEditor.enable($("[data-control=html-editor]"));
         NumbericUpDown.enable($("[data-control=numeric-up-down]"));
         Slider.enable($("[data-control=range-slider],[data-control=slider]"));
-        FileUpload.enable($(".file-upload input:file"));
+        this.getService<FileUploadFactory>(Services.FileUploadFactory).enable($(".file-upload input:file"));
         ConfirmBox.enable($("[data-confirm-question]"));
         PasswordStength.enable($(".password-strength"));
         SubMenu.enable($(".with-submenu"));

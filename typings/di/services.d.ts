@@ -25,6 +25,7 @@ declare const Services: {
     DateTimePicker: string;
     DateTimePickerBase: string;
     FileUpload: string;
+    FileUploadFactory: string;
     GlobalSearch: string;
     HtmlEditor: string;
     InstantSearch: string;
