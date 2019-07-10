@@ -17,6 +17,7 @@ declare const Services: {
     StandardAction: string;
     AutoComplete: string;
     CkEditorFileManager: string;
+    CKEditorFileManagerFactory: string;
     ConfirmBox: string;
     CustomCheckbox: string;
     CustomRadio: string;
@@ -35,6 +36,7 @@ declare const Services: {
     SanityAdapter: string;
     Select: string;
     Slider: string;
+    SliderFactory: string;
     SubMenu: string;
     TimeControl: string;
     UserHelp: string;

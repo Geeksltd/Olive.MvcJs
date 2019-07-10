@@ -24,7 +24,7 @@ import HtmlEditor from 'olive/plugins/htmlEditor'
 import TimeControl from 'olive/plugins/timeControl'
 import AutoComplete from 'olive/plugins/autoComplete'
 import GlobalSearch from 'olive/plugins/globalSearch'
-import Slider from 'olive/plugins/slider'
+import { SliderFactory } from 'olive/plugins/slider'
 import DatePicker from 'olive/plugins/datePicker'
 import DateTimePicker from 'olive/plugins/dateTimePicker'
 import NumbericUpDown from 'olive/plugins/numericUpDown'
@@ -37,7 +37,7 @@ import UserHelp from 'olive/plugins/userHelp'
 import MultiSelect from "./plugins/multiSelect";
 import CustomCheckbox from "./plugins/customCheckbox";
 import CustomRadio from "./plugins/customRadio";
-import CKEditorFileManager from "./plugins/ckEditorFileManager";
+import { CKEditorFileManagerFactory } from "./plugins/ckEditorFileManager";
 import Grouping from "./components/grouping";
 import { ServiceContainer } from "./di/serviceContainer";
 import Services from "./di/services";
@@ -94,6 +94,10 @@ export default class OlivePage {
             out.value.withDependencies(Services.Url);
         }
 
+        if (services.tryAddSingleton(Services.CKEditorFileManagerFactory, (url: Url) => new CKEditorFileManagerFactory(url), out)) {
+            out.value.withDependencies(Services.Url);
+        }
+
         if (services.tryAddSingleton(Services.Sorting, (url: Url, formAction: FormAction) => new Sorting(url, formAction), out)) {
             out.value.withDependencies(Services.Url, Services.FormAction);
         }
@@ -104,6 +108,10 @@ export default class OlivePage {
 
         if (services.tryAddSingleton(Services.FileUploadFactory, (url: Url, formAction: FormAction) => new FileUploadFactory(url, formAction), out)) {
             out.value.withDependencies(Services.Url, Services.FormAction);
+        }
+
+        if (services.tryAddSingleton(Services.SliderFactory, (form: Form) => new SliderFactory(form), out)) {
+            out.value.withDependencies(Services.Form);
         }
 
         if (services.tryAddSingleton(Services.AjaxRedirect, (url: Url, formAction: FormAction, waiting: Waiting) =>
@@ -221,7 +229,7 @@ export default class OlivePage {
         // =================== Plug-ins ====================
         InstantSearch.enable($("[name=InstantSearch]"));
         AutoComplete.enable($("input[autocomplete-source]"));
-        CKEditorFileManager.enable($(".ckeditor-file-uri"));
+        this.getService<CKEditorFileManagerFactory>(Services.CKEditorFileManagerFactory).enable($(".ckeditor-file-uri"));
         GlobalSearch.enable($("input[data-search-source]"));
         DatePicker.enable($("[data-control=date-picker],[data-control=calendar]"));
         DateTimePicker.enable($("[data-control='date-picker|time-picker']"));
@@ -229,7 +237,7 @@ export default class OlivePage {
         DateDropdown.enable($("[data-control=date-drop-downs]"));
         HtmlEditor.enable($("[data-control=html-editor]"));
         NumbericUpDown.enable($("[data-control=numeric-up-down]"));
-        Slider.enable($("[data-control=range-slider],[data-control=slider]"));
+        this.getService<SliderFactory>(Services.SliderFactory).enable($("[data-control=range-slider],[data-control=slider]"));
         this.getService<FileUploadFactory>(Services.FileUploadFactory).enable($(".file-upload input:file"));
         ConfirmBox.enable($("[data-confirm-question]"));
         PasswordStength.enable($(".password-strength"));

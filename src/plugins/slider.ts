@@ -1,20 +1,24 @@
 
 import Form from "olive/components/form"
 
+export class SliderFactory implements IService {
+    constructor(private form: Form) { }
+
+    public enable(selector: JQuery) { selector.each((i, e) => new Slider($(e), this.form).enable()); }
+}
+
 export default class Slider {
-    input: any;
+    input: JQuery;
     options;
-    
-    public static enable(selector:JQuery){selector.each((i,e)=> new Slider($(e)).enable());}
-    
-    constructor(targetInput: any) {
+
+    constructor(targetInput: JQuery, private form: Form) {
         this.input = targetInput;
         this.options = { min: 0, max: 100, value: null, range: false, formatter: null, tooltip: 'always', upper: null, tooltip_split: false };
     }
 
     enable() {
 
-        let data_options = this.input.attr("data-options") ? JSON.parse(Form.cleanJson(this.input.attr("data-options"))) : null;
+        let data_options = this.input.attr("data-options") ? JSON.parse(this.form.cleanJson(this.input.attr("data-options"))) : null;
         if (data_options) $.extend(true, this.options, data_options);
 
         this.options.range = this.input.attr("data-control") == "range-slider";
