@@ -2,10 +2,20 @@ import Form from "olive/components/form"
 import Url from 'olive/components/url'
 import FormAction from 'olive/mvc/formAction'
 
+export class AutoCompleteFactory implements IService {
+
+    constructor(private url: Url,
+        private form: Form,
+        private formAction: FormAction) { }
+
+    public enable(selector: JQuery) {
+        selector.each((i, e) => new AutoComplete($(e), this.url, this.form, this.formAction).enable());
+    }
+}
+
 export default class AutoComplete {
     private static customOptions: RunningCoder.Typeahead.Options;
 
-    input: JQuery;
     awaitingAutocompleteResponses: number = 0;
     valueField: JQuery;
 
@@ -13,13 +23,10 @@ export default class AutoComplete {
         AutoComplete.customOptions = options;
     }
 
-    public static enable(selector: JQuery) {
-        selector.each((i, e) => new AutoComplete($(e)).enable());
-    }
-
-    constructor(targetInput: JQuery) {
-        this.input = targetInput;
-    }
+    constructor(public input: JQuery,
+        private url: Url,
+        private form: Form,
+        private formAction: FormAction) { }
 
     enable() {
 
@@ -27,16 +34,16 @@ export default class AutoComplete {
         else this.input.attr("data-typeahead-enabled", "true");
 
         if (this.input.is("[data-change-action]"))
-            FormAction.enableInvokeWithAjax(this.input, "typeahead:select", "data-change-action");
+            this.formAction.enableInvokeWithAjax(this.input, "typeahead:select", "data-change-action");
 
         this.input.wrap("<div class='typeahead__container'></div>");
 
         this.valueField = $("[name='" + this.input.attr("name").slice(0, -5) + "']");
 
         let url = this.input.attr("autocomplete-source") || '';
-        url = Url.effectiveUrlProvider(url, this.input);
+        url = this.url.effectiveUrlProvider(url, this.input);
 
-        var postData: any = this.toObject(Form.getPostData(this.input));
+        var postData: any = this.toObject(this.form.getPostData(this.input));
 
         postData[this.input.attr("name")] = "{{query}}";
 

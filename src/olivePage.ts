@@ -22,7 +22,7 @@ import Select from 'olive/plugins/select'
 import PasswordStength from 'olive/plugins/passwordStength'
 import HtmlEditor from 'olive/plugins/htmlEditor'
 import TimeControl from 'olive/plugins/timeControl'
-import AutoComplete from 'olive/plugins/autoComplete'
+import { AutoCompleteFactory } from 'olive/plugins/autoComplete'
 import GlobalSearch from 'olive/plugins/globalSearch'
 import { SliderFactory } from 'olive/plugins/slider'
 import DatePicker from 'olive/plugins/datePicker'
@@ -38,7 +38,7 @@ import MultiSelect from "./plugins/multiSelect";
 import CustomCheckbox from "./plugins/customCheckbox";
 import CustomRadio from "./plugins/customRadio";
 import { CKEditorFileManagerFactory } from "./plugins/ckEditorFileManager";
-import Grouping from "./components/grouping";
+import { GroupingFactory } from "./components/grouping";
 import { ServiceContainer } from "./di/serviceContainer";
 import Services from "./di/services";
 import { ServiceDescription } from "./di/serviceDescription";
@@ -108,6 +108,14 @@ export default class OlivePage {
 
         if (services.tryAddSingleton(Services.FileUploadFactory, (url: Url, formAction: FormAction) => new FileUploadFactory(url, formAction), out)) {
             out.value.withDependencies(Services.Url, Services.FormAction);
+        }
+
+        if (services.tryAddSingleton(Services.GroupingFactory, (url: Url, ajaxRedirect: AjaxRedirect) => new GroupingFactory(url, ajaxRedirect), out)) {
+            out.value.withDependencies(Services.Url, Services.AjaxRedirect);
+        }
+
+        if (services.tryAddSingleton(Services.AutoCompleteFactory, (url: Url, form: Form, formAction: FormAction) => new AutoCompleteFactory(url, form, formAction), out)) {
+            out.value.withDependencies(Services.Url, Services.Form, Services.FormAction);
         }
 
         if (services.tryAddSingleton(Services.SliderFactory, (form: Form) => new SliderFactory(form), out)) {
@@ -221,14 +229,14 @@ export default class OlivePage {
         form.enableDefaultButtonKeyPress($("form input, form select"));
         UserHelp.enable($("[data-user-help]"));
         this.getService<StandardAction>(Services.StandardAction).enableLinkModal($("[target='$modal'][href]"));
-        Grouping.enable($(".form-group #GroupBy"));
+        this.getService<GroupingFactory>(Services.GroupingFactory).enable($(".form-group #GroupBy"));
 
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust",
             (e: any) => $(e.currentTarget).height(e.currentTarget.contentWindow.document.body.scrollHeight));
 
         // =================== Plug-ins ====================
         InstantSearch.enable($("[name=InstantSearch]"));
-        AutoComplete.enable($("input[autocomplete-source]"));
+        this.getService<AutoCompleteFactory>(Services.AutoCompleteFactory).enable($("input[autocomplete-source]"));
         this.getService<CKEditorFileManagerFactory>(Services.CKEditorFileManagerFactory).enable($(".ckeditor-file-uri"));
         GlobalSearch.enable($("input[data-search-source]"));
         DatePicker.enable($("[data-control=date-picker],[data-control=calendar]"));

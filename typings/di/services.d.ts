@@ -4,6 +4,7 @@ declare const Services: {
     Form: string;
     Grid: string;
     Grouping: string;
+    GroupingFactory: string;
     LiteEvent: string;
     MasterDetail: string;
     Modal: string;
@@ -16,6 +17,7 @@ declare const Services: {
     FormAction: string;
     StandardAction: string;
     AutoComplete: string;
+    AutoCompleteFactory: string;
     CkEditorFileManager: string;
     CKEditorFileManagerFactory: string;
     ConfirmBox: string;
