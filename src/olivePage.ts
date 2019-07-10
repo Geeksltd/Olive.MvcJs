@@ -116,6 +116,10 @@ export default class OlivePage {
             out.value.withDependencies(Services.Url, Services.AjaxRedirect);
         }
 
+        if (services.tryAddSingleton(Services.ModalHelper, (url: Url, ajaxRedirect: AjaxRedirect) => new ModalHelper(url, ajaxRedirect), out)) {
+            out.value.withDependencies(Services.Url, Services.AjaxRedirect);
+        }
+
         if (services.tryAddSingleton(Services.AutoCompleteFactory, (url: Url, form: Form, formAction: FormAction) => new AutoCompleteFactory(url, form, formAction), out)) {
             out.value.withDependencies(Services.Url, Services.Form, Services.FormAction);
         }
