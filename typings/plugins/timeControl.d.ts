@@ -1,4 +1,10 @@
+import { ModalHelper } from "olive/components/modal";
+export declare class TimeControlFactory implements IService {
+    private modalHelper;
+    constructor(modalHelper: ModalHelper);
+    enable(selector: JQuery): void;
+}
 export default class TimeControl {
-    static enable(selector: JQuery): void;
-    constructor(targetInput: any);
+    private modalHelper;
+    constructor(targetInput: any, modalHelper: ModalHelper);
 }

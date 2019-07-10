@@ -9,7 +9,7 @@ import StandardAction from 'olive/mvc/standardAction'
 import Form from 'olive/components/form'
 import Url from 'olive/components/url'
 import SystemExtensions from 'olive/extensions/systemExtensions'
-import Modal from 'olive/components/modal'
+import { ModalHelper } from 'olive/components/modal'
 import Validate from 'olive/components/validate'
 import Sorting from 'olive/components/sorting'
 import Paging from 'olive/components/paging'
@@ -20,13 +20,13 @@ import Grid from 'olive/components/grid'
 
 import Select from 'olive/plugins/select'
 import PasswordStength from 'olive/plugins/passwordStength'
-import HtmlEditor from 'olive/plugins/htmlEditor'
-import TimeControl from 'olive/plugins/timeControl'
+import { HtmlEditorFactory } from 'olive/plugins/htmlEditor'
+import { TimeControlFactory } from 'olive/plugins/timeControl'
 import { AutoCompleteFactory } from 'olive/plugins/autoComplete'
 import GlobalSearch from 'olive/plugins/globalSearch'
 import { SliderFactory } from 'olive/plugins/slider'
-import DatePicker from 'olive/plugins/datePicker'
-import DateTimePicker from 'olive/plugins/dateTimePicker'
+import { DatePickerFactory } from 'olive/plugins/datePicker'
+import { DateTimePickerFactory } from 'olive/plugins/dateTimePicker'
 import NumbericUpDown from 'olive/plugins/numericUpDown'
 import { FileUploadFactory } from 'olive/plugins/fileUpload'
 import ConfirmBox from 'olive/plugins/confirmBox'
@@ -47,7 +47,7 @@ export default class OlivePage {
 
     private services: ServiceContainer;
 
-    public modal = Modal;
+    public modalHelper: ModalHelper;
     public waiting = Waiting;
 
     constructor() {
@@ -56,7 +56,9 @@ export default class OlivePage {
         this.configureServices(this.services);
 
         SystemExtensions.initialize();
-        Modal.initialize();
+
+        this.modalHelper = this.getService<ModalHelper>(Services.ModalHelper);
+        this.modalHelper.initialize();
 
         //ASP.NET needs this config for Request.IsAjaxRequest()
         $.ajaxSetup({
@@ -122,9 +124,21 @@ export default class OlivePage {
             out.value.withDependencies(Services.Form);
         }
 
-        if (services.tryAddSingleton(Services.AjaxRedirect, (url: Url, formAction: FormAction, waiting: Waiting) =>
-            new AjaxRedirect(url, formAction, waiting), out)) {
-            out.value.withDependencies(Services.Url, Services.FormAction, Services.Waiting);
+        if (services.tryAddSingleton(Services.DateTimePickerFactory, (modalHelper: ModalHelper) => new DateTimePickerFactory(modalHelper), out)) {
+            out.value.withDependencies(Services.ModalHelper);
+        }
+
+        if (services.tryAddSingleton(Services.DatePickerFactory, (modalHelper: ModalHelper) => new DatePickerFactory(modalHelper), out)) {
+            out.value.withDependencies(Services.ModalHelper);
+        }
+
+        if (services.tryAddSingleton(Services.TimeControlFactory, (modalHelper: ModalHelper) => new TimeControlFactory(modalHelper), out)) {
+            out.value.withDependencies(Services.ModalHelper);
+        }
+
+        if (services.tryAddSingleton(Services.AjaxRedirect, (url: Url, formAction: FormAction, waiting: Waiting, modalHelper: ModalHelper) =>
+            new AjaxRedirect(url, formAction, waiting, modalHelper), out)) {
+            out.value.withDependencies(Services.Url, Services.FormAction, Services.Waiting, Services.ModalHelper);
         }
 
         if (services.tryAddSingleton(Services.Form, (url: Url, validate: Validate, waiting: Waiting, ajaxRedirect: AjaxRedirect) =>
@@ -145,8 +159,9 @@ export default class OlivePage {
             formAction: FormAction,
             waiting: Waiting,
             ajaxRedirect: AjaxRedirect,
-            select: Select) =>
-            new StandardAction(alert, form, formAction, waiting, ajaxRedirect, select), out)
+            select: Select,
+            modalHelper: ModalHelper) =>
+            new StandardAction(alert, form, formAction, waiting, ajaxRedirect, select, modalHelper), out)
         ) {
             out.value.withDependencies(
                 Services.Alert,
@@ -154,7 +169,8 @@ export default class OlivePage {
                 Services.FormAction,
                 Services.Waiting,
                 Services.AjaxRedirect,
-                Services.Select);
+                Services.Select,
+                Services.ModalHelper);
         }
 
         if (services.tryAddSingleton(Services.FormAction, (url: Url,
@@ -162,8 +178,9 @@ export default class OlivePage {
             masterDetail: MasterDetail,
             standardAction: StandardAction,
             form: Form,
-            waiting: Waiting) =>
-            new FormAction(url, validate, masterDetail, standardAction, form, waiting), out)
+            waiting: Waiting,
+            modalHelper: ModalHelper) =>
+            new FormAction(url, validate, masterDetail, standardAction, form, waiting, modalHelper), out)
         ) {
             out.value.withDependencies(
                 Services.Url,
@@ -171,7 +188,8 @@ export default class OlivePage {
                 Services.MasterDetail,
                 Services.StandardAction,
                 Services.Form,
-                Services.Waiting);
+                Services.Waiting,
+                Services.ModalHelper);
         }
     }
 
@@ -223,7 +241,7 @@ export default class OlivePage {
         sorting.setSortHeaderClass($("th[data-sort]"));
         const form = this.getService<Form>(Services.Form);
         form.enablecleanUpNumberField($("[data-val-number]"));
-        Modal.enableEnsureHeight($("[data-toggle=tab]"));
+        this.modalHelper.enableEnsureHeight($("[data-toggle=tab]"));
         this.getService<MultiSelect>(Services.MultiSelect).enableEnhance($("select[data-control='collapsible-checkboxes']"));
         this.getService<Select>(Services.Select).enableEnhance($("select:not([data-control='collapsible-checkboxes'])"));
         form.enableDefaultButtonKeyPress($("form input, form select"));
@@ -239,11 +257,11 @@ export default class OlivePage {
         this.getService<AutoCompleteFactory>(Services.AutoCompleteFactory).enable($("input[autocomplete-source]"));
         this.getService<CKEditorFileManagerFactory>(Services.CKEditorFileManagerFactory).enable($(".ckeditor-file-uri"));
         GlobalSearch.enable($("input[data-search-source]"));
-        DatePicker.enable($("[data-control=date-picker],[data-control=calendar]"));
-        DateTimePicker.enable($("[data-control='date-picker|time-picker']"));
-        TimeControl.enable($("[data-control=time-picker]"));
+        this.getService<DatePickerFactory>(Services.DatePickerFactory).enable($("[data-control=date-picker],[data-control=calendar]"));
+        this.getService<DateTimePickerFactory>(Services.DateTimePickerFactory).enable($("[data-control='date-picker|time-picker']"));
+        this.getService<TimeControlFactory>(Services.TimeControlFactory).enable($("[data-control=time-picker]"));
         DateDropdown.enable($("[data-control=date-drop-downs]"));
-        HtmlEditor.enable($("[data-control=html-editor]"));
+        this.getService<HtmlEditorFactory>(Services.HtmlEditorFactory).enable($("[data-control=html-editor]"));
         NumbericUpDown.enable($("[data-control=numeric-up-down]"));
         this.getService<SliderFactory>(Services.SliderFactory).enable($("[data-control=range-slider],[data-control=slider]"));
         this.getService<FileUploadFactory>(Services.FileUploadFactory).enable($(".file-upload input:file"));
@@ -269,7 +287,7 @@ export default class OlivePage {
         formAction.enableInvokeWithAjax($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar],[data-change-action][data-control=time-picker]"), "dp.change.data-action", "data-change-action");
 
         this.getService<MasterDetail>(Services.MasterDetail).updateSubFormStates();
-        Modal.adjustHeight();
+        this.modalHelper.adjustHeight();
 
         this._initializeActions.forEach((action) => action());
 

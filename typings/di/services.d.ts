@@ -8,6 +8,7 @@ declare const Services: {
     LiteEvent: string;
     MasterDetail: string;
     Modal: string;
+    ModalHelper: string;
     Paging: string;
     Sorting: string;
     Url: string;
@@ -25,12 +26,15 @@ declare const Services: {
     CustomRadio: string;
     DateDropdown: string;
     DatePicker: string;
+    DatePickerFactory: string;
     DateTimePicker: string;
+    DateTimePickerFactory: string;
     DateTimePickerBase: string;
     FileUpload: string;
     FileUploadFactory: string;
     GlobalSearch: string;
     HtmlEditor: string;
+    HtmlEditorFactory: string;
     InstantSearch: string;
     MultiSelect: string;
     NumericUpDown: string;
@@ -41,6 +45,7 @@ declare const Services: {
     SliderFactory: string;
     SubMenu: string;
     TimeControl: string;
+    TimeControlFactory: string;
     UserHelp: string;
 };
 export default Services;

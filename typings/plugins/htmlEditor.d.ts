@@ -1,8 +1,14 @@
+import { ModalHelper } from "olive/components/modal";
+export declare class HtmlEditorFactory implements IService {
+    private modalHelper;
+    constructor(modalHelper: ModalHelper);
+    enable(selector: JQuery): void;
+}
 export default class HtmlEditor {
+    private modalHelper;
     input: any;
     static editorConfigPath: string;
-    static enable(selector: JQuery): void;
-    constructor(targetInput: any);
+    constructor(targetInput: any, modalHelper: ModalHelper);
     enable(): void;
     onCkEditorScriptReady(): void;
     getEditorSettings(): {

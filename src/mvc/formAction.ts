@@ -6,7 +6,7 @@ import Url from 'olive/components/url'
 import Config from "olive/config"
 import StandardAction from 'olive/mvc/standardAction'
 import LiteEvent from 'olive/components/liteEvent'
-import Modal from '../components/modal';
+import { ModalHelper } from '../components/modal';
 
 export interface IViewUpdatedEventArgs {
     container: JQuery;
@@ -27,7 +27,8 @@ export default class FormAction implements IService {
         private masterDetail: MasterDetail,
         private standardAction: StandardAction,
         private form: Form,
-        private waiting: Waiting) { }
+        private waiting: Waiting,
+        private modalHelper: ModalHelper) { }
 
     public enableInvokeWithAjax(selector: JQuery, event: string, attrName: string) {
         selector.off(event).on(event,
@@ -268,7 +269,7 @@ export default class FormAction implements IService {
         document.title = $("#page_meta_title").val();
 
         //open modal if needed
-        Modal.tryOpenFromUrl();
+        this.modalHelper.tryOpenFromUrl();
         //if (!window.isModal() && Url.getQuery("_modal") !== "") {
         //    let url: string = Url.getQuery("_modal");
         //    new Modal(null, url).open(false);

@@ -5,6 +5,7 @@ import Form from 'olive/components/form';
 import Url from 'olive/components/url';
 import StandardAction from 'olive/mvc/standardAction';
 import LiteEvent from 'olive/components/liteEvent';
+import { ModalHelper } from '../components/modal';
 export interface IViewUpdatedEventArgs {
     container: JQuery;
     trigger: any;
@@ -17,13 +18,14 @@ export default class FormAction implements IService {
     private standardAction;
     private form;
     private waiting;
+    private modalHelper;
     isAwaitingAjaxResponse: boolean;
     events: {
         [event: string]: Function[];
     };
     dynamicallyLoadedScriptFiles: any[];
     onViewChanged: LiteEvent<IViewUpdatedEventArgs>;
-    constructor(url: Url, validate: Validate, masterDetail: MasterDetail, standardAction: StandardAction, form: Form, waiting: Waiting);
+    constructor(url: Url, validate: Validate, masterDetail: MasterDetail, standardAction: StandardAction, form: Form, waiting: Waiting, modalHelper: ModalHelper);
     enableInvokeWithAjax(selector: JQuery, event: string, attrName: string): void;
     enableinvokeWithPost(selector: JQuery): void;
     invokeWithPost(event: any): boolean;

@@ -1,7 +1,7 @@
 import Waiting from 'olive/components/waiting'
 import Url from 'olive/components/url'
 import FormAction from 'olive/mvc/formAction'
-import Modal from 'olive/components/modal';
+import { ModalHelper } from 'olive/components/modal';
 
 export default class AjaxRedirect implements IService {
     requestCounter = 0;
@@ -13,7 +13,8 @@ export default class AjaxRedirect implements IService {
     constructor(
         private url: Url,
         private formAction: FormAction,
-        private waiting: Waiting
+        private waiting: Waiting,
+        private modalHelper: ModalHelper
     ) { }
 
     defaultOnRedirected(title: string, url: string) {
@@ -42,7 +43,7 @@ export default class AjaxRedirect implements IService {
     }
 
     back(event) {
-        if (Modal.isOrGoingToBeModal())
+        if (this.modalHelper.isOrGoingToBeModal())
             window.location.reload();
         else {
             if (this.ajaxChangedUrl == 0) return;
@@ -101,7 +102,7 @@ export default class AjaxRedirect implements IService {
                 }
 
                 if (addToHistory) {
-                    if (window.isModal() && addToHistory) Modal.changeUrl(url);
+                    if (window.isModal() && addToHistory) this.modalHelper.changeUrl(url);
                 }
 
                 this.formAction.isAwaitingAjaxResponse = false;

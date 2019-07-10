@@ -1,15 +1,19 @@
 import Modal from "olive/components/modal"
 import Config from "olive/config";
+import { ModalHelper } from "olive/components/modal";
 
+export class TimeControlFactory implements IService {
+    constructor(private modalHelper: ModalHelper) { }
+
+    public enable(selector: JQuery) { selector.each((i, e) => new TimeControl($(e), this.modalHelper)); }
+}
 export default class TimeControl {
-    public static enable(selector: JQuery) { selector.each((i, e) => new TimeControl($(e))); }
-
-    constructor(targetInput: any) {
+    constructor(targetInput: any, private modalHelper: ModalHelper) {
         let input = targetInput;
 
         if (window.isModal()) {
-            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", e => Modal.expandToFitPicker(e));
-            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", e => Modal.expandToFitPicker(e));
+            input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", e => this.modalHelper.expandToFitPicker(e));
+            input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", e => this.modalHelper.expandToFitPicker(e));
         }
 
         input.attr("data-autofocus", "disabled");

@@ -1,9 +1,9 @@
-import Modal from 'olive/components/modal';
+import { ModalHelper } from 'olive/components/modal';
 import Waiting from 'olive/components/waiting';
 import { ServiceContainer } from "./di/serviceContainer";
 export default class OlivePage {
     private services;
-    modal: typeof Modal;
+    modalHelper: ModalHelper;
     waiting: typeof Waiting;
     constructor();
     configureServices(services: ServiceContainer): void;

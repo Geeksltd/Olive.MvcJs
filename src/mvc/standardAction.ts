@@ -1,7 +1,7 @@
 import Alert from 'olive/components/alert'
 import Select from 'olive/plugins/select'
 import Waiting from 'olive/components/waiting'
-import Modal from 'olive/components/modal'
+import Modal, { ModalHelper } from '../components/modal'
 import AjaxRedirect from 'olive/mvc/ajaxRedirect'
 import CrossDomainEvent from 'olive/components/crossDomainEvent'
 import Form from 'olive/components/form'
@@ -14,7 +14,8 @@ export default class StandardAction implements IService {
         private formAction: FormAction,
         private waiting: Waiting,
         private ajaxRedirect: AjaxRedirect,
-        private select: Select) { }
+        private select: Select,
+        private modalHelper: ModalHelper) { }
 
     public enableLinkModal(selector: JQuery) {
         selector.off("click.open-modal").on("click.open-modal", (e) => {
@@ -69,7 +70,7 @@ export default class StandardAction implements IService {
         else if (action.BrowserAction == "Back") window.history.back();
         else if (action.BrowserAction == "CloseModal") { if (window.page.modal.closeMe() === false) return false; }
         else if (action.BrowserAction == "CloseModalRebindParent") {
-            let opener = Modal.currentModal.opener;
+            let opener = this.modalHelper.currentModal.opener;
             if (window.page.modal.closeMe() === false) return false;
             if (opener) {
                 let data = this.form.getPostData(opener.parents('form'));
@@ -117,12 +118,14 @@ export default class StandardAction implements IService {
     }
 
     openModal(event, url?, options?): any {
-        Modal.close();
-        new Modal(event, url, options).open();
+        this.modalHelper.close();
+        //new Modal(event, url, options).open();
+        throw 'Not implemented';
     }
 
     openModaliFrame(event, url?, options?): void {
-        Modal.close();
-        new Modal(event, url, options).openiFrame();
+        this.modalHelper.close();
+        //new Modal(event, url, options).openiFrame();
+        throw 'Not implemented';
     }
 }
