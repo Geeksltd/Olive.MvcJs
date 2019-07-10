@@ -1,6 +1,6 @@
-export default class Alert {
-    static enableAlert(): void;
-    static alert(text: string, style?: string, callback?: Function): void;
-    static confirm(text: string, style?: string, callback?: Function): void;
-    static alertUnobtrusively(message: string, style?: string): void;
+export default class Alert implements IService {
+    enableAlert(): void;
+    alert(text: string, style?: string, callback?: Function): void;
+    confirm(text: string, style?: string, callback?: Function): void;
+    alertUnobtrusively(message: string, style?: string): void;
 }

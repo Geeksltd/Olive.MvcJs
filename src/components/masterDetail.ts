@@ -1,9 +1,12 @@
 import Validate from "./validate";
 
-export default class MasterDetail {
-    public static enable(selector: JQuery) { selector.off("click.delete-subform").on("click.delete-subform", (e) => this.deleteSubForm(e)); }
+export default class MasterDetail implements IService {
 
-    static updateSubFormStates() {
+    constructor(private validate: Validate) { }
+
+    public enable(selector: JQuery) { selector.off("click.delete-subform").on("click.delete-subform", (e) => this.deleteSubForm(e)); }
+
+    updateSubFormStates() {
         let countItems = element => $(element).parent().find(".subform-item:visible").length;
         // Hide removed items
         $("input[name$=MustBeDeleted][value]").val("true");
@@ -23,11 +26,11 @@ export default class MasterDetail {
         });
     }
 
-    static deleteSubForm(event: JQueryEventObject) {
+    deleteSubForm(event: JQueryEventObject) {
         let button = $(event.currentTarget);
 
         let container = button.parents(".subform-item");
-        Validate.removeTooltipsRelatedTo(container);
+        this.validate.removeTooltipsRelatedTo(container);
         container.find("input[name$=MustBeDeleted]").val("true");
         this.updateSubFormStates();
         event.preventDefault();

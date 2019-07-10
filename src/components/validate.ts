@@ -2,10 +2,13 @@
 import Alert from "olive/components/alert";
 import { TooltipOption } from "typings-lib/bootstrap/index";
 
-export default class Validate {
-    private static tooltipOptions: TooltipOption;
+export default class Validate implements IService {
+    /// TODO: this field is obsolete and DI should use instead.
+    private tooltipOptions: TooltipOption;
 
-    public static configure() {
+    constructor(private alert: Alert) { }
+
+    public configure() {
 
         let methods: any = $.validator.methods;
 
@@ -19,18 +22,20 @@ export default class Validate {
         // TODO: datetime, time
     }
 
-    public static setTooltipOptions(options: TooltipOption) {
-        Validate.tooltipOptions = options;
+    /// TODO: this method is obsolete and DI should use instead.
+    public setTooltipOptions(options: TooltipOption) {
+        console.log('MultiSelect.setOptions is obsolete and will be removed in next version.');
+        this.tooltipOptions = options;
     }
 
-    public static validateForm(trigger: JQuery) {
+    public validateForm(trigger: JQuery) {
 
         if (trigger.is("[formnovalidate]")) return true;
         let form = trigger.closest("form");
         let validator = form.validate();
 
         $.extend(validator.settings, {
-            tooltip_options: { _all_: Validate.tooltipOptions }
+            tooltip_options: { _all_: this.tooltipOptions }
         })
 
         if (!validator.form()) {
@@ -48,19 +53,19 @@ export default class Validate {
             });
 
             if (errorMessage.length > 0)
-                Alert.alert(errorMessage, "error");
+                this.alert.alert(errorMessage, "error");
 
             return false;
         }
         return true;
     }
 
-    public static reloadRules(form: JQuery) {
+    public reloadRules(form: JQuery) {
         form.removeData("validator").removeData("unobtrusiveValidation");
         //$.validator.unobtrusive.parse(form);
     }
 
-    public static removeTooltipsRelatedTo(parent: JQuery) {
+    public removeTooltipsRelatedTo(parent: JQuery) {
         parent.find('[aria-describedby]').each((_, elem) => {
             const id = $(elem).attr('aria-describedby');
 

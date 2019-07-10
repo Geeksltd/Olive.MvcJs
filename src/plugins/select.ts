@@ -1,15 +1,15 @@
 ﻿import 'bootstrap-select'
 
-export default class Select {
+export default class Select implements IService {
     //https://developer.snapappointments.com/bootstrap-select/
 
-    public static enableEnhance(selector: JQuery) { selector.each((i, e) => this.enhance($(e))); }
+    public enableEnhance(selector: JQuery) { selector.each((i, e) => this.enhance($(e))); }
 
-    static enhance(selectControl: JQuery) {
+    enhance(selectControl: JQuery) {
         selectControl.selectpicker();
     }
 
-    public static replaceSource(controlId: string, items) {
+    public replaceSource(controlId: string, items) {
 
         let $control = $('#' + controlId);
 

@@ -1,5 +1,8 @@
-export default class MasterDetail {
-    static enable(selector: JQuery): void;
-    static updateSubFormStates(): void;
-    static deleteSubForm(event: JQueryEventObject): void;
+import Validate from "./validate";
+export default class MasterDetail implements IService {
+    private validate;
+    constructor(validate: Validate);
+    enable(selector: JQuery): void;
+    updateSubFormStates(): void;
+    deleteSubForm(event: JQueryEventObject): void;
 }

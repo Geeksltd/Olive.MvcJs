@@ -7,9 +7,16 @@ import CrossDomainEvent from 'olive/components/crossDomainEvent'
 import Form from 'olive/components/form'
 import FormAction from './formAction';
 
-export default class StandardAction {
+export default class StandardAction implements IService {
 
-    public static enableLinkModal(selector: JQuery) {
+    constructor(private alert: Alert,
+        private form: Form,
+        private formAction: FormAction,
+        private waiting: Waiting,
+        private ajaxRedirect: AjaxRedirect,
+        private select: Select) { }
+
+    public enableLinkModal(selector: JQuery) {
         selector.off("click.open-modal").on("click.open-modal", (e) => {
             if ($(e.currentTarget).attr("data-mode") === "iframe") {
                 this.openModaliFrame(e);
@@ -22,7 +29,7 @@ export default class StandardAction {
         });
     }
 
-    public static runStartup(container: JQuery = null, trigger: any = null, stage: string = "Init") {
+    public runStartup(container: JQuery = null, trigger: any = null, stage: string = "Init") {
         if (container == null) container = $(document);
         if (trigger == null) trigger = $(document);
         let actions = [];
@@ -50,13 +57,13 @@ export default class StandardAction {
         }
     }
 
-    public static runAll(actions: any, trigger: any = null) {
+    public runAll(actions: any, trigger: any = null) {
         for (let action of actions) {
             if (!this.run(action, trigger)) return;
         }
     }
 
-    static run(action: any, trigger: any): boolean {
+    run(action: any, trigger: any): boolean {
         if (action.Notify || action.Notify == "") this.notify(action, trigger);
         else if (action.Script) eval(action.Script);
         else if (action.BrowserAction == "Back") window.history.back();
@@ -65,9 +72,9 @@ export default class StandardAction {
             let opener = Modal.currentModal.opener;
             if (window.page.modal.closeMe() === false) return false;
             if (opener) {
-                let data = Form.getPostData(opener.parents('form'));
-                $.post(window.location.href, data, function (response) {
-                    FormAction.processAjaxResponse(response, opener.closest("[data-module]"), opener, null);
+                let data = this.form.getPostData(opener.parents('form'));
+                $.post(window.location.href, data, (response) => {
+                    this.formAction.processAjaxResponse(response, opener.closest("[data-module]"), opener, null);
                 });
             }
             else {
@@ -81,8 +88,8 @@ export default class StandardAction {
         else if (action.BrowserAction == "Close") window.close();
         else if (action.BrowserAction == "Refresh") window.page.refresh();
         else if (action.BrowserAction == "Print") window.print();
-        else if (action.BrowserAction == "ShowPleaseWait") Waiting.show(action.BlockScreen);
-        else if (action.ReplaceSource) Select.replaceSource(action.ReplaceSource, action.Items);
+        else if (action.BrowserAction == "ShowPleaseWait") this.waiting.show(action.BlockScreen);
+        else if (action.ReplaceSource) this.select.replaceSource(action.ReplaceSource, action.Items);
         else if (action.Download) window.download(action.Download);
         else if (action.Redirect) this.redirect(action, trigger);
         else alert("Don't know how to handle: " + JSON.stringify(action).htmlEncode());
@@ -90,13 +97,13 @@ export default class StandardAction {
         return true;
     }
 
-    static notify(action: any, trigger: any) {
+    notify(action: any, trigger: any) {
         if (action.Obstruct == false)
-            Alert.alertUnobtrusively(action.Notify, action.Style);
-        else Alert.alert(action.Notify, action.Style);
+            this.alert.alertUnobtrusively(action.Notify, action.Style);
+        else this.alert.alert(action.Notify, action.Style);
     }
 
-    static redirect(action: any, trigger: any) {
+    redirect(action: any, trigger: any) {
         if (action.Redirect.indexOf('/') != 0 && action.Redirect.indexOf('http') != 0)
             action.Redirect = '/' + action.Redirect;
 
@@ -105,16 +112,16 @@ export default class StandardAction {
         else if (action.Target && action.Target != '') window.open(action.Redirect, action.Target);
         else if (action.WithAjax === false) location.replace(action.Redirect);
         else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true)
-            AjaxRedirect.go(action.Redirect, trigger, false, false, true);
+            this.ajaxRedirect.go(action.Redirect, trigger, false, false, true);
         else location.replace(action.Redirect);
     }
 
-    static openModal(event, url?, options?): any {
+    openModal(event, url?, options?): any {
         Modal.close();
         new Modal(event, url, options).open();
     }
 
-    static openModaliFrame(event, url?, options?): void {
+    openModaliFrame(event, url?, options?): void {
         Modal.close();
         new Modal(event, url, options).openiFrame();
     }

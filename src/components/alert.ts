@@ -1,11 +1,11 @@
-export default class Alert {
+export default class Alert implements IService {
 
-    public static enableAlert() {
+    public enableAlert() {
         let w: any = window;
         w.alert = (text: string, callback) => this.alert(text, null, callback);
     }
 
-    public static alert(text: string, style?: string, callback?: Function) {
+    public alert(text: string, style?: string, callback?: Function) {
 
         if (text === undefined) text = "";
         text = text.trim();
@@ -20,7 +20,7 @@ export default class Alert {
         }
     }
 
-    public static confirm(text: string, style?: string, callback?: Function) {
+    public confirm(text: string, style?: string, callback?: Function) {
 
         if (text === undefined) text = "";
         text = text.trim();
@@ -34,8 +34,8 @@ export default class Alert {
             $('.alertify-message').empty().append($.parseHTML(text));
         }
     }
-    
-    public static alertUnobtrusively(message: string, style?: string) {
+
+    public alertUnobtrusively(message: string, style?: string) {
         alertify.log(message, style);
     }
 }

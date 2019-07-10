@@ -1,25 +1,22 @@
-import FormAction from "olive/mvc/formAction";
+export default class Grid implements IService {
 
-export default class Grid {
-
-
-    public static enableColumn(element: any) {
+    public enableColumn(element: any) {
         element.off("click.apply-columns").on("click.apply-columns", e => this.applyColumns(e));
     }
 
-    public static enableToggle(element: any) {
+    public enableToggle(element: any) {
         element.off("change.select-all").on("change.select-all", e => this.enableSelectAllToggle(e));
     }
 
-    public static enableHlightRow(element: any) {
+    public enableHlightRow(element: any) {
         this.highlightRow(element);
     }
 
-    public static enableSelectCol(selector: JQuery) {
+    public enableSelectCol(selector: JQuery) {
         selector.each((i, e) => this.enableSelectColumns($(e)));
     }
 
-    static applyColumns(event: JQueryEventObject) {
+    applyColumns(event: JQueryEventObject) {
         let button = $(event.currentTarget);
         let checkboxes = button.closest(".select-cols").find(":checkbox");
         if (checkboxes.length === 0 || checkboxes.filter(":checked").length > 0) return;
@@ -27,24 +24,24 @@ export default class Grid {
             .appendTo(button.parent());
     }
 
-    static enableSelectColumns(container) {
+    enableSelectColumns(container) {
         let columns = container.find("div.select-cols");
         container.find("a.select-cols").click(() => { columns.show(); return false; });
         columns.find('.cancel').click(() => columns.hide());
     }
 
-    static enableSelectAllToggle(event) {
+    enableSelectAllToggle(event) {
         let trigger = $(event.currentTarget);
         trigger.closest("table").find("td.select-row > input:checkbox").prop('checked', trigger.is(":checked"));
     }
 
-    static highlightRow(element: any) {
+    highlightRow(element: any) {
         let target = $(element.closest("tr"));
         target.siblings('tr').removeClass('highlighted');
         target.addClass('highlighted');
     }
 
-    public static mergeActionButtons(): void {
+    public mergeActionButtons(): void {
 
         $("table tr > .actions-merge, .r-grid .r-grid-row > .actions-merge").each((index, item) => {
 
@@ -91,7 +88,7 @@ export default class Grid {
                     currentInnerItem.children("button").each((i, innerLink) => {
                         let selected: any = $(innerLink);
                         mergedContent[selected.text().trim()] = selected.attr("formaction").trim() + "#ATTRIBUTE##BUTTON#";
-                        if (selected.attr("data-confirm-question")) 
+                        if (selected.attr("data-confirm-question"))
                             mergedContent[selected.text().trim()] += "data-confirm-question='" + selected.attr("data-confirm-question") + "'";
                         if (selected.attr("formmethod"))
                             mergedContent[selected.text().trim()] += "formmethod='" + selected.attr("formmethod") + "'";

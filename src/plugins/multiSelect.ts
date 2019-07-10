@@ -1,25 +1,29 @@
 import 'bootstrap-select'
 
-export default class MultiSelect {
+export default class MultiSelect implements IService {
   //https://developer.snapappointments.com/bootstrap-select/
-  private static defaultOptions = {
+
+  /// TODO: this fields are obsolete and DI should use instead.
+  private defaultOptions = {
     actionsBox: true,
     liveSearch: true,
     selectedTextFormat: "count"
   };
-  private static options: any = MultiSelect.defaultOptions;
+  private options: any = this.defaultOptions;
 
-  public static enableEnhance(selector: JQuery) {
+  public enableEnhance(selector: JQuery) {
     if ($.fn.selectpicker)
       $.fn.selectpicker.Constructor.BootstrapVersion = "4";
     selector.each((i, e) => this.enhance($(e)));
   }
 
-  public static setOptions(options: any): void {
-    MultiSelect.options = $.extend(MultiSelect.defaultOptions, options)
+  /// TODO: this method is obsolete and DI should use instead.
+  public setOptions(options: any): void {
+    console.log('MultiSelect.setOptions is obsolete and will be removed in next version.');
+    this.options = $.extend(this.defaultOptions, options)
   }
 
-  static enhance(selectControl: JQuery) {
-    selectControl.selectpicker(MultiSelect.options);
+  private enhance(selectControl: JQuery) {
+    selectControl.selectpicker(this.options);
   }
 }

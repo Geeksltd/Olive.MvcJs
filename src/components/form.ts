@@ -3,17 +3,24 @@ import Validate from 'olive/components/validate'
 import Waiting from 'olive/components/waiting'
 import AjaxRedirect from 'olive/mvc/ajaxRedirect'
 
-export default class Form {
+export default class Form implements IService {
 
-    public static currentRequestUrlProvider: (() => string) = () => window.location.pathAndQuery();
+    constructor(
+        private url: Url,
+        private validate: Validate,
+        private waiting: Waiting,
+        private ajaxRedirect: AjaxRedirect
+    ) { }
 
-    public static enableDefaultButtonKeyPress(selector: JQuery) { selector.off("keypress.default-button").on("keypress.default-button", (e) => this.DefaultButtonKeyPress(e)); }
+    public currentRequestUrlProvider: (() => string) = () => window.location.pathAndQuery();
 
-    public static enablecleanUpNumberField(selector: JQuery) { selector.off("blur.cleanup-number").on("blur.cleanup-number", (e) => this.cleanUpNumberField($(e.currentTarget))); }
+    public enableDefaultButtonKeyPress(selector: JQuery) { selector.off("keypress.default-button").on("keypress.default-button", (e) => this.DefaultButtonKeyPress(e)); }
 
-    public static enablesubmitCleanGet(selector: JQuery) { selector.off("submit.clean-up").on("submit.clean-up", (e) => this.submitCleanGet(e)); }
+    public enablecleanUpNumberField(selector: JQuery) { selector.off("blur.cleanup-number").on("blur.cleanup-number", (e) => this.cleanUpNumberField($(e.currentTarget))); }
 
-    static getCleanFormData(form: JQuery): JQuerySerializeArrayElement[] {
+    public enablesubmitCleanGet(selector: JQuery) { selector.off("submit.clean-up").on("submit.clean-up", (e) => this.submitCleanGet(e)); }
+
+    getCleanFormData(form: JQuery): JQuerySerializeArrayElement[] {
         let result: JQuerySerializeArrayElement[] = [];
 
         let disabledOnes = form.find(":disabled").removeAttr('disabled')
@@ -49,14 +56,14 @@ export default class Form {
         return result;
     }
 
-    static cleanJson(str): string {
+    cleanJson(str): string {
         return str.replace(/(\s*?{\s*?|\s*?,\s*?)(['"])?([a-zA-Z0-9]+)(['"])?:/g, '$1"$3":')
     };
 
-    public static getPostData(trigger: JQuery): JQuerySerializeArrayElement[] {
+    public getPostData(trigger: JQuery): JQuerySerializeArrayElement[] {
         let form = trigger.closest("[data-module]");
         if (!form.is("form")) form = $("<form />").append(form.clone(true));
-        let data = Form.getCleanFormData(form);
+        let data = this.getCleanFormData(form);
         // If it's master-details, then we need the index.
         let subFormContainer = trigger.closest(".subform-item");
         if (subFormContainer) {
@@ -70,7 +77,7 @@ export default class Form {
         return data;
     }
 
-    static DefaultButtonKeyPress(event: JQueryEventObject): boolean {
+    DefaultButtonKeyPress(event: JQueryEventObject): boolean {
         if (event.which === 13) {
             let target = $(event.currentTarget);
             let button = target.closest("[data-module]").find('[default-button]:first'); // Same module
@@ -80,29 +87,29 @@ export default class Form {
         } else return true;
     }
 
-    static cleanUpNumberField(field: JQuery) {
+    cleanUpNumberField(field: JQuery) {
         let domElement = <HTMLInputElement>field.get(0);
         field.val(field.val().replace(/[^\d.-]/g, ""));
     }
 
-    static submitCleanGet(event: JQueryEventObject) {
+    submitCleanGet(event: JQueryEventObject) {
         let form = $(event.currentTarget);
-        if (Validate.validateForm(form) == false) { Waiting.hide(); return false; }
+        if (this.validate.validateForm(form) == false) { this.waiting.hide(); return false; }
 
-        let formData = Form.getCleanFormData(form).filter(item => item.name != "__RequestVerificationToken");
+        let formData = this.getCleanFormData(form).filter(item => item.name != "__RequestVerificationToken");
 
-        let url = Url.removeEmptyQueries(form.attr('action'));
+        let url = this.url.removeEmptyQueries(form.attr('action'));
 
         try {
 
-            form.find("input:checkbox:unchecked").each((ind, e) => url = Url.removeQuery(url, $(e).attr("name")));
+            form.find("input:checkbox:unchecked").each((ind, e) => url = this.url.removeQuery(url, $(e).attr("name")));
 
             for (let item of formData)
-                url = Url.updateQuery(url, item.name, item.value);
+                url = this.url.updateQuery(url, item.name, item.value);
 
-            url = Url.removeEmptyQueries(url);
+            url = this.url.removeEmptyQueries(url);
 
-            if (form.is("[data-redirect=ajax]")) AjaxRedirect.go(url, form, false, false, true);
+            if (form.is("[data-redirect=ajax]")) this.ajaxRedirect.go(url, form, false, false, true);
             else location.href = url;
         }
         catch (error) {

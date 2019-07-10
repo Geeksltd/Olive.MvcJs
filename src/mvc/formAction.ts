@@ -14,32 +14,40 @@ export interface IViewUpdatedEventArgs {
     isNewPage: boolean;
 }
 
-export default class FormAction {
-    public static isAwaitingAjaxResponse = false;
-    static events: { [event: string]: Function[] } = {};
-    static dynamicallyLoadedScriptFiles = [];
+export default class FormAction implements IService {
+    public isAwaitingAjaxResponse = false;
+    events: { [event: string]: Function[] } = {};
+    dynamicallyLoadedScriptFiles = [];
 
-    public static onViewChanged = new LiteEvent<IViewUpdatedEventArgs>();
+    public onViewChanged = new LiteEvent<IViewUpdatedEventArgs>();
 
-    public static enableInvokeWithAjax(selector: JQuery, event: string, attrName: string) {
+    constructor(
+        private url: Url,
+        private validate: Validate,
+        private masterDetail: MasterDetail,
+        private standardAction: StandardAction,
+        private form: Form,
+        private waiting: Waiting) { }
+
+    public enableInvokeWithAjax(selector: JQuery, event: string, attrName: string) {
         selector.off(event).on(event,
             (e) => {
                 let trigger = $(e.currentTarget);
-                let url = Url.effectiveUrlProvider(trigger.attr(attrName), trigger);
+                let url = this.url.effectiveUrlProvider(trigger.attr(attrName), trigger);
                 this.invokeWithAjax(e, url, false);
                 return false;
             });
     }
 
-    public static enableinvokeWithPost(selector: JQuery) { selector.off("click.formaction").on("click.formaction", (e) => this.invokeWithPost(e)); }
+    public enableinvokeWithPost(selector: JQuery) { selector.off("click.formaction").on("click.formaction", (e) => this.invokeWithPost(e)); }
 
-    static invokeWithPost(event) {
+    invokeWithPost(event) {
         let trigger = $(event.currentTarget);
         let containerModule = trigger.closest("[data-module]");
-        if (containerModule.is("form") && Validate.validateForm(trigger) == false) return false;
+        if (containerModule.is("form") && this.validate.validateForm(trigger) == false) return false;
 
-        let data = Form.getPostData(trigger);
-        let url = Url.effectiveUrlProvider(trigger.attr("formaction"), trigger);
+        let data = this.form.getPostData(trigger);
+        let url = this.url.effectiveUrlProvider(trigger.attr("formaction"), trigger);
         let form = $("<form method='post' />").hide().appendTo($("body"));
 
         for (let item of data)
@@ -48,20 +56,20 @@ export default class FormAction {
         return false;
     }
 
-    static invokeWithAjax(event, actionUrl, syncCall = false) {
+    invokeWithAjax(event, actionUrl, syncCall = false) {
 
         let trigger = $(event.currentTarget);
         let triggerUniqueSelector: string = trigger.getUniqueSelector();
         let containerModule = trigger.closest("[data-module]");
 
-        if (Validate.validateForm(trigger) == false) { Waiting.hide(); return false; }
-        let data_before_disable = Form.getPostData(trigger);
+        if (this.validate.validateForm(trigger) == false) { this.waiting.hide(); return false; }
+        let data_before_disable = this.form.getPostData(trigger);
         let disableToo = Config.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
         if (disableToo) trigger.attr('disabled', 'disabled');
         trigger.addClass('loading-action-result');
         this.isAwaitingAjaxResponse = true;
 
-        actionUrl = Url.effectiveUrlProvider(actionUrl, trigger);
+        actionUrl = this.url.effectiveUrlProvider(actionUrl, trigger);
 
         // If the request is cross domain, jquery won't send the header: X-Requested-With
         data_before_disable = data_before_disable.concat({ name: ".Olive-Requested-With", value: "XMLHttpRequest" });
@@ -74,11 +82,11 @@ export default class FormAction {
             xhrFields: { withCredentials: true },
             async: !syncCall,
             data: data_before_disable,
-            success: (result) => { $(".tooltip").remove(); Waiting.hide(); this.processAjaxResponse(result, containerModule, trigger, null); },
+            success: (result) => { $(".tooltip").remove(); this.waiting.hide(); this.processAjaxResponse(result, containerModule, trigger, null); },
             error: this.onAjaxResponseError,
             statusCode: {
                 401: (data) => {
-                    Url.onAuthenticationFailed();
+                    this.url.onAuthenticationFailed();
                 }
             },
             complete: (x) => {
@@ -101,8 +109,8 @@ export default class FormAction {
         return false;
     }
 
-    public static onAjaxResponseError(jqXHR: JQueryXHR, status: string, error: string) {
-        Waiting.hide();
+    public onAjaxResponseError(jqXHR: JQueryXHR, status: string, error: string) {
+        this.waiting.hide();
 
         let text = jqXHR.responseText;
 
@@ -122,7 +130,7 @@ export default class FormAction {
     }
 
 
-    public static processAjaxResponse(response, containerModule, trigger, args) {
+    public processAjaxResponse(response, containerModule, trigger, args) {
 
         let asElement = $(response);
 
@@ -152,22 +160,22 @@ export default class FormAction {
                 container = containerModule.find("[data-subform=" + subFormName + "]:first");
 
             container.append(asElement);
-            Validate.reloadRules(trigger.parents("form"));
-            MasterDetail.updateSubFormStates();
+            this.validate.reloadRules(trigger.parents("form"));
+            this.masterDetail.updateSubFormStates();
             this.raiseViewChanged(asElement, trigger);
             return;
         }
 
         // List of actions
-        StandardAction.runAll(response, trigger);
+        this.standardAction.runAll(response, trigger);
     }
 
-    static raiseViewChanged(container, trigger, isNewPage: boolean = false) {
+    raiseViewChanged(container, trigger, isNewPage: boolean = false) {
         this.onViewChanged.raise({ container: container, trigger: trigger, isNewPage: isNewPage });
     }
 
 
-    static navigate(element: JQuery, trigger, args) {
+    navigate(element: JQuery, trigger, args) {
 
         let referencedScripts = element.find("script[src]").map((i, s) => $(s).attr("src"));
         let referencedCss = element.find("link[rel='stylesheet']").map((i, s) => $(s).attr("href"));
@@ -195,7 +203,7 @@ export default class FormAction {
             this.processWithTheContent(trigger, element, args, referencedScripts);
     }
 
-    private static processWithTheContent(trigger, element, args, referencedScripts) {
+    private processWithTheContent(trigger, element, args, referencedScripts) {
 
         let width = $(window).width();
 
@@ -225,7 +233,7 @@ export default class FormAction {
             setTimeout(function () {
                 oldMain.remove();
                 newMain.removeClass("w3-animate-left").removeClass("w3-animate-right");
-                FormAction.updateUrl(referencedScripts, element, trigger);
+                this.updateUrl(referencedScripts, element, trigger);
             }, 400);
         }
         else {
@@ -234,7 +242,7 @@ export default class FormAction {
         }
     }
 
-    private static updateUrl(referencedScripts, element, trigger) {
+    private updateUrl(referencedScripts, element, trigger) {
         if (referencedScripts.length) {
             let expectedScripts = referencedScripts.length;
             let loadedScripts = 0;

@@ -1,9 +1,12 @@
 import Modal from 'olive/components/modal';
 import Waiting from 'olive/components/waiting';
+import { ServiceContainer } from "./di/serviceContainer";
 export default class OlivePage {
+    private services;
     modal: typeof Modal;
     waiting: typeof Waiting;
     constructor();
+    configureServices(services: ServiceContainer): void;
     fixAlertIssues(): void;
     _initializeActions: any[];
     onInit(action: any): void;
@@ -16,4 +19,5 @@ export default class OlivePage {
     goBack(target: any): boolean;
     customizeValidationTooltip(): void;
     refresh(keepScroll?: boolean): boolean;
+    private getService;
 }

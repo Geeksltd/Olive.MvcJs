@@ -1,11 +1,11 @@
-export default class Grid {
-    static enableColumn(element: any): void;
-    static enableToggle(element: any): void;
-    static enableHlightRow(element: any): void;
-    static enableSelectCol(selector: JQuery): void;
-    static applyColumns(event: JQueryEventObject): void;
-    static enableSelectColumns(container: any): void;
-    static enableSelectAllToggle(event: any): void;
-    static highlightRow(element: any): void;
-    static mergeActionButtons(): void;
+export default class Grid implements IService {
+    enableColumn(element: any): void;
+    enableToggle(element: any): void;
+    enableHlightRow(element: any): void;
+    enableSelectCol(selector: JQuery): void;
+    applyColumns(event: JQueryEventObject): void;
+    enableSelectColumns(container: any): void;
+    enableSelectAllToggle(event: any): void;
+    highlightRow(element: any): void;
+    mergeActionButtons(): void;
 }
