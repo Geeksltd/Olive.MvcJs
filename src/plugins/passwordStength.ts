@@ -1,10 +1,10 @@
 ﻿export default class PasswordStength {
-   container: any;
-    
-    public static enable(selector:JQuery){selector.each((i,e)=> new PasswordStength($(e)));}
-    
-    constructor(targetContainer:any){
-        this.container=targetContainer;
+    container: any;
+
+    static enable(selector: JQuery) { selector.each((i, e) => new PasswordStength($(e))); }
+
+    constructor(targetContainer: any) {
+        this.container = targetContainer;
     }
 
     enable() {
@@ -16,7 +16,7 @@
 
         let options = {
             common: {},
-            rules: {},
+            rules: {}, 
             ui: {
                 container: formGroup,
                 showVerdictsInsideProgressBar: true,

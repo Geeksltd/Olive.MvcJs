@@ -8,8 +8,8 @@ export default class Url implements IService {
     updateQuery(uri: any, key: any, value: any): any;
     removeQuery(url: string, parameter: string): string;
     getQuery(name: string, url?: string): string;
-    goToLoginPage(): void;
-    fullQueryString(url: string): string;
+    private goToLoginPage;
+    private fullQueryString;
     addQuery(url: string, key: string, value: any): string;
     removeEmptyQueries(url: string): string;
     baseContentUrl: any;

@@ -1,6 +1,6 @@
 import { ServiceDescription } from "./serviceDescription";
 export declare class ServiceContainer {
-    services: Array<ServiceDescription>;
+    private services;
     tryAddSingleton(key: string, factory: (...args: IService[]) => IService, serviceOut: IOutParam<ServiceDescription>): boolean;
     tryAddTransient(key: string, factory: (...args: IService[]) => IService, serviceOut: IOutParam<ServiceDescription>): boolean;
     addSingleton(key: string, factory: (...args: IService[]) => IService): ServiceDescription;

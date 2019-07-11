@@ -2,7 +2,7 @@ import * as jq from 'olive/extensions/jQueryExtensions'
 
 export default class SystemExtensions {
 
-    static initialize() {
+    public static initialize() {
         window.download = this.download;
         Array.groupBy = this.groupBy;
         JSON.safeParse = this.safeParse;
@@ -23,7 +23,7 @@ export default class SystemExtensions {
         });
     }
 
-    static extend(type, name: string, implementation: Function) {
+    private static extend(type, name: string, implementation: Function) {
         var proto = type.prototype;
 
         if (implementation.length == 0) throw new Error("extend function needs at least one argument.");
@@ -32,7 +32,7 @@ export default class SystemExtensions {
         else if (implementation.length == 3) proto[name] = function (a1, a2) { return implementation(this, a1, a2) };
     }
 
-    static extendString() {
+    private static extendString() {
 
         this.extend(String, "endsWith",
             (instance: string, searchString: string) => {
@@ -69,7 +69,7 @@ export default class SystemExtensions {
         this.extend(String, "contains", (instance, text: string) => instance.indexOf(text) > -1);
     }
 
-    static safeParse(data) {
+    private static safeParse(data) {
         try {
             return JSON.parse(data);
         } catch (error) {
@@ -79,11 +79,11 @@ export default class SystemExtensions {
         }
     }
 
-    static download(url) {
+    private static download(url) {
         $("<iframe style='visibility:hidden; width:1px; height:1px;'></iframe>").attr("src", url).appendTo("body");
     }
 
-    static groupBy(array: Array<any>, groupFunction: Function) {
+    private static groupBy(array: Array<any>, groupFunction: Function) {
         var groups = {};
         array.forEach(function (o) {
             var group = JSON.stringify(groupFunction(o));

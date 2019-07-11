@@ -16,8 +16,8 @@ export interface IViewUpdatedEventArgs {
 
 export default class FormAction implements IService {
     public isAwaitingAjaxResponse = false;
-    events: { [event: string]: Function[] } = {};
-    dynamicallyLoadedScriptFiles = [];
+    public events: { [event: string]: Function[] } = {};
+    private dynamicallyLoadedScriptFiles = [];
 
     public onViewChanged = new LiteEvent<IViewUpdatedEventArgs>();
 
@@ -42,7 +42,7 @@ export default class FormAction implements IService {
 
     public enableinvokeWithPost(selector: JQuery) { selector.off("click.formaction").on("click.formaction", (e) => this.invokeWithPost(e)); }
 
-    invokeWithPost(event) {
+    private invokeWithPost(event) {
         let trigger = $(event.currentTarget);
         let containerModule = trigger.closest("[data-module]");
         if (containerModule.is("form") && this.validate.validateForm(trigger) == false) return false;
@@ -57,7 +57,7 @@ export default class FormAction implements IService {
         return false;
     }
 
-    invokeWithAjax(event, actionUrl, syncCall = false) {
+    public invokeWithAjax(event, actionUrl, syncCall = false) {
 
         let trigger = $(event.currentTarget);
         let triggerUniqueSelector: string = trigger.getUniqueSelector();
@@ -171,12 +171,12 @@ export default class FormAction implements IService {
         this.standardAction.runAll(response, trigger);
     }
 
-    raiseViewChanged(container, trigger, isNewPage: boolean = false) {
+    private raiseViewChanged(container, trigger, isNewPage: boolean = false) {
         this.onViewChanged.raise({ container: container, trigger: trigger, isNewPage: isNewPage });
     }
 
 
-    navigate(element: JQuery, trigger, args) {
+    private navigate(element: JQuery, trigger, args) {
 
         let referencedScripts = element.find("script[src]").map((i, s) => $(s).attr("src"));
         let referencedCss = element.find("link[rel='stylesheet']").map((i, s) => $(s).attr("href"));

@@ -64,7 +64,7 @@ export default class StandardAction implements IService {
         }
     }
 
-    run(action: any, trigger: any): boolean {
+    private run(action: any, trigger: any): boolean {
         if (action.Notify || action.Notify == "") this.notify(action, trigger);
         else if (action.Script) eval(action.Script);
         else if (action.BrowserAction == "Back") window.history.back();
@@ -98,13 +98,13 @@ export default class StandardAction implements IService {
         return true;
     }
 
-    notify(action: any, trigger: any) {
+    private notify(action: any, trigger: any) {
         if (action.Obstruct == false)
             this.alert.alertUnobtrusively(action.Notify, action.Style);
         else this.alert.alert(action.Notify, action.Style);
     }
 
-    redirect(action: any, trigger: any) {
+    private redirect(action: any, trigger: any) {
         if (action.Redirect.indexOf('/') != 0 && action.Redirect.indexOf('http') != 0)
             action.Redirect = '/' + action.Redirect;
 
@@ -117,13 +117,13 @@ export default class StandardAction implements IService {
         else location.replace(action.Redirect);
     }
 
-    openModal(event, url?, options?): any {
+    private openModal(event, url?, options?): any {
         this.modalHelper.close();
         //new Modal(event, url, options).open();
         throw 'Not implemented';
     }
 
-    openModaliFrame(event, url?, options?): void {
+    private openModaliFrame(event, url?, options?): void {
         this.modalHelper.close();
         //new Modal(event, url, options).openiFrame();
         throw 'Not implemented';

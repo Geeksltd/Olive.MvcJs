@@ -1,6 +1,6 @@
 export default class SanityAdapter {
 
-    public static enable() { $(window).off('click.SanityAdapter').on('click.SanityAdapter', e => this.skipNewWindows(e)); }
+    static enable() { $(window).off('click.SanityAdapter').on('click.SanityAdapter', e => this.skipNewWindows(e)); }
 
     static skipNewWindows(element: JQueryEventObject) {
         $(element.target).filter('a').removeAttr('target');

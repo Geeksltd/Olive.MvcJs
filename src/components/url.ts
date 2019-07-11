@@ -3,7 +3,7 @@
     public effectiveUrlProvider: ((url: string, trigger: JQuery) => string) = (u, t) => u;
     public onAuthenticationFailed: (() => void) = this.goToLoginPage;
 
-    makeAbsolute(baseUrl: string, relativeUrl: string): string {
+    public makeAbsolute(baseUrl: string, relativeUrl: string): string {
         baseUrl = baseUrl || window.location.origin;
         relativeUrl = relativeUrl || '';
 
@@ -15,15 +15,15 @@
         return baseUrl + relativeUrl;
     }
 
-    isAbsolute(url: string): Boolean {
+    public isAbsolute(url: string): Boolean {
         if (!url) return false;
         url = url.toLowerCase();
         return url.indexOf("http://") === 0 || url.indexOf("https://") === 0;
     }
 
-    current(): string { return window.location.href; }
+    public current(): string { return window.location.href; }
 
-    goBack(): void {
+    public goBack(): void {
         if (this.current().indexOf(this.baseContentUrl + "/##") === 0) history.back();
         else {
             let returnUrl = this.getQuery("ReturnUrl");
@@ -32,7 +32,7 @@
         }
     }
 
-    updateQuery(uri, key, value) {
+    public updateQuery(uri, key, value) {
         if (uri == null) uri = window.location.href;
 
         let re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
@@ -41,7 +41,7 @@
         else return uri + separator + key + "=" + value;
     }
 
-    removeQuery(url: string, parameter: string) {
+    public removeQuery(url: string, parameter: string) {
         //prefer to use l.search if you have a location/link object
         let urlParts = url.split('?');
         if (urlParts.length >= 2) {
@@ -72,12 +72,12 @@
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
-    goToLoginPage() {
+    private goToLoginPage() {
         let query: string = this.current().split("/").splice(3).join("/");
         window.location.href = "/login?returnUrl=/" + query.trimStart("/");
     }
 
-    fullQueryString(url: string): string {
+    private fullQueryString(url: string): string {
         if (url == undefined || url == null)
             url = this.current();
 
@@ -86,9 +86,9 @@
         return url.substring(url.indexOf("?") + 1);
     }
 
-    addQuery(url: string, key: string, value) { return url + (url.indexOf("?") == -1 ? "?" : "&") + key + "=" + value; }
+    public addQuery(url: string, key: string, value) { return url + (url.indexOf("?") == -1 ? "?" : "&") + key + "=" + value; }
 
-    removeEmptyQueries(url: string): string {
+    public removeEmptyQueries(url: string): string {
 
         let items = this.fullQueryString(url).split('&');
         let result = '';
@@ -109,8 +109,8 @@
         return result;
     }
 
-    baseContentUrl = window["BaseThemeUrl"] || '/';
-    ofContent(relativeUrl: string) {
+    public baseContentUrl = window["BaseThemeUrl"] || '/';
+    public ofContent(relativeUrl: string) {
         let base = this.baseContentUrl;
         while (base.length > 0 && base[base.length - 1] === '/')
             base = base.substring(0, base.length - 1);

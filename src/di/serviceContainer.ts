@@ -1,7 +1,7 @@
 import { ServiceDescription } from "./serviceDescription";
 
 export class ServiceContainer {
-    services: Array<ServiceDescription> = new Array<ServiceDescription>();
+    private services: Array<ServiceDescription> = new Array<ServiceDescription>();
 
     public tryAddSingleton(key: string, factory: (...args: IService[]) => IService, serviceOut: IOutParam<ServiceDescription>): boolean {
         return this.try(key, serviceOut, () => this.addSingleton(key, factory));

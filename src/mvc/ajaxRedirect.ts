@@ -4,9 +4,9 @@ import FormAction from 'olive/mvc/formAction'
 import { ModalHelper } from 'olive/components/modal';
 
 export default class AjaxRedirect implements IService {
-    requestCounter = 0;
-    ajaxChangedUrl = 0;
-    isAjaxRedirecting = false;
+    private requestCounter = 0;
+    private ajaxChangedUrl = 0;
+    private isAjaxRedirecting = false;
     public onRedirected: ((title: string, url: string) => void) = this.defaultOnRedirected;
     public onRedirectionFailed: ((url: string, response: JQueryXHR) => void) = this.defaultOnRedirectionFailed;
 
@@ -17,7 +17,7 @@ export default class AjaxRedirect implements IService {
         private modalHelper: ModalHelper
     ) { }
 
-    defaultOnRedirected(title: string, url: string) {
+    public defaultOnRedirected(title: string, url: string) {
         history.pushState({}, title, url);
     }
 
@@ -34,7 +34,7 @@ export default class AjaxRedirect implements IService {
         selector.off("click.ajax-redirect").on("click.ajax-redirect", e => this.redirect(e));
     }
 
-    redirect(event: JQueryEventObject) {
+    private redirect(event: JQueryEventObject) {
         if (event.ctrlKey || event.button === 1) return true;
         let link = $(event.currentTarget);
         let url = link.attr('href');
@@ -42,7 +42,7 @@ export default class AjaxRedirect implements IService {
         return false;
     }
 
-    back(event) {
+    private back(event) {
         if (this.modalHelper.isOrGoingToBeModal())
             window.location.reload();
         else {

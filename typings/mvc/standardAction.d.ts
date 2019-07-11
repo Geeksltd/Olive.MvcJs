@@ -17,9 +17,9 @@ export default class StandardAction implements IService {
     enableLinkModal(selector: JQuery): void;
     runStartup(container?: JQuery, trigger?: any, stage?: string): void;
     runAll(actions: any, trigger?: any): void;
-    run(action: any, trigger: any): boolean;
-    notify(action: any, trigger: any): void;
-    redirect(action: any, trigger: any): void;
-    openModal(event: any, url?: any, options?: any): any;
-    openModaliFrame(event: any, url?: any, options?: any): void;
+    private run;
+    private notify;
+    private redirect;
+    private openModal;
+    private openModaliFrame;
 }

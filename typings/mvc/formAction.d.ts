@@ -23,17 +23,17 @@ export default class FormAction implements IService {
     events: {
         [event: string]: Function[];
     };
-    dynamicallyLoadedScriptFiles: any[];
+    private dynamicallyLoadedScriptFiles;
     onViewChanged: LiteEvent<IViewUpdatedEventArgs>;
     constructor(url: Url, validate: Validate, masterDetail: MasterDetail, standardAction: StandardAction, form: Form, waiting: Waiting, modalHelper: ModalHelper);
     enableInvokeWithAjax(selector: JQuery, event: string, attrName: string): void;
     enableinvokeWithPost(selector: JQuery): void;
-    invokeWithPost(event: any): boolean;
+    private invokeWithPost;
     invokeWithAjax(event: any, actionUrl: any, syncCall?: boolean): boolean;
     onAjaxResponseError(jqXHR: JQueryXHR, status: string, error: string): void;
     processAjaxResponse(response: any, containerModule: any, trigger: any, args: any): void;
-    raiseViewChanged(container: any, trigger: any, isNewPage?: boolean): void;
-    navigate(element: JQuery, trigger: any, args: any): void;
+    private raiseViewChanged;
+    private navigate;
     private processWithTheContent;
     private updateUrl;
 }

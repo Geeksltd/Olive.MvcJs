@@ -7,9 +7,9 @@ export default class AjaxRedirect implements IService {
     private formAction;
     private waiting;
     private modalHelper;
-    requestCounter: number;
-    ajaxChangedUrl: number;
-    isAjaxRedirecting: boolean;
+    private requestCounter;
+    private ajaxChangedUrl;
+    private isAjaxRedirecting;
     onRedirected: ((title: string, url: string) => void);
     onRedirectionFailed: ((url: string, response: JQueryXHR) => void);
     constructor(url: Url, formAction: FormAction, waiting: Waiting, modalHelper: ModalHelper);
@@ -17,7 +17,7 @@ export default class AjaxRedirect implements IService {
     defaultOnRedirectionFailed(url: string, response: JQueryXHR): void;
     enableBack(selector: JQuery): void;
     enableRedirect(selector: JQuery): void;
-    redirect(event: JQueryEventObject): boolean;
-    back(event: any): void;
+    private redirect;
+    private back;
     go(url: string, trigger?: JQuery, isBack?: boolean, keepScroll?: boolean, addToHistory?: boolean): boolean;
 }

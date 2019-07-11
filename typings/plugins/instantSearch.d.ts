@@ -1,7 +1,7 @@
 export default class InstantSearch {
-    input: any;
+    private input;
     static enable(selector: JQuery): void;
     constructor(targetInput: any);
     enable(): void;
-    onChanged(event: any): void;
+    private onChanged;
 }

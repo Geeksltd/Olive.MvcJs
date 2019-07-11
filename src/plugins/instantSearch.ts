@@ -1,8 +1,8 @@
 ﻿
 export default class InstantSearch {
-    input: any;
+    private input: any;
 
-    public static enable(selector: JQuery) { selector.each((i, e) => new InstantSearch($(e)).enable()); }
+    static enable(selector: JQuery) { selector.each((i, e) => new InstantSearch($(e)).enable()); }
 
     constructor(targetInput: any) { this.input = targetInput; }
 
@@ -15,7 +15,7 @@ export default class InstantSearch {
         });
     }
 
-    onChanged(event: any) {
+    private onChanged(event: any) { 
         this.input = this.input || $(event.currentTarget);
         let keywords = this.input.val().toLowerCase().split(' ');
         let rows = this.input.closest('[data-module]').find(".grid > tbody > tr, .olive-instant-search-item");

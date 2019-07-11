@@ -1,8 +1,8 @@
 import { ServiceContainer } from "./serviceContainer";
 
 export class ServiceDescription {
-    factory: (...args: IService[]) => IService = () => { throw `factory is not provided for type '${this.key}'.` };
-    dependencies = new Array<string>();
+    private factory: (...args: IService[]) => IService = () => { throw `factory is not provided for type '${this.key}'.` };
+    private dependencies = new Array<string>();
     private instance: IService;
 
     constructor(public key: string, private singleton: boolean, private container: ServiceContainer) {
