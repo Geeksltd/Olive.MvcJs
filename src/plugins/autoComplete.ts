@@ -16,8 +16,8 @@ export class AutoCompleteFactory implements IService {
 export default class AutoComplete {
     private static customOptions: RunningCoder.Typeahead.Options;
 
-    awaitingAutocompleteResponses: number = 0;
-    valueField: JQuery;
+    private awaitingAutocompleteResponses: number = 0;
+    private valueField: JQuery;
 
     public static setOptions(options: RunningCoder.Typeahead.Options) {
         AutoComplete.customOptions = options;
@@ -28,7 +28,7 @@ export default class AutoComplete {
         private form: Form,
         private formAction: FormAction) { }
 
-    enable() {
+    public enable() {
 
         if (this.input.is("[data-typeahead-enabled=true]")) return;
         else this.input.attr("data-typeahead-enabled", "true");
@@ -118,13 +118,13 @@ export default class AutoComplete {
             .typeahead($.extend(defaultOptions, AutoComplete.customOptions, mandatoryOptions));
     }
 
-    clearValue() {
+    private clearValue() {
         if (this.input.val() === "") this.valueField.val("");
         if (this.input.val() !== this.input.data("selected-text"))
             this.valueField.val("");
     }
 
-    itemSelected(item: any) {
+    private itemSelected(item: any) {
 
         if (item) {
             var txt = (item.Text == null || item.Text == undefined || item.Text.trim() == "") ? item.Display : item.Text;
@@ -141,7 +141,7 @@ export default class AutoComplete {
     }
 
     // Convert current form array to simple plain object
-    toObject(arr: JQuerySerializeArrayElement[]) {
+    private toObject(arr: JQuerySerializeArrayElement[]) {
         var rv = {};
         for (var i = 0; i < arr.length; ++i)
             rv[arr[i].name] = arr[i].value;

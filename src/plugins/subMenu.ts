@@ -3,9 +3,9 @@ export default class SubMenu {
     private menu: any;
     private submenuOptions: any;
 
-    static enable(selector: JQuery) { selector.each((i, e) => new SubMenu($(e))); }
+    public static enable(selector: JQuery) { selector.each((i, e) => new SubMenu($(e))); }
 
-    static createAccordion(selector: JQuery) {
+    public static createAccordion(selector: JQuery) {
         selector.find('[data-toggle]').click(function (event) {
             $($(event.target).parent('li').siblings().children('[data-toggle][aria-expanded=true]')).trigger('click');
         });

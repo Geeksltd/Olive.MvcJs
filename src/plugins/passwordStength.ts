@@ -1,13 +1,9 @@
 ﻿export default class PasswordStength {
-    container: any;
+    public static enable(selector: JQuery) { selector.each((i, e) => new PasswordStength($(e)).enable()); }
 
-    static enable(selector: JQuery) { selector.each((i, e) => new PasswordStength($(e))); }
+    constructor(private container: JQuery) { }
 
-    constructor(targetContainer: any) {
-        this.container = targetContainer;
-    }
-
-    enable() {
+    private enable() {
         // for configuration options : https://github.com/ablanco/jquery.pwstrength.bootstrap/blob/master/OPTIONS.md
 
         if (this.container.find(".progress").length !== 0) return;
@@ -16,7 +12,7 @@
 
         let options = {
             common: {},
-            rules: {}, 
+            rules: {},
             ui: {
                 container: formGroup,
                 showVerdictsInsideProgressBar: true,

@@ -1,12 +1,10 @@
 ﻿
 export default class InstantSearch {
-    private input: any;
+    public static enable(selector: JQuery) { selector.each((i, e) => new InstantSearch($(e)).enable()); }
 
-    static enable(selector: JQuery) { selector.each((i, e) => new InstantSearch($(e)).enable()); }
+    constructor(private input: JQuery) { }
 
-    constructor(targetInput: any) { this.input = targetInput; }
-
-    enable() {
+    private enable() {
         // TODO: Make it work with List render mode too.
         this.input.off("keyup.immediate-filter").on("keyup.immediate-filter", this.onChanged);
 
@@ -15,7 +13,7 @@ export default class InstantSearch {
         });
     }
 
-    private onChanged(event: any) { 
+    private onChanged(event: any) {
         this.input = this.input || $(event.currentTarget);
         let keywords = this.input.val().toLowerCase().split(' ');
         let rows = this.input.closest('[data-module]').find(".grid > tbody > tr, .olive-instant-search-item");

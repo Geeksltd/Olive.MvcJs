@@ -2,14 +2,14 @@ import { ModalHelper } from "olive/components/modal"
 import Config from "olive/config"
 
 export default abstract class dateTimePickerBase {
-    abstract controlType: string;
-    abstract format: string;
+    protected abstract controlType: string;
+    protected abstract format: string;
 
     constructor(protected input: JQuery, private modalHelper: ModalHelper) { }
 
-    abstract modifyOptions(options: any): void;
+    protected abstract modifyOptions(options: any): void;
 
-    show() {
+    public show() {
 
         if (window.isModal()) {
             this.input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", e => this.modalHelper.expandToFitPicker(e));

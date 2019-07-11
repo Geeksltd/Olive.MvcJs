@@ -6,8 +6,8 @@ export declare class DatePickerFactory implements IService {
     enable(selector: JQuery): void;
 }
 export default class DatePicker extends dateTimePickerBase {
-    controlType: string;
-    format: string;
+    protected controlType: string;
+    protected format: string;
     constructor(targetInput: JQuery, modalHelper: ModalHelper);
-    modifyOptions(options: any): void;
+    protected modifyOptions(options: any): void;
 }

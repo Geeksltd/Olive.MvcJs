@@ -15,17 +15,15 @@ export class FileUploadFactory implements IService {
 }
 
 export default class FileUpload {
-    input: JQuery;
-    container: JQuery;
-    idInput: JQuery;
-    deleteButton: JQuery;
-    progressBar: JQuery;
-    currentFileLink: JQuery;
-    existingFileNameInput: JQuery;
-    fileLabel: JQuery;
+    private container: JQuery;
+    private idInput: JQuery;
+    private deleteButton: JQuery;
+    private progressBar: JQuery;
+    private currentFileLink: JQuery;
+    private existingFileNameInput: JQuery;
+    private fileLabel: JQuery;
 
-    constructor(targetInput: JQuery, private url: Url, private formAction: FormAction) {
-        this.input = targetInput;
+    constructor(private input: JQuery, private url: Url, private formAction: FormAction) {
         this.fixMasterDetailsInputName();
         this.input.before(this.input.siblings('input'));
         this.container = this.input.closest(".file-upload");
@@ -34,7 +32,7 @@ export default class FileUpload {
         this.deleteButton = this.container.find(".delete-file").click(e => this.onDeleteButtonClicked());
     }
 
-    enable() {
+    public enable() {
         this.input.attr("data-url", this.url.effectiveUrlProvider("/upload", this.input));
         const options = {
             'input': this.input.attr('data-input') !== 'false',
@@ -75,12 +73,12 @@ export default class FileUpload {
         });
     }
 
-    fixMasterDetailsInputName(): void {
+    private fixMasterDetailsInputName(): void {
         let nameParts = this.input.attr('name').split('.');
         this.input.attr('name', nameParts[nameParts.length - 1]);
     }
 
-    hasExistingFile(): boolean {
+    private hasExistingFile(): boolean {
         if (!this.currentFileLink) return false;
         let name = this.currentFileLink.text();
         if (!name) return false;
@@ -89,7 +87,7 @@ export default class FileUpload {
         return true;
     }
 
-    showExistingFile() {
+    private showExistingFile() {
         this.deleteButton.show();
         this.progressBar.width('100%');
 
@@ -101,12 +99,12 @@ export default class FileUpload {
             .click(() => this.currentFileLink[0].click());
     }
 
-    removeExistingFile() {
+    private removeExistingFile() {
         if (!this.hasExistingFile()) return;
         this.existingFileNameInput.removeClass('file-target').attr('disabled', 'true').off();
     }
 
-    onDeleteButtonClicked() {
+    private onDeleteButtonClicked() {
         this.deleteButton.hide();
         if (!this.idInput.data('val-required'))
             this.idInput.val("REMOVE");
@@ -117,23 +115,23 @@ export default class FileUpload {
         this.removeExistingFile();
     }
 
-    onDragDropped(e, data) {
+    private onDragDropped(e, data) {
         if (this.fileLabel.length > 0 && data.files.length > 0) {
             this.fileLabel.val(data.files.map(x => x.name));
         }
     }
 
-    onProgressAll(e, data: any) {
+    private onProgressAll(e, data: any) {
         let progress = parseInt((data.loaded / data.total * 100).toString(), 10);
         this.progressBar.width(progress + '%');
     }
 
-    onUploadError(jqXHR: JQueryXHR, status: string, error: string) {
+    private onUploadError(jqXHR: JQueryXHR, status: string, error: string) {
         this.formAction.onAjaxResponseError(jqXHR, status, error);
         this.fileLabel.val('');
     }
 
-    onUploadSuccess(response) {
+    private onUploadSuccess(response) {
         if (response.Error) {
             this.formAction.onAjaxResponseError(<any>{ responseText: response.Error }, "error", response.Error);
             this.fileLabel.val('');
@@ -145,11 +143,11 @@ export default class FileUpload {
         }
     }
 
-    onUploadCompleted(response) {
+    private onUploadCompleted(response) {
         CrossDomainEvent.raise(parent, "file-uploaded", response);
     }
 
-    onChange(e, data) {
+    private onChange(e, data) {
         this.progressBar.width(0);
         this.removeExistingFile();
     }

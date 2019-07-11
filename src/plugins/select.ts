@@ -3,13 +3,13 @@
 export default class Select implements IService {
     //https://developer.snapappointments.com/bootstrap-select/
 
-    enableEnhance(selector: JQuery) { selector.each((i, e) => this.enhance($(e))); }
+    public enableEnhance(selector: JQuery) { selector.each((i, e) => this.enhance($(e))); }
 
-    enhance(selectControl: JQuery) {
+    private enhance(selectControl: JQuery) {
         selectControl.selectpicker();
     }
 
-    replaceSource(controlId: string, items) {
+    public replaceSource(controlId: string, items) {
 
         let $control = $('#' + controlId);
 

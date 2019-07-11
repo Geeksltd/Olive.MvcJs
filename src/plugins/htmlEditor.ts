@@ -8,21 +8,16 @@ export class HtmlEditorFactory implements IService {
 }
 
 export default class HtmlEditor {
-
-    input: any;
-
     public static editorConfigPath: string = "/scripts/ckeditor_config.js";
 
-    constructor(targetInput: any, private modalHelper: ModalHelper) {
-        this.input = targetInput;
-    }
+    constructor(private input: JQuery, private modalHelper: ModalHelper) { }
 
-    enable() {
+    public enable() {
         window["CKEDITOR_BASEPATH"] = Config.CK_EDITOR_BASE_PATH;
         this.onDemandScript(Config.CK_EDITOR_BASE_PATH + "ckeditor.js", () => this.onCkEditorScriptReady());
     }
 
-    onCkEditorScriptReady() {
+    private onCkEditorScriptReady() {
         CKEDITOR.basePath = Config.CK_EDITOR_BASE_PATH;
 
         CKEDITOR.config.contentsCss = Config.CK_EDITOR_BASE_PATH + 'contents.css';
@@ -33,7 +28,7 @@ export default class HtmlEditor {
         editor.on("instanceReady", (event) => this.modalHelper.adjustHeight());
     }
 
-    getEditorSettings() {
+    private getEditorSettings() {
         return {
             toolbar: this.input.attr('data-toolbar') || Config.DEFAULT_HTML_EDITOR_MODE,
             customConfig: HtmlEditor.editorConfigPath

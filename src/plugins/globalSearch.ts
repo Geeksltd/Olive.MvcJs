@@ -1,19 +1,18 @@
 ﻿
 export default class GlobalSearch {
-    input: any;
-    awaitingAutocompleteResponses: number = 0;
-    valueField: JQuery;
-    testvarable: number = 3;
-    urlList: string[];
-    isMouseInsideSearchPanel: boolean = false;
-    isTyping: boolean = false;
-    searchedText: string = null;
+    private awaitingAutocompleteResponses: number = 0;
+    private valueField: JQuery;
+    private testvarable: number = 3;
+    private urlList: string[];
+    private isMouseInsideSearchPanel: boolean = false;
+    private isTyping: boolean = false;
+    private searchedText: string = null;
 
     public static enable(selector: JQuery) {
         selector.each((i, e) => new GlobalSearch($(e)).enable());
     }
 
-    public static boldSearch(str: string, searchText: string) {
+    private static boldSearch(str: string, searchText: string) {
         var ix = -1;
         var result: string = "";
         if (str !== null && str !== undefined) {
@@ -38,7 +37,7 @@ export default class GlobalSearch {
         return result;
     }
 
-    public static boldSearchAll(str: string, searchText: string) {
+    private static boldSearchAll(str: string, searchText: string) {
         var result: string = str;
         if (searchText != null && searchText != undefined) {
             var splitedsearchtext = searchText.split(' ');
@@ -49,13 +48,11 @@ export default class GlobalSearch {
         return result;
     }
 
-    constructor(targetInput: any) {
-        this.input = targetInput;
-    }
+    constructor(private input: JQuery) { }
 
-    enable() {
+    private enable() {
         if (this.input.is("[data-globalsearch-enabled=true]")) return;
-        else this.input.attr("data-globalsearch-enabled", true);
+        else this.input.attr("data-globalsearch-enabled", "true");
         this.input.wrap("<div class='global-search-panel'></div>");
 
 
@@ -82,11 +79,11 @@ export default class GlobalSearch {
         }).bind(this));
     }
 
-    inputChangeHandler() {
+    private inputChangeHandler() {
         this.createSearchComponent(this.urlList);
     }
 
-    clearSearchComponent() {
+    private clearSearchComponent() {
         let inputholder = this.input.parent();
         if (inputholder !== undefined) {
             let panel = inputholder.find(".global-search-result-panel");
@@ -97,7 +94,7 @@ export default class GlobalSearch {
         }
     }
 
-    createSearchComponent(urls: string[]) {
+    private createSearchComponent(urls: string[]) {
         this.searchedText = this.input.val().trim();
         var searchPanel = this.input.parent();
         var resultPanel = searchPanel.find(".global-search-result-panel");
@@ -250,13 +247,13 @@ export default class GlobalSearch {
         }
     }
 
-    clearValue() {
+    private clearValue() {
         if (this.input.val() === "") this.valueField.val("");
         if (this.input.val() !== this.input.data("selected-text"))
             this.valueField.val("");
     }
 
-    itemSelected(item: any) {
+    private itemSelected(item: any) {
 
         if (item != undefined) {
             this.valueField.val(item.Value);
@@ -271,7 +268,7 @@ export default class GlobalSearch {
     }
 
     // Convert current form array to simple plain object
-    toObject(arr: JQuerySerializeArrayElement[]) {
+    private toObject(arr: JQuerySerializeArrayElement[]) {
         var rv = {};
         for (var i = 0; i < arr.length; ++i)
             rv[arr[i].name] = arr[i].value;

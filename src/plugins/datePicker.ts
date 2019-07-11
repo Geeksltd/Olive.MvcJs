@@ -9,14 +9,14 @@ export class DatePickerFactory implements IService {
 }
 
 export default class DatePicker extends dateTimePickerBase {
-    controlType = "date-picker";
-    format = Config.DATE_FORMAT;
+    protected controlType = "date-picker";
+    protected format = Config.DATE_FORMAT;
 
     constructor(targetInput: JQuery, modalHelper: ModalHelper) {
         super(targetInput, modalHelper);
     }
 
-    modifyOptions(options: any): void {
+    protected modifyOptions(options: any): void {
         $.extend(options, {
             viewMode: this.input.attr("data-view-mode") || 'days'
         });

@@ -2,9 +2,9 @@ import { ModalHelper } from "olive/components/modal";
 export default abstract class dateTimePickerBase {
     protected input: JQuery;
     private modalHelper;
-    abstract controlType: string;
-    abstract format: string;
+    protected abstract controlType: string;
+    protected abstract format: string;
     constructor(input: JQuery, modalHelper: ModalHelper);
-    abstract modifyOptions(options: any): void;
+    protected abstract modifyOptions(options: any): void;
     show(): void;
 }

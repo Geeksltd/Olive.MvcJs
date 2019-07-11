@@ -4,7 +4,7 @@ import Form from "olive/components/form"
 export class SliderFactory implements IService {
     constructor(private form: Form) { }
 
-    enable(selector: JQuery) { selector.each((i, e) => new Slider($(e), this.form).enable()); }
+    public enable(selector: JQuery) { selector.each((i, e) => new Slider($(e), this.form).enable()); }
 }
 
 export default class Slider {
@@ -16,7 +16,7 @@ export default class Slider {
         this.options = { min: 0, max: 100, value: null, range: false, formatter: null, tooltip: 'always', upper: null, tooltip_split: false };
     }
 
-    enable() {
+    public enable() {
 
         let data_options = this.input.attr("data-options") ? JSON.parse(this.form.cleanJson(this.input.attr("data-options"))) : null;
         if (data_options) $.extend(true, this.options, data_options);

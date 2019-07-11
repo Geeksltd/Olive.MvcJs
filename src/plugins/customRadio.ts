@@ -1,7 +1,5 @@
 export default class CustomRadio {
-    input: any;
-    checkedClassName = 'checked';
-    static handledClassName = 'handled';
+    private static handledClassName = 'handled';
 
     public static enable(selector: JQuery) {
         selector.each((i, e) => {
@@ -10,11 +8,9 @@ export default class CustomRadio {
         });
     }
 
-    constructor(targetInput: any) {
-        this.input = targetInput;
-    }
+    constructor(private input: JQuery) { }
 
-    enable() {
+    private enable() {
         let radio = $('<div class="radio-helper"/>');
 
         let check = () => {

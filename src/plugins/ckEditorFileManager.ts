@@ -9,7 +9,7 @@ export class CKEditorFileManagerFactory implements IService {
 export default class CKEditorFileManager {
     constructor(private item: JQuery, private url: Url) { }
 
-    enable() {
+    public enable() {
         this.item.on('click', () => {
             const uri = this.item.data('download-uri');
             window.opener.CKEDITOR.tools.callFunction(this.url.getQuery('CKEditorFuncNum'), uri);

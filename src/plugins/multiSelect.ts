@@ -11,14 +11,14 @@ export default class MultiSelect implements IService {
     };
     private options: any = this.defaultOptions;
 
-    enableEnhance(selector: JQuery) {
+    public enableEnhance(selector: JQuery) {
         if ($.fn.selectpicker)
             $.fn.selectpicker.Constructor.BootstrapVersion = "4";
         selector.each((i, e) => this.enhance($(e)));
     }
-     
+
     /// TODO: this method is obsolete and DI should use instead.
-    setOptions(options: any): void {
+    public setOptions(options: any): void {
         console.log('MultiSelect.setOptions is obsolete and will be removed in next version.');
         this.options = $.extend(this.defaultOptions, options)
     }

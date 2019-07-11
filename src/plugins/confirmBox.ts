@@ -1,12 +1,10 @@
 
 export default class ConfirmBox {
-    button: any;
-
     public static enable(selector: JQuery) { selector.each((i, e) => new ConfirmBox($(e)).enable()); }
 
-    constructor(targetButton: any) { this.button = targetButton; }
+    constructor(private button: JQuery) { }
 
-    enable() {
+    private enable() {
         this.button.off("click.confirm-question").bindFirst("click.confirm-question", e => {
             e.stopImmediatePropagation();
 
