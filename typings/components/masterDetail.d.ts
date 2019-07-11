@@ -4,5 +4,5 @@ export default class MasterDetail implements IService {
     constructor(validate: Validate);
     enable(selector: JQuery): void;
     updateSubFormStates(): void;
-    deleteSubForm(event: JQueryEventObject): void;
+    private deleteSubForm;
 }

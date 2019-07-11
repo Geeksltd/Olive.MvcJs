@@ -8,7 +8,7 @@ export default class Grid implements IService {
         element.off("change.select-all").on("change.select-all", e => this.enableSelectAllToggle(e));
     }
 
-    public enableHlightRow(element: any) {
+    private enableHlightRow(element: any) {
         this.highlightRow(element);
     }
 
@@ -16,7 +16,7 @@ export default class Grid implements IService {
         selector.each((i, e) => this.enableSelectColumns($(e)));
     }
 
-    applyColumns(event: JQueryEventObject) {
+    private applyColumns(event: JQueryEventObject) {
         let button = $(event.currentTarget);
         let checkboxes = button.closest(".select-cols").find(":checkbox");
         if (checkboxes.length === 0 || checkboxes.filter(":checked").length > 0) return;
@@ -24,18 +24,18 @@ export default class Grid implements IService {
             .appendTo(button.parent());
     }
 
-    enableSelectColumns(container) {
+    private enableSelectColumns(container) {
         let columns = container.find("div.select-cols");
         container.find("a.select-cols").click(() => { columns.show(); return false; });
         columns.find('.cancel').click(() => columns.hide());
     }
 
-    enableSelectAllToggle(event) {
+    private enableSelectAllToggle(event) {
         let trigger = $(event.currentTarget);
         trigger.closest("table").find("td.select-row > input:checkbox").prop('checked', trigger.is(":checked"));
     }
 
-    highlightRow(element: any) {
+    private highlightRow(element: any) {
         let target = $(element.closest("tr"));
         target.siblings('tr').removeClass('highlighted');
         target.addClass('highlighted');

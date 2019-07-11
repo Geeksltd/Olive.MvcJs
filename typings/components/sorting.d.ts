@@ -8,7 +8,7 @@ export default class Sorting implements IService {
     enableDragSort(selector: JQuery): void;
     enablesetSortHeaderClass(selector: JQuery): void;
     enableAjaxSorting(selector: JQuery): void;
-    AjaxSorting(event: JQueryEventObject): void;
+    private AjaxSorting;
     setSortHeaderClass(thead: JQuery): void;
-    DragSort(container: any): void;
+    private DragSort;
 }

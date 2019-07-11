@@ -15,7 +15,7 @@ export default class Paging implements IService {
             e => this.withAjax(e));
     }
 
-    onSizeChanged(event: Event) {
+    private onSizeChanged(event: Event) {
         let form = $(event.currentTarget).closest("form");
         if (form.length === 0) return;
         if (form.attr("method") == "get") form.submit();
@@ -25,7 +25,7 @@ export default class Paging implements IService {
         }
     }
 
-    withAjax(event: JQueryEventObject) {
+    private withAjax(event: JQueryEventObject) {
         let button = $(event.currentTarget);
         let page = button.attr("data-pagination");
         let key = "p";

@@ -16,7 +16,7 @@ export default class Sorting implements IService {
         selector.off("click.ajax-sorting").on("click.ajax-sorting", e => this.AjaxSorting(e))
     };
 
-    AjaxSorting(event: JQueryEventObject) {
+    private AjaxSorting(event: JQueryEventObject) {
         let button = $(event.currentTarget);
         let sort = button.attr("data-sort");
         let key = "s";
@@ -31,7 +31,7 @@ export default class Sorting implements IService {
         input.val(sort);
     }
 
-    setSortHeaderClass(thead: JQuery) {
+    public setSortHeaderClass(thead: JQuery) {
 
         let currentSort: string = thead.closest("[data-module]").find("#Current-Sort").val() || "";
         if (currentSort == "") return;
@@ -52,7 +52,7 @@ export default class Sorting implements IService {
         currentThead.append("<i />");
     }
 
-    DragSort(container) {
+    private DragSort(container) {
 
         var config = {
             handle: '[data-sort-item]',

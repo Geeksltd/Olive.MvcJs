@@ -3,14 +3,14 @@ import CrossDomainEvent from 'olive/components/crossDomainEvent';
 import AjaxRedirect from 'olive/mvc/ajaxRedirect';
 
 export class ModalHelper implements IService {
-    current: any = null;
-    currentModal: Modal = null;
-    isAjaxModal: boolean = false;
-    isClosingModal: boolean = false;
+    public current: any = null;
+    public currentModal: Modal = null;
+    public isAjaxModal: boolean = false;
+    private isClosingModal: boolean = false;
 
     constructor(private url: Url, private ajaxRedirect: AjaxRedirect) { }
 
-    initialize() {
+    public initialize() {
 
         CrossDomainEvent.handle('set-iframe-height', x => this.setIFrameHeight(x));
         CrossDomainEvent.handle('close-modal', x => this.close());
@@ -25,7 +25,7 @@ export class ModalHelper implements IService {
         };
     }
 
-    public closeMe() {
+    private closeMe() {
         if (!this.isAjaxModal) { CrossDomainEvent.raise(parent, "close-modal"); }
         this.close();
 
@@ -74,7 +74,7 @@ export class ModalHelper implements IService {
         return true;
     }
 
-    setIFrameHeight(arg: any) {
+    private setIFrameHeight(arg: any) {
         try {
             let iframe = $("iframe").filter((i, f) => f["src"] == arg.url);
             if (iframe.attr("data-has-explicit-height") === 'true') return;
@@ -86,7 +86,7 @@ export class ModalHelper implements IService {
 
     public enableEnsureHeight(selector: JQuery) { selector.off("click.tab-toggle").on("click.tab-toggle", () => this.ensureHeight()); }
 
-    ensureHeight() {
+    private ensureHeight() {
         setTimeout(() => this.adjustHeight(), 1);
     }
 
@@ -114,7 +114,7 @@ export class ModalHelper implements IService {
         this.adjustHeight(overflow);
     }
 
-    public ensureNonModal() {
+    private ensureNonModal() {
         if (window.isModal())
             parent.window.location.href = location.href;
     }
@@ -152,7 +152,7 @@ export class ModalHelper implements IService {
     }
 
 
-    openWithUrl(): void {
+    private openWithUrl(): void {
 
         if (this.url.getQuery("_iframe") === "true") {
             new Modal(this.url, this.ajaxRedirect, this, null, this.url.getQuery("_modal")).openiFrame(false);
@@ -164,12 +164,12 @@ export class ModalHelper implements IService {
 }
 
 export default class Modal {
-    isOpening: boolean = false;
-    opener: JQuery;
-    url: string;
-    rawUrl: string;
-    modalOptions: any = {};
-    scrollPosition: number;
+    private isOpening: boolean = false;
+    public opener: JQuery;
+    private url: string;
+    private rawUrl: string;
+    private modalOptions: any = {};
+    public scrollPosition: number;
 
     constructor(private urlService: Url, private ajaxRedirect: AjaxRedirect, private helper: ModalHelper, event?: JQueryEventObject, targeturl?: string, opt?: any) {
         let target = event ? $(event.currentTarget) : null;
@@ -182,7 +182,7 @@ export default class Modal {
         if (options) this.modalOptions = JSON.safeParse(options);
     }
 
-    open(changeUrl: boolean = true): boolean {
+    public open(changeUrl: boolean = true): boolean {
         this.isOpening = true;
         this.helper.isAjaxModal = true;
         if (this.helper.current) { if (this.helper.close() === false) { return false; } }
@@ -202,7 +202,7 @@ export default class Modal {
         });
     }
 
-    openiFrame(changeUrl: boolean = true) {
+    public openiFrame(changeUrl: boolean = true) {
         this.isOpening = true;
         this.helper.isAjaxModal = false;
         if (this.helper.current)
@@ -234,7 +234,7 @@ export default class Modal {
         });
     }
 
-    shouldKeepScroll(): boolean {
+    public shouldKeepScroll(): boolean {
         if (this.modalOptions) {
             if (this.modalOptions.keepScroll) {
                 return this.modalOptions.keepScroll;
@@ -243,7 +243,7 @@ export default class Modal {
         return true;
     }
 
-    getModalTemplateForAjax(options: any): string {
+    protected getModalTemplateForAjax(options: any): string {
         let modalDialogStyle: string = "";
 
         if (options) {
@@ -273,7 +273,7 @@ export default class Modal {
         );
     }
 
-    getModalTemplateForiFrame(options: any) {
+    protected getModalTemplateForiFrame(options: any) {
 
         let modalDialogStyle = "";
         let iframeStyle = "width:100%; border:0;";

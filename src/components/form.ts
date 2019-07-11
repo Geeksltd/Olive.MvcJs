@@ -12,7 +12,7 @@ export default class Form implements IService {
         private ajaxRedirect: AjaxRedirect
     ) { }
 
-    public currentRequestUrlProvider: (() => string) = () => window.location.pathAndQuery();
+    private currentRequestUrlProvider: (() => string) = () => window.location.pathAndQuery();
 
     public enableDefaultButtonKeyPress(selector: JQuery) { selector.off("keypress.default-button").on("keypress.default-button", (e) => this.DefaultButtonKeyPress(e)); }
 
@@ -20,7 +20,7 @@ export default class Form implements IService {
 
     public enablesubmitCleanGet(selector: JQuery) { selector.off("submit.clean-up").on("submit.clean-up", (e) => this.submitCleanGet(e)); }
 
-    getCleanFormData(form: JQuery): JQuerySerializeArrayElement[] {
+    private getCleanFormData(form: JQuery): JQuerySerializeArrayElement[] {
         let result: JQuerySerializeArrayElement[] = [];
 
         let disabledOnes = form.find(":disabled").removeAttr('disabled')
@@ -56,7 +56,7 @@ export default class Form implements IService {
         return result;
     }
 
-    cleanJson(str): string {
+    public cleanJson(str): string {
         return str.replace(/(\s*?{\s*?|\s*?,\s*?)(['"])?([a-zA-Z0-9]+)(['"])?:/g, '$1"$3":')
     };
 
@@ -77,7 +77,7 @@ export default class Form implements IService {
         return data;
     }
 
-    DefaultButtonKeyPress(event: JQueryEventObject): boolean {
+    private DefaultButtonKeyPress(event: JQueryEventObject): boolean {
         if (event.which === 13) {
             let target = $(event.currentTarget);
             let button = target.closest("[data-module]").find('[default-button]:first'); // Same module
@@ -87,12 +87,12 @@ export default class Form implements IService {
         } else return true;
     }
 
-    cleanUpNumberField(field: JQuery) {
+    private cleanUpNumberField(field: JQuery) {
         let domElement = <HTMLInputElement>field.get(0);
         field.val(field.val().replace(/[^\d.-]/g, ""));
     }
 
-    submitCleanGet(event: JQueryEventObject) {
+    private submitCleanGet(event: JQueryEventObject) {
         let form = $(event.currentTarget);
         if (this.validate.validateForm(form) == false) { this.waiting.hide(); return false; }
 

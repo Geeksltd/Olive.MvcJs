@@ -4,12 +4,12 @@ import Form from "olive/components/form"
 export class SliderFactory implements IService {
     constructor(private form: Form) { }
 
-    public enable(selector: JQuery) { selector.each((i, e) => new Slider($(e), this.form).enable()); }
+    enable(selector: JQuery) { selector.each((i, e) => new Slider($(e), this.form).enable()); }
 }
 
 export default class Slider {
-    input: JQuery;
-    options;
+    private input: JQuery;
+    private options;
 
     constructor(targetInput: JQuery, private form: Form) {
         this.input = targetInput;

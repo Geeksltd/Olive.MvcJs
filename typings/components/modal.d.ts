@@ -6,36 +6,36 @@ export declare class ModalHelper implements IService {
     current: any;
     currentModal: Modal;
     isAjaxModal: boolean;
-    isClosingModal: boolean;
+    private isClosingModal;
     constructor(url: Url, ajaxRedirect: AjaxRedirect);
     initialize(): void;
-    closeMe(): boolean;
+    private closeMe;
     close(): boolean;
-    setIFrameHeight(arg: any): void;
+    private setIFrameHeight;
     enableEnsureHeight(selector: JQuery): void;
-    ensureHeight(): void;
+    private ensureHeight;
     adjustHeight(overflow?: number): void;
     expandToFitPicker(target: any): void;
-    ensureNonModal(): void;
+    private ensureNonModal;
     tryOpenFromUrl(): void;
     changeUrl(url: string, iframe?: boolean): void;
     isOrGoingToBeModal(): boolean;
-    openWithUrl(): void;
+    private openWithUrl;
 }
 export default class Modal {
     private urlService;
     private ajaxRedirect;
     private helper;
-    isOpening: boolean;
+    private isOpening;
     opener: JQuery;
-    url: string;
-    rawUrl: string;
-    modalOptions: any;
+    private url;
+    private rawUrl;
+    private modalOptions;
     scrollPosition: number;
     constructor(urlService: Url, ajaxRedirect: AjaxRedirect, helper: ModalHelper, event?: JQueryEventObject, targeturl?: string, opt?: any);
     open(changeUrl?: boolean): boolean;
     openiFrame(changeUrl?: boolean): boolean;
     shouldKeepScroll(): boolean;
-    getModalTemplateForAjax(options: any): string;
-    getModalTemplateForiFrame(options: any): string;
+    protected getModalTemplateForAjax(options: any): string;
+    protected getModalTemplateForiFrame(options: any): string;
 }

@@ -20,7 +20,7 @@ export default class Alert implements IService {
         }
     }
 
-    public confirm(text: string, style?: string, callback?: Function) {
+    private confirm(text: string, style?: string, callback?: Function) {
 
         if (text === undefined) text = "";
         text = text.trim();

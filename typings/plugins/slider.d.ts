@@ -6,8 +6,8 @@ export declare class SliderFactory implements IService {
 }
 export default class Slider {
     private form;
-    input: JQuery;
-    options: any;
+    private input;
+    private options;
     constructor(targetInput: JQuery, form: Form);
     enable(): void;
 }

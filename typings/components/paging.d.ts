@@ -6,6 +6,6 @@ export default class Paging implements IService {
     constructor(url: Url, formAction: FormAction);
     enableOnSizeChanged(selector: JQuery): void;
     enableWithAjax(selector: JQuery): void;
-    onSizeChanged(event: Event): void;
-    withAjax(event: JQueryEventObject): void;
+    private onSizeChanged;
+    private withAjax;
 }

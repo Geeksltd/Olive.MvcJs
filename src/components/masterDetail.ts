@@ -6,7 +6,7 @@ export default class MasterDetail implements IService {
 
     public enable(selector: JQuery) { selector.off("click.delete-subform").on("click.delete-subform", (e) => this.deleteSubForm(e)); }
 
-    updateSubFormStates() {
+    public updateSubFormStates() {
         let countItems = element => $(element).parent().find(".subform-item:visible").length;
         // Hide removed items
         $("input[name$=MustBeDeleted][value]").val("true");
@@ -26,7 +26,7 @@ export default class MasterDetail implements IService {
         });
     }
 
-    deleteSubForm(event: JQueryEventObject) {
+    private deleteSubForm(event: JQueryEventObject) {
         let button = $(event.currentTarget);
 
         let container = button.parents(".subform-item");

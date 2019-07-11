@@ -1,11 +1,11 @@
 export default class Grid implements IService {
     enableColumn(element: any): void;
     enableToggle(element: any): void;
-    enableHlightRow(element: any): void;
+    private enableHlightRow;
     enableSelectCol(selector: JQuery): void;
-    applyColumns(event: JQueryEventObject): void;
-    enableSelectColumns(container: any): void;
-    enableSelectAllToggle(event: any): void;
-    highlightRow(element: any): void;
+    private applyColumns;
+    private enableSelectColumns;
+    private enableSelectAllToggle;
+    private highlightRow;
     mergeActionButtons(): void;
 }
