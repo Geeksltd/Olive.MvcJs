@@ -79,7 +79,7 @@ export default class OlivePage {
         CrossDomainEvent.handle('refresh-page', x => this.refresh());
     }
 
-    configureServices(services: ServiceContainer) {
+    protected configureServices(services: ServiceContainer) {
         const out: IOutParam<ServiceDescription> = {};
 
         services.tryAddSingleton(Services.Alert, () => new Alert(), out);
@@ -197,18 +197,18 @@ export default class OlivePage {
         }
     }
 
-    fixAlertIssues() {
+    private fixAlertIssues() {
         if (!$.fn.tooltip.Constructor) $.fn.tooltip.Constructor = {};
         window["alertify"] = <alertify.IAlertifyStatic>window.require("alertify")();
     }
 
-    _initializeActions = [];
-    onInit(action) { this._initializeActions.push(action) }
+    protected _initializeActions = [];
+    protected onInit(action) { this._initializeActions.push(action) }
 
-    _preInitializeActions = [];
-    onPreInit(action) { this._preInitializeActions.push(action) }
+    protected _preInitializeActions = [];
+    protected onPreInit(action) { this._preInitializeActions.push(action) }
 
-    onViewChanged(container: JQuery = null, trigger: any = null, newPage: boolean = false, firstTime: boolean = false) {
+    protected onViewChanged(container: JQuery = null, trigger: any = null, newPage: boolean = false, firstTime: boolean = false) {
         const standardAction = this.getService<StandardAction>(Services.StandardAction);
         standardAction.runStartup(container, trigger, "PreInit");
         try {
@@ -226,7 +226,7 @@ export default class OlivePage {
         //if (firstTime) Modal.tryOpenFromUrl();
     }
 
-    initialize() {
+    protected initialize() {
         this._preInitializeActions.forEach((action) => action());
 
         // =================== Standard Features ====================
@@ -301,15 +301,15 @@ export default class OlivePage {
         catch (error) { console.error(error); }
     }
 
-    enableCustomCheckbox() {
+    protected enableCustomCheckbox() {
         CustomCheckbox.enable($("input[type=checkbox]"));
     }
 
-    enableCustomRadio() {
+    protected enableCustomRadio() {
         CustomRadio.enable($("input[type=radio]"));
     }
 
-    goBack(target) {
+    protected goBack(target) {
         const url = this.getService<Url>(Services.Url);
 
         let returnUrl = url.getQuery("ReturnUrl");
@@ -321,11 +321,11 @@ export default class OlivePage {
         return false;
     }
 
-    customizeValidationTooltip() {
+    protected customizeValidationTooltip() {
 
     }
 
-    refresh(keepScroll = false) {
+    protected refresh(keepScroll = false) {
         if ($("main").length == 1 || $("main").length === 2) //if there is an ajax modal available, then we have 2 main elements.
             this.getService<AjaxRedirect>(Services.AjaxRedirect).go(location.href, null, false /*isBack*/, keepScroll, false);
         else location.reload();
