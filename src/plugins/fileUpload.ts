@@ -1,7 +1,7 @@
 // import FormAction from "olive/mvc/formAction"
 import Url from "olive/components/url"
 import CrossDomainEvent from "olive/components/crossDomainEvent";
-import CombinedUtilities from "olive/mvc/combinedUtilities";
+import ServerInvoker from "olive/mvc/serverInvoker";
 
 // For configuration see:
 // http://markusslima.github.io/bootstrap-filestyle/ 
@@ -10,9 +10,9 @@ import CombinedUtilities from "olive/mvc/combinedUtilities";
 export class FileUploadFactory implements IService {
 
     constructor(private url: Url,
-        private formAction: CombinedUtilities) { }
+        private serverInvoker: ServerInvoker) { }
 
-    public enable(selector: JQuery) { selector.each((i, e) => new FileUpload($(e), this.url, this.formAction).enable()); }
+    public enable(selector: JQuery) { selector.each((i, e) => new FileUpload($(e), this.url, this.serverInvoker).enable()); }
 }
 
 export default class FileUpload {
@@ -24,7 +24,7 @@ export default class FileUpload {
     private existingFileNameInput: JQuery;
     private fileLabel: JQuery;
 
-    constructor(private input: JQuery, private url: Url, private formAction: CombinedUtilities) {
+    constructor(private input: JQuery, private url: Url, private serverInvoker: ServerInvoker) {
         this.fixMasterDetailsInputName();
         this.input.before(this.input.siblings('input'));
         this.container = this.input.closest(".file-upload");
@@ -128,13 +128,13 @@ export default class FileUpload {
     }
 
     private onUploadError(jqXHR: JQueryXHR, status: string, error: string) {
-        this.formAction.onAjaxResponseError_fa(jqXHR, status, error);
+        this.serverInvoker.onAjaxResponseError(jqXHR, status, error);
         this.fileLabel.val('');
     }
 
     private onUploadSuccess(response) {
         if (response.Error) {
-            this.formAction.onAjaxResponseError_fa(<any>{ responseText: response.Error }, "error", response.Error);
+            this.serverInvoker.onAjaxResponseError(<any>{ responseText: response.Error }, "error", response.Error);
             this.fileLabel.val('');
         }
         else {

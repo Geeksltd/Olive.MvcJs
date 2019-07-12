@@ -15,7 +15,8 @@ declare const Services: {
     Validate: string;
     Waiting: string;
     AjaxRedirect: string;
-    FormAction: string;
+    ResponseProcessor: string;
+    ServerInvoker: string;
     StandardAction: string;
     AutoComplete: string;
     AutoCompleteFactory: string;

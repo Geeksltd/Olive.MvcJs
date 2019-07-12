@@ -2,9 +2,10 @@
 import Config from "olive/config"
 import CrossDomainEvent from 'olive/components/crossDomainEvent'
 
-// import FormAction from 'olive/mvc/formAction'
-// import AjaxRedirect from 'olive/mvc/ajaxRedirect'
-// import StandardAction from 'olive/mvc/standardAction'
+import ResponseProcessor from "./mvc/responseProcessor";
+import AjaxRedirect from 'olive/mvc/ajaxRedirect'
+import StandardAction from 'olive/mvc/standardAction'
+import ServerInvoker from "./mvc/serverInvoker";
 
 import Form from 'olive/components/form'
 import Url from 'olive/components/url'
@@ -42,7 +43,6 @@ import { GroupingFactory } from "./components/grouping";
 import { ServiceContainer } from "./di/serviceContainer";
 import Services from "./di/services";
 import { ServiceDescription } from "./di/serviceDescription";
-import CombinedUtilities from "./mvc/combinedUtilities";
 
 export default class OlivePage {
 
@@ -76,7 +76,7 @@ export default class OlivePage {
 
         // TODO: Find a cleaner way.
         this.fixAlertIssues();
-        this.getService<CombinedUtilities>(Services.FormAction).onViewChanged_fa.handle(x => this.onViewChanged(x.container, x.trigger, x.isNewPage));
+        this.getService<ResponseProcessor>(Services.ResponseProcessor).viewChanged.handle(x => this.onViewChanged(x.container, x.trigger, x.isNewPage));
         CrossDomainEvent.handle('refresh-page', x => this.refresh());
     }
 
@@ -210,14 +210,14 @@ export default class OlivePage {
     protected onPreInit(action) { this._preInitializeActions.push(action) }
 
     protected onViewChanged(container: JQuery = null, trigger: any = null, newPage: boolean = false, firstTime: boolean = false) {
-        const standardAction = this.getService<CombinedUtilities>(Services.StandardAction);
-        standardAction.runStartup_sa(container, trigger, "PreInit");
+        const standardAction = this.getService<StandardAction>(Services.StandardAction);
+        standardAction.runStartup(container, trigger, "PreInit");
         try {
             this.initialize();
         } catch (error) {
             alert("initialization failed: " + error);
         }
-        standardAction.runStartup_sa(container, trigger, "Init");
+        standardAction.runStartup(container, trigger, "Init");
 
         if (newPage) {
             $('[autofocus]:not([data-autofocus=disabled]):first').focus();
@@ -251,7 +251,7 @@ export default class OlivePage {
         this.getService<Select>(Services.Select).enableEnhance($("select:not([data-control='collapsible-checkboxes'])"));
         form.enableDefaultButtonKeyPress($("form input, form select"));
         UserHelp.enable($("[data-user-help]"));
-        this.getService<CombinedUtilities>(Services.StandardAction).enableLinkModal_sa($("[target='$modal'][href]"));
+        this.getService<ModalHelper>(Services.ModalHelper).enableLink($("[target='$modal'][href]"));
         this.getService<GroupingFactory>(Services.GroupingFactory).enable($(".form-group #GroupBy"));
 
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust",
@@ -279,17 +279,17 @@ export default class OlivePage {
         this.customizeValidationTooltip();
 
         // =================== Request lifecycle ====================
-        const ajaxRedirect = this.getService<CombinedUtilities>(Services.AjaxRedirect);
-        ajaxRedirect.enableBack_ar($(window));
-        ajaxRedirect.enableRedirect_ar($("a[data-redirect=ajax]"));
+        const ajaxRedirect = this.getService<AjaxRedirect>(Services.AjaxRedirect);
+        ajaxRedirect.enableBack($(window));
+        ajaxRedirect.enableRedirect($("a[data-redirect=ajax]"));
         form.enablesubmitCleanGet($('form[method=get]'));
 
-        const formAction = this.getService<CombinedUtilities>(Services.FormAction);
-        formAction.enableInvokeWithAjax_fa($("[formaction]").not("[formmethod=post]"), "click.formaction", "formaction");
-        formAction.enableinvokeWithPost_fa($("[formaction][formmethod=post]"));
-        formAction.enableInvokeWithAjax_fa($("[data-change-action]:not([autocomplete-source]):not([data-control=collapsible-checkboxes])"), "change.data-action", "data-change-action");
-        formAction.enableInvokeWithAjax_fa($("[data-change-action][data-control=collapsible-checkboxes]"), "hidden.bs.select", "data-change-action");
-        formAction.enableInvokeWithAjax_fa($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar],[data-change-action][data-control=time-picker]"), "dp.change.data-action", "data-change-action");
+        const formAction = this.getService<ServerInvoker>(Services.ServerInvoker);
+        formAction.enableInvokeWithAjax($("[formaction]").not("[formmethod=post]"), "click.formaction", "formaction");
+        formAction.enableinvokeWithPost($("[formaction][formmethod=post]"));
+        formAction.enableInvokeWithAjax($("[data-change-action]:not([autocomplete-source]):not([data-control=collapsible-checkboxes])"), "change.data-action", "data-change-action");
+        formAction.enableInvokeWithAjax($("[data-change-action][data-control=collapsible-checkboxes]"), "hidden.bs.select", "data-change-action");
+        formAction.enableInvokeWithAjax($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar],[data-change-action][data-control=time-picker]"), "dp.change.data-action", "data-change-action");
 
         this.getService<MasterDetail>(Services.MasterDetail).updateSubFormStates();
         this.modalHelper.adjustHeight();
@@ -316,7 +316,7 @@ export default class OlivePage {
         let returnUrl = url.getQuery("ReturnUrl");
 
         if (returnUrl && target && $(target).is("[data-redirect=ajax]"))
-            this.getService<CombinedUtilities>(Services.AjaxRedirect).go_ar(returnUrl, $(target), false, false, true);
+            this.getService<AjaxRedirect>(Services.AjaxRedirect).go(returnUrl, $(target), false, false, true);
         else url.goBack();
 
         return false;
@@ -328,7 +328,7 @@ export default class OlivePage {
 
     protected refresh(keepScroll = false) {
         if ($("main").length == 1 || $("main").length === 2) //if there is an ajax modal available, then we have 2 main elements.
-            this.getService<CombinedUtilities>(Services.AjaxRedirect).go_ar(location.href, null, false /*isBack*/, keepScroll, false);
+            this.getService<AjaxRedirect>(Services.AjaxRedirect).go(location.href, null, false /*isBack*/, keepScroll, false);
         else location.reload();
 
         return false;

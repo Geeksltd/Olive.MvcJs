@@ -1,13 +1,12 @@
 
 import Url from 'olive/components/url'
-// import FormAction from 'olive/mvc/formAction'
 import 'jquery-sortable'
-import CombinedUtilities from 'olive/mvc/combinedUtilities';
+import ServerInvoker from 'olive/mvc/serverInvoker';
 
 export default class Sorting implements IService {
 
     constructor(private url: Url,
-        private formAction: CombinedUtilities) { }
+        private serverInvoker: ServerInvoker) { }
 
     public enableDragSort(selector: JQuery) { selector.each((i, e) => this.DragSort($(e))) };
 
@@ -92,7 +91,7 @@ export default class Sorting implements IService {
 
             actionUrl = this.url.effectiveUrlProvider(actionUrl, handle);
 
-            this.formAction.invokeWithAjax_fa({ currentTarget: handle.get(0) }, actionUrl);
+            this.serverInvoker.invokeWithAjax(<JQueryEventObject>{ currentTarget: handle.get(0) }, actionUrl);
         };
 
 

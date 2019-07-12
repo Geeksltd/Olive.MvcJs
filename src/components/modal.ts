@@ -1,7 +1,6 @@
 import Url from 'olive/components/url';
 import CrossDomainEvent from 'olive/components/crossDomainEvent';
-import CombinedUtilities from 'olive/mvc/combinedUtilities';
-// import AjaxRedirect from 'olive/mvc/ajaxRedirect';
+import AjaxRedirect from 'olive/mvc/ajaxRedirect';
 
 export class ModalHelper implements IService {
     public current: any = null;
@@ -9,7 +8,22 @@ export class ModalHelper implements IService {
     public isAjaxModal: boolean = false;
     private isClosingModal: boolean = false;
 
-    constructor(private url: Url, private ajaxRedirect: CombinedUtilities) { }
+    constructor(private url: Url, private ajaxRedirect: AjaxRedirect) { }
+
+    public enableLink(selector: JQuery) {
+        selector.off("click.open-modal").on("click.open-modal", (e) => {
+            this.close();
+
+            if ($(e.currentTarget).attr("data-mode") === "iframe") {
+                this.openiFrame(e);
+            }
+            else {
+                this.open(e);
+            }
+
+            return false;
+        });
+    }
 
     public initialize() {
 
@@ -70,7 +84,7 @@ export class ModalHelper implements IService {
         if (currentPath.endsWith("?"))
             currentPath = currentPath.trimEnd("?");
 
-        this.ajaxRedirect.defaultOnRedirected_ar("", currentPath);
+        history.pushState({}, "", currentPath);
 
         return true;
     }
@@ -144,7 +158,7 @@ export class ModalHelper implements IService {
             modalUrl = this.url.addQuery(modalUrl, "_iframe", "true");
         }
 
-        this.ajaxRedirect.defaultOnRedirected_ar("", modalUrl);
+        history.pushState({}, "", modalUrl);
     }
 
 
@@ -180,7 +194,7 @@ export default class Modal {
     private modalOptions: any = {};
     public scrollPosition: number;
 
-    constructor(private urlService: Url, private ajaxRedirect: CombinedUtilities, private helper: ModalHelper, event?: JQueryEventObject, targeturl?: string, opt?: any) {
+    constructor(private urlService: Url, private ajaxRedirect: AjaxRedirect, private helper: ModalHelper, event?: JQueryEventObject, targeturl?: string, opt?: any) {
         let target = event ? $(event.currentTarget) : null;
         this.opener = target;
         this.url = targeturl ? targeturl : target.attr("href");
@@ -200,7 +214,7 @@ export default class Modal {
         this.helper.currentModal = this;
         this.scrollPosition = $(window).scrollTop();
 
-        this.ajaxRedirect.go_ar(this.url, $(this.helper.current).find("main"), true, this.shouldKeepScroll(), changeUrl);
+        this.ajaxRedirect.go(this.url, $(this.helper.current).find("main"), true, this.shouldKeepScroll(), changeUrl);
 
         $("body").append(this.helper.current);
 

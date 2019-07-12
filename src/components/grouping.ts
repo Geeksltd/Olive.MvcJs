@@ -1,11 +1,11 @@
 // import AjaxRedirect from "olive/mvc/ajaxRedirect";
 import Url from "./url";
-import CombinedUtilities from "olive/mvc/combinedUtilities";
+import AjaxRedirect from "olive/mvc/ajaxRedirect";
 
 export class GroupingFactory implements IService {
     constructor(
         private url: Url,
-        private ajaxRedirect: CombinedUtilities
+        private ajaxRedirect: AjaxRedirect
     ) { }
 
     public enable(selector: JQuery): void { selector.each((_, elem) => new Grouping($(elem), this.url, this.ajaxRedirect)) }
@@ -14,9 +14,9 @@ export class GroupingFactory implements IService {
 export default class Grouping {
     constructor(private dropdown: JQuery,
         private url: Url,
-        private ajaxRedirect: CombinedUtilities) {
+        private ajaxRedirect: AjaxRedirect) {
         dropdown.on('change', () => {
-            this.ajaxRedirect.go_ar(this.url.updateQuery(this.url.current(), "GroupBy", dropdown.val()), dropdown, false, true, false);
+            this.ajaxRedirect.go(this.url.updateQuery(this.url.current(), "GroupBy", dropdown.val()), dropdown, false, true, false);
         });
     }
 }

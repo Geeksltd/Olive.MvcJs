@@ -1,8 +1,7 @@
 ﻿import Url from 'olive/components/url'
 import Validate from 'olive/components/validate'
 import Waiting from 'olive/components/waiting'
-import CombinedUtilities from 'olive/mvc/combinedUtilities';
-// import AjaxRedirect from 'olive/mvc/ajaxRedirect'
+import AjaxRedirect from 'olive/mvc/ajaxRedirect'
 
 export default class Form implements IService {
 
@@ -10,7 +9,7 @@ export default class Form implements IService {
         private url: Url,
         private validate: Validate,
         private waiting: Waiting,
-        private ajaxRedirect: CombinedUtilities
+        private ajaxRedirect: AjaxRedirect
     ) { }
 
     private currentRequestUrlProvider: (() => string) = () => window.location.pathAndQuery();
@@ -110,7 +109,7 @@ export default class Form implements IService {
 
             url = this.url.removeEmptyQueries(url);
 
-            if (form.is("[data-redirect=ajax]")) this.ajaxRedirect.go_ar(url, form, false, false, true);
+            if (form.is("[data-redirect=ajax]")) this.ajaxRedirect.go(url, form, false, false, true);
             else location.href = url;
         }
         catch (error) {

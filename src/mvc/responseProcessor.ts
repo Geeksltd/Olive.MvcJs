@@ -1,0 +1,172 @@
+import LiteEvent from "olive/components/liteEvent";
+
+export default class ResponseProcessor implements IService {
+    private dynamicallyLoadedScriptFiles = [];
+
+    public subformChanged = new LiteEvent<IResponseProcessorEventArgs>();
+    public viewChanged = new LiteEvent<IViewUpdatedEventArgs>();
+    public processCompleted = new LiteEvent<IEventArgs>();
+    public nothingFoundToProcess = new LiteEvent<IResponseProcessorEventArgs>();
+
+    public processAjaxResponse(response: any, containerModule: JQuery, trigger: JQuery, args: any) {
+
+        let asElement = $(response);
+
+        if (asElement.is("main")) {
+            this.navigate(asElement, trigger, args);
+            return;
+        }
+
+        if (asElement.is("[data-module]")) {
+            containerModule.replaceWith(asElement);
+            this.onViewChanged(asElement, trigger);
+            return;
+        }
+
+        if (response.length == 1 && response[0].ReplaceView) {
+            asElement = $("<div/>").append(response[0].ReplaceView);
+            containerModule.replaceWith(asElement);
+            this.onViewChanged(asElement, trigger);
+            return;
+        }
+
+        if (trigger && trigger.is("[data-add-subform]")) {
+            let subFormName = trigger.attr("data-add-subform");
+            let container = containerModule.find("[data-subform=" + subFormName + "] > table tbody:first");
+
+            if (container.length == 0)
+                container = containerModule.find("[data-subform=" + subFormName + "]:first");
+
+            container.append(asElement);
+            // this.validate.reloadRules(trigger.parents("form"));
+            // this.masterDetail.updateSubFormStates();
+            this.onSubformChanged(response, trigger);
+            this.onViewChanged(asElement, trigger);
+            return;
+        }
+
+        // List of actions
+        // this.runAll_sa(response, trigger);
+        this.onNothingFoundToProcess(response, trigger);
+    }
+
+    protected onNothingFoundToProcess(response: any, trigger: JQuery) {
+        this.nothingFoundToProcess.raise({ response: response, trigger: trigger });
+        throw new Error("The event should be handled by StandardAction (RunAll).");
+    }
+
+    protected onSubformChanged(response: any, trigger: JQuery) {
+        this.subformChanged.raise({ response: response, trigger: trigger });
+        throw new Error("The event should be handled by Validate and MasterDetail.");
+    }
+
+    protected onViewChanged(container: JQuery, trigger: JQuery, isNewPage: boolean = false) {
+        this.viewChanged.raise({ container: container, trigger: trigger, isNewPage: isNewPage });
+    }
+
+    protected navigate(element: JQuery, trigger: JQuery, args: any) {
+
+        let referencedScripts = element.find("script[src]").map((i, s) => $(s).attr("src"));
+        let referencedCss = element.find("link[rel='stylesheet']").map((i, s) => $(s).attr("href"));
+        element.find("script[src]").remove();
+        element.find("link[rel='stylesheet']").remove();
+
+        //check for CSS links in the main tag after ajax call
+        if (referencedCss.length > 0) {
+            let contentLoaded: boolean = false;
+            referencedCss.each((i, item: any) => {
+
+                if (!contentLoaded) {
+                    //first add CSS files and then load content.
+                    $("head").append($('<link rel="stylesheet" type="text/css" />')
+                        .attr("href", item).load(item, () => { this.processWithTheContent(trigger, element, args, referencedScripts); }));
+
+                    contentLoaded = true;
+                }
+                else if ($("link[href='" + item + "']") && $("link[href='" + item + "']").length === 0) {
+                    $("head").append($('<link rel="stylesheet" type="text/css" />').attr("href", item));
+                }
+            });
+        }
+        else
+            this.processWithTheContent(trigger, element, args, referencedScripts);
+    }
+
+    protected processWithTheContent(trigger: JQuery, element: JQuery, args: any, referencedScripts: JQuery) {
+
+        let width = $(window).width();
+
+        let oldMain = trigger.closest("main");
+        if (oldMain.length === 0) oldMain = $("main");
+
+        let tooltips = $('body > .tooltip');
+
+        tooltips.each((index, elem) => {
+            if ($('[aria-discribedby=' + elem.id + ']'))
+                elem.remove();
+        });
+
+        if (width <= 800 && trigger.data("transition") == "slide") {
+            let newMain = element.appendTo(oldMain.parent());
+            oldMain.css("position", "fixed");
+
+            if (args == "back") {
+                newMain.addClass("w3-animate-left");
+                oldMain.addClass("w3-animate-righter");
+            }
+            else {
+                newMain.addClass("w3-animate-right");
+                oldMain.addClass("w3-animate-lefter");
+            }
+
+            setTimeout(() => {
+                oldMain.remove();
+                newMain.removeClass("w3-animate-left").removeClass("w3-animate-right");
+                this.updateUrl(referencedScripts, element, trigger);
+            }, 400);
+        }
+        else {
+            oldMain.replaceWith(element);
+            this.updateUrl(referencedScripts, element, trigger);
+        }
+    }
+
+    protected updateUrl(referencedScripts: JQuery, element: JQuery, trigger: JQuery) {
+        if (referencedScripts.length) {
+            let expectedScripts = referencedScripts.length;
+            let loadedScripts = 0;
+            referencedScripts.each((_, item) => {
+                let url = '' + item;
+                if (this.dynamicallyLoadedScriptFiles.indexOf(url) > -1) {
+                    loadedScripts++;
+                    if (loadedScripts == expectedScripts)
+                        this.onViewChanged(element, trigger, true);
+                }
+                else {
+                    this.dynamicallyLoadedScriptFiles.push(url);
+                    $.getScript(url, () => {
+                        loadedScripts++;
+                        if (loadedScripts == expectedScripts)
+                            this.onViewChanged(element, trigger, true);
+                    });
+                }
+            });
+        }
+        else this.onViewChanged(element, trigger, true);
+
+        document.title = $("#page_meta_title").val();
+
+        this.onProcessCompleted();
+        // //open modal if needed
+        // this.modalHelper.tryOpenFromUrl();
+        // //if (!window.isModal() && Url.getQuery("_modal") !== "") {
+        // //    let url: string = Url.getQuery("_modal");
+        // //    new Modal(null, url).open(false);
+        // //}
+    }
+
+    protected onProcessCompleted() {
+        this.processCompleted.raise({});
+        throw new Error("The event should be handled by ModalHelper.");
+    }
+}

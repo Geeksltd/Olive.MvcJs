@@ -1,10 +1,10 @@
 import Url from 'olive/components/url';
 import 'jquery-sortable';
-import CombinedUtilities from 'olive/mvc/combinedUtilities';
+import ServerInvoker from 'olive/mvc/serverInvoker';
 export default class Sorting implements IService {
     private url;
-    private formAction;
-    constructor(url: Url, formAction: CombinedUtilities);
+    private serverInvoker;
+    constructor(url: Url, serverInvoker: ServerInvoker);
     enableDragSort(selector: JQuery): void;
     enablesetSortHeaderClass(selector: JQuery): void;
     enableAjaxSorting(selector: JQuery): void;
