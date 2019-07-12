@@ -151,6 +151,14 @@ export class ModalHelper implements IService {
         return window.isModal() || !!this.url.getQuery("_modal");
     }
 
+    public open(event?: JQueryEventObject, url?: string, options?: any) {
+        new Modal(this.url, this.ajaxRedirect, this, event, url, options).open();
+    }
+
+    public openiFrame(event?: JQueryEventObject, url?: string, options?: any) {
+        new Modal(this.url, this.ajaxRedirect, this, event, url, options).openiFrame();
+    }
+
 
     private openWithUrl(): void {
 

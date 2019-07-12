@@ -20,6 +20,8 @@ export declare class ModalHelper implements IService {
     tryOpenFromUrl(): void;
     changeUrl(url: string, iframe?: boolean): void;
     isOrGoingToBeModal(): boolean;
+    open(event?: JQueryEventObject, url?: string, options?: any): void;
+    openiFrame(event?: JQueryEventObject, url?: string, options?: any): void;
     private openWithUrl;
 }
 export default class Modal {

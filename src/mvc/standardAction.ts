@@ -119,13 +119,11 @@ export default class StandardAction implements IService {
 
     private openModal(event, url?, options?): any {
         this.modalHelper.close();
-        //new Modal(event, url, options).open();
-        throw 'Not implemented';
+        this.modalHelper.open(event, url, options);
     }
 
     private openModaliFrame(event, url?, options?): void {
         this.modalHelper.close();
-        //new Modal(event, url, options).openiFrame();
-        throw 'Not implemented';
+        this.modalHelper.openiFrame(event, url, options);
     }
 }
