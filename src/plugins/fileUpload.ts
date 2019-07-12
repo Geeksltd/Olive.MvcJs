@@ -1,6 +1,7 @@
-import FormAction from "olive/mvc/formAction"
+// import FormAction from "olive/mvc/formAction"
 import Url from "olive/components/url"
 import CrossDomainEvent from "olive/components/crossDomainEvent";
+import CombinedUtilities from "olive/mvc/combinedUtilities";
 
 // For configuration see:
 // http://markusslima.github.io/bootstrap-filestyle/ 
@@ -9,7 +10,7 @@ import CrossDomainEvent from "olive/components/crossDomainEvent";
 export class FileUploadFactory implements IService {
 
     constructor(private url: Url,
-        private formAction: FormAction) { }
+        private formAction: CombinedUtilities) { }
 
     public enable(selector: JQuery) { selector.each((i, e) => new FileUpload($(e), this.url, this.formAction).enable()); }
 }
@@ -23,7 +24,7 @@ export default class FileUpload {
     private existingFileNameInput: JQuery;
     private fileLabel: JQuery;
 
-    constructor(private input: JQuery, private url: Url, private formAction: FormAction) {
+    constructor(private input: JQuery, private url: Url, private formAction: CombinedUtilities) {
         this.fixMasterDetailsInputName();
         this.input.before(this.input.siblings('input'));
         this.container = this.input.closest(".file-upload");
@@ -127,13 +128,13 @@ export default class FileUpload {
     }
 
     private onUploadError(jqXHR: JQueryXHR, status: string, error: string) {
-        this.formAction.onAjaxResponseError(jqXHR, status, error);
+        this.formAction.onAjaxResponseError_fa(jqXHR, status, error);
         this.fileLabel.val('');
     }
 
     private onUploadSuccess(response) {
         if (response.Error) {
-            this.formAction.onAjaxResponseError(<any>{ responseText: response.Error }, "error", response.Error);
+            this.formAction.onAjaxResponseError_fa(<any>{ responseText: response.Error }, "error", response.Error);
             this.fileLabel.val('');
         }
         else {

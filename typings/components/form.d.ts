@@ -1,13 +1,13 @@
 import Url from 'olive/components/url';
 import Validate from 'olive/components/validate';
 import Waiting from 'olive/components/waiting';
-import AjaxRedirect from 'olive/mvc/ajaxRedirect';
+import CombinedUtilities from 'olive/mvc/combinedUtilities';
 export default class Form implements IService {
     private url;
     private validate;
     private waiting;
     private ajaxRedirect;
-    constructor(url: Url, validate: Validate, waiting: Waiting, ajaxRedirect: AjaxRedirect);
+    constructor(url: Url, validate: Validate, waiting: Waiting, ajaxRedirect: CombinedUtilities);
     private currentRequestUrlProvider;
     enableDefaultButtonKeyPress(selector: JQuery): void;
     enablecleanUpNumberField(selector: JQuery): void;

@@ -1,10 +1,11 @@
 import Url from 'olive/components/url'
-import FormAction from 'olive/mvc/formAction'
+import CombinedUtilities from 'olive/mvc/combinedUtilities';
+// import FormAction from 'olive/mvc/formAction'
 
 export default class Paging implements IService {
 
     constructor(private url: Url,
-        private formAction: FormAction) { }
+        private formAction: CombinedUtilities) { }
 
     public enableOnSizeChanged(selector: JQuery) {
         selector.off("change.pagination-size").on("change.pagination-size", e => this.onSizeChanged(e));
@@ -21,7 +22,7 @@ export default class Paging implements IService {
         if (form.attr("method") == "get") form.submit();
         else {
             let actionUrl = this.url.effectiveUrlProvider(form.attr("action"), $(event.currentTarget));
-            this.formAction.invokeWithAjax(event, actionUrl);
+            this.formAction.invokeWithAjax_fa(event, actionUrl);
         }
     }
 

@@ -1,5 +1,5 @@
 import Url from 'olive/components/url';
-import AjaxRedirect from 'olive/mvc/ajaxRedirect';
+import CombinedUtilities from 'olive/mvc/combinedUtilities';
 export declare class ModalHelper implements IService {
     private url;
     private ajaxRedirect;
@@ -7,7 +7,7 @@ export declare class ModalHelper implements IService {
     currentModal: Modal;
     isAjaxModal: boolean;
     private isClosingModal;
-    constructor(url: Url, ajaxRedirect: AjaxRedirect);
+    constructor(url: Url, ajaxRedirect: CombinedUtilities);
     initialize(): void;
     private closeMe;
     close(): boolean;
@@ -34,7 +34,7 @@ export default class Modal {
     private rawUrl;
     private modalOptions;
     scrollPosition: number;
-    constructor(urlService: Url, ajaxRedirect: AjaxRedirect, helper: ModalHelper, event?: JQueryEventObject, targeturl?: string, opt?: any);
+    constructor(urlService: Url, ajaxRedirect: CombinedUtilities, helper: ModalHelper, event?: JQueryEventObject, targeturl?: string, opt?: any);
     open(changeUrl?: boolean): boolean;
     openiFrame(changeUrl?: boolean): boolean;
     shouldKeepScroll(): boolean;

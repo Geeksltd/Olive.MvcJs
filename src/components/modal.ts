@@ -1,6 +1,7 @@
 import Url from 'olive/components/url';
 import CrossDomainEvent from 'olive/components/crossDomainEvent';
-import AjaxRedirect from 'olive/mvc/ajaxRedirect';
+import CombinedUtilities from 'olive/mvc/combinedUtilities';
+// import AjaxRedirect from 'olive/mvc/ajaxRedirect';
 
 export class ModalHelper implements IService {
     public current: any = null;
@@ -8,7 +9,7 @@ export class ModalHelper implements IService {
     public isAjaxModal: boolean = false;
     private isClosingModal: boolean = false;
 
-    constructor(private url: Url, private ajaxRedirect: AjaxRedirect) { }
+    constructor(private url: Url, private ajaxRedirect: CombinedUtilities) { }
 
     public initialize() {
 
@@ -69,7 +70,7 @@ export class ModalHelper implements IService {
         if (currentPath.endsWith("?"))
             currentPath = currentPath.trimEnd("?");
 
-        this.ajaxRedirect.defaultOnRedirected("", currentPath);
+        this.ajaxRedirect.defaultOnRedirected_ar("", currentPath);
 
         return true;
     }
@@ -143,7 +144,7 @@ export class ModalHelper implements IService {
             modalUrl = this.url.addQuery(modalUrl, "_iframe", "true");
         }
 
-        this.ajaxRedirect.defaultOnRedirected("", modalUrl);
+        this.ajaxRedirect.defaultOnRedirected_ar("", modalUrl);
     }
 
 
@@ -179,7 +180,7 @@ export default class Modal {
     private modalOptions: any = {};
     public scrollPosition: number;
 
-    constructor(private urlService: Url, private ajaxRedirect: AjaxRedirect, private helper: ModalHelper, event?: JQueryEventObject, targeturl?: string, opt?: any) {
+    constructor(private urlService: Url, private ajaxRedirect: CombinedUtilities, private helper: ModalHelper, event?: JQueryEventObject, targeturl?: string, opt?: any) {
         let target = event ? $(event.currentTarget) : null;
         this.opener = target;
         this.url = targeturl ? targeturl : target.attr("href");
@@ -199,7 +200,7 @@ export default class Modal {
         this.helper.currentModal = this;
         this.scrollPosition = $(window).scrollTop();
 
-        this.ajaxRedirect.go(this.url, $(this.helper.current).find("main"), true, this.shouldKeepScroll(), changeUrl);
+        this.ajaxRedirect.go_ar(this.url, $(this.helper.current).find("main"), true, this.shouldKeepScroll(), changeUrl);
 
         $("body").append(this.helper.current);
 

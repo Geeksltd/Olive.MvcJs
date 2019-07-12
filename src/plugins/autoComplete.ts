@@ -1,12 +1,13 @@
 import Form from "olive/components/form"
 import Url from 'olive/components/url'
-import FormAction from 'olive/mvc/formAction'
+import CombinedUtilities from "olive/mvc/combinedUtilities";
+// import FormAction from 'olive/mvc/formAction'
 
 export class AutoCompleteFactory implements IService {
 
     constructor(private url: Url,
         private form: Form,
-        private formAction: FormAction) { }
+        private formAction: CombinedUtilities) { }
 
     public enable(selector: JQuery) {
         selector.each((i, e) => new AutoComplete($(e), this.url, this.form, this.formAction).enable());
@@ -26,7 +27,7 @@ export default class AutoComplete {
     constructor(public input: JQuery,
         private url: Url,
         private form: Form,
-        private formAction: FormAction) { }
+        private formAction: CombinedUtilities) { }
 
     public enable() {
 
@@ -34,7 +35,7 @@ export default class AutoComplete {
         else this.input.attr("data-typeahead-enabled", "true");
 
         if (this.input.is("[data-change-action]"))
-            this.formAction.enableInvokeWithAjax(this.input, "typeahead:select", "data-change-action");
+            this.formAction.enableInvokeWithAjax_fa(this.input, "typeahead:select", "data-change-action");
 
         this.input.wrap("<div class='typeahead__container'></div>");
 

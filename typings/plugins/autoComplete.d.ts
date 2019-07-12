@@ -1,11 +1,11 @@
 import Form from "olive/components/form";
 import Url from 'olive/components/url';
-import FormAction from 'olive/mvc/formAction';
+import CombinedUtilities from "olive/mvc/combinedUtilities";
 export declare class AutoCompleteFactory implements IService {
     private url;
     private form;
     private formAction;
-    constructor(url: Url, form: Form, formAction: FormAction);
+    constructor(url: Url, form: Form, formAction: CombinedUtilities);
     enable(selector: JQuery): void;
 }
 export default class AutoComplete {
@@ -17,7 +17,7 @@ export default class AutoComplete {
     private awaitingAutocompleteResponses;
     private valueField;
     static setOptions(options: RunningCoder.Typeahead.Options): void;
-    constructor(input: JQuery, url: Url, form: Form, formAction: FormAction);
+    constructor(input: JQuery, url: Url, form: Form, formAction: CombinedUtilities);
     enable(): void;
     private clearValue;
     private itemSelected;

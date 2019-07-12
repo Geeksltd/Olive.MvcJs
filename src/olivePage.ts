@@ -2,9 +2,9 @@
 import Config from "olive/config"
 import CrossDomainEvent from 'olive/components/crossDomainEvent'
 
-import FormAction from 'olive/mvc/formAction'
-import AjaxRedirect from 'olive/mvc/ajaxRedirect'
-import StandardAction from 'olive/mvc/standardAction'
+// import FormAction from 'olive/mvc/formAction'
+// import AjaxRedirect from 'olive/mvc/ajaxRedirect'
+// import StandardAction from 'olive/mvc/standardAction'
 
 import Form from 'olive/components/form'
 import Url from 'olive/components/url'
@@ -42,6 +42,7 @@ import { GroupingFactory } from "./components/grouping";
 import { ServiceContainer } from "./di/serviceContainer";
 import Services from "./di/services";
 import { ServiceDescription } from "./di/serviceDescription";
+import CombinedUtilities from "./mvc/combinedUtilities";
 
 export default class OlivePage {
 
@@ -75,7 +76,7 @@ export default class OlivePage {
 
         // TODO: Find a cleaner way.
         this.fixAlertIssues();
-        this.getService<FormAction>(Services.FormAction).onViewChanged.handle(x => this.onViewChanged(x.container, x.trigger, x.isNewPage));
+        this.getService<CombinedUtilities>(Services.FormAction).onViewChanged_fa.handle(x => this.onViewChanged(x.container, x.trigger, x.isNewPage));
         CrossDomainEvent.handle('refresh-page', x => this.refresh());
     }
 
@@ -100,29 +101,29 @@ export default class OlivePage {
             out.value.withDependencies(Services.Url);
         }
 
-        if (services.tryAddSingleton(Services.Sorting, (url: Url, formAction: FormAction) => new Sorting(url, formAction), out)) {
-            out.value.withDependencies(Services.Url, Services.FormAction);
-        }
+        // if (services.tryAddSingleton(Services.Sorting, (url: Url, formAction: FormAction) => new Sorting(url, formAction), out)) {
+        //     out.value.withDependencies(Services.Url, Services.FormAction);
+        // }
 
-        if (services.tryAddSingleton(Services.Paging, (url: Url, formAction: FormAction) => new Paging(url, formAction), out)) {
-            out.value.withDependencies(Services.Url, Services.FormAction);
-        }
+        // if (services.tryAddSingleton(Services.Paging, (url: Url, formAction: FormAction) => new Paging(url, formAction), out)) {
+        //     out.value.withDependencies(Services.Url, Services.FormAction);
+        // }
 
-        if (services.tryAddSingleton(Services.FileUploadFactory, (url: Url, formAction: FormAction) => new FileUploadFactory(url, formAction), out)) {
-            out.value.withDependencies(Services.Url, Services.FormAction);
-        }
+        // if (services.tryAddSingleton(Services.FileUploadFactory, (url: Url, formAction: FormAction) => new FileUploadFactory(url, formAction), out)) {
+        //     out.value.withDependencies(Services.Url, Services.FormAction);
+        // }
 
-        if (services.tryAddSingleton(Services.GroupingFactory, (url: Url, ajaxRedirect: AjaxRedirect) => new GroupingFactory(url, ajaxRedirect), out)) {
-            out.value.withDependencies(Services.Url, Services.AjaxRedirect);
-        }
+        // if (services.tryAddSingleton(Services.GroupingFactory, (url: Url, ajaxRedirect: AjaxRedirect) => new GroupingFactory(url, ajaxRedirect), out)) {
+        //     out.value.withDependencies(Services.Url, Services.AjaxRedirect);
+        // }
 
-        if (services.tryAddSingleton(Services.ModalHelper, (url: Url, ajaxRedirect: AjaxRedirect) => new ModalHelper(url, ajaxRedirect), out)) {
-            out.value.withDependencies(Services.Url, Services.AjaxRedirect);
-        }
+        // if (services.tryAddSingleton(Services.ModalHelper, (url: Url, ajaxRedirect: AjaxRedirect) => new ModalHelper(url, ajaxRedirect), out)) {
+        //     out.value.withDependencies(Services.Url, Services.AjaxRedirect);
+        // }
 
-        if (services.tryAddSingleton(Services.AutoCompleteFactory, (url: Url, form: Form, formAction: FormAction) => new AutoCompleteFactory(url, form, formAction), out)) {
-            out.value.withDependencies(Services.Url, Services.Form, Services.FormAction);
-        }
+        // if (services.tryAddSingleton(Services.AutoCompleteFactory, (url: Url, form: Form, formAction: FormAction) => new AutoCompleteFactory(url, form, formAction), out)) {
+        //     out.value.withDependencies(Services.Url, Services.Form, Services.FormAction);
+        // }
 
         if (services.tryAddSingleton(Services.SliderFactory, (form: Form) => new SliderFactory(form), out)) {
             out.value.withDependencies(Services.Form);
@@ -140,15 +141,15 @@ export default class OlivePage {
             out.value.withDependencies(Services.ModalHelper);
         }
 
-        if (services.tryAddSingleton(Services.AjaxRedirect, (url: Url, formAction: FormAction, waiting: Waiting, modalHelper: ModalHelper) =>
-            new AjaxRedirect(url, formAction, waiting, modalHelper), out)) {
-            out.value.withDependencies(Services.Url, Services.FormAction, Services.Waiting, Services.ModalHelper);
-        }
+        // if (services.tryAddSingleton(Services.AjaxRedirect, (url: Url, formAction: FormAction, waiting: Waiting, modalHelper: ModalHelper) =>
+        //     new AjaxRedirect(url, formAction, waiting, modalHelper), out)) {
+        //     out.value.withDependencies(Services.Url, Services.FormAction, Services.Waiting, Services.ModalHelper);
+        // }
 
-        if (services.tryAddSingleton(Services.Form, (url: Url, validate: Validate, waiting: Waiting, ajaxRedirect: AjaxRedirect) =>
-            new Form(url, validate, waiting, ajaxRedirect), out)) {
-            out.value.withDependencies(Services.Url, Services.Validate, Services.Waiting, Services.AjaxRedirect);
-        }
+        // if (services.tryAddSingleton(Services.Form, (url: Url, validate: Validate, waiting: Waiting, ajaxRedirect: AjaxRedirect) =>
+        //     new Form(url, validate, waiting, ajaxRedirect), out)) {
+        //     out.value.withDependencies(Services.Url, Services.Validate, Services.Waiting, Services.AjaxRedirect);
+        // }
 
         if (services.tryAddSingleton(Services.Validate, (alert: Alert) => new Validate(alert), out)) {
             out.value.withDependencies(Services.Alert);
@@ -158,43 +159,43 @@ export default class OlivePage {
             out.value.withDependencies(Services.Validate);
         }
 
-        if (services.tryAddSingleton(Services.StandardAction, (alert: Alert,
-            form: Form,
-            formAction: FormAction,
-            waiting: Waiting,
-            ajaxRedirect: AjaxRedirect,
-            select: Select,
-            modalHelper: ModalHelper) =>
-            new StandardAction(alert, form, formAction, waiting, ajaxRedirect, select, modalHelper), out)
-        ) {
-            out.value.withDependencies(
-                Services.Alert,
-                Services.Form,
-                Services.FormAction,
-                Services.Waiting,
-                Services.AjaxRedirect,
-                Services.Select,
-                Services.ModalHelper);
-        }
+        // if (services.tryAddSingleton(Services.StandardAction, (alert: Alert,
+        //     form: Form,
+        //     formAction: FormAction,
+        //     waiting: Waiting,
+        //     ajaxRedirect: AjaxRedirect,
+        //     select: Select,
+        //     modalHelper: ModalHelper) =>
+        //     new StandardAction(alert, form, formAction, waiting, ajaxRedirect, select, modalHelper), out)
+        // ) {
+        //     out.value.withDependencies(
+        //         Services.Alert,
+        //         Services.Form,
+        //         Services.FormAction,
+        //         Services.Waiting,
+        //         Services.AjaxRedirect,
+        //         Services.Select,
+        //         Services.ModalHelper);
+        // }
 
-        if (services.tryAddSingleton(Services.FormAction, (url: Url,
-            validate: Validate,
-            masterDetail: MasterDetail,
-            standardAction: StandardAction,
-            form: Form,
-            waiting: Waiting,
-            modalHelper: ModalHelper) =>
-            new FormAction(url, validate, masterDetail, standardAction, form, waiting, modalHelper), out)
-        ) {
-            out.value.withDependencies(
-                Services.Url,
-                Services.Validate,
-                Services.MasterDetail,
-                Services.StandardAction,
-                Services.Form,
-                Services.Waiting,
-                Services.ModalHelper);
-        }
+        // if (services.tryAddSingleton(Services.FormAction, (url: Url,
+        //     validate: Validate,
+        //     masterDetail: MasterDetail,
+        //     standardAction: StandardAction,
+        //     form: Form,
+        //     waiting: Waiting,
+        //     modalHelper: ModalHelper) =>
+        //     new FormAction(url, validate, masterDetail, standardAction, form, waiting, modalHelper), out)
+        // ) {
+        //     out.value.withDependencies(
+        //         Services.Url,
+        //         Services.Validate,
+        //         Services.MasterDetail,
+        //         Services.StandardAction,
+        //         Services.Form,
+        //         Services.Waiting,
+        //         Services.ModalHelper);
+        // }
     }
 
     private fixAlertIssues() {
@@ -209,14 +210,14 @@ export default class OlivePage {
     protected onPreInit(action) { this._preInitializeActions.push(action) }
 
     protected onViewChanged(container: JQuery = null, trigger: any = null, newPage: boolean = false, firstTime: boolean = false) {
-        const standardAction = this.getService<StandardAction>(Services.StandardAction);
-        standardAction.runStartup(container, trigger, "PreInit");
+        const standardAction = this.getService<CombinedUtilities>(Services.StandardAction);
+        standardAction.runStartup_sa(container, trigger, "PreInit");
         try {
             this.initialize();
         } catch (error) {
             alert("initialization failed: " + error);
         }
-        standardAction.runStartup(container, trigger, "Init");
+        standardAction.runStartup_sa(container, trigger, "Init");
 
         if (newPage) {
             $('[autofocus]:not([data-autofocus=disabled]):first').focus();
@@ -250,7 +251,7 @@ export default class OlivePage {
         this.getService<Select>(Services.Select).enableEnhance($("select:not([data-control='collapsible-checkboxes'])"));
         form.enableDefaultButtonKeyPress($("form input, form select"));
         UserHelp.enable($("[data-user-help]"));
-        this.getService<StandardAction>(Services.StandardAction).enableLinkModal($("[target='$modal'][href]"));
+        this.getService<CombinedUtilities>(Services.StandardAction).enableLinkModal_sa($("[target='$modal'][href]"));
         this.getService<GroupingFactory>(Services.GroupingFactory).enable($(".form-group #GroupBy"));
 
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust",
@@ -278,17 +279,17 @@ export default class OlivePage {
         this.customizeValidationTooltip();
 
         // =================== Request lifecycle ====================
-        const ajaxRedirect = this.getService<AjaxRedirect>(Services.AjaxRedirect);
-        ajaxRedirect.enableBack($(window));
-        ajaxRedirect.enableRedirect($("a[data-redirect=ajax]"));
+        const ajaxRedirect = this.getService<CombinedUtilities>(Services.AjaxRedirect);
+        ajaxRedirect.enableBack_ar($(window));
+        ajaxRedirect.enableRedirect_ar($("a[data-redirect=ajax]"));
         form.enablesubmitCleanGet($('form[method=get]'));
 
-        const formAction = this.getService<FormAction>(Services.FormAction);
-        formAction.enableInvokeWithAjax($("[formaction]").not("[formmethod=post]"), "click.formaction", "formaction");
-        formAction.enableinvokeWithPost($("[formaction][formmethod=post]"));
-        formAction.enableInvokeWithAjax($("[data-change-action]:not([autocomplete-source]):not([data-control=collapsible-checkboxes])"), "change.data-action", "data-change-action");
-        formAction.enableInvokeWithAjax($("[data-change-action][data-control=collapsible-checkboxes]"), "hidden.bs.select", "data-change-action");
-        formAction.enableInvokeWithAjax($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar],[data-change-action][data-control=time-picker]"), "dp.change.data-action", "data-change-action");
+        const formAction = this.getService<CombinedUtilities>(Services.FormAction);
+        formAction.enableInvokeWithAjax_fa($("[formaction]").not("[formmethod=post]"), "click.formaction", "formaction");
+        formAction.enableinvokeWithPost_fa($("[formaction][formmethod=post]"));
+        formAction.enableInvokeWithAjax_fa($("[data-change-action]:not([autocomplete-source]):not([data-control=collapsible-checkboxes])"), "change.data-action", "data-change-action");
+        formAction.enableInvokeWithAjax_fa($("[data-change-action][data-control=collapsible-checkboxes]"), "hidden.bs.select", "data-change-action");
+        formAction.enableInvokeWithAjax_fa($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar],[data-change-action][data-control=time-picker]"), "dp.change.data-action", "data-change-action");
 
         this.getService<MasterDetail>(Services.MasterDetail).updateSubFormStates();
         this.modalHelper.adjustHeight();
@@ -315,7 +316,7 @@ export default class OlivePage {
         let returnUrl = url.getQuery("ReturnUrl");
 
         if (returnUrl && target && $(target).is("[data-redirect=ajax]"))
-            this.getService<AjaxRedirect>(Services.AjaxRedirect).go(returnUrl, $(target), false, false, true);
+            this.getService<CombinedUtilities>(Services.AjaxRedirect).go_ar(returnUrl, $(target), false, false, true);
         else url.goBack();
 
         return false;
@@ -327,7 +328,7 @@ export default class OlivePage {
 
     protected refresh(keepScroll = false) {
         if ($("main").length == 1 || $("main").length === 2) //if there is an ajax modal available, then we have 2 main elements.
-            this.getService<AjaxRedirect>(Services.AjaxRedirect).go(location.href, null, false /*isBack*/, keepScroll, false);
+            this.getService<CombinedUtilities>(Services.AjaxRedirect).go_ar(location.href, null, false /*isBack*/, keepScroll, false);
         else location.reload();
 
         return false;
