@@ -35,7 +35,8 @@ export default class Modal {
         window["isModal"] = () => {
             try {
                 if (Modal.isAjaxModal) return true;
-                return window.self !== window.parent;
+                return $('myModal').length > 0;
+                //return window.self !== window.parent;
             } catch (e) {
                 return true;
             }
