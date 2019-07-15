@@ -6,6 +6,7 @@ import ResponseProcessor from "./mvc/responseProcessor";
 import AjaxRedirect from 'olive/mvc/ajaxRedirect'
 import StandardAction from 'olive/mvc/standardAction'
 import ServerInvoker from "./mvc/serverInvoker";
+import WindowEx from "./mvc/windowEx";
 
 import Form from 'olive/components/form'
 import Url from 'olive/components/url'
@@ -43,13 +44,12 @@ import { GroupingFactory } from "./components/grouping";
 import { ServiceContainer } from "./di/serviceContainer";
 import Services from "./di/services";
 import { ServiceDescription } from "./di/serviceDescription";
-import WindowEx from "./mvc/windowEx";
 
 export default class OlivePage {
 
     private services: ServiceContainer;
 
-    public modalHelper: ModalHelper;
+    public modal: ModalHelper;
     public waiting = Waiting;
 
     constructor() {
@@ -59,7 +59,7 @@ export default class OlivePage {
 
         SystemExtensions.initialize();
 
-        this.modalHelper = this.getService<ModalHelper>(Services.ModalHelper);
+        this.modal = this.getService<ModalHelper>(Services.ModalHelper);
 
         this.initializeServices();
 
@@ -83,7 +83,7 @@ export default class OlivePage {
     }
 
     protected initializeServices() {
-        this.modalHelper.initialize();
+        this.modal.initialize();
         this.getService<StandardAction>(Services.StandardAction).initialize();
         this.getService<Validate>(Services.Validate).initialize();
         this.getService<MasterDetail>(Services.MasterDetail).initialize();
@@ -250,7 +250,7 @@ export default class OlivePage {
             if (Config.REDIRECT_SCROLLS_UP) $(window).scrollTop(0);
         }
 
-        //if (firstTime) Modal.tryOpenFromUrl();
+        if (firstTime) this.modal.tryOpenFromUrl();
     }
 
     protected initialize() {
@@ -272,7 +272,7 @@ export default class OlivePage {
         sorting.setSortHeaderClass($("th[data-sort]"));
         const form = this.getService<Form>(Services.Form);
         form.enablecleanUpNumberField($("[data-val-number]"));
-        this.modalHelper.enableEnsureHeight($("[data-toggle=tab]"));
+        this.modal.enableEnsureHeight($("[data-toggle=tab]"));
         this.getService<MultiSelect>(Services.MultiSelect).enableEnhance($("select[data-control='collapsible-checkboxes']"));
         this.getService<Select>(Services.Select).enableEnhance($("select:not([data-control='collapsible-checkboxes'])"));
         form.enableDefaultButtonKeyPress($("form input, form select"));
@@ -317,7 +317,7 @@ export default class OlivePage {
         formAction.enableInvokeWithAjax($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar],[data-change-action][data-control=time-picker]"), "dp.change.data-action", "data-change-action");
 
         this.getService<MasterDetail>(Services.MasterDetail).updateSubFormStates();
-        this.modalHelper.adjustHeight();
+        this.modal.adjustHeight();
 
         this._initializeActions.forEach((action) => action());
 

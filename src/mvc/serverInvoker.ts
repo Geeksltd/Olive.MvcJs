@@ -96,7 +96,7 @@ export default class ServerInvoker implements IService {
         return false;
     }
 
-    public onAjaxResponseError(jqXHR: JQueryXHR, status: string, error: string) {
+    public onAjaxResponseError = (jqXHR: JQueryXHR, status: string, error: string) => {
         this.waiting.hide();
 
         let text = jqXHR.responseText;

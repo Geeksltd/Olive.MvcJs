@@ -3,7 +3,7 @@ import Waiting from 'olive/components/waiting';
 import { ServiceContainer } from "./di/serviceContainer";
 export default class OlivePage {
     private services;
-    modalHelper: ModalHelper;
+    modal: ModalHelper;
     waiting: typeof Waiting;
     constructor();
     protected initializeServices(): void;
