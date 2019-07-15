@@ -15,6 +15,7 @@ const Services = {
     Validate: "validate",
     Waiting: "waiting",
     AjaxRedirect: "ajaxRedirect",
+    WindowEx: "windowEx",
     ResponseProcessor: "responseProcessor",
     ServerInvoker: "serverInvoker",
     StandardAction: "standardAction",

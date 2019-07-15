@@ -43,6 +43,7 @@ import { GroupingFactory } from "./components/grouping";
 import { ServiceContainer } from "./di/serviceContainer";
 import Services from "./di/services";
 import { ServiceDescription } from "./di/serviceDescription";
+import WindowEx from "./mvc/windowEx";
 
 export default class OlivePage {
 
@@ -93,6 +94,8 @@ export default class OlivePage {
 
         services.tryAddSingleton(Services.Select, () => new Select(), out);
 
+        services.tryAddSingleton(Services.ResponseProcessor, () => new ResponseProcessor(), out)
+
         if (services.tryAddSingleton(Services.Waiting, (url: Url) => new Waiting(url), out)) {
             out.value.withDependencies(Services.Url);
         }
@@ -101,32 +104,40 @@ export default class OlivePage {
             out.value.withDependencies(Services.Url);
         }
 
-        // if (services.tryAddSingleton(Services.Sorting, (url: Url, formAction: FormAction) => new Sorting(url, formAction), out)) {
-        //     out.value.withDependencies(Services.Url, Services.FormAction);
-        // }
+        if (services.tryAddSingleton(Services.Sorting, (url: Url, serverInvoker: ServerInvoker) => new Sorting(url, serverInvoker), out)) {
+            out.value.withDependencies(Services.Url, Services.ServerInvoker);
+        }
 
-        // if (services.tryAddSingleton(Services.Paging, (url: Url, formAction: FormAction) => new Paging(url, formAction), out)) {
-        //     out.value.withDependencies(Services.Url, Services.FormAction);
-        // }
+        if (services.tryAddSingleton(Services.Paging, (url: Url, serverInvoker: ServerInvoker) => new Paging(url, serverInvoker), out)) {
+            out.value.withDependencies(Services.Url, Services.ServerInvoker);
+        }
 
-        // if (services.tryAddSingleton(Services.FileUploadFactory, (url: Url, formAction: FormAction) => new FileUploadFactory(url, formAction), out)) {
-        //     out.value.withDependencies(Services.Url, Services.FormAction);
-        // }
+        if (services.tryAddSingleton(Services.FileUploadFactory, (url: Url, serverInvoker: ServerInvoker) => new FileUploadFactory(url, serverInvoker), out)) {
+            out.value.withDependencies(Services.Url, Services.ServerInvoker);
+        }
 
-        // if (services.tryAddSingleton(Services.GroupingFactory, (url: Url, ajaxRedirect: AjaxRedirect) => new GroupingFactory(url, ajaxRedirect), out)) {
-        //     out.value.withDependencies(Services.Url, Services.AjaxRedirect);
-        // }
+        if (services.tryAddSingleton(Services.GroupingFactory, (url: Url, ajaxRedirect: AjaxRedirect) => new GroupingFactory(url, ajaxRedirect), out)) {
+            out.value.withDependencies(Services.Url, Services.AjaxRedirect);
+        }
 
-        // if (services.tryAddSingleton(Services.ModalHelper, (url: Url, ajaxRedirect: AjaxRedirect) => new ModalHelper(url, ajaxRedirect), out)) {
-        //     out.value.withDependencies(Services.Url, Services.AjaxRedirect);
-        // }
+        if (services.tryAddSingleton(Services.ModalHelper, (url: Url, ajaxRedirect: AjaxRedirect) => new ModalHelper(url, ajaxRedirect), out)) {
+            out.value.withDependencies(Services.Url, Services.AjaxRedirect);
+        }
 
-        // if (services.tryAddSingleton(Services.AutoCompleteFactory, (url: Url, form: Form, formAction: FormAction) => new AutoCompleteFactory(url, form, formAction), out)) {
-        //     out.value.withDependencies(Services.Url, Services.Form, Services.FormAction);
-        // }
+        if (services.tryAddSingleton(Services.WindowEx, (modalHelper: ModalHelper, ajaxRedirect: AjaxRedirect) => new WindowEx(modalHelper, ajaxRedirect), out)) {
+            out.value.withDependencies(Services.ModalHelper, Services.AjaxRedirect);
+        }
+
+        if (services.tryAddSingleton(Services.AutoCompleteFactory, (url: Url, form: Form, serverInvoker: ServerInvoker) => new AutoCompleteFactory(url, form, serverInvoker), out)) {
+            out.value.withDependencies(Services.Url, Services.Form, Services.ServerInvoker);
+        }
 
         if (services.tryAddSingleton(Services.SliderFactory, (form: Form) => new SliderFactory(form), out)) {
             out.value.withDependencies(Services.Form);
+        }
+
+        if (services.tryAddSingleton(Services.HtmlEditorFactory, (modalHelper: ModalHelper) => new HtmlEditorFactory(modalHelper), out)) {
+            out.value.withDependencies(Services.ModalHelper);
         }
 
         if (services.tryAddSingleton(Services.DateTimePickerFactory, (modalHelper: ModalHelper) => new DateTimePickerFactory(modalHelper), out)) {
@@ -141,15 +152,18 @@ export default class OlivePage {
             out.value.withDependencies(Services.ModalHelper);
         }
 
-        // if (services.tryAddSingleton(Services.AjaxRedirect, (url: Url, formAction: FormAction, waiting: Waiting, modalHelper: ModalHelper) =>
-        //     new AjaxRedirect(url, formAction, waiting, modalHelper), out)) {
-        //     out.value.withDependencies(Services.Url, Services.FormAction, Services.Waiting, Services.ModalHelper);
-        // }
+        if (services.tryAddSingleton(Services.AjaxRedirect, (url: Url,
+            responseProcessor: ResponseProcessor,
+            waiting: Waiting) =>
+            new AjaxRedirect(url, responseProcessor, waiting), out)
+        ) {
+            out.value.withDependencies(Services.Url, Services.ResponseProcessor, Services.Waiting);
+        }
 
-        // if (services.tryAddSingleton(Services.Form, (url: Url, validate: Validate, waiting: Waiting, ajaxRedirect: AjaxRedirect) =>
-        //     new Form(url, validate, waiting, ajaxRedirect), out)) {
-        //     out.value.withDependencies(Services.Url, Services.Validate, Services.Waiting, Services.AjaxRedirect);
-        // }
+        if (services.tryAddSingleton(Services.Form, (url: Url, validate: Validate, waiting: Waiting, ajaxRedirect: AjaxRedirect) =>
+            new Form(url, validate, waiting, ajaxRedirect), out)) {
+            out.value.withDependencies(Services.Url, Services.Validate, Services.Waiting, Services.AjaxRedirect);
+        }
 
         if (services.tryAddSingleton(Services.Validate, (alert: Alert) => new Validate(alert), out)) {
             out.value.withDependencies(Services.Alert);
@@ -159,43 +173,39 @@ export default class OlivePage {
             out.value.withDependencies(Services.Validate);
         }
 
-        // if (services.tryAddSingleton(Services.StandardAction, (alert: Alert,
-        //     form: Form,
-        //     formAction: FormAction,
-        //     waiting: Waiting,
-        //     ajaxRedirect: AjaxRedirect,
-        //     select: Select,
-        //     modalHelper: ModalHelper) =>
-        //     new StandardAction(alert, form, formAction, waiting, ajaxRedirect, select, modalHelper), out)
-        // ) {
-        //     out.value.withDependencies(
-        //         Services.Alert,
-        //         Services.Form,
-        //         Services.FormAction,
-        //         Services.Waiting,
-        //         Services.AjaxRedirect,
-        //         Services.Select,
-        //         Services.ModalHelper);
-        // }
+        if (services.tryAddSingleton(Services.StandardAction, (alert: Alert,
+            form: Form,
+            waiting: Waiting,
+            ajaxRedirect: AjaxRedirect,
+            responseProcessor: ResponseProcessor,
+            select: Select,
+            modalHelper: ModalHelper) =>
+            new StandardAction(alert, form, waiting, ajaxRedirect, responseProcessor, select, modalHelper), out)
+        ) {
+            out.value.withDependencies(
+                Services.Alert,
+                Services.Form,
+                Services.Waiting,
+                Services.AjaxRedirect,
+                Services.ResponseProcessor,
+                Services.Select,
+                Services.ModalHelper);
+        }
 
-        // if (services.tryAddSingleton(Services.FormAction, (url: Url,
-        //     validate: Validate,
-        //     masterDetail: MasterDetail,
-        //     standardAction: StandardAction,
-        //     form: Form,
-        //     waiting: Waiting,
-        //     modalHelper: ModalHelper) =>
-        //     new FormAction(url, validate, masterDetail, standardAction, form, waiting, modalHelper), out)
-        // ) {
-        //     out.value.withDependencies(
-        //         Services.Url,
-        //         Services.Validate,
-        //         Services.MasterDetail,
-        //         Services.StandardAction,
-        //         Services.Form,
-        //         Services.Waiting,
-        //         Services.ModalHelper);
-        // }
+        if (services.tryAddSingleton(Services.ServerInvoker, (url: Url,
+            validate: Validate,
+            waiting: Waiting,
+            form: Form,
+            responseProcessor: ResponseProcessor) =>
+            new ServerInvoker(url, validate, waiting, form, responseProcessor), out)
+        ) {
+            out.value.withDependencies(
+                Services.Url,
+                Services.Validate,
+                Services.Waiting,
+                Services.Form,
+                Services.ResponseProcessor);
+        }
     }
 
     private fixAlertIssues() {
@@ -279,9 +289,8 @@ export default class OlivePage {
         this.customizeValidationTooltip();
 
         // =================== Request lifecycle ====================
-        const ajaxRedirect = this.getService<AjaxRedirect>(Services.AjaxRedirect);
-        ajaxRedirect.enableBack($(window));
-        ajaxRedirect.enableRedirect($("a[data-redirect=ajax]"));
+        this.getService<WindowEx>(Services.WindowEx).enableBack($(window));
+        this.getService<AjaxRedirect>(Services.AjaxRedirect).enableRedirect($("a[data-redirect=ajax]"));
         form.enablesubmitCleanGet($('form[method=get]'));
 
         const formAction = this.getService<ServerInvoker>(Services.ServerInvoker);

@@ -194,7 +194,14 @@ export default class Modal {
     private modalOptions: any = {};
     public scrollPosition: number;
 
-    constructor(private urlService: Url, private ajaxRedirect: AjaxRedirect, private helper: ModalHelper, event?: JQueryEventObject, targeturl?: string, opt?: any) {
+    constructor(
+        private urlService: Url,
+        private ajaxRedirect: AjaxRedirect,
+        private helper: ModalHelper,
+        event?: JQueryEventObject,
+        targeturl?: string,
+        opt?: any) {
+
         let target = event ? $(event.currentTarget) : null;
         this.opener = target;
         this.url = targeturl ? targeturl : target.attr("href");
@@ -214,7 +221,15 @@ export default class Modal {
         this.helper.currentModal = this;
         this.scrollPosition = $(window).scrollTop();
 
-        this.ajaxRedirect.go(this.url, $(this.helper.current).find("main"), true, this.shouldKeepScroll(), changeUrl);
+        this.ajaxRedirect.go(this.url,
+            $(this.helper.current).find("main"),
+            true,
+            this.shouldKeepScroll(),
+            changeUrl,
+            () => {
+                if (changeUrl && window.isModal())
+                    this.helper.changeUrl(this.url);
+            });
 
         $("body").append(this.helper.current);
 

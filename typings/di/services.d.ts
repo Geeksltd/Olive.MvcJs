@@ -15,6 +15,7 @@ declare const Services: {
     Validate: string;
     Waiting: string;
     AjaxRedirect: string;
+    WindowEx: string;
     ResponseProcessor: string;
     ServerInvoker: string;
     StandardAction: string;

@@ -6,7 +6,7 @@ import ServerInvoker from './serverInvoker';
 
 export default class AjaxRedirect implements IService {
     private requestCounter = 0;
-    private ajaxChangedUrl = 0;
+    public ajaxChangedUrl = 0;
     private isAjaxRedirecting = false;
     // public onRedirected: ((title: string, url: string) => void) = this.defaultOnRedirected;
     // public onRedirectionFailed: ((url: string, response: JQueryXHR) => void) = this.defaultOnRedirectionFailed;
@@ -14,14 +14,8 @@ export default class AjaxRedirect implements IService {
     constructor(
         private url: Url,
         private responseProcessor: ResponseProcessor,
-        private serverInvoker: ServerInvoker,
-        private waiting: Waiting,
-        private modalHelper: ModalHelper
+        private waiting: Waiting
     ) { }
-
-    public enableBack(selector: JQuery) {
-        selector.off("popstate.ajax-redirect").on("popstate.ajax-redirect", e => this.back(e));
-    }
 
     public enableRedirect(selector: JQuery) {
         selector.off("click.ajax-redirect").on("click.ajax-redirect", e => this.redirect(e));
@@ -44,18 +38,12 @@ export default class AjaxRedirect implements IService {
         return false;
     }
 
-    private back(event: JQueryEventObject) {
-        if (this.modalHelper.isOrGoingToBeModal())
-            window.location.reload();
-        else {
-            if (this.ajaxChangedUrl == 0) return;
-            this.ajaxChangedUrl--;
-            this.go(location.href, null, true, false, false);
-        }
-    }
-
-    public go(url: string, trigger: JQuery = null, isBack: boolean = false, keepScroll: boolean = false,
-        addToHistory = true): boolean {
+    public go(url: string,
+        trigger: JQuery = null,
+        isBack: boolean = false,
+        keepScroll: boolean = false,
+        addToHistory = true,
+        success?: () => void): boolean {
 
         if (!trigger) trigger = $(window);
 
@@ -67,7 +55,7 @@ export default class AjaxRedirect implements IService {
         }
 
         this.isAjaxRedirecting = true;
-        this.serverInvoker.isAwaitingAjaxResponse = true;
+        // this.serverInvoker.isAwaitingAjaxResponse = true;
 
         const requestCounter = ++this.requestCounter;
         if (window.stop) window.stop();
@@ -103,11 +91,11 @@ export default class AjaxRedirect implements IService {
                     }
                 }
 
-                if (addToHistory) {
-                    if (window.isModal() && addToHistory) this.modalHelper.changeUrl(url);
+                if (success) {
+                    success();
                 }
 
-                this.serverInvoker.isAwaitingAjaxResponse = false;
+                // this.serverInvoker.isAwaitingAjaxResponse = false;
                 this.isAjaxRedirecting = false;
 
                 this.responseProcessor.processAjaxResponse(response, null, trigger, isBack ? "back" : null);
