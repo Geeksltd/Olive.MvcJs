@@ -49,5 +49,6 @@ declare const Services: {
     TimeControl: string;
     TimeControlFactory: string;
     UserHelp: string;
+    ServiceLocator: string;
 };
 export default Services;

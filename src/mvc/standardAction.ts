@@ -5,7 +5,7 @@ import { ModalHelper } from '../components/modal'
 import AjaxRedirect from 'olive/mvc/ajaxRedirect'
 import CrossDomainEvent from 'olive/components/crossDomainEvent'
 import Form from 'olive/components/form'
-import ResponseProcessor from './responseProcessor';
+import ResponseProcessor from 'olive/mvc/responseProcessor';
 
 export default class StandardAction implements IService {
 
@@ -15,7 +15,8 @@ export default class StandardAction implements IService {
         private ajaxRedirect: AjaxRedirect,
         private responseProcessor: ResponseProcessor,
         private select: Select,
-        private modalHelper: ModalHelper) { }
+        private modalHelper: ModalHelper,
+        private serviceLocator: IServiceLocator) { }
 
     public initialize() {
         this.responseProcessor.nothingFoundToProcess.handle((data) => this.runAll(data.response, data.trigger));
@@ -58,6 +59,7 @@ export default class StandardAction implements IService {
     private run(action: any, trigger: any): boolean {
         if (action.Notify || action.Notify == "") this.notify_sa(action, trigger);
         else if (action.Script) eval(action.Script);
+        else if (action.ServiceKey) this.loadService(action.ServiceKey, action.Function, action.Arguments);
         else if (action.BrowserAction == "Back") window.history.back();
         else if (action.BrowserAction == "CloseModal") { if (window.page.modal.closeMe() === false) return false; }
         else if (action.BrowserAction == "CloseModalRebindParent") {
@@ -111,5 +113,12 @@ export default class StandardAction implements IService {
     private openModal_sa(event, url?, options?): any {
         this.modalHelper.close();
         this.modalHelper.open(event, url, options);
+    }
+
+    private loadService(key: string, func: string, args: any) {
+        //this.serviceLocator.getService<any>(key)[func].Apply({}, args);
+        const obj = this.serviceLocator.getService<any>(key)
+        const method = obj[func];
+        method.apply(obj, args);
     }
 }

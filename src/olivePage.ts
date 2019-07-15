@@ -45,7 +45,7 @@ import { ServiceContainer } from "./di/serviceContainer";
 import Services from "./di/services";
 import { ServiceDescription } from "./di/serviceDescription";
 
-export default class OlivePage {
+export default class OlivePage implements IServiceLocator {
 
     private services: ServiceContainer;
 
@@ -91,6 +91,8 @@ export default class OlivePage {
 
     protected configureServices(services: ServiceContainer) {
         const out: IOutParam<ServiceDescription> = {};
+
+        services.tryAddSingleton(Services.ServiceLocator, () => this, out);
 
         services.tryAddSingleton(Services.Alert, () => new Alert(), out);
 
@@ -195,8 +197,9 @@ export default class OlivePage {
             ajaxRedirect: AjaxRedirect,
             responseProcessor: ResponseProcessor,
             select: Select,
-            modalHelper: ModalHelper) =>
-            new StandardAction(alert, form, waiting, ajaxRedirect, responseProcessor, select, modalHelper), out)
+            modalHelper: ModalHelper,
+            serviceLocator: IServiceLocator) =>
+            new StandardAction(alert, form, waiting, ajaxRedirect, responseProcessor, select, modalHelper, serviceLocator), out)
         ) {
             out.value.withDependencies(
                 Services.Alert,
@@ -205,7 +208,8 @@ export default class OlivePage {
                 Services.AjaxRedirect,
                 Services.ResponseProcessor,
                 Services.Select,
-                Services.ModalHelper);
+                Services.ModalHelper,
+                Services.ServiceLocator);
         }
 
         if (services.tryAddSingleton(Services.ServerInvoker, (url: Url,
@@ -359,7 +363,7 @@ export default class OlivePage {
         return false;
     }
 
-    private getService<T extends IService>(key: string) {
+    public getService<T extends IService>(key: string) {
         return this.services.getService<T>(key);
     }
 }

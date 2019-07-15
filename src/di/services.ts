@@ -49,6 +49,7 @@ const Services = {
     TimeControl: "timeControl",
     TimeControlFactory: "timeControlFactory",
     UserHelp: "userHelp",
+    ServiceLocator: "serviceLocator",
 };
 
 export default Services;

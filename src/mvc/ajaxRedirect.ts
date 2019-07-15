@@ -1,8 +1,6 @@
 import Waiting from 'olive/components/waiting'
 import Url from 'olive/components/url'
-import { ModalHelper } from 'olive/components/modal';
-import ResponseProcessor from './responseProcessor';
-import ServerInvoker from './serverInvoker';
+import ResponseProcessor from 'olive/mvc/responseProcessor';
 
 export default class AjaxRedirect implements IService {
     private requestCounter = 0;

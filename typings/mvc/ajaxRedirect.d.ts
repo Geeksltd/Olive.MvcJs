@@ -1,6 +1,6 @@
 import Waiting from 'olive/components/waiting';
 import Url from 'olive/components/url';
-import ResponseProcessor from './responseProcessor';
+import ResponseProcessor from 'olive/mvc/responseProcessor';
 export default class AjaxRedirect implements IService {
     private url;
     private responseProcessor;

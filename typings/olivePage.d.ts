@@ -1,7 +1,7 @@
 import { ModalHelper } from 'olive/components/modal';
 import Waiting from 'olive/components/waiting';
 import { ServiceContainer } from "./di/serviceContainer";
-export default class OlivePage {
+export default class OlivePage implements IServiceLocator {
     private services;
     modal: ModalHelper;
     waiting: typeof Waiting;
@@ -20,5 +20,5 @@ export default class OlivePage {
     protected goBack(target: any): boolean;
     protected customizeValidationTooltip(): void;
     protected refresh(keepScroll?: boolean): boolean;
-    private getService;
+    getService<T extends IService>(key: string): T;
 }

@@ -12,7 +12,7 @@ export default class Form implements IService {
         private ajaxRedirect: AjaxRedirect
     ) { }
 
-    private currentRequestUrlProvider: (() => string) = () => window.location.pathAndQuery();
+    protected currentRequestUrlProvider: (() => string) = () => window.location.pathAndQuery();
 
     public enableDefaultButtonKeyPress(selector: JQuery) { selector.off("keypress.default-button").on("keypress.default-button", (e) => this.DefaultButtonKeyPress(e)); }
 

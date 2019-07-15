@@ -8,7 +8,7 @@ export default class Form implements IService {
     private waiting;
     private ajaxRedirect;
     constructor(url: Url, validate: Validate, waiting: Waiting, ajaxRedirect: AjaxRedirect);
-    private currentRequestUrlProvider;
+    protected currentRequestUrlProvider: (() => string);
     enableDefaultButtonKeyPress(selector: JQuery): void;
     enablecleanUpNumberField(selector: JQuery): void;
     enablesubmitCleanGet(selector: JQuery): void;
