@@ -60,7 +60,8 @@ export default class OlivePage {
         SystemExtensions.initialize();
 
         this.modalHelper = this.getService<ModalHelper>(Services.ModalHelper);
-        this.modalHelper.initialize();
+
+        this.initializeServices();
 
         //ASP.NET needs this config for Request.IsAjaxRequest()
         $.ajaxSetup({
@@ -79,6 +80,13 @@ export default class OlivePage {
         this.fixAlertIssues();
         this.getService<ResponseProcessor>(Services.ResponseProcessor).viewChanged.handle(x => this.onViewChanged(x.container, x.trigger, x.isNewPage));
         CrossDomainEvent.handle('refresh-page', x => this.refresh());
+    }
+
+    protected initializeServices() {
+        this.modalHelper.initialize();
+        this.getService<StandardAction>(Services.StandardAction).initialize();
+        this.getService<Validate>(Services.Validate).initialize();
+        this.getService<MasterDetail>(Services.MasterDetail).initialize();
     }
 
     protected configureServices(services: ServiceContainer) {
@@ -120,15 +128,19 @@ export default class OlivePage {
             out.value.withDependencies(Services.Url, Services.AjaxRedirect);
         }
 
-        if (services.tryAddSingleton(Services.ModalHelper, (url: Url, ajaxRedirect: AjaxRedirect) => new ModalHelper(url, ajaxRedirect), out)) {
-            out.value.withDependencies(Services.Url, Services.AjaxRedirect);
+        if (services.tryAddSingleton(Services.ModalHelper, (url: Url, ajaxRedirect: AjaxRedirect, responseProcessor: ResponseProcessor) =>
+            new ModalHelper(url, ajaxRedirect, responseProcessor), out)
+        ) {
+            out.value.withDependencies(Services.Url, Services.AjaxRedirect, Services.ResponseProcessor);
         }
 
         if (services.tryAddSingleton(Services.WindowEx, (modalHelper: ModalHelper, ajaxRedirect: AjaxRedirect) => new WindowEx(modalHelper, ajaxRedirect), out)) {
             out.value.withDependencies(Services.ModalHelper, Services.AjaxRedirect);
         }
 
-        if (services.tryAddSingleton(Services.AutoCompleteFactory, (url: Url, form: Form, serverInvoker: ServerInvoker) => new AutoCompleteFactory(url, form, serverInvoker), out)) {
+        if (services.tryAddSingleton(Services.AutoCompleteFactory, (url: Url, form: Form, serverInvoker: ServerInvoker) =>
+            new AutoCompleteFactory(url, form, serverInvoker), out)
+        ) {
             out.value.withDependencies(Services.Url, Services.Form, Services.ServerInvoker);
         }
 
@@ -165,12 +177,16 @@ export default class OlivePage {
             out.value.withDependencies(Services.Url, Services.Validate, Services.Waiting, Services.AjaxRedirect);
         }
 
-        if (services.tryAddSingleton(Services.Validate, (alert: Alert) => new Validate(alert), out)) {
-            out.value.withDependencies(Services.Alert);
+        if (services.tryAddSingleton(Services.Validate, (alert: Alert, responseProcessor: ResponseProcessor) =>
+            new Validate(alert, responseProcessor), out)
+        ) {
+            out.value.withDependencies(Services.Alert, Services.ResponseProcessor);
         }
 
-        if (services.tryAddSingleton(Services.MasterDetail, (validate: Validate) => new MasterDetail(validate), out)) {
-            out.value.withDependencies(Services.Validate);
+        if (services.tryAddSingleton(Services.MasterDetail, (validate: Validate, responseProcessor: ResponseProcessor) =>
+            new MasterDetail(validate, responseProcessor), out)
+        ) {
+            out.value.withDependencies(Services.Validate, Services.ResponseProcessor);
         }
 
         if (services.tryAddSingleton(Services.StandardAction, (alert: Alert,

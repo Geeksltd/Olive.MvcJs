@@ -38,7 +38,6 @@ export default class ResponseProcessor implements IService {
                 container = containerModule.find("[data-subform=" + subFormName + "]:first");
 
             container.append(asElement);
-            // this.validate.reloadRules(trigger.parents("form"));
             // this.masterDetail.updateSubFormStates();
             this.onSubformChanged(response, trigger);
             this.onViewChanged(asElement, trigger);
@@ -46,18 +45,15 @@ export default class ResponseProcessor implements IService {
         }
 
         // List of actions
-        // this.runAll_sa(response, trigger);
         this.onNothingFoundToProcess(response, trigger);
     }
 
     protected onNothingFoundToProcess(response: any, trigger: JQuery) {
         this.nothingFoundToProcess.raise({ response: response, trigger: trigger });
-        throw new Error("The event should be handled by StandardAction (RunAll).");
     }
 
     protected onSubformChanged(response: any, trigger: JQuery) {
         this.subformChanged.raise({ response: response, trigger: trigger });
-        throw new Error("The event should be handled by Validate and MasterDetail.");
     }
 
     protected onViewChanged(container: JQuery, trigger: JQuery, isNewPage: boolean = false) {
@@ -157,16 +153,9 @@ export default class ResponseProcessor implements IService {
         document.title = $("#page_meta_title").val();
 
         this.onProcessCompleted();
-        // //open modal if needed
-        // this.modalHelper.tryOpenFromUrl();
-        // //if (!window.isModal() && Url.getQuery("_modal") !== "") {
-        // //    let url: string = Url.getQuery("_modal");
-        // //    new Modal(null, url).open(false);
-        // //}
     }
 
     protected onProcessCompleted() {
         this.processCompleted.raise({});
-        throw new Error("The event should be handled by ModalHelper.");
     }
 }

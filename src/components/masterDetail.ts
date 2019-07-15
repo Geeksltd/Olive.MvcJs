@@ -1,8 +1,13 @@
 import Validate from "./validate";
+import ResponseProcessor from "olive/mvc/responseProcessor";
 
 export default class MasterDetail implements IService {
 
-    constructor(private validate: Validate) { }
+    constructor(private validate: Validate, private responseProcessor: ResponseProcessor) { }
+
+    public initialize() {
+        this.responseProcessor.subformChanged.handle((_) => this.updateSubFormStates());
+    }
 
     public enable(selector: JQuery) { selector.off("click.delete-subform").on("click.delete-subform", (e) => this.deleteSubForm(e)); }
 

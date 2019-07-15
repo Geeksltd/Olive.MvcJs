@@ -6,6 +6,7 @@ export default class OlivePage {
     modalHelper: ModalHelper;
     waiting: typeof Waiting;
     constructor();
+    protected initializeServices(): void;
     protected configureServices(services: ServiceContainer): void;
     private fixAlertIssues;
     protected _initializeActions: any[];

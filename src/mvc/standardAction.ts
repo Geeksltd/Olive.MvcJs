@@ -17,6 +17,10 @@ export default class StandardAction implements IService {
         private select: Select,
         private modalHelper: ModalHelper) { }
 
+    public initialize() {
+        this.responseProcessor.nothingFoundToProcess.handle((data) => this.runAll(data.response, data.trigger));
+    }
+
     public runStartup(container: JQuery = null, trigger: any = null, stage: string = "Init") {
         if (container == null) container = $(document);
         if (trigger == null) trigger = $(document);

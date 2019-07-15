@@ -25,7 +25,7 @@ export class ServiceContainer {
         if (!!service)
             return <T>service.getInstance();
         else
-            throw `No service registered for '${key}'.`;
+            throw new Error(`No service registered for '${key}'.`);
     }
 
     private try(key: string, serviceOut: IOutParam<ServiceDescription>, action: () => ServiceDescription) {
@@ -40,7 +40,7 @@ export class ServiceContainer {
 
     private add(key: string, singleton: boolean, factory: (...args: IService[]) => IService): ServiceDescription {
         if (this.services.some(s => s.key === key))
-            throw `A service with the same key (${key}) is already added`;
+            throw new Error(`A service with the same key (${key}) is already added`);
 
         var result = new ServiceDescription(key, singleton, this);
         result.setFactory(factory);

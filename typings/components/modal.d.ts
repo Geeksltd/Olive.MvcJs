@@ -1,13 +1,15 @@
 import Url from 'olive/components/url';
 import AjaxRedirect from 'olive/mvc/ajaxRedirect';
+import ResponseProcessor from 'olive/mvc/responseProcessor';
 export declare class ModalHelper implements IService {
     private url;
     private ajaxRedirect;
+    private responseProcessor;
     current: any;
     currentModal: Modal;
     isAjaxModal: boolean;
     private isClosingModal;
-    constructor(url: Url, ajaxRedirect: AjaxRedirect);
+    constructor(url: Url, ajaxRedirect: AjaxRedirect, responseProcessor: ResponseProcessor);
     enableLink(selector: JQuery): void;
     initialize(): void;
     private closeMe;

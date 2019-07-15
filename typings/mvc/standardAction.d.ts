@@ -14,6 +14,7 @@ export default class StandardAction implements IService {
     private select;
     private modalHelper;
     constructor(alert: Alert, form: Form, waiting: Waiting, ajaxRedirect: AjaxRedirect, responseProcessor: ResponseProcessor, select: Select, modalHelper: ModalHelper);
+    initialize(): void;
     runStartup(container?: JQuery, trigger?: any, stage?: string): void;
     runAll(actions: any, trigger?: any): void;
     private run;

@@ -1,6 +1,7 @@
 import Url from 'olive/components/url';
 import CrossDomainEvent from 'olive/components/crossDomainEvent';
 import AjaxRedirect from 'olive/mvc/ajaxRedirect';
+import ResponseProcessor from 'olive/mvc/responseProcessor';
 
 export class ModalHelper implements IService {
     public current: any = null;
@@ -8,7 +9,9 @@ export class ModalHelper implements IService {
     public isAjaxModal: boolean = false;
     private isClosingModal: boolean = false;
 
-    constructor(private url: Url, private ajaxRedirect: AjaxRedirect) { }
+    constructor(private url: Url,
+        private ajaxRedirect: AjaxRedirect,
+        private responseProcessor: ResponseProcessor) { }
 
     public enableLink(selector: JQuery) {
         selector.off("click.open-modal").on("click.open-modal", (e) => {
@@ -29,6 +32,8 @@ export class ModalHelper implements IService {
 
         CrossDomainEvent.handle('set-iframe-height', x => this.setIFrameHeight(x));
         CrossDomainEvent.handle('close-modal', x => this.close());
+
+        this.responseProcessor.processCompleted.handle(() => this.tryOpenFromUrl());
 
         window["isModal"] = () => {
             try {
