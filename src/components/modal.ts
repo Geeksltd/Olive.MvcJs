@@ -38,7 +38,8 @@ export class ModalHelper implements IService {
         window["isModal"] = () => {
             try {
                 if (this.isAjaxModal) return true;
-                return window.self !== window.parent;
+                return $('myModal').length > 0;
+                //return window.self !== window.parent;
             } catch (e) {
                 return true;
             }
