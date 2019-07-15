@@ -1,10 +1,11 @@
 ﻿
-export function enableValidateForTimePicker() {
+const enableValidateForTimePicker = () => {
     $.validator.addMethod("time", function (value, element, params) {
         return this.optional(element) || /^([01]\d|2[0-3]|[0-9])(:[0-5]\d){1,2}$/.test(value);
     }, 'Please enter a valid time, between 00:00 and 23:59');
     $.validator.unobtrusive.adapters.addBool("time");
 }
+export { enableValidateForTimePicker }
 
 export function screenOffset() {
     var documentOffset = this.first().offset();
@@ -52,8 +53,8 @@ export function bindFirst(name, fn) {
 //    return result;
 //}
 
-export function enableValidateForCheckboxList() {
-    $.validator.unobtrusive.adapters.add("selection-required", function (options) {
+const enableValidateForCheckboxList = () => {
+    $.validator.unobtrusive.adapters.add("selection-required", (options) => {
         if (options.element.tagName.toUpperCase() == "INPUT" && options.element.type.toUpperCase() == "CHECKBOX") {
             var $element = $(options.element);
             options.rules["required"] = true;
@@ -61,8 +62,9 @@ export function enableValidateForCheckboxList() {
         }
     });
 }
+export { enableValidateForCheckboxList }
 
-export function raiseEvent(event: string, owner: any, data?: any) {
+const raiseEvent = (event: string, owner: any, data?: any) => {
     let result = true;
 
     if (owner.event.hasOwnProperty(event)) {
@@ -73,6 +75,7 @@ export function raiseEvent(event: string, owner: any, data?: any) {
     }
     return result;
 }
+export { raiseEvent };
 
 export function getUniqueSelector() {
     if (this.length != 1) throw 'Requires one element.';

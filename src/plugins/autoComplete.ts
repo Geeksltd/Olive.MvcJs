@@ -97,7 +97,7 @@ export default class AutoComplete {
                         "Text": "",
                         "Value": ""
                     }],
-                    ajax: function (query) {
+                    ajax: (query) => {
                         return {
                             type: "POST",
                             url: url,

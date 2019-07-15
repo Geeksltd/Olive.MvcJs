@@ -2,6 +2,7 @@
     "rules": {
         "member-access": {
             "severity": "error"
-        }
+        },
+        "only-arrow-functions": true
     }
 }
