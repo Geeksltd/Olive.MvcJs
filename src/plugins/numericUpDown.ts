@@ -1,14 +1,10 @@
 
 export default class NumbericUpDown {
-    input: any;
-    
-     public static enable(selector:JQuery){selector.each((i,e)=> new NumbericUpDown($(e)).enable())}
-    
-    constructor(targetInput: any) {
-        this.input = targetInput;          
-    }
+    public static enable(selector: JQuery) { selector.each((i, e) => new NumbericUpDown($(e)).enable()) }
 
-    public enable() {
+    constructor(private input: JQuery) { }
+
+    private enable() {
         let min = this.input.attr("data-val-range-min");
         let max = this.input.attr("data-val-range-max");
 

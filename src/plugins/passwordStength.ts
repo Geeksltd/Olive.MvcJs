@@ -1,13 +1,9 @@
 ﻿export default class PasswordStength {
-   container: any;
-    
-    public static enable(selector:JQuery){selector.each((i,e)=> new PasswordStength($(e)));}
-    
-    constructor(targetContainer:any){
-        this.container=targetContainer;
-    }
+    public static enable(selector: JQuery) { selector.each((i, e) => new PasswordStength($(e)).enable()); }
 
-    enable() {
+    constructor(private container: JQuery) { }
+
+    private enable() {
         // for configuration options : https://github.com/ablanco/jquery.pwstrength.bootstrap/blob/master/OPTIONS.md
 
         if (this.container.find(".progress").length !== 0) return;

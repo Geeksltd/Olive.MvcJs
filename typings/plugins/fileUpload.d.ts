@@ -1,24 +1,33 @@
+import Url from "olive/components/url";
+import ServerInvoker from "olive/mvc/serverInvoker";
+export declare class FileUploadFactory implements IService {
+    private url;
+    private serverInvoker;
+    constructor(url: Url, serverInvoker: ServerInvoker);
+    enable(selector: JQuery): void;
+}
 export default class FileUpload {
-    input: JQuery;
-    container: JQuery;
-    idInput: JQuery;
-    deleteButton: JQuery;
-    progressBar: JQuery;
-    currentFileLink: JQuery;
-    existingFileNameInput: JQuery;
-    fileLabel: JQuery;
-    static enable(selector: JQuery): void;
-    constructor(targetInput: JQuery);
+    private input;
+    private url;
+    private serverInvoker;
+    private container;
+    private idInput;
+    private deleteButton;
+    private progressBar;
+    private currentFileLink;
+    private existingFileNameInput;
+    private fileLabel;
+    constructor(input: JQuery, url: Url, serverInvoker: ServerInvoker);
     enable(): void;
-    fixMasterDetailsInputName(): void;
-    hasExistingFile(): boolean;
-    showExistingFile(): void;
-    removeExistingFile(): void;
-    onDeleteButtonClicked(): void;
-    onDragDropped(e: any, data: any): void;
-    onProgressAll(e: any, data: any): void;
-    onUploadError(jqXHR: JQueryXHR, status: string, error: string): void;
-    onUploadSuccess(response: any): void;
-    onUploadCompleted(response: any): void;
-    onChange(e: any, data: any): void;
+    private fixMasterDetailsInputName;
+    private hasExistingFile;
+    private showExistingFile;
+    private removeExistingFile;
+    private onDeleteButtonClicked;
+    private onDragDropped;
+    private onProgressAll;
+    private onUploadError;
+    private onUploadSuccess;
+    private onUploadCompleted;
+    private onChange;
 }

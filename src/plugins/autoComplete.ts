@@ -1,42 +1,49 @@
 import Form from "olive/components/form"
 import Url from 'olive/components/url'
-import FormAction from 'olive/mvc/formAction'
+import ServerInvoker from "olive/mvc/serverInvoker";
+
+export class AutoCompleteFactory implements IService {
+
+    constructor(private url: Url,
+        private form: Form,
+        private serverInvoker: ServerInvoker) { }
+
+    public enable(selector: JQuery) {
+        selector.each((i, e) => new AutoComplete($(e), this.url, this.form, this.serverInvoker).enable());
+    }
+}
 
 export default class AutoComplete {
     private static customOptions: RunningCoder.Typeahead.Options;
 
-    input: JQuery;
-    awaitingAutocompleteResponses: number = 0;
-    valueField: JQuery;
+    private awaitingAutocompleteResponses: number = 0;
+    private valueField: JQuery;
 
     public static setOptions(options: RunningCoder.Typeahead.Options) {
         AutoComplete.customOptions = options;
     }
 
-    public static enable(selector: JQuery) {
-        selector.each((i, e) => new AutoComplete($(e)).enable());
-    }
+    constructor(public input: JQuery,
+        private url: Url,
+        private form: Form,
+        private serverInvoker: ServerInvoker) { }
 
-    constructor(targetInput: JQuery) {
-        this.input = targetInput;
-    }
-
-    enable() {
+    public enable() {
 
         if (this.input.is("[data-typeahead-enabled=true]")) return;
         else this.input.attr("data-typeahead-enabled", "true");
 
         if (this.input.is("[data-change-action]"))
-            FormAction.enableInvokeWithAjax(this.input, "typeahead:select", "data-change-action");
+            this.serverInvoker.enableInvokeWithAjax(this.input, "typeahead:select", "data-change-action");
 
         this.input.wrap("<div class='typeahead__container'></div>");
 
         this.valueField = $("[name='" + this.input.attr("name").slice(0, -5) + "']");
 
         let url = this.input.attr("autocomplete-source") || '';
-        url = Url.effectiveUrlProvider(url, this.input);
+        url = this.url.effectiveUrlProvider(url, this.input);
 
-        var postData: any = this.toObject(Form.getPostData(this.input));
+        var postData: any = this.toObject(this.form.getPostData(this.input));
 
         postData[this.input.attr("name")] = "{{query}}";
 
@@ -90,7 +97,7 @@ export default class AutoComplete {
                         "Text": "",
                         "Value": ""
                     }],
-                    ajax: function (query) {
+                    ajax: (query) => {
                         return {
                             type: "POST",
                             url: url,
@@ -111,13 +118,13 @@ export default class AutoComplete {
             .typeahead($.extend(defaultOptions, AutoComplete.customOptions, mandatoryOptions));
     }
 
-    clearValue() {
+    private clearValue() {
         if (this.input.val() === "") this.valueField.val("");
         if (this.input.val() !== this.input.data("selected-text"))
             this.valueField.val("");
     }
 
-    itemSelected(item: any) {
+    private itemSelected(item: any) {
 
         if (item) {
             var txt = (item.Text == null || item.Text == undefined || item.Text.trim() == "") ? item.Display : item.Text;
@@ -134,7 +141,7 @@ export default class AutoComplete {
     }
 
     // Convert current form array to simple plain object
-    toObject(arr: JQuerySerializeArrayElement[]) {
+    private toObject(arr: JQuerySerializeArrayElement[]) {
         var rv = {};
         for (var i = 0; i < arr.length; ++i)
             rv[arr[i].name] = arr[i].value;

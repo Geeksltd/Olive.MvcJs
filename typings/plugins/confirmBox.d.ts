@@ -1,7 +1,7 @@
 export default class ConfirmBox {
-    button: any;
+    private button;
     static enable(selector: JQuery): void;
-    constructor(targetButton: any);
-    enable(): void;
+    constructor(button: JQuery);
+    private enable;
     showConfirm(text: any, yesCallback: any): void;
 }

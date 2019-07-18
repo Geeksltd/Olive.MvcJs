@@ -1,19 +1,22 @@
 
 import Url from 'olive/components/url'
-import FormAction from 'olive/mvc/formAction'
 import 'jquery-sortable'
+import ServerInvoker from 'olive/mvc/serverInvoker';
 
-export default class Sorting {
+export default class Sorting implements IService {
 
-    public static enableDragSort(selector: JQuery) { selector.each((i, e) => this.DragSort($(e))) };
+    constructor(private url: Url,
+        private serverInvoker: ServerInvoker) { }
 
-    public static enablesetSortHeaderClass(selector: JQuery) { selector.each((i, e) => this.setSortHeaderClass($(e))) };
+    public enableDragSort(selector: JQuery) { selector.each((i, e) => this.DragSort($(e))) };
 
-    public static enableAjaxSorting(selector: JQuery) {
+    public enablesetSortHeaderClass(selector: JQuery) { selector.each((i, e) => this.setSortHeaderClass($(e))) };
+
+    public enableAjaxSorting(selector: JQuery) {
         selector.off("click.ajax-sorting").on("click.ajax-sorting", e => this.AjaxSorting(e))
     };
 
-    static AjaxSorting(event: JQueryEventObject) {
+    private AjaxSorting(event: JQueryEventObject) {
         let button = $(event.currentTarget);
         let sort = button.attr("data-sort");
         let key = "s";
@@ -28,7 +31,7 @@ export default class Sorting {
         input.val(sort);
     }
 
-    static setSortHeaderClass(thead: JQuery) {
+    public setSortHeaderClass(thead: JQuery) {
 
         let currentSort: string = thead.closest("[data-module]").find("#Current-Sort").val() || "";
         if (currentSort == "") return;
@@ -49,7 +52,7 @@ export default class Sorting {
         currentThead.append("<i />");
     }
 
-    static DragSort(container) {
+    private DragSort(container) {
 
         var config = {
             handle: '[data-sort-item]',
@@ -84,11 +87,11 @@ export default class Sorting {
             let handle = ui.item.find("[data-sort-item]");
 
             let actionUrl = handle.attr("data-sort-action");
-            actionUrl = Url.addQuery(actionUrl, "drop-before", dropBefore);
+            actionUrl = this.url.addQuery(actionUrl, "drop-before", dropBefore);
 
-            actionUrl = Url.effectiveUrlProvider(actionUrl, handle);
+            actionUrl = this.url.effectiveUrlProvider(actionUrl, handle);
 
-            FormAction.invokeWithAjax({ currentTarget: handle.get(0) }, actionUrl);
+            this.serverInvoker.invokeWithAjax(<JQueryEventObject>{ currentTarget: handle.get(0) }, actionUrl);
         };
 
 

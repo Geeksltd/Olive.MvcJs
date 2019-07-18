@@ -1,14 +1,17 @@
-export default class AjaxRedirect {
-    static requestCounter: number;
-    static ajaxChangedUrl: number;
-    static isAjaxRedirecting: boolean;
-    static onRedirected: ((title: string, url: string) => void);
-    static onRedirectionFailed: ((url: string, response: JQueryXHR) => void);
-    static defaultOnRedirected(title: string, url: string): void;
-    static defaultOnRedirectionFailed(url: string, response: JQueryXHR): void;
-    static enableBack(selector: JQuery): void;
-    static enableRedirect(selector: JQuery): void;
-    static redirect(event: JQueryEventObject): boolean;
-    static back(event: any): void;
-    static go(url: string, trigger?: JQuery, isBack?: boolean, keepScroll?: boolean, addToHistory?: boolean): boolean;
+import Waiting from 'olive/components/waiting';
+import Url from 'olive/components/url';
+import ResponseProcessor from 'olive/mvc/responseProcessor';
+export default class AjaxRedirect implements IService {
+    private url;
+    private responseProcessor;
+    private waiting;
+    private requestCounter;
+    ajaxChangedUrl: number;
+    private isAjaxRedirecting;
+    constructor(url: Url, responseProcessor: ResponseProcessor, waiting: Waiting);
+    enableRedirect(selector: JQuery): void;
+    protected onRedirected(title: string, url: string): void;
+    protected onRedirectionFailed(url: string, response: JQueryXHR): void;
+    private redirect;
+    go(url: string, trigger?: JQuery, isBack?: boolean, keepScroll?: boolean, addToHistory?: boolean, success?: () => void): boolean;
 }

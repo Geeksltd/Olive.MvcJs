@@ -1,33 +1,34 @@
 import Waiting from 'olive/components/waiting'
 import Url from 'olive/components/url'
-import FormAction from 'olive/mvc/formAction'
-import Modal from 'olive/components/modal';
+import ResponseProcessor from 'olive/mvc/responseProcessor';
 
-export default class AjaxRedirect {
-    static requestCounter = 0;
-    static ajaxChangedUrl = 0;
-    static isAjaxRedirecting = false;
-    public static onRedirected: ((title: string, url: string) => void) = AjaxRedirect.defaultOnRedirected;
-    public static onRedirectionFailed: ((url: string, response: JQueryXHR) => void) = AjaxRedirect.defaultOnRedirectionFailed;
+export default class AjaxRedirect implements IService {
+    private requestCounter = 0;
+    public ajaxChangedUrl = 0;
+    private isAjaxRedirecting = false;
+    // public onRedirected: ((title: string, url: string) => void) = this.defaultOnRedirected;
+    // public onRedirectionFailed: ((url: string, response: JQueryXHR) => void) = this.defaultOnRedirectionFailed;
 
-    static defaultOnRedirected(title: string, url: string) {
+    constructor(
+        private url: Url,
+        private responseProcessor: ResponseProcessor,
+        private waiting: Waiting
+    ) { }
+
+    public enableRedirect(selector: JQuery) {
+        selector.off("click.ajax-redirect").on("click.ajax-redirect", e => this.redirect(e));
+    }
+
+    protected onRedirected(title: string, url: string) {
         history.pushState({}, title, url);
     }
 
-    public static defaultOnRedirectionFailed(url: string, response: JQueryXHR) {
+    protected onRedirectionFailed(url: string, response: JQueryXHR) {
         if (confirm("Request failed. Do you want to see the error details?"))
             open(url, "_blank");
     }
 
-    public static enableBack(selector: JQuery) {
-        selector.off("popstate.ajax-redirect").on("popstate.ajax-redirect", e => this.back(e));
-    }
-
-    public static enableRedirect(selector: JQuery) {
-        selector.off("click.ajax-redirect").on("click.ajax-redirect", e => this.redirect(e));
-    }
-
-    static redirect(event: JQueryEventObject) {
+    private redirect(event: JQueryEventObject) {
         if (event.ctrlKey || event.button === 1) return true;
         let link = $(event.currentTarget);
         let url = link.attr('href');
@@ -35,32 +36,26 @@ export default class AjaxRedirect {
         return false;
     }
 
-    static back(event) {
-        if (Modal.isOrGoingToBeModal())
-            window.location.reload();
-        else {
-            if (this.ajaxChangedUrl == 0) return;
-            this.ajaxChangedUrl--;
-            this.go(location.href, null, true, false, false);
-        }
-    }
-
-    public static go(url: string, trigger: JQuery = null, isBack: boolean = false, keepScroll: boolean = false,
-        addToHistory = true) {
+    public go(url: string,
+        trigger: JQuery = null,
+        isBack: boolean = false,
+        keepScroll: boolean = false,
+        addToHistory = true,
+        success?: () => void): boolean {
 
         if (!trigger) trigger = $(window);
 
-        url = Url.effectiveUrlProvider(url, trigger);
+        url = this.url.effectiveUrlProvider(url, trigger);
 
-        if (url.indexOf(Url.baseContentUrl + "/##") == 0) {
-            url = url.substring(Url.baseContentUrl.length).substring(3);
+        if (url.indexOf(this.url.baseContentUrl + "/##") == 0) {
+            url = url.substring(this.url.baseContentUrl.length).substring(3);
             console.log("## Redirecting to " + url);
         }
 
         this.isAjaxRedirecting = true;
-        FormAction.isAwaitingAjaxResponse = true;
+        // this.serverInvoker.isAwaitingAjaxResponse = true;
 
-        const requestCounter = ++AjaxRedirect.requestCounter;
+        const requestCounter = ++this.requestCounter;
         if (window.stop) window.stop();
         else if (document.execCommand !== undefined) document.execCommand("Stop", false);
 
@@ -69,14 +64,14 @@ export default class AjaxRedirect {
             scrollTopBefore = $(document).scrollTop();
         }
 
-        Waiting.show(false, false);
+        this.waiting.show(false, false);
 
         $.ajax({
             url: url,
             type: 'GET',
             xhrFields: { withCredentials: true },
             success: (response) => {
-                FormAction.events = {};
+                //this.formAction.events_fa = {};
 
                 if (!isBack) {
                     this.ajaxChangedUrl++;
@@ -88,27 +83,27 @@ export default class AjaxRedirect {
                         try {
                             this.onRedirected(title, addressBar);
                         } catch (error) {
-                            addressBar = Url.makeAbsolute(Url.baseContentUrl, "/##" + addressBar);
+                            addressBar = this.url.makeAbsolute(this.url.baseContentUrl, "/##" + addressBar);
                             history.pushState({}, title, addressBar);
                         }
                     }
                 }
 
-                if (addToHistory) {
-                    if (window.isModal() && addToHistory) Modal.changeUrl(url);
+                if (success) {
+                    success();
                 }
 
-                FormAction.isAwaitingAjaxResponse = false;
+                // this.serverInvoker.isAwaitingAjaxResponse = false;
                 this.isAjaxRedirecting = false;
 
-                FormAction.processAjaxResponse(response, null, trigger, isBack ? "back" : null);
+                this.responseProcessor.processAjaxResponse(response, null, trigger, isBack ? "back" : null);
                 if (keepScroll) $(document).scrollTop(scrollTopBefore);
             },
             error: (response) => {
-                if (AjaxRedirect.requestCounter == requestCounter)
+                if (this.requestCounter == requestCounter)
                     this.onRedirectionFailed(url, response);
             },
-            complete: (response) => Waiting.hide()
+            complete: (response) => this.waiting.hide()
         });
         return false;
     }

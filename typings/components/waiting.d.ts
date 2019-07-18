@@ -1,4 +1,7 @@
-export default class Waiting {
-    static show(blockScreen?: boolean, validate?: boolean): void;
-    static hide(): void;
+import Url from 'olive/components/url';
+export default class Waiting implements IService {
+    private url;
+    constructor(url: Url);
+    show(blockScreen?: boolean, validate?: boolean): void;
+    hide(): void;
 }

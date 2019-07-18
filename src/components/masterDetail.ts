@@ -1,9 +1,17 @@
 import Validate from "./validate";
+import ResponseProcessor from "olive/mvc/responseProcessor";
 
-export default class MasterDetail {
-    public static enable(selector: JQuery) { selector.off("click.delete-subform").on("click.delete-subform", (e) => this.deleteSubForm(e)); }
+export default class MasterDetail implements IService {
 
-    static updateSubFormStates() {
+    constructor(private validate: Validate, private responseProcessor: ResponseProcessor) { }
+
+    public initialize() {
+        this.responseProcessor.subformChanged.handle((_) => this.updateSubFormStates());
+    }
+
+    public enable(selector: JQuery) { selector.off("click.delete-subform").on("click.delete-subform", (e) => this.deleteSubForm(e)); }
+
+    public updateSubFormStates() {
         let countItems = element => $(element).parent().find(".subform-item:visible").length;
         // Hide removed items
         $("input[name$=MustBeDeleted][value]").val("true");
@@ -23,11 +31,11 @@ export default class MasterDetail {
         });
     }
 
-    static deleteSubForm(event: JQueryEventObject) {
+    private deleteSubForm(event: JQueryEventObject) {
         let button = $(event.currentTarget);
 
         let container = button.parents(".subform-item");
-        Validate.removeTooltipsRelatedTo(container);
+        this.validate.removeTooltipsRelatedTo(container);
         container.find("input[name$=MustBeDeleted]").val("true");
         this.updateSubFormStates();
         event.preventDefault();

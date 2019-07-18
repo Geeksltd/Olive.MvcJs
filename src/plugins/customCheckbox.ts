@@ -1,7 +1,5 @@
 export default class CustomCheckbox {
-    input: any;
-    checkedClassName = 'checked';
-    static handledClassName = 'handled';
+    private static handledClassName = 'handled';
 
     public static enable(selector: JQuery) {
         selector.each((i, e) => {
@@ -10,11 +8,9 @@ export default class CustomCheckbox {
         });
     }
 
-    constructor(targetInput: any) {
-        this.input = targetInput;
-    }
+    constructor(private input: JQuery) { }
 
-    enable() {
+    private enable() {
         let checkBox = $('<div class="checkbox-helper"/>');
 
         let toggle = () => {

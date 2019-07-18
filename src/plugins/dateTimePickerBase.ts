@@ -1,22 +1,19 @@
-import Modal from "olive/components/modal"
+import { ModalHelper } from "olive/components/modal"
 import Config from "olive/config"
 
 export default abstract class dateTimePickerBase {
-    input: JQuery;
-    abstract controlType: string;
-    abstract format: string;
+    protected abstract controlType: string;
+    protected abstract format: string;
 
-    constructor(targetInput: JQuery) {
-        this.input = targetInput;
-    }
+    constructor(protected input: JQuery, private modalHelper: ModalHelper) { }
 
-    abstract modifyOptions(options: any): void;
+    protected abstract modifyOptions(options: any): void;
 
-    show() {
+    public show() {
 
         if (window.isModal()) {
-            this.input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", e => Modal.expandToFitPicker(e));
-            this.input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", e => Modal.expandToFitPicker(e));
+            this.input.off("dp.show.adjustHeight").on("dp.show.adjustHeight", e => this.modalHelper.expandToFitPicker(e));
+            this.input.off("dp.hide.adjustHeight").on("dp.hide.adjustHeight", e => this.modalHelper.expandToFitPicker(e));
         }
 
         this.input.attr("data-autofocus", "disabled");
