@@ -15,6 +15,12 @@
         return baseUrl + relativeUrl;
     }
 
+    public makeRelative(url: string): string {
+        if (this.isAbsolute(url))
+            return url.split("/").splice(3).join("/");
+        else return url;
+    }
+
     public isAbsolute(url: string): Boolean {
         if (!url) return false;
         url = url.toLowerCase();
@@ -70,6 +76,10 @@
         let regex = new RegExp("[\\?&]" + name + "=([^&#]*)", "i"),
             results = regex.exec(url);
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+    }
+
+    public goToUrlAfterLogin(url: string) {
+        window.location.href = "/login?returnUrl=/" + this.makeRelative(url).trimStart("/");
     }
 
     private goToLoginPage() {

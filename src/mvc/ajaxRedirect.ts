@@ -24,7 +24,10 @@ export default class AjaxRedirect implements IService {
     }
 
     protected onRedirectionFailed(url: string, response: JQueryXHR) {
-        if (confirm("Request failed. Do you want to see the error details?"))
+        if (response.status === 401)
+            this.url.goToUrlAfterLogin(url);
+
+        else if (confirm("Request failed. Do you want to see the error details?"))
             open(url, "_blank");
     }
 
