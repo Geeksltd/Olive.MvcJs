@@ -22,5 +22,6 @@ export default class StandardAction implements IService {
     private notify_sa;
     private redirect_sa;
     private openModal_sa;
+    private loadServiceAfterConfiguration;
     private loadService;
 }

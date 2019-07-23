@@ -59,6 +59,7 @@ export default class StandardAction implements IService {
     private run(action: any, trigger: any): boolean {
         if (action.Notify || action.Notify == "") this.notify_sa(action, trigger);
         else if (action.Script) eval(action.Script);
+        else if (action.ServiceConfigurationUrl) this.loadServiceAfterConfiguration(action.ServiceConfigurationUrl, action.ServiceKey, action.Function, action.Arguments);
         else if (action.ServiceKey) this.loadService(action.ServiceKey, action.Function, action.Arguments);
         else if (action.BrowserAction == "Back") window.history.back();
         else if (action.BrowserAction == "CloseModal") { if (window.page.modal.closeMe() === false) return false; }
@@ -113,6 +114,12 @@ export default class StandardAction implements IService {
     private openModal_sa(event, url?, options?): any {
         this.modalHelper.close();
         this.modalHelper.open(event, url, options);
+    }
+
+    private loadServiceAfterConfiguration(serviceConfigurationUrl: string, key: string, func: string, args: any) {
+        (<any>window).requirejs([serviceConfigurationUrl], () => {
+            this.loadService(key, func, args);
+        });
     }
 
     private loadService(key: string, func: string, args: any) {
