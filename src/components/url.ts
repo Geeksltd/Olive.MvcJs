@@ -79,7 +79,7 @@
     }
 
     public goToUrlAfterLogin(url: string) {
-        window.location.href = "/login?returnUrl=/" + this.makeRelative(url).trimStart("/");
+        window.location.href = "/login?returnUrl=/" + encodeURIComponent(this.makeRelative(url).trimStart("/"));
     }
 
     private goToLoginPage() {

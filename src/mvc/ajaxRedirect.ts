@@ -25,7 +25,7 @@ export default class AjaxRedirect implements IService {
 
     protected onRedirectionFailed(url: string, response: JQueryXHR) {
         if (response.status === 401)
-            this.url.goToUrlAfterLogin(url);
+            this.url.goToUrlAfterLogin(this.url.current());
 
         else if (confirm("Request failed. Do you want to see the error details?"))
             open(url, "_blank");
@@ -44,7 +44,7 @@ export default class AjaxRedirect implements IService {
         isBack: boolean = false,
         keepScroll: boolean = false,
         addToHistory = true,
-        success?: () => void): boolean {
+        onComplete?: (successful: boolean) => void): boolean {
 
         if (!trigger) trigger = $(window);
 
@@ -76,6 +76,10 @@ export default class AjaxRedirect implements IService {
             success: (response) => {
                 //this.formAction.events_fa = {};
 
+                if (onComplete) {
+                    onComplete(true);
+                }
+
                 if (!isBack) {
                     this.ajaxChangedUrl++;
                     if (addToHistory && !window.isModal()) {
@@ -92,10 +96,6 @@ export default class AjaxRedirect implements IService {
                     }
                 }
 
-                if (success) {
-                    success();
-                }
-
                 // this.serverInvoker.isAwaitingAjaxResponse = false;
                 this.isAjaxRedirecting = false;
 
@@ -103,6 +103,9 @@ export default class AjaxRedirect implements IService {
                 if (keepScroll) $(document).scrollTop(scrollTopBefore);
             },
             error: (response) => {
+                if (onComplete) {
+                    onComplete(false);
+                }
                 if (this.requestCounter == requestCounter)
                     this.onRedirectionFailed(url, response);
             },
