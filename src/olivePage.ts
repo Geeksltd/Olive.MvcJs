@@ -47,7 +47,7 @@ import { ServiceDescription } from "./di/serviceDescription";
 
 export default class OlivePage implements IServiceLocator {
 
-    private services: ServiceContainer;
+    public services: ServiceContainer;
 
     public modal: ModalHelper;
     public waiting = Waiting;
@@ -257,7 +257,7 @@ export default class OlivePage implements IServiceLocator {
         if (firstTime) this.modal.tryOpenFromUrl();
     }
 
-    protected initialize() {
+    public initialize() {
         this._preInitializeActions.forEach((action) => action());
 
         // =================== Standard Features ====================

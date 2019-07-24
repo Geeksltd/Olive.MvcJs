@@ -2,7 +2,7 @@ import { ModalHelper } from 'olive/components/modal';
 import Waiting from 'olive/components/waiting';
 import { ServiceContainer } from "./di/serviceContainer";
 export default class OlivePage implements IServiceLocator {
-    private services;
+    services: ServiceContainer;
     modal: ModalHelper;
     waiting: typeof Waiting;
     constructor();
@@ -14,7 +14,7 @@ export default class OlivePage implements IServiceLocator {
     protected _preInitializeActions: any[];
     protected onPreInit(action: any): void;
     protected onViewChanged(container?: JQuery, trigger?: any, newPage?: boolean, firstTime?: boolean): void;
-    protected initialize(): void;
+    initialize(): void;
     protected enableCustomCheckbox(): void;
     protected enableCustomRadio(): void;
     protected goBack(target: any): boolean;
