@@ -1,4 +1,4 @@
-export default class SanityAdapter {
-    static enable(): void;
-    private static skipNewWindows;
+export default class SanityAdapter implements IService {
+    enable(): void;
+    private skipNewWindows;
 }

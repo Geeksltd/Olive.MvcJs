@@ -44,6 +44,7 @@ import { GroupingFactory } from "./components/grouping";
 import { ServiceContainer } from "./di/serviceContainer";
 import Services from "./di/services";
 import { ServiceDescription } from "./di/serviceDescription";
+import SanityAdapter from "./plugins/sanityAdapter";
 
 export default class OlivePage implements IServiceLocator {
 
@@ -105,6 +106,8 @@ export default class OlivePage implements IServiceLocator {
         services.tryAddSingleton(Services.Select, () => new Select(), out);
 
         services.tryAddSingleton(Services.ResponseProcessor, () => new ResponseProcessor(), out)
+
+        services.tryAddSingleton(Services.SanityAdapter, () => new SanityAdapter(), out)
 
         if (services.tryAddSingleton(Services.Waiting, (url: Url) => new Waiting(url), out)) {
             out.value.withDependencies(Services.Url);
