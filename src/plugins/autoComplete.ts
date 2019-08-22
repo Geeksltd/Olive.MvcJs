@@ -115,7 +115,7 @@ export default class AutoComplete {
             .before('<i class="fas fa-chevron-down"></i>')
             .data("selected-text", "")
             .on('input', () => this.clearValue())
-            .typeahead($.extend(defaultOptions, AutoComplete.customOptions, mandatoryOptions));
+            .typeahead($.extend(true, defaultOptions, AutoComplete.customOptions, mandatoryOptions));
     }
 
     private clearValue() {
