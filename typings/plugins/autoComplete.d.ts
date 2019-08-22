@@ -19,7 +19,7 @@ export default class AutoComplete {
     static setOptions(options: RunningCoder.Typeahead.Options): void;
     constructor(input: JQuery, url: Url, form: Form, serverInvoker: ServerInvoker);
     enable(): void;
-    private clearValue;
-    private itemSelected;
-    private toObject;
+    protected clearValue(): void;
+    protected itemSelected(item: any): void;
+    protected toObject(arr: JQuerySerializeArrayElement[]): {};
 }

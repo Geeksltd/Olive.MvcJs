@@ -118,13 +118,13 @@ export default class AutoComplete {
             .typeahead($.extend(true, defaultOptions, AutoComplete.customOptions, mandatoryOptions));
     }
 
-    private clearValue() {
+    protected clearValue() {
         if (this.input.val() === "") this.valueField.val("");
         if (this.input.val() !== this.input.data("selected-text"))
             this.valueField.val("");
     }
 
-    private itemSelected(item: any) {
+    protected itemSelected(item: any) {
 
         if (item) {
             var txt = (item.Text == null || item.Text == undefined || item.Text.trim() == "") ? item.Display : item.Text;
@@ -141,7 +141,7 @@ export default class AutoComplete {
     }
 
     // Convert current form array to simple plain object
-    private toObject(arr: JQuerySerializeArrayElement[]) {
+    protected toObject(arr: JQuerySerializeArrayElement[]) {
         var rv = {};
         for (var i = 0; i < arr.length; ++i)
             rv[arr[i].name] = arr[i].value;
