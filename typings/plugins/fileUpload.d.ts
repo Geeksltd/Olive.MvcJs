@@ -11,12 +11,14 @@ export default class FileUpload {
     private url;
     private serverInvoker;
     private container;
-    private idInput;
     private deleteButton;
     private progressBar;
     private currentFileLink;
     private existingFileNameInput;
-    private fileLabel;
+    private actionInput;
+    private tempFileIdInput;
+    private filenameInput;
+    private validationInput;
     constructor(input: JQuery, url: Url, serverInvoker: ServerInvoker);
     enable(): void;
     private fixMasterDetailsInputName;
@@ -30,4 +32,5 @@ export default class FileUpload {
     private onUploadSuccess;
     private onUploadCompleted;
     private onChange;
+    private setValidationValue;
 }
