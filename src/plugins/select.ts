@@ -1,9 +1,12 @@
 ﻿import 'bootstrap-select'
+import { DelayedInitializer } from './delayedInitializer';
 
 export default class Select implements IService {
     //https://developer.snapappointments.com/bootstrap-select/
 
-    public enableEnhance(selector: JQuery) { selector.each((i, e) => this.enhance($(e))); }
+    public enableEnhance(selector: JQuery, delayedInitializer: DelayedInitializer) {
+        delayedInitializer.initialize(selector, (i, e) => this.enhance($(e)));
+    }
 
     private enhance(selectControl: JQuery) {
         selectControl.selectpicker();

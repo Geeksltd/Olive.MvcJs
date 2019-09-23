@@ -1,11 +1,15 @@
 import Modal from "olive/components/modal"
 import Config from "olive/config";
 import { ModalHelper } from "olive/components/modal";
+import { DelayedInitializer } from "./delayedInitializer";
 
 export class TimeControlFactory implements IService {
-    constructor(private modalHelper: ModalHelper) { }
+    constructor(private modalHelper: ModalHelper,
+        private delayedInitializer: DelayedInitializer) { }
 
-    public enable(selector: JQuery) { selector.each((i, e) => new TimeControl($(e), this.modalHelper)); }
+    public enable(selector: JQuery) {
+        this.delayedInitializer.initialize(selector, (i, e) => new TimeControl($(e), this.modalHelper));
+    }
 }
 export default class TimeControl {
     constructor(targetInput: any, private modalHelper: ModalHelper) {

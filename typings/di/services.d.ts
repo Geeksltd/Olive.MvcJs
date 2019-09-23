@@ -50,5 +50,6 @@ declare const Services: {
     TimeControlFactory: string;
     UserHelp: string;
     ServiceLocator: string;
+    DelayedInitializer: string;
 };
 export default Services;

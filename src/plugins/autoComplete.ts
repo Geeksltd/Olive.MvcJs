@@ -1,15 +1,18 @@
 import Form from "olive/components/form"
 import Url from 'olive/components/url'
 import ServerInvoker from "olive/mvc/serverInvoker";
+import { DelayedInitializer } from "./delayedInitializer";
 
 export class AutoCompleteFactory implements IService {
 
     constructor(private url: Url,
         private form: Form,
-        private serverInvoker: ServerInvoker) { }
+        private serverInvoker: ServerInvoker,
+        private delayedInitializer: DelayedInitializer) { }
 
     public enable(selector: JQuery) {
-        selector.each((i, e) => new AutoComplete($(e), this.url, this.form, this.serverInvoker).enable());
+        this.delayedInitializer.initialize(selector,
+            (i, e) => new AutoComplete($(e), this.url, this.form, this.serverInvoker).enable())
     }
 }
 

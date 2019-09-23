@@ -2,15 +2,17 @@
 import Url from 'olive/components/url'
 import 'jquery-sortable'
 import ServerInvoker from 'olive/mvc/serverInvoker';
+import { DelayedInitializer } from 'olive/plugins/delayedInitializer';
 
 export default class Sorting implements IService {
 
     constructor(private url: Url,
-        private serverInvoker: ServerInvoker) { }
+        private serverInvoker: ServerInvoker,
+        private delayedInitializer: DelayedInitializer) { }
 
-    public enableDragSort(selector: JQuery) { selector.each((i, e) => this.DragSort($(e))) };
+    public enableDragSort(selector: JQuery) { this.delayedInitializer.initialize(selector, (i, e) => this.DragSort($(e))) };
 
-    public enablesetSortHeaderClass(selector: JQuery) { selector.each((i, e) => this.setSortHeaderClass($(e))) };
+    public enablesetSortHeaderClass(selector: JQuery) { this.delayedInitializer.initialize(selector, (i, e) => this.setSortHeaderClass($(e))) };
 
     public enableAjaxSorting(selector: JQuery) {
         selector.off("click.ajax-sorting").on("click.ajax-sorting", e => this.AjaxSorting(e))

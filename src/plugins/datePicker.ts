@@ -1,11 +1,15 @@
 import Config from "olive/config"
 import dateTimePickerBase from "./dateTimePickerBase";
 import { ModalHelper } from "olive/components/modal";
+import { DelayedInitializer } from "./delayedInitializer";
 
 export class DatePickerFactory implements IService {
-    constructor(private modalHelper: ModalHelper) { }
+    constructor(private modalHelper: ModalHelper,
+        private delayedInitializer: DelayedInitializer) { }
 
-    public enable(selector: JQuery) { selector.each((i, e) => new DatePicker($(e), this.modalHelper).show()); }
+    public enable(selector: JQuery) {
+        this.delayedInitializer.initialize(selector, (i, e) => new DatePicker($(e), this.modalHelper).show());
+    }
 }
 
 export default class DatePicker extends dateTimePickerBase {

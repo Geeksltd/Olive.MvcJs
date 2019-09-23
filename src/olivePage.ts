@@ -45,6 +45,7 @@ import { ServiceContainer } from "./di/serviceContainer";
 import Services from "./di/services";
 import { ServiceDescription } from "./di/serviceDescription";
 import SanityAdapter from "./plugins/sanityAdapter";
+import { DelayedInitializer } from "./plugins/delayedInitializer";
 
 export default class OlivePage implements IServiceLocator {
 
@@ -105,9 +106,11 @@ export default class OlivePage implements IServiceLocator {
 
         services.tryAddSingleton(Services.Select, () => new Select(), out);
 
-        services.tryAddSingleton(Services.ResponseProcessor, () => new ResponseProcessor(), out)
+        services.tryAddSingleton(Services.ResponseProcessor, () => new ResponseProcessor(), out);
 
-        services.tryAddSingleton(Services.SanityAdapter, () => new SanityAdapter(), out)
+        services.tryAddSingleton(Services.SanityAdapter, () => new SanityAdapter(), out);
+
+        services.tryAddSingleton(Services.DelayedInitializer, () => new DelayedInitializer(), out);
 
         if (services.tryAddSingleton(Services.Waiting, (url: Url) => new Waiting(url), out)) {
             out.value.withDependencies(Services.Url);
@@ -117,8 +120,10 @@ export default class OlivePage implements IServiceLocator {
             out.value.withDependencies(Services.Url);
         }
 
-        if (services.tryAddSingleton(Services.Sorting, (url: Url, serverInvoker: ServerInvoker) => new Sorting(url, serverInvoker), out)) {
-            out.value.withDependencies(Services.Url, Services.ServerInvoker);
+        if (services.tryAddSingleton(Services.Sorting, (url: Url, serverInvoker: ServerInvoker, delayedInitializer: DelayedInitializer) =>
+            new Sorting(url, serverInvoker, delayedInitializer), out)
+        ) {
+            out.value.withDependencies(Services.Url, Services.ServerInvoker, Services.DelayedInitializer);
         }
 
         if (services.tryAddSingleton(Services.Paging, (url: Url, serverInvoker: ServerInvoker) => new Paging(url, serverInvoker), out)) {
@@ -143,10 +148,10 @@ export default class OlivePage implements IServiceLocator {
             out.value.withDependencies(Services.ModalHelper, Services.AjaxRedirect);
         }
 
-        if (services.tryAddSingleton(Services.AutoCompleteFactory, (url: Url, form: Form, serverInvoker: ServerInvoker) =>
-            new AutoCompleteFactory(url, form, serverInvoker), out)
+        if (services.tryAddSingleton(Services.AutoCompleteFactory, (url: Url, form: Form, serverInvoker: ServerInvoker, delayedInitializer: DelayedInitializer) =>
+            new AutoCompleteFactory(url, form, serverInvoker, delayedInitializer), out)
         ) {
-            out.value.withDependencies(Services.Url, Services.Form, Services.ServerInvoker);
+            out.value.withDependencies(Services.Url, Services.Form, Services.ServerInvoker, Services.DelayedInitializer);
         }
 
         if (services.tryAddSingleton(Services.SliderFactory, (form: Form) => new SliderFactory(form), out)) {
@@ -157,16 +162,22 @@ export default class OlivePage implements IServiceLocator {
             out.value.withDependencies(Services.ModalHelper);
         }
 
-        if (services.tryAddSingleton(Services.DateTimePickerFactory, (modalHelper: ModalHelper) => new DateTimePickerFactory(modalHelper), out)) {
-            out.value.withDependencies(Services.ModalHelper);
+        if (services.tryAddSingleton(Services.DateTimePickerFactory, (modalHelper: ModalHelper, delayedInitializer: DelayedInitializer) =>
+            new DateTimePickerFactory(modalHelper, delayedInitializer), out)
+        ) {
+            out.value.withDependencies(Services.ModalHelper, Services.DelayedInitializer);
         }
 
-        if (services.tryAddSingleton(Services.DatePickerFactory, (modalHelper: ModalHelper) => new DatePickerFactory(modalHelper), out)) {
-            out.value.withDependencies(Services.ModalHelper);
+        if (services.tryAddSingleton(Services.DatePickerFactory, (modalHelper: ModalHelper, delayedInitializer: DelayedInitializer) =>
+            new DatePickerFactory(modalHelper, delayedInitializer), out)
+        ) {
+            out.value.withDependencies(Services.ModalHelper, Services.DelayedInitializer);
         }
 
-        if (services.tryAddSingleton(Services.TimeControlFactory, (modalHelper: ModalHelper) => new TimeControlFactory(modalHelper), out)) {
-            out.value.withDependencies(Services.ModalHelper);
+        if (services.tryAddSingleton(Services.TimeControlFactory, (modalHelper: ModalHelper, delayedInitializer: DelayedInitializer) =>
+            new TimeControlFactory(modalHelper, delayedInitializer), out)
+        ) {
+            out.value.withDependencies(Services.ModalHelper, Services.DelayedInitializer);
         }
 
         if (services.tryAddSingleton(Services.AjaxRedirect, (url: Url,
@@ -281,7 +292,8 @@ export default class OlivePage implements IServiceLocator {
         form.enablecleanUpNumberField($("[data-val-number]"));
         this.modal.enableEnsureHeight($("[data-toggle=tab]"));
         this.getService<MultiSelect>(Services.MultiSelect).enableEnhance($("select[data-control='collapsible-checkboxes']"));
-        this.getService<Select>(Services.Select).enableEnhance($("select:not([data-control='collapsible-checkboxes'])"));
+        this.getService<Select>(Services.Select).enableEnhance($("select:not([data-control='collapsible-checkboxes'])"),
+            this.getService<DelayedInitializer>(Services.DelayedInitializer));
         form.enableDefaultButtonKeyPress($("form input, form select"));
         UserHelp.enable($("[data-user-help]"));
         this.getService<ModalHelper>(Services.ModalHelper).enableLink($("[target='$modal'][href]"));

@@ -50,6 +50,7 @@ const Services = {
     TimeControlFactory: "timeControlFactory",
     UserHelp: "userHelp",
     ServiceLocator: "serviceLocator",
+    DelayedInitializer: "delayedInitializer",
 };
 
 export default Services;
