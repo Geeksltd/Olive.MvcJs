@@ -16,8 +16,7 @@ export class AutoCompleteFactory implements IService {
 export default class AutoComplete {
     private static customOptions: RunningCoder.Typeahead.Options;
 
-    private awaitingAutocompleteResponses: number = 0;
-    private valueField: JQuery;
+    protected valueField: JQuery;
 
     public static setOptions(options: RunningCoder.Typeahead.Options) {
         AutoComplete.customOptions = options;
@@ -29,7 +28,6 @@ export default class AutoComplete {
         private serverInvoker: ServerInvoker) { }
 
     public enable() {
-
         if (this.input.is("[data-typeahead-enabled=true]")) return;
         else this.input.attr("data-typeahead-enabled", "true");
 
@@ -40,20 +38,43 @@ export default class AutoComplete {
 
         this.valueField = $("[name='" + this.input.attr("name").slice(0, -5) + "']");
 
+        this.input
+            .wrap("<span class='typehead-chevron-down'></span>")
+            .before('<i class="fas fa-chevron-down"></i>')
+            .data("selected-text", "")
+            .on('input', () => this.clearValue())
+            .typeahead($.extend(true, this.getDefaultOptions(), AutoComplete.customOptions, this.getMandatoryOptions()));
+    }
+
+    private getMandatoryOptions(): RunningCoder.Typeahead.Options {
         let url = this.input.attr("autocomplete-source") || '';
         url = this.url.effectiveUrlProvider(url, this.input);
 
-        var postData: any = this.toObject(this.form.getPostData(this.input));
-
-        postData[this.input.attr("name")] = "{{query}}";
-
-        let clientSideSearch = this.input.attr("clientside") || false;
-
-        let callback: RunningCoder.Typeahead.Callback = {
-            onClick: (node, a, item, event) => {
-                // The following line is a compile error.
-                // $("[name='" + node.attr("name").slice(0, -5) + "']").val(event.Value);
+        return {
+            source: {
+                values: {
+                    display: "Display",
+                    data: [{
+                        "Display": "",
+                        "Text": "",
+                        "Value": ""
+                    }],
+                    ajax: (_) => {
+                        return {
+                            type: "POST",
+                            url: url,
+                            data: this.getPostData(),
+                            xhrFields: { withCredentials: true }
+                        };
+                    }
+                }
             },
+            callback: this.getMandatoryCallbacks()
+        };
+    }
+
+    private getMandatoryCallbacks(): RunningCoder.Typeahead.Callback {
+        let callback: RunningCoder.Typeahead.Callback = {
             onClickAfter: (node, a, item, event) => {
                 this.itemSelected(item);
                 this.input.trigger("typeahead:select", { event, item })
@@ -77,7 +98,13 @@ export default class AutoComplete {
             });
         }
 
-        let defaultOptions: RunningCoder.Typeahead.Options = {
+        return callback;
+    }
+
+    protected getDefaultOptions(): RunningCoder.Typeahead.Options {
+        let clientSideSearch = this.input.attr("clientside") || false;
+
+        return {
             minLength: 0,
             dynamic: !clientSideSearch,
             searchOnFocus: true,
@@ -87,35 +114,14 @@ export default class AutoComplete {
             correlativeTemplate: true,
             emptyTemplate: "<div class='tt-suggestion'>Not found</div>"
         };
+    }
 
-        let mandatoryOptions: RunningCoder.Typeahead.Options = {
-            source: {
-                values: {
-                    display: "Display",
-                    data: [{
-                        "Display": "",
-                        "Text": "",
-                        "Value": ""
-                    }],
-                    ajax: (query) => {
-                        return {
-                            type: "POST",
-                            url: url,
-                            data: postData,
-                            xhrFields: { withCredentials: true }
-                        };
-                    }
-                }
-            },
-            callback: callback
-        };
+    protected getPostData(): any {
+        var postData: any = this.toObject(this.form.getPostData(this.input));
 
-        this.input
-            .wrap("<span class='typehead-chevron-down'></span>")
-            .before('<i class="fas fa-chevron-down"></i>')
-            .data("selected-text", "")
-            .on('input', () => this.clearValue())
-            .typeahead($.extend(true, defaultOptions, AutoComplete.customOptions, mandatoryOptions));
+        postData[this.input.attr("name")] = "{{query}}";
+
+        return postData;
     }
 
     protected clearValue() {

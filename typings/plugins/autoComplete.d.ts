@@ -14,11 +14,14 @@ export default class AutoComplete {
     private form;
     private serverInvoker;
     private static customOptions;
-    private awaitingAutocompleteResponses;
-    private valueField;
+    protected valueField: JQuery;
     static setOptions(options: RunningCoder.Typeahead.Options): void;
     constructor(input: JQuery, url: Url, form: Form, serverInvoker: ServerInvoker);
     enable(): void;
+    private getMandatoryOptions;
+    private getMandatoryCallbacks;
+    protected getDefaultOptions(): RunningCoder.Typeahead.Options;
+    protected getPostData(): any;
     protected clearValue(): void;
     protected itemSelected(item: any): void;
     protected toObject(arr: JQuerySerializeArrayElement[]): {};
