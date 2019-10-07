@@ -13,6 +13,8 @@ export default class HtmlEditor {
     constructor(private input: JQuery, private modalHelper: ModalHelper) { }
 
     public enable() {
+        if (this.input.css("display") === "none") return;
+
         window["CKEDITOR_BASEPATH"] = Config.CK_EDITOR_BASE_PATH;
         this.onDemandScript(Config.CK_EDITOR_BASE_PATH + "ckeditor.js", () => this.onCkEditorScriptReady());
     }
