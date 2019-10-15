@@ -31,7 +31,7 @@ import { DatePickerFactory } from 'olive/plugins/datePicker'
 import { DateTimePickerFactory } from 'olive/plugins/dateTimePicker'
 import NumbericUpDown from 'olive/plugins/numericUpDown'
 import { FileUploadFactory } from 'olive/plugins/fileUpload'
-import ConfirmBox from 'olive/plugins/confirmBox'
+import ConfirmBoxFactory from 'olive/plugins/confirmBox'
 import SubMenu from 'olive/plugins/subMenu'
 import InstantSearch from 'olive/plugins/instantSearch'
 import DateDropdown from 'olive/plugins/dateDropdown'
@@ -94,6 +94,8 @@ export default class OlivePage implements IServiceLocator {
         const out: IOutParam<ServiceDescription> = {};
 
         services.tryAddSingleton(Services.ServiceLocator, () => this, out);
+
+        services.tryAddSingleton(Services.ConfirmBoxFactory, () => new ConfirmBoxFactory(), out);
 
         services.tryAddSingleton(Services.Alert, () => new Alert(), out);
 
@@ -303,7 +305,7 @@ export default class OlivePage implements IServiceLocator {
         NumbericUpDown.enable($("[data-control=numeric-up-down]"));
         this.getService<SliderFactory>(Services.SliderFactory).enable($("[data-control=range-slider],[data-control=slider]"));
         this.getService<FileUploadFactory>(Services.FileUploadFactory).enable($(".file-upload input:file"));
-        ConfirmBox.enable($("[data-confirm-question]"));
+        this.getService<ConfirmBoxFactory>(Services.ConfirmBoxFactory).enable($("[data-confirm-question]"));
         PasswordStength.enable($(".password-strength"));
         SubMenu.enable($(".with-submenu"));
         SubMenu.createAccordion($("ul.accordion"));

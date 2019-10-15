@@ -23,6 +23,7 @@ const Services = {
     AutoCompleteFactory: "autoCompleteFactory",
     CkEditorFileManager: "ckEditorFileManager",
     CKEditorFileManagerFactory: "ckEditorFileManagerFactory",
+    ConfirmBoxFactory: "confirmBoxFactory",
     ConfirmBox: "confirmBox",
     CustomCheckbox: "customCheckbox",
     CustomRadio: "customRadio",

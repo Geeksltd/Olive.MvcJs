@@ -23,6 +23,7 @@ declare const Services: {
     AutoCompleteFactory: string;
     CkEditorFileManager: string;
     CKEditorFileManagerFactory: string;
+    ConfirmBoxFactory: string;
     ConfirmBox: string;
     CustomCheckbox: string;
     CustomRadio: string;

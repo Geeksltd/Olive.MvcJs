@@ -1,7 +1,10 @@
-export default class ConfirmBox {
-    private button;
-    static enable(selector: JQuery): void;
+export default class ConfirmBoxFactory implements IService {
+    enable(selector: JQuery): void;
+}
+export declare class ConfirmBox {
+    protected button: JQuery;
     constructor(button: JQuery);
-    private enable;
-    showConfirm(text: any, yesCallback: any): void;
+    enable(): void;
+    protected setButtonsLabel(ok: string, cancel: string): void;
+    protected showConfirm(text: string, yesCallback: () => void): void;
 }
