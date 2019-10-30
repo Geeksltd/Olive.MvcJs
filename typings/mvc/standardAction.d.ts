@@ -19,9 +19,9 @@ export default class StandardAction implements IService {
     runStartup(container?: JQuery, trigger?: any, stage?: string): void;
     runAll(actions: any, trigger?: any): void;
     private run;
-    private notify_sa;
-    private redirect_sa;
-    private openModal_sa;
+    private notify;
+    private redirect;
+    private openModal;
     private loadServiceAfterConfiguration;
     private loadService;
 }

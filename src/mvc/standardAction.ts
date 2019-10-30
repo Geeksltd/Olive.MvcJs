@@ -57,7 +57,7 @@ export default class StandardAction implements IService {
     }
 
     private run(action: any, trigger: any): boolean {
-        if (action.Notify || action.Notify == "") this.notify_sa(action, trigger);
+        if (action.Notify || action.Notify == "") this.notify(action, trigger);
         else if (action.Script) eval(action.Script);
         else if (action.ServiceConfigurationUrl) this.loadServiceAfterConfiguration(action.ServiceConfigurationUrl, action.ServiceKey, action.Function, action.Arguments);
         else if (action.ServiceKey) this.loadService(action.ServiceKey, action.Function, action.Arguments);
@@ -86,24 +86,24 @@ export default class StandardAction implements IService {
         else if (action.BrowserAction == "ShowPleaseWait") this.waiting.show(action.BlockScreen);
         else if (action.ReplaceSource) this.select.replaceSource(action.ReplaceSource, action.Items);
         else if (action.Download) window.download(action.Download);
-        else if (action.Redirect) this.redirect_sa(action, trigger);
+        else if (action.Redirect) this.redirect(action, trigger);
         else alert("Don't know how to handle: " + JSON.stringify(action).htmlEncode());
 
         return true;
     }
 
-    private notify_sa(action: any, trigger: any) {
+    private notify(action: any, trigger: any) {
         if (action.Obstruct == false)
             this.alert.alertUnobtrusively(action.Notify, action.Style);
         else this.alert.alert(action.Notify, action.Style);
     }
 
-    private redirect_sa(action: any, trigger: any) {
+    private redirect(action: any, trigger: any) {
         if (action.Redirect.indexOf('/') != 0 && action.Redirect.indexOf('http') != 0)
             action.Redirect = '/' + action.Redirect;
 
         if (action.OutOfModal && window.isModal()) parent.window.location.href = action.Redirect;
-        else if (action.Target == '$modal') this.openModal_sa({ currentTarget: trigger }, action.Redirect, null);
+        else if (action.Target == '$modal') this.openModal({ currentTarget: trigger }, action.Redirect, null);
         else if (action.Target && action.Target != '') window.open(action.Redirect, action.Target);
         else if (action.WithAjax === false) location.replace(action.Redirect);
         else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true)
@@ -111,9 +111,9 @@ export default class StandardAction implements IService {
         else location.replace(action.Redirect);
     }
 
-    private openModal_sa(event, url?, options?): any {
+    private openModal(event, url?, options?): any {
         this.modalHelper.close();
-        this.modalHelper.open(event, url, options);
+        setTimeout(() => this.modalHelper.open(event, url, options), 0);
     }
 
     private loadServiceAfterConfiguration(serviceConfigurationUrl: string, key: string, func: string, args: any) {
