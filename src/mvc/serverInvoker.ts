@@ -63,6 +63,14 @@ export default class ServerInvoker implements IService {
 
         const scrollPosition = $(window).scrollTop();
 
+        const context: IInvocationContext = {
+            trigger,
+            containerModule,
+            url: actionUrl,
+        };
+
+        this.onInvocation(event, context);
+
         $.ajax({
             url: actionUrl,
             type: trigger.attr("data-ajax-method") || 'POST',
@@ -78,6 +86,8 @@ export default class ServerInvoker implements IService {
             },
             complete: (x) => {
                 this.isAwaitingAjaxResponse = false;
+                this.onInvocationCompleted(event, context);
+
                 trigger.removeClass('loading-action-result');
                 if (disableToo) trigger.removeAttr('disabled');
 
@@ -90,10 +100,24 @@ export default class ServerInvoker implements IService {
 
                 if (triggerTabIndex > -1) $(":focusable").not("[tabindex='-1']").eq(triggerTabIndex).focus();
                 $(window).scrollTop(scrollPosition);
+
+                this.onInvocationProcessed(event, context);
             }
         });
 
         return false;
+    }
+
+    protected onInvocation(event: JQueryEventObject, context: IInvocationContext) {
+
+    }
+
+    protected onInvocationProcessed(event: JQueryEventObject, context: IInvocationContext) {
+
+    }
+
+    protected onInvocationCompleted(event: JQueryEventObject, context: IInvocationContext) {
+
     }
 
     public onAjaxResponseError = (jqXHR: JQueryXHR, status: string, error: string) => {
