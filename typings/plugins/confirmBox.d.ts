@@ -5,6 +5,6 @@ export declare class ConfirmBox {
     protected button: JQuery;
     constructor(button: JQuery);
     enable(): void;
-    protected setButtonsLabel(ok: string, cancel: string): void;
-    protected showConfirm(text: string, yesCallback: () => void): void;
+    setButtonsLabel(ok: string, cancel: string): void;
+    showConfirm(text: string, yesCallback: () => void): void;
 }

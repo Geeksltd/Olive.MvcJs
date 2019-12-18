@@ -24,11 +24,11 @@ export class ConfirmBox {
         });
     }
 
-    protected setButtonsLabel(ok: string, cancel: string) {
+    public setButtonsLabel(ok: string, cancel: string) {
         alertify.set({ labels: { ok, cancel } });
     }
 
-    protected showConfirm(text: string, yesCallback: () => void) {
+    public showConfirm(text: string, yesCallback: () => void) {
         alertify.confirm(text.replace(/\r/g, "<br />"), e => {
             if (e) yesCallback();
             else return false;

@@ -172,6 +172,6 @@ export default class FileUpload {
 
     private setValidationValue(value: string) {
         this.validationInput.val(value);
-        this.input.closest('form').validate().form();
+        this.input.closest('form').validate().element(this.validationInput);
     }
 }
