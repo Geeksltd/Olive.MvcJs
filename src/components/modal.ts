@@ -157,14 +157,14 @@ export class ModalHelper implements IService {
             let pathArray: Array<string> = url.split("/").splice(3);
             url = pathArray.join("/");
         }
-
-        let modalUrl: string = this.url.addQuery(currentPath, "_modal", url);
+		
+        let modalUrl: string = this.url.addQuery(currentPath, "_modal", encodeURIComponent(url));
 
         if (iframe) {
             modalUrl = this.url.addQuery(modalUrl, "_iframe", "true");
         }
 
-        history.pushState({}, "", encodeURI(modalUrl));
+        history.pushState({}, "", modalUrl);
     }
 
 
