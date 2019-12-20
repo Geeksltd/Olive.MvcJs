@@ -164,7 +164,7 @@ export class ModalHelper implements IService {
             modalUrl = this.url.addQuery(modalUrl, "_iframe", "true");
         }
 
-        history.pushState({}, "", modalUrl);
+        history.pushState({}, "", encodeURI(modalUrl));
     }
 
 
