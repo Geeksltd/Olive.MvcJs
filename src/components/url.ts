@@ -1,9 +1,9 @@
-﻿export default class Url {
+﻿export default class Url implements IService {
 
-    public static effectiveUrlProvider: ((url: string, trigger: JQuery) => string) = (u, t) => u;
-    public static onAuthenticationFailed: (() => void) = Url.goToLoginPage;
+    public effectiveUrlProvider: ((url: string, trigger: JQuery) => string) = (u, t) => u;
+    public onAuthenticationFailed: (() => void) = this.goToLoginPage;
 
-    static makeAbsolute(baseUrl: string, relativeUrl: string): string {
+    public makeAbsolute(baseUrl: string, relativeUrl: string): string {
         baseUrl = baseUrl || window.location.origin;
         relativeUrl = relativeUrl || '';
 
@@ -15,24 +15,30 @@
         return baseUrl + relativeUrl;
     }
 
-    static isAbsolute(url: string): Boolean {
+    public makeRelative(url: string): string {
+        if (this.isAbsolute(url))
+            return url.split("/").splice(3).join("/");
+        else return url;
+    }
+
+    public isAbsolute(url: string): Boolean {
         if (!url) return false;
         url = url.toLowerCase();
         return url.indexOf("http://") === 0 || url.indexOf("https://") === 0;
     }
 
-    static current(): string { return window.location.href; }
+    public current(): string { return window.location.href; }
 
-    static goBack(): void {
-        if (Url.current().indexOf(Url.baseContentUrl + "/##") === 0) history.back();
+    public goBack(): void {
+        if (this.current().indexOf(this.baseContentUrl + "/##") === 0) history.back();
         else {
-            let returnUrl = Url.getQuery("ReturnUrl");
+            let returnUrl = this.getQuery("ReturnUrl");
             if (returnUrl) window.location.href = returnUrl;
             else history.back();
         }
     }
 
-    static updateQuery(uri, key, value) {
+    public updateQuery(uri, key, value) {
         if (uri == null) uri = window.location.href;
 
         let re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
@@ -41,7 +47,7 @@
         else return uri + separator + key + "=" + value;
     }
 
-    static removeQuery(url: string, parameter: string) {
+    public removeQuery(url: string, parameter: string) {
         //prefer to use l.search if you have a location/link object
         let urlParts = url.split('?');
         if (urlParts.length >= 2) {
@@ -63,8 +69,8 @@
         }
     }
 
-    public static getQuery(name: string, url: string = null): string {
-        if (url) url = Url.fullQueryString(url); else url = location.search;
+    public getQuery(name: string, url: string = null): string {
+        if (url) url = this.fullQueryString(url); else url = location.search;
 
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
         let regex = new RegExp("[\\?&]" + name + "=([^&#]*)", "i"),
@@ -72,25 +78,29 @@
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
-    static goToLoginPage() {
+    public goToUrlAfterLogin(url: string) {
+        window.location.href = "/login?returnUrl=/" + encodeURIComponent(this.makeRelative(url).trimStart("/"));
+    }
+
+    private goToLoginPage() {
         let query: string = this.current().split("/").splice(3).join("/");
         window.location.href = "/login?returnUrl=/" + query.trimStart("/");
     }
 
-    static fullQueryString(url: string): string {
+    private fullQueryString(url: string): string {
         if (url == undefined || url == null)
-            url = Url.current();
+            url = this.current();
 
         if (url.indexOf("?") == -1) return '';
 
         return url.substring(url.indexOf("?") + 1);
     }
 
-    static addQuery(url: string, key: string, value) { return url + (url.indexOf("?") == -1 ? "?" : "&") + key + "=" + value; }
+    public addQuery(url: string, key: string, value) { return url + (url.indexOf("?") == -1 ? "?" : "&") + key + "=" + value; }
 
-    static removeEmptyQueries(url: string): string {
+    public removeEmptyQueries(url: string): string {
 
-        let items = Url.fullQueryString(url).split('&');
+        let items = this.fullQueryString(url).split('&');
         let result = '';
 
         for (let i in items) {
@@ -109,8 +119,8 @@
         return result;
     }
 
-    static baseContentUrl = window["BaseThemeUrl"] || '/';
-    static ofContent(relativeUrl: string) {
+    public baseContentUrl = window["BaseThemeUrl"] || '/';
+    public ofContent(relativeUrl: string) {
         let base = this.baseContentUrl;
         while (base.length > 0 && base[base.length - 1] === '/')
             base = base.substring(0, base.length - 1);

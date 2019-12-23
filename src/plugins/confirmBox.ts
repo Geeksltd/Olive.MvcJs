@@ -1,32 +1,34 @@
+export default class ConfirmBoxFactory implements IService {
+    public enable(selector: JQuery) { selector.each((i, e) => new ConfirmBox($(e)).enable()); }
+}
 
-export default class ConfirmBox {
-    button: any;
+export class ConfirmBox {
+    constructor(protected button: JQuery) { }
 
-    public static enable(selector: JQuery) { selector.each((i, e) => new ConfirmBox($(e)).enable()); }
-
-    constructor(targetButton: any) { this.button = targetButton; }
-
-    enable() {
+    public enable() {
         this.button.off("click.confirm-question").bindFirst("click.confirm-question", e => {
             e.stopImmediatePropagation();
 
-            alertify.set({
-                labels: {
-                    ok: this.button.attr('data-confirm-ok') || 'OK',
-                    cancel: this.button.attr('data-confirm-cancel') || 'Cancel'
-                }
-            });
+            this.setButtonsLabel(
+                this.button.attr('data-confirm-ok') || 'OK',
+                this.button.attr('data-confirm-cancel') || 'Cancel',
+            );
 
             this.showConfirm(this.button.attr('data-confirm-question'), () => {
                 this.button.off("click.confirm-question");
                 this.button.trigger('click');
                 this.enable();
             });
+
             return false;
         });
     }
 
-    public showConfirm(text, yesCallback) {
+    public setButtonsLabel(ok: string, cancel: string) {
+        alertify.set({ labels: { ok, cancel } });
+    }
+
+    public showConfirm(text: string, yesCallback: () => void) {
         alertify.confirm(text.replace(/\r/g, "<br />"), e => {
             if (e) yesCallback();
             else return false;

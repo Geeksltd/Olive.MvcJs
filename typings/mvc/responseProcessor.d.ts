@@ -1,0 +1,16 @@
+import LiteEvent from "olive/components/liteEvent";
+export default class ResponseProcessor implements IService {
+    private dynamicallyLoadedScriptFiles;
+    subformChanged: LiteEvent<IResponseProcessorEventArgs>;
+    viewChanged: LiteEvent<IViewUpdatedEventArgs>;
+    processCompleted: LiteEvent<IEventArgs>;
+    nothingFoundToProcess: LiteEvent<IResponseProcessorEventArgs>;
+    processAjaxResponse(response: any, containerModule: JQuery, trigger: JQuery, args: any): void;
+    protected onNothingFoundToProcess(response: any, trigger: JQuery): void;
+    protected onSubformChanged(response: any, trigger: JQuery): void;
+    protected onViewChanged(container: JQuery, trigger: JQuery, isNewPage?: boolean): void;
+    protected navigate(element: JQuery, trigger: JQuery, args: any): void;
+    protected processWithTheContent(trigger: JQuery, element: JQuery, args: any, referencedScripts: JQuery): void;
+    protected updateUrl(referencedScripts: JQuery, element: JQuery, trigger: JQuery): void;
+    protected onProcessCompleted(): void;
+}

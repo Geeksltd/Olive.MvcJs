@@ -2,14 +2,16 @@
 import Config from "olive/config"
 import CrossDomainEvent from 'olive/components/crossDomainEvent'
 
-import FormAction from 'olive/mvc/formAction'
+import ResponseProcessor from "./mvc/responseProcessor";
 import AjaxRedirect from 'olive/mvc/ajaxRedirect'
 import StandardAction from 'olive/mvc/standardAction'
+import ServerInvoker from "./mvc/serverInvoker";
+import WindowEx from "./mvc/windowEx";
 
 import Form from 'olive/components/form'
 import Url from 'olive/components/url'
 import SystemExtensions from 'olive/extensions/systemExtensions'
-import Modal from 'olive/components/modal'
+import { ModalHelper } from 'olive/components/modal'
 import Validate from 'olive/components/validate'
 import Sorting from 'olive/components/sorting'
 import Paging from 'olive/components/paging'
@@ -20,16 +22,16 @@ import Grid from 'olive/components/grid'
 
 import Select from 'olive/plugins/select'
 import PasswordStength from 'olive/plugins/passwordStength'
-import HtmlEditor from 'olive/plugins/htmlEditor'
-import TimeControl from 'olive/plugins/timeControl'
-import AutoComplete from 'olive/plugins/autoComplete'
+import { HtmlEditorFactory } from 'olive/plugins/htmlEditor'
+import { TimeControlFactory } from 'olive/plugins/timeControl'
+import { AutoCompleteFactory } from 'olive/plugins/autoComplete'
 import GlobalSearch from 'olive/plugins/globalSearch'
-import Slider from 'olive/plugins/slider'
-import DatePicker from 'olive/plugins/datePicker'
-import DateTimePicker from 'olive/plugins/dateTimePicker'
+import { SliderFactory } from 'olive/plugins/slider'
+import { DatePickerFactory } from 'olive/plugins/datePicker'
+import { DateTimePickerFactory } from 'olive/plugins/dateTimePicker'
 import NumbericUpDown from 'olive/plugins/numericUpDown'
-import FileUpload from 'olive/plugins/fileUpload'
-import ConfirmBox from 'olive/plugins/confirmBox'
+import { FileUploadFactory } from 'olive/plugins/fileUpload'
+import ConfirmBoxFactory from 'olive/plugins/confirmBox'
 import SubMenu from 'olive/plugins/subMenu'
 import InstantSearch from 'olive/plugins/instantSearch'
 import DateDropdown from 'olive/plugins/dateDropdown'
@@ -37,17 +39,30 @@ import UserHelp from 'olive/plugins/userHelp'
 import MultiSelect from "./plugins/multiSelect";
 import CustomCheckbox from "./plugins/customCheckbox";
 import CustomRadio from "./plugins/customRadio";
-import CKEditorFileManager from "./plugins/ckEditorFileManager";
-import Grouping from "./components/grouping";
+import { CKEditorFileManagerFactory } from "./plugins/ckEditorFileManager";
+import { GroupingFactory } from "./components/grouping";
+import { ServiceContainer } from "./di/serviceContainer";
+import Services from "./di/services";
+import { ServiceDescription } from "./di/serviceDescription";
+import SanityAdapter from "./plugins/sanityAdapter";
 
-export default class OlivePage {
+export default class OlivePage implements IServiceLocator {
 
-    public modal = Modal;
+    public services: ServiceContainer;
+
+    public modal: ModalHelper;
     public waiting = Waiting;
 
     constructor() {
+        this.services = new ServiceContainer();
+
+        this.configureServices(this.services);
+
         SystemExtensions.initialize();
-        Modal.initialize();
+
+        this.modal = this.getService<ModalHelper>(Services.ModalHelper);
+
+        this.initializeServices();
 
         //ASP.NET needs this config for Request.IsAjaxRequest()
         $.ajaxSetup({
@@ -57,90 +72,240 @@ export default class OlivePage {
         $(() => {
             //$.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: this.DEFAULT_MODAL_BACKDROP });
             //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
-            Alert.enableAlert();
-            Validate.configure();
+            this.getService<Alert>(Services.Alert).enableAlert();
+            this.getService<Validate>(Services.Validate).configure();
             this.onViewChanged(null, null, true, true);
         });
 
         // TODO: Find a cleaner way.
         this.fixAlertIssues();
-        FormAction.onViewChanged.handle(x => this.onViewChanged(x.container, x.trigger, x.isNewPage));
+        this.getService<ResponseProcessor>(Services.ResponseProcessor).viewChanged.handle(x => this.onViewChanged(x.container, x.trigger, x.isNewPage));
         CrossDomainEvent.handle('refresh-page', x => this.refresh());
     }
 
-    fixAlertIssues() {
+    protected initializeServices() {
+        this.modal.initialize();
+        this.getService<StandardAction>(Services.StandardAction).initialize();
+        this.getService<Validate>(Services.Validate).initialize();
+        this.getService<MasterDetail>(Services.MasterDetail).initialize();
+    }
+
+    protected configureServices(services: ServiceContainer) {
+        const out: IOutParam<ServiceDescription> = {};
+
+        services.tryAddSingleton(Services.ServiceLocator, () => this, out);
+
+        services.tryAddSingleton(Services.ConfirmBoxFactory, () => new ConfirmBoxFactory(), out);
+
+        services.tryAddSingleton(Services.Alert, () => new Alert(), out);
+
+        services.tryAddSingleton(Services.Url, () => new Url(), out);
+
+        services.tryAddSingleton(Services.Grid, () => new Grid(), out);
+
+        services.tryAddSingleton(Services.MultiSelect, () => new MultiSelect(), out);
+
+        services.tryAddSingleton(Services.Select, () => new Select(), out);
+
+        services.tryAddSingleton(Services.ResponseProcessor, () => new ResponseProcessor(), out)
+
+        services.tryAddSingleton(Services.SanityAdapter, () => new SanityAdapter(), out)
+
+        if (services.tryAddSingleton(Services.Waiting, (url: Url) => new Waiting(url), out)) {
+            out.value.withDependencies(Services.Url);
+        }
+
+        if (services.tryAddSingleton(Services.CKEditorFileManagerFactory, (url: Url) => new CKEditorFileManagerFactory(url), out)) {
+            out.value.withDependencies(Services.Url);
+        }
+
+        if (services.tryAddSingleton(Services.Sorting, (url: Url, serverInvoker: ServerInvoker) => new Sorting(url, serverInvoker), out)) {
+            out.value.withDependencies(Services.Url, Services.ServerInvoker);
+        }
+
+        if (services.tryAddSingleton(Services.Paging, (url: Url, serverInvoker: ServerInvoker) => new Paging(url, serverInvoker), out)) {
+            out.value.withDependencies(Services.Url, Services.ServerInvoker);
+        }
+
+        if (services.tryAddSingleton(Services.FileUploadFactory, (url: Url, serverInvoker: ServerInvoker) => new FileUploadFactory(url, serverInvoker), out)) {
+            out.value.withDependencies(Services.Url, Services.ServerInvoker);
+        }
+
+        if (services.tryAddSingleton(Services.GroupingFactory, (url: Url, ajaxRedirect: AjaxRedirect) => new GroupingFactory(url, ajaxRedirect), out)) {
+            out.value.withDependencies(Services.Url, Services.AjaxRedirect);
+        }
+
+        if (services.tryAddSingleton(Services.ModalHelper, (url: Url, ajaxRedirect: AjaxRedirect, responseProcessor: ResponseProcessor) =>
+            new ModalHelper(url, ajaxRedirect, responseProcessor), out)
+        ) {
+            out.value.withDependencies(Services.Url, Services.AjaxRedirect, Services.ResponseProcessor);
+        }
+
+        if (services.tryAddSingleton(Services.WindowEx, (modalHelper: ModalHelper, ajaxRedirect: AjaxRedirect) => new WindowEx(modalHelper, ajaxRedirect), out)) {
+            out.value.withDependencies(Services.ModalHelper, Services.AjaxRedirect);
+        }
+
+        if (services.tryAddSingleton(Services.AutoCompleteFactory, (url: Url, form: Form, serverInvoker: ServerInvoker) =>
+            new AutoCompleteFactory(url, form, serverInvoker), out)
+        ) {
+            out.value.withDependencies(Services.Url, Services.Form, Services.ServerInvoker);
+        }
+
+        if (services.tryAddSingleton(Services.SliderFactory, (form: Form) => new SliderFactory(form), out)) {
+            out.value.withDependencies(Services.Form);
+        }
+
+        if (services.tryAddSingleton(Services.HtmlEditorFactory, (modalHelper: ModalHelper) => new HtmlEditorFactory(modalHelper), out)) {
+            out.value.withDependencies(Services.ModalHelper);
+        }
+
+        if (services.tryAddSingleton(Services.DateTimePickerFactory, (modalHelper: ModalHelper) => new DateTimePickerFactory(modalHelper), out)) {
+            out.value.withDependencies(Services.ModalHelper);
+        }
+
+        if (services.tryAddSingleton(Services.DatePickerFactory, (modalHelper: ModalHelper) => new DatePickerFactory(modalHelper), out)) {
+            out.value.withDependencies(Services.ModalHelper);
+        }
+
+        if (services.tryAddSingleton(Services.TimeControlFactory, (modalHelper: ModalHelper) => new TimeControlFactory(modalHelper), out)) {
+            out.value.withDependencies(Services.ModalHelper);
+        }
+
+        if (services.tryAddSingleton(Services.AjaxRedirect, (url: Url,
+            responseProcessor: ResponseProcessor,
+            waiting: Waiting) =>
+            new AjaxRedirect(url, responseProcessor, waiting), out)
+        ) {
+            out.value.withDependencies(Services.Url, Services.ResponseProcessor, Services.Waiting);
+        }
+
+        if (services.tryAddSingleton(Services.Form, (url: Url, validate: Validate, waiting: Waiting, ajaxRedirect: AjaxRedirect) =>
+            new Form(url, validate, waiting, ajaxRedirect), out)) {
+            out.value.withDependencies(Services.Url, Services.Validate, Services.Waiting, Services.AjaxRedirect);
+        }
+
+        if (services.tryAddSingleton(Services.Validate, (alert: Alert, responseProcessor: ResponseProcessor) =>
+            new Validate(alert, responseProcessor), out)
+        ) {
+            out.value.withDependencies(Services.Alert, Services.ResponseProcessor);
+        }
+
+        if (services.tryAddSingleton(Services.MasterDetail, (validate: Validate, responseProcessor: ResponseProcessor) =>
+            new MasterDetail(validate, responseProcessor), out)
+        ) {
+            out.value.withDependencies(Services.Validate, Services.ResponseProcessor);
+        }
+
+        if (services.tryAddSingleton(Services.StandardAction, (alert: Alert,
+            form: Form,
+            waiting: Waiting,
+            ajaxRedirect: AjaxRedirect,
+            responseProcessor: ResponseProcessor,
+            select: Select,
+            modalHelper: ModalHelper,
+            serviceLocator: IServiceLocator) =>
+            new StandardAction(alert, form, waiting, ajaxRedirect, responseProcessor, select, modalHelper, serviceLocator), out)
+        ) {
+            out.value.withDependencies(
+                Services.Alert,
+                Services.Form,
+                Services.Waiting,
+                Services.AjaxRedirect,
+                Services.ResponseProcessor,
+                Services.Select,
+                Services.ModalHelper,
+                Services.ServiceLocator);
+        }
+
+        if (services.tryAddSingleton(Services.ServerInvoker, (url: Url,
+            validate: Validate,
+            waiting: Waiting,
+            form: Form,
+            responseProcessor: ResponseProcessor) =>
+            new ServerInvoker(url, validate, waiting, form, responseProcessor), out)
+        ) {
+            out.value.withDependencies(
+                Services.Url,
+                Services.Validate,
+                Services.Waiting,
+                Services.Form,
+                Services.ResponseProcessor);
+        }
+    }
+
+    private fixAlertIssues() {
         if (!$.fn.tooltip.Constructor) $.fn.tooltip.Constructor = {};
         window["alertify"] = <alertify.IAlertifyStatic>window.require("alertify")();
     }
 
-    _initializeActions = [];
-    onInit(action) { this._initializeActions.push(action) }
+    protected _initializeActions = [];
+    protected onInit(action) { this._initializeActions.push(action) }
 
-    _preInitializeActions = [];
-    onPreInit(action) { this._preInitializeActions.push(action) }
+    protected _preInitializeActions = [];
+    protected onPreInit(action) { this._preInitializeActions.push(action) }
 
-    onViewChanged(container: JQuery = null, trigger: any = null, newPage: boolean = false, firstTime: boolean = false) {
-
-        StandardAction.runStartup(container, trigger, "PreInit");
+    protected onViewChanged(container: JQuery = null, trigger: any = null, newPage: boolean = false, firstTime: boolean = false) {
+        const standardAction = this.getService<StandardAction>(Services.StandardAction);
+        standardAction.runStartup(container, trigger, "PreInit");
         try {
             this.initialize();
         } catch (error) {
             alert("initialization failed: " + error);
         }
-        StandardAction.runStartup(container, trigger, "Init");
+        standardAction.runStartup(container, trigger, "Init");
 
         if (newPage) {
             $('[autofocus]:not([data-autofocus=disabled]):first').focus();
             if (Config.REDIRECT_SCROLLS_UP) $(window).scrollTop(0);
         }
 
-        //if (firstTime) {
-        //    if (Modal.urlContainsModal() && !Modal.modalPageExists()) {
-        //        Modal.openWithUrl();
-        //    }
-        //}
+        if (firstTime) this.modal.tryOpenFromUrl();
     }
 
-    initialize() {
+    public initialize() {
         this._preInitializeActions.forEach((action) => action());
 
         // =================== Standard Features ====================
-        Grid.mergeActionButtons();
-        Grid.enableColumn($(".select-cols .apply"));
-        Grid.enableSelectCol($(".select-grid-cols .group-control"));
-        Grid.enableToggle($("th.select-all > input:checkbox"));
-        MasterDetail.enable($("[data-delete-subform]"));
-        Paging.enableOnSizeChanged($("form .pagination-size").find("select[name=p],select[name$='.p']"));
-        Sorting.enableDragSort($("[data-sort-item]").parents("tbody,.r-grid-body"));
-        Paging.enableWithAjax($("a[data-pagination]"));
-        Sorting.enableAjaxSorting($("a[data-sort]"));
-        Sorting.setSortHeaderClass($("th[data-sort]"));
-        Form.enablecleanUpNumberField($("[data-val-number]"));
-        Modal.enableEnsureHeight($("[data-toggle=tab]"));
-        MultiSelect.enableEnhance($("select[data-control='collapsible-checkboxes']"));
-        Select.enableEnhance($("select:not([data-control='collapsible-checkboxes'])"));
-        Form.enableDefaultButtonKeyPress($("form input, form select"));
+        const grid = this.getService<Grid>(Services.Grid);
+        grid.mergeActionButtons();
+        grid.enableColumn($(".select-cols .apply"));
+        grid.enableSelectCol($(".select-grid-cols .group-control"));
+        grid.enableToggle($("th.select-all > input:checkbox"));
+        this.getService<MasterDetail>(Services.MasterDetail).enable($("[data-delete-subform]"));
+        const paging = this.getService<Paging>(Services.Paging);
+        paging.enableOnSizeChanged($("form .pagination-size").find("select[name=p],select[name$='.p']"));
+        const sorting = this.getService<Sorting>(Services.Sorting);
+        sorting.enableDragSort($("[data-sort-item]").parents("tbody,.r-grid-body"));
+        paging.enableWithAjax($("a[data-pagination]"));
+        sorting.enableAjaxSorting($("a[data-sort]"));
+        sorting.setSortHeaderClass($("th[data-sort]"));
+        const form = this.getService<Form>(Services.Form);
+        form.enablecleanUpNumberField($("[data-val-number]"));
+        this.modal.enableEnsureHeight($("[data-toggle=tab]"));
+        this.getService<MultiSelect>(Services.MultiSelect).enableEnhance($("select[data-control='collapsible-checkboxes']"));
+        this.getService<Select>(Services.Select).enableEnhance($("select:not([data-control='collapsible-checkboxes'])"));
+        form.enableDefaultButtonKeyPress($("form input, form select"));
         UserHelp.enable($("[data-user-help]"));
-        StandardAction.enableLinkModal($("[target='$modal'][href]"));
-        Grouping.enable($(".form-group #GroupBy"));
+        this.getService<ModalHelper>(Services.ModalHelper).enableLink($("[target='$modal'][href]"));
+        this.getService<GroupingFactory>(Services.GroupingFactory).enable($(".form-group #GroupBy"));
 
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust",
             (e: any) => $(e.currentTarget).height(e.currentTarget.contentWindow.document.body.scrollHeight));
 
         // =================== Plug-ins ====================
         InstantSearch.enable($("[name=InstantSearch]"));
-        AutoComplete.enable($("input[autocomplete-source]"));
-        CKEditorFileManager.enable($(".ckeditor-file-uri"));
+        this.getService<AutoCompleteFactory>(Services.AutoCompleteFactory).enable($("input[autocomplete-source]"));
+        this.getService<CKEditorFileManagerFactory>(Services.CKEditorFileManagerFactory).enable($(".ckeditor-file-uri"));
         GlobalSearch.enable($("input[data-search-source]"));
-        DatePicker.enable($("[data-control=date-picker],[data-control=calendar]"));
-        DateTimePicker.enable($("[data-control='date-picker|time-picker']"));
-        TimeControl.enable($("[data-control=time-picker]"));
+        this.getService<DatePickerFactory>(Services.DatePickerFactory).enable($("[data-control=date-picker],[data-control=calendar]"));
+        this.getService<DateTimePickerFactory>(Services.DateTimePickerFactory).enable($("[data-control='date-picker|time-picker']"));
+        this.getService<TimeControlFactory>(Services.TimeControlFactory).enable($("[data-control=time-picker]"));
         DateDropdown.enable($("[data-control=date-drop-downs]"));
-        HtmlEditor.enable($("[data-control=html-editor]"));
+        this.getService<HtmlEditorFactory>(Services.HtmlEditorFactory).enable($("[data-control=html-editor]"));
         NumbericUpDown.enable($("[data-control=numeric-up-down]"));
-        Slider.enable($("[data-control=range-slider],[data-control=slider]"));
-        FileUpload.enable($(".file-upload input:file"));
-        ConfirmBox.enable($("[data-confirm-question]"));
+        this.getService<SliderFactory>(Services.SliderFactory).enable($("[data-control=range-slider],[data-control=slider]"));
+        this.getService<FileUploadFactory>(Services.FileUploadFactory).enable($(".file-upload input:file"));
+        this.getService<ConfirmBoxFactory>(Services.ConfirmBoxFactory).enable($("[data-confirm-question]"));
         PasswordStength.enable($(".password-strength"));
         SubMenu.enable($(".with-submenu"));
         SubMenu.createAccordion($("ul.accordion"));
@@ -149,16 +314,19 @@ export default class OlivePage {
         this.customizeValidationTooltip();
 
         // =================== Request lifecycle ====================
-        AjaxRedirect.enableBack($(window));
-        AjaxRedirect.enableRedirect($("a[data-redirect=ajax]"));
-        Form.enablesubmitCleanGet($('form[method=get]'));
-        FormAction.enableInvokeWithAjax($("[formaction]").not("[formmethod=post]"), "click.formaction", "formaction");
-        FormAction.enableinvokeWithPost($("[formaction][formmethod=post]"));
-        FormAction.enableInvokeWithAjax($("[data-change-action]:not([autocomplete-source])"), "change.data-action", "data-change-action");
-        FormAction.enableInvokeWithAjax($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar],[data-change-action][data-control=time-picker]"), "dp.change.data-action", "data-change-action");
+        this.getService<WindowEx>(Services.WindowEx).enableBack($(window));
+        this.getService<AjaxRedirect>(Services.AjaxRedirect).enableRedirect($("a[data-redirect=ajax]"));
+        form.enablesubmitCleanGet($('form[method=get]'));
 
-        MasterDetail.updateSubFormStates();
-        Modal.adjustHeight();
+        const formAction = this.getService<ServerInvoker>(Services.ServerInvoker);
+        formAction.enableInvokeWithAjax($("[formaction]").not("[formmethod=post]"), "click.formaction", "formaction");
+        formAction.enableinvokeWithPost($("[formaction][formmethod=post]"));
+        formAction.enableInvokeWithAjax($("[data-change-action]:not([autocomplete-source]):not([data-control=collapsible-checkboxes])"), "change.data-action", "data-change-action");
+        formAction.enableInvokeWithAjax($("[data-change-action][data-control=collapsible-checkboxes]"), "hidden.bs.select", "data-change-action");
+        formAction.enableInvokeWithAjax($("[data-change-action][data-control=date-picker],[data-change-action][data-control=calendar],[data-change-action][data-control=time-picker]"), "dp.change.data-action", "data-change-action");
+
+        this.getService<MasterDetail>(Services.MasterDetail).updateSubFormStates();
+        this.modal.adjustHeight();
 
         this._initializeActions.forEach((action) => action());
 
@@ -168,33 +336,39 @@ export default class OlivePage {
         catch (error) { console.error(error); }
     }
 
-    enableCustomCheckbox() {
+    protected enableCustomCheckbox() {
         CustomCheckbox.enable($("input[type=checkbox]"));
     }
 
-    enableCustomRadio() {
+    protected enableCustomRadio() {
         CustomRadio.enable($("input[type=radio]"));
     }
 
-    goBack(target) {
-        let returnUrl = Url.getQuery("ReturnUrl");
+    protected goBack(target) {
+        const url = this.getService<Url>(Services.Url);
+
+        let returnUrl = url.getQuery("ReturnUrl");
 
         if (returnUrl && target && $(target).is("[data-redirect=ajax]"))
-            AjaxRedirect.go(returnUrl, $(target), false, false, true);
-        else Url.goBack();
+            this.getService<AjaxRedirect>(Services.AjaxRedirect).go(returnUrl, $(target), false, false, true);
+        else url.goBack();
 
         return false;
     }
 
-    customizeValidationTooltip() {
+    protected customizeValidationTooltip() {
 
     }
 
-    refresh(keepScroll = false) {
+    protected refresh(keepScroll = false) {
         if ($("main").length == 1 || $("main").length === 2) //if there is an ajax modal available, then we have 2 main elements.
-            AjaxRedirect.go(location.href, null, false /*isBack*/, keepScroll, false);
+            this.getService<AjaxRedirect>(Services.AjaxRedirect).go(location.href, null, false /*isBack*/, keepScroll, false);
         else location.reload();
 
         return false;
+    }
+
+    public getService<T extends IService>(key: string) {
+        return this.services.getService<T>(key);
     }
 }

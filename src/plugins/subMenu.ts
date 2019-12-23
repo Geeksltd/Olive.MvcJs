@@ -1,16 +1,16 @@
 
 export default class SubMenu {
-    menu: any;
-    submenuOptions: any;
-    
-    public static enable(selector:JQuery){selector.each((i,e)=> new SubMenu($(e)));}
+    private menu: any;
+    private submenuOptions: any;
 
-    public static createAccordion(selector:JQuery){
-        selector.find('[data-toggle]').click(function(event){
+    public static enable(selector: JQuery) { selector.each((i, e) => new SubMenu($(e))); }
+
+    public static createAccordion(selector: JQuery) {
+        selector.find('[data-toggle]').click((event) => {
             $($(event.target).parent('li').siblings().children('[data-toggle][aria-expanded=true]')).trigger('click');
         });
     }
-    
+
     constructor(targetMenue: any) {
         this.menu = targetMenue;
         this.submenuOptions = { showTimeout: 0, hideTimeout: 0 };

@@ -1,35 +1,52 @@
-import FormAction from "olive/mvc/formAction"
+// import FormAction from "olive/mvc/formAction"
 import Url from "olive/components/url"
 import CrossDomainEvent from "olive/components/crossDomainEvent";
+import ServerInvoker from "olive/mvc/serverInvoker";
 
 // For configuration see:
 // http://markusslima.github.io/bootstrap-filestyle/ 
 // https://blueimp.github.io/jQuery-File-Upload/
 
+export class FileUploadFactory implements IService {
+
+    constructor(private url: Url,
+        private serverInvoker: ServerInvoker) { }
+
+    public enable(selector: JQuery) { selector.each((i, e) => new FileUpload($(e), this.url, this.serverInvoker).enable()); }
+}
+
 export default class FileUpload {
-    input: JQuery;
-    container: JQuery;
-    idInput: JQuery;
-    deleteButton: JQuery;
-    progressBar: JQuery;
-    currentFileLink: JQuery;
-    existingFileNameInput: JQuery;
-    fileLabel: JQuery;
+    private container: JQuery;
+    private deleteButton: JQuery;
+    private progressBar: JQuery;
+    private currentFileLink: JQuery;
+    private existingFileNameInput: JQuery;
 
-    public static enable(selector: JQuery) { selector.each((i, e) => new FileUpload($(e)).enable()); }
+    private actionInput: JQuery;
+    private tempFileIdInput: JQuery;
+    private filenameInput: JQuery;
+    private validationInput: JQuery;
 
-    constructor(targetInput: JQuery) {
-        this.input = targetInput;
+    constructor(private input: JQuery, private url: Url, private serverInvoker: ServerInvoker) {
         this.fixMasterDetailsInputName();
-        this.input.before(this.input.siblings('input'));
+
+        // console.log("Check me!!")
+        // this.input.before(this.input.siblings('input'));
+
         this.container = this.input.closest(".file-upload");
-        this.idInput = this.container.find("input.file-id");
-        this.fileLabel = this.input.parent().find(':text');
+        //this.idInput = this.container.find("input.file-id");
+        //this.fileLabel = this.input.parent().find(':text');
+
+        this.actionInput = this.container.find(".Action");
+        this.tempFileIdInput = this.container.find(".TempFileId");
+        this.filenameInput = this.container.find(".Filename");
+        this.validationInput = this.container.find(".validation");
+
         this.deleteButton = this.container.find(".delete-file").click(e => this.onDeleteButtonClicked());
     }
 
-    enable() {
-        this.input.attr("data-url", Url.effectiveUrlProvider("/upload", this.input));
+    public enable() {
+        this.input.attr("data-url", this.url.effectiveUrlProvider("/upload", this.input));
         const options = {
             'input': this.input.attr('data-input') !== 'false',
             'htmlIcon': this.input.attr('data-icon'),
@@ -47,7 +64,7 @@ export default class FileUpload {
         this.container.find('.bootstrap-filestyle > input:text').wrap($("<div class='progress'></div>"));
         this.progressBar = this.container.find(".progress-bar");
         this.container.find('.bootstrap-filestyle > .progress').prepend(this.progressBar);
-        if (this.idInput.val() != "REMOVE") {
+        if (this.actionInput.val() != "Removed") {
             this.currentFileLink = this.container.find('.current-file > a');
             this.existingFileNameInput = this.container.find('.bootstrap-filestyle > .progress > input:text');
         }
@@ -69,12 +86,12 @@ export default class FileUpload {
         });
     }
 
-    fixMasterDetailsInputName(): void {
+    private fixMasterDetailsInputName(): void {
         let nameParts = this.input.attr('name').split('.');
         this.input.attr('name', nameParts[nameParts.length - 1]);
     }
 
-    hasExistingFile(): boolean {
+    private hasExistingFile(): boolean {
         if (!this.currentFileLink) return false;
         let name = this.currentFileLink.text();
         if (!name) return false;
@@ -83,7 +100,7 @@ export default class FileUpload {
         return true;
     }
 
-    showExistingFile() {
+    private showExistingFile() {
         this.deleteButton.show();
         this.progressBar.width('100%');
 
@@ -95,56 +112,66 @@ export default class FileUpload {
             .click(() => this.currentFileLink[0].click());
     }
 
-    removeExistingFile() {
+    private removeExistingFile() {
         if (!this.hasExistingFile()) return;
         this.existingFileNameInput.removeClass('file-target').attr('disabled', 'true').off();
     }
 
-    onDeleteButtonClicked() {
+    private onDeleteButtonClicked() {
         this.deleteButton.hide();
-        if (!this.idInput.data('val-required'))
-            this.idInput.val("REMOVE");
-        else
-            this.idInput.val('');
+        this.actionInput.val("Removed");
+        this.setValidationValue("");
         this.progressBar.width(0);
         this.input.filestyle('clear');
         this.removeExistingFile();
     }
 
-    onDragDropped(e, data) {
-        if (this.fileLabel.length > 0 && data.files.length > 0) {
-            this.fileLabel.val(data.files.map(x => x.name));
+    private onDragDropped(e, data) {
+        if (this.filenameInput.length > 0 && data.files.length > 0) {
+            this.filenameInput.val(data.files.map(x => x.name));
         }
     }
 
-    onProgressAll(e, data: any) {
+    private onProgressAll(e, data: any) {
         let progress = parseInt((data.loaded / data.total * 100).toString(), 10);
         this.progressBar.width(progress + '%');
     }
 
-    onUploadError(jqXHR: JQueryXHR, status: string, error: string) {
-        FormAction.onAjaxResponseError(jqXHR, status, error);
-        this.fileLabel.val('');
+    private onUploadError(jqXHR: JQueryXHR, status: string, error: string) {
+        this.serverInvoker.onAjaxResponseError(jqXHR, status, error);
+        this.filenameInput.val('');
     }
 
-    onUploadSuccess(response) {
+    private onUploadSuccess(response) {
         if (response.Error) {
-            FormAction.onAjaxResponseError(<any>{ responseText: response.Error }, "error", response.Error);
-            this.fileLabel.val('');
+            this.serverInvoker.onAjaxResponseError(<any>{ responseText: response.Error }, "error", response.Error);
+            this.filenameInput.val('');
         }
         else {
-            if (this.input.is("[multiple]")) this.idInput.val(this.idInput.val() + "|file:" + response.Result.ID);
-            else this.idInput.val("file:" + response.Result.ID);
+            if (this.input.is("[multiple]")) {
+                this.tempFileIdInput.val(this.tempFileIdInput.val() + "|" + response.Result.ID);
+                this.filenameInput.val(this.filenameInput.val() + ", " + response.Result.Name);
+            }
+            else {
+                this.tempFileIdInput.val(response.Result.ID);
+                this.filenameInput.val(response.Result.Name);
+            }
             this.deleteButton.show();
+            this.setValidationValue("value");
         }
     }
 
-    onUploadCompleted(response) {
+    private onUploadCompleted(response) {
         CrossDomainEvent.raise(parent, "file-uploaded", response);
     }
 
-    onChange(e, data) {
+    private onChange(e, data) {
         this.progressBar.width(0);
         this.removeExistingFile();
+    }
+
+    private setValidationValue(value: string) {
+        this.validationInput.val(value);
+        this.input.closest('form').validate().element(this.validationInput);
     }
 }

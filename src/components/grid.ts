@@ -1,25 +1,22 @@
-import FormAction from "olive/mvc/formAction";
+export default class Grid implements IService {
 
-export default class Grid {
-
-
-    public static enableColumn(element: any) {
+    public enableColumn(element: any) {
         element.off("click.apply-columns").on("click.apply-columns", e => this.applyColumns(e));
     }
 
-    public static enableToggle(element: any) {
+    public enableToggle(element: any) {
         element.off("change.select-all").on("change.select-all", e => this.enableSelectAllToggle(e));
     }
 
-    public static enableHlightRow(element: any) {
+    private enableHlightRow(element: any) {
         this.highlightRow(element);
     }
 
-    public static enableSelectCol(selector: JQuery) {
+    public enableSelectCol(selector: JQuery) {
         selector.each((i, e) => this.enableSelectColumns($(e)));
     }
 
-    static applyColumns(event: JQueryEventObject) {
+    private applyColumns(event: JQueryEventObject) {
         let button = $(event.currentTarget);
         let checkboxes = button.closest(".select-cols").find(":checkbox");
         if (checkboxes.length === 0 || checkboxes.filter(":checked").length > 0) return;
@@ -27,26 +24,26 @@ export default class Grid {
             .appendTo(button.parent());
     }
 
-    static enableSelectColumns(container) {
+    private enableSelectColumns(container) {
         let columns = container.find("div.select-cols");
         container.find("a.select-cols").click(() => { columns.show(); return false; });
         columns.find('.cancel').click(() => columns.hide());
     }
 
-    static enableSelectAllToggle(event) {
+    private enableSelectAllToggle(event) {
         let trigger = $(event.currentTarget);
         trigger.closest("table").find("td.select-row > input:checkbox").prop('checked', trigger.is(":checked"));
     }
 
-    static highlightRow(element: any) {
+    private highlightRow(element: any) {
         let target = $(element.closest("tr"));
         target.siblings('tr').removeClass('highlighted');
         target.addClass('highlighted');
     }
 
-    public static mergeActionButtons(): void {
+    public mergeActionButtons(): void {
 
-        $("table tr > .actions-merge").each((index, item) => {
+        $("table tr > .actions-merge, .r-grid .r-grid-row > .actions-merge").each((index, item) => {
 
             let current: any = $(item);
 
@@ -54,7 +51,6 @@ export default class Grid {
                 return;
 
             var mergedContent: any;
-
             if (current.children("a").length > 0) {
                 mergedContent = {};
                 current.children("a").each((i, innerLink) => {
@@ -67,10 +63,14 @@ export default class Grid {
 
                 current.children("button").each((i, innerLink) => {
                     let selected: any = $(innerLink);
-                    mergedContent[selected.text().trim()] = selected.attr("formaction").trim() + "#ATTRIBUTE##BUTTON#data-confirm-question='" + selected.attr("data-confirm-question") + "'";
+                    mergedContent[selected.text().trim()] = selected.attr("formaction").trim() + "#ATTRIBUTE##BUTTON#";
+                    if (selected.attr("data-confirm-question"))
+                        mergedContent[selected.text().trim()] += "data-confirm-question='" + selected.attr("data-confirm-question") + "'";
+                    if (selected.attr("formmethod"))
+                        mergedContent[selected.text().trim()] += "formmethod='" + selected.attr("formmethod") + "'";
                 });
             }
-            else {
+            else if (!mergedContent) {
                 mergedContent = "";
             }
 
@@ -87,7 +87,11 @@ export default class Grid {
 
                     currentInnerItem.children("button").each((i, innerLink) => {
                         let selected: any = $(innerLink);
-                        mergedContent[selected.text().trim()] = selected.attr("formaction").trim() + "#ATTRIBUTE##BUTTON#data-confirm-question='" + selected.attr("data-confirm-question") + "'";
+                        mergedContent[selected.text().trim()] = selected.attr("formaction").trim() + "#ATTRIBUTE##BUTTON#";
+                        if (selected.attr("data-confirm-question"))
+                            mergedContent[selected.text().trim()] += "data-confirm-question='" + selected.attr("data-confirm-question") + "'";
+                        if (selected.attr("formmethod"))
+                            mergedContent[selected.text().trim()] += "formmethod='" + selected.attr("formmethod") + "'";
                     });
                 }
             });

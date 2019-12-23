@@ -1,14 +1,18 @@
 import Url from "olive/components/url";
 
+export class CKEditorFileManagerFactory implements IService {
+
+    constructor(private url: Url) { }
+
+    public enable(selector: JQuery) { selector.each((i, e) => new CKEditorFileManager($(e), this.url).enable()); }
+}
 export default class CKEditorFileManager {
-    public static enable(selector: JQuery) { selector.each((i, e) => new CKEditorFileManager($(e)).enable()); }
+    constructor(private item: JQuery, private url: Url) { }
 
-    constructor(private item: JQuery) { }
-
-    enable() {
+    public enable() {
         this.item.on('click', () => {
             const uri = this.item.data('download-uri');
-            window.opener.CKEDITOR.tools.callFunction(Url.getQuery('CKEditorFuncNum'), uri);
+            window.opener.CKEDITOR.tools.callFunction(this.url.getQuery('CKEditorFuncNum'), uri);
             window.close();
         });
     }

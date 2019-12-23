@@ -1,8 +1,10 @@
 ﻿import Url from 'olive/components/url'
 
-export default class Waiting {
+export default class Waiting implements IService {
 
-    public static show(blockScreen: boolean = false, validate: boolean = true) {
+    constructor(private url: Url) { }
+
+    public show(blockScreen: boolean = false, validate: boolean = true) {
 
         if (validate) {
             for (let i = 0; i < document.forms.length; i++)
@@ -17,14 +19,14 @@ export default class Waiting {
                 .appendTo(screen);
         }
 
-        var imageUrl = Url.ofContent('/img/loading.gif');
+        var imageUrl = this.url.ofContent('/img/loading.gif');
 
         $("<div class='wait-container'><div class='wait-box'><img src='" + imageUrl + "'/></div>")
             .appendTo(screen)
             .fadeIn('slow');
     }
 
-    public static hide() {
+    public hide() {
         $(".wait-screen").remove();
     }
 }

@@ -1,52 +1,80 @@
 import Form from "olive/components/form"
 import Url from 'olive/components/url'
-import FormAction from 'olive/mvc/formAction'
+import ServerInvoker from "olive/mvc/serverInvoker";
+
+export class AutoCompleteFactory implements IService {
+
+    constructor(private url: Url,
+        private form: Form,
+        private serverInvoker: ServerInvoker) { }
+
+    public enable(selector: JQuery) {
+        selector.each((i, e) => new AutoComplete($(e), this.url, this.form, this.serverInvoker).enable());
+    }
+}
 
 export default class AutoComplete {
     private static customOptions: RunningCoder.Typeahead.Options;
 
-    input: JQuery;
-    awaitingAutocompleteResponses: number = 0;
-    valueField: JQuery;
+    protected valueField: JQuery;
 
     public static setOptions(options: RunningCoder.Typeahead.Options) {
         AutoComplete.customOptions = options;
     }
 
-    public static enable(selector: JQuery) {
-        selector.each((i, e) => new AutoComplete($(e)).enable());
-    }
+    constructor(public input: JQuery,
+        private url: Url,
+        private form: Form,
+        private serverInvoker: ServerInvoker) { }
 
-    constructor(targetInput: JQuery) {
-        this.input = targetInput;
-    }
-
-    enable() {
-
+    public enable() {
         if (this.input.is("[data-typeahead-enabled=true]")) return;
         else this.input.attr("data-typeahead-enabled", "true");
 
         if (this.input.is("[data-change-action]"))
-            FormAction.enableInvokeWithAjax(this.input, "typeahead:select", "data-change-action");
+            this.serverInvoker.enableInvokeWithAjax(this.input, "typeahead:select", "data-change-action");
 
         this.input.wrap("<div class='typeahead__container'></div>");
 
         this.valueField = $("[name='" + this.input.attr("name").slice(0, -5) + "']");
 
+        this.input
+            .wrap("<span class='typehead-chevron-down'></span>")
+            .before('<i class="fas fa-chevron-down"></i>')
+            .data("selected-text", "")
+            .on('input', () => this.clearValue())
+            .typeahead($.extend(true, this.getDefaultOptions(), AutoComplete.customOptions, this.getMandatoryOptions()));
+    }
+
+    private getMandatoryOptions(): RunningCoder.Typeahead.Options {
         let url = this.input.attr("autocomplete-source") || '';
-        url = Url.effectiveUrlProvider(url, this.input);
+        url = this.url.effectiveUrlProvider(url, this.input);
 
-        var postData: any = this.toObject(Form.getPostData(this.input));
-
-        postData[this.input.attr("name")] = "{{query}}";
-
-        let clientSideSearch = this.input.attr("clientside") || false;
-
-        let callback: RunningCoder.Typeahead.Callback = {
-            onClick: (node, a, item, event) => {
-                // The following line is a compile error.
-                // $("[name='" + node.attr("name").slice(0, -5) + "']").val(event.Value);
+        return {
+            source: {
+                values: {
+                    display: "Display",
+                    data: [{
+                        "Display": "",
+                        "Text": "",
+                        "Value": ""
+                    }],
+                    ajax: (_) => {
+                        return {
+                            type: "POST",
+                            url: url,
+                            data: this.getPostData(),
+                            xhrFields: { withCredentials: true }
+                        };
+                    }
+                }
             },
+            callback: this.getMandatoryCallbacks()
+        };
+    }
+
+    private getMandatoryCallbacks(): RunningCoder.Typeahead.Callback {
+        let callback: RunningCoder.Typeahead.Callback = {
             onClickAfter: (node, a, item, event) => {
                 this.itemSelected(item);
                 this.input.trigger("typeahead:select", { event, item })
@@ -70,7 +98,13 @@ export default class AutoComplete {
             });
         }
 
-        let defaultOptions: RunningCoder.Typeahead.Options = {
+        return callback;
+    }
+
+    protected getDefaultOptions(): RunningCoder.Typeahead.Options {
+        let clientSideSearch = this.input.attr("clientside") || false;
+
+        return {
             minLength: 0,
             dynamic: !clientSideSearch,
             searchOnFocus: true,
@@ -80,44 +114,23 @@ export default class AutoComplete {
             correlativeTemplate: true,
             emptyTemplate: "<div class='tt-suggestion'>Not found</div>"
         };
-
-        let mandatoryOptions: RunningCoder.Typeahead.Options = {
-            source: {
-                values: {
-                    display: "Display",
-                    data: [{
-                        "Display": "",
-                        "Text": "",
-                        "Value": ""
-                    }],
-                    ajax: function (query) {
-                        return {
-                            type: "POST",
-                            url: url,
-                            data: postData,
-                            xhrFields: { withCredentials: true }
-                        };
-                    }
-                }
-            },
-            callback: callback
-        };
-
-        this.input
-            .wrap("<span class='typehead-chevron-down'></span>")
-            .before('<i class="fas fa-chevron-down"></i>')
-            .data("selected-text", "")
-            .on('input', () => this.clearValue())
-            .typeahead($.extend(defaultOptions, AutoComplete.customOptions, mandatoryOptions));
     }
 
-    clearValue() {
+    protected getPostData(): any {
+        var postData: any = this.toObject(this.form.getPostData(this.input));
+
+        postData[this.input.attr("name")] = "{{query}}";
+
+        return postData;
+    }
+
+    protected clearValue() {
         if (this.input.val() === "") this.valueField.val("");
         if (this.input.val() !== this.input.data("selected-text"))
             this.valueField.val("");
     }
 
-    itemSelected(item: any) {
+    protected itemSelected(item: any) {
 
         if (item) {
             var txt = (item.Text == null || item.Text == undefined || item.Text.trim() == "") ? item.Display : item.Text;
@@ -134,7 +147,7 @@ export default class AutoComplete {
     }
 
     // Convert current form array to simple plain object
-    toObject(arr: JQuerySerializeArrayElement[]) {
+    protected toObject(arr: JQuerySerializeArrayElement[]) {
         var rv = {};
         for (var i = 0; i < arr.length; ++i)
             rv[arr[i].name] = arr[i].value;

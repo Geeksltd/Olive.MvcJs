@@ -1,9 +1,14 @@
+import Url from 'olive/components/url';
 import 'jquery-sortable';
-export default class Sorting {
-    static enableDragSort(selector: JQuery): void;
-    static enablesetSortHeaderClass(selector: JQuery): void;
-    static enableAjaxSorting(selector: JQuery): void;
-    static AjaxSorting(event: JQueryEventObject): void;
-    static setSortHeaderClass(thead: JQuery): void;
-    static DragSort(container: any): void;
+import ServerInvoker from 'olive/mvc/serverInvoker';
+export default class Sorting implements IService {
+    private url;
+    private serverInvoker;
+    constructor(url: Url, serverInvoker: ServerInvoker);
+    enableDragSort(selector: JQuery): void;
+    enablesetSortHeaderClass(selector: JQuery): void;
+    enableAjaxSorting(selector: JQuery): void;
+    private AjaxSorting;
+    setSortHeaderClass(thead: JQuery): void;
+    private DragSort;
 }

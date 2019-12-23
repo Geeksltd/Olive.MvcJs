@@ -1,13 +1,9 @@
 export default class DateDropdown {
-     input: any;
+    public static enable(selector: JQuery) { selector.each((i, e) => new DateDropdown($(e)).enable()); }
 
-    public static enable(selector:JQuery){selector.each((i,e) => new DateDropdown($(e)).enable());}
-    
-    constructor(targetInput:any){
-        this.input=targetInput;
-    }
+    constructor(private input: JQuery) { }
 
-    enable (){
+    private enable() {
         this.input.combodate({
             format: 'DD/MM/YYYY',
             template: 'DD / MMM / YYYY',
@@ -16,5 +12,5 @@ export default class DateDropdown {
             smartDays: true,
             firstItem: 'name'
         });
-    } 
+    }
 }

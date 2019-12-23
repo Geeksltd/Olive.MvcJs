@@ -1,10 +1,27 @@
-export default class StandardAction {
-    static enableLinkModal(selector: JQuery): void;
-    static runStartup(container?: JQuery, trigger?: any, stage?: string): void;
-    static runAll(actions: any, trigger?: any): void;
-    static run(action: any, trigger: any): boolean;
-    static notify(action: any, trigger: any): void;
-    static redirect(action: any, trigger: any): void;
-    static openModal(event: any, url?: any, options?: any): any;
-    static openModaliFrame(event: any, url?: any, options?: any): void;
+import Alert from 'olive/components/alert';
+import Select from 'olive/plugins/select';
+import Waiting from 'olive/components/waiting';
+import { ModalHelper } from '../components/modal';
+import AjaxRedirect from 'olive/mvc/ajaxRedirect';
+import Form from 'olive/components/form';
+import ResponseProcessor from 'olive/mvc/responseProcessor';
+export default class StandardAction implements IService {
+    private alert;
+    private form;
+    private waiting;
+    private ajaxRedirect;
+    private responseProcessor;
+    private select;
+    private modalHelper;
+    private serviceLocator;
+    constructor(alert: Alert, form: Form, waiting: Waiting, ajaxRedirect: AjaxRedirect, responseProcessor: ResponseProcessor, select: Select, modalHelper: ModalHelper, serviceLocator: IServiceLocator);
+    initialize(): void;
+    runStartup(container?: JQuery, trigger?: any, stage?: string): void;
+    runAll(actions: any, trigger?: any): void;
+    private run;
+    private notify;
+    private redirect;
+    private openModal;
+    private loadServiceAfterConfiguration;
+    private loadService;
 }
