@@ -137,7 +137,7 @@ export default class FileUpload {
         this.progressBar.width(progress + '%');
     }
 
-    private onUploadError(jqXHR: JQueryXHR, status: string, error: string) {
+    private onUploadError = (jqXHR: JQueryXHR, status: string, error: string) => {
         this.serverInvoker.onAjaxResponseError(jqXHR, status, error);
         this.filenameInput.val('');
     }
