@@ -14,6 +14,8 @@ export default class CustomCheckbox {
         let checkBox = $('<div class="checkbox-helper"/>');
 
         let toggle = () => {
+            if (this.input.attr('disabled')) return;
+
             this.input.prop('checked', !this.input.is(':checked')).focus();
             this.input.trigger('change');
         };
