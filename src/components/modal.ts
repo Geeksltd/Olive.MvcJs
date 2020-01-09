@@ -292,7 +292,7 @@ export default class Modal {
 
         if (options) {
             if (options.width) {
-                modalDialogStyle += "width:" + options.width + ";";
+               modalDialogStyle += "width:" + options.width + "; max-width: none;";
             }
 
             if (options.height) {
@@ -303,8 +303,8 @@ export default class Modal {
         return (
             "<div class='modal' id='myModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel'\
            aria-hidden='true'>\
-              <div class='modal-dialog'>\
-              <div class='modal-content' style='" + modalDialogStyle + "'>\
+              <div class='modal-dialog' style='" + modalDialogStyle + "'>\
+              <div class='modal-content' >\
               <div class='modal-header'>\
                   <button type='button' class='close' data-dismiss='modal' aria-label='Close'>\
                       <i class='fa fa-times-circle'></i>\

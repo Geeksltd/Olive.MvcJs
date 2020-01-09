@@ -14,6 +14,8 @@ export default class CustomRadio {
         let radio = $('<div class="radio-helper"/>');
 
         let check = () => {
+            if (this.input.attr('disabled')) return;
+
             this.input.prop('checked', true).focus();
             this.input.trigger('change');
         }
