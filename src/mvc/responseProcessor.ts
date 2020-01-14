@@ -71,7 +71,10 @@ export default class ResponseProcessor implements IService {
         if (referencedCss.length > 0) {
             let contentLoaded: boolean = false;
             referencedCss.each((i, item: any) => {
-
+                
+                //remove all added css
+                $("head").find("link[href=\"" + item + "\"]").remove();
+                
                 if (!contentLoaded) {
                     //first add CSS files and then load content.
                     $("head").append($('<link rel="stylesheet" type="text/css" />')
