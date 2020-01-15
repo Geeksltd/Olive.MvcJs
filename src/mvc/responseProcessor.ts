@@ -69,26 +69,52 @@ export default class ResponseProcessor implements IService {
 
         //check for CSS links in the main tag after ajax call
         if (referencedCss.length > 0) {
-            let contentLoaded: boolean = false;
-            referencedCss.each((i, item: any) => {
-                
-                //remove all added css
-                $("head").find("link[href=\"" + item + "\"]").remove();
-                
-                if (!contentLoaded) {
-                    //first add CSS files and then load content.
-                    $("head").append($('<link rel="stylesheet" type="text/css" />')
-                        .attr("href", item).load(item, () => { this.processWithTheContent(trigger, element, args, referencedScripts); }));
+            
+            let currentCss = $("head").find("link[rel='stylesheet']").map((i, s) => $(s).attr("href"));
 
-                    contentLoaded = true;
-                }
-                else if ($("link[href='" + item + "']") && $("link[href='" + item + "']").length === 0) {
-                    $("head").append($('<link rel="stylesheet" type="text/css" />').attr("href", item));
-                }
-            });
+            let cssTobeAdded = this.addSelectedCss(currentCss, referencedCss);
+
+            this.loadCssFiles(cssTobeAdded, trigger, element, args, referencedScripts);
         }
         else
             this.processWithTheContent(trigger, element, args, referencedScripts);
+    }
+
+    private loadCssFiles(cssArray: any[], trigger, element, args, referencedScripts) {
+        
+        if (cssArray.length > 0) {
+            $("head").append($('<link rel="stylesheet" type="text/css" />').attr("href", cssArray[0]));
+            cssArray.pop();
+            this.loadCssFiles(cssArray, trigger, element, args, referencedScripts);
+        }
+        else
+            return this.processWithTheContent(trigger, element, args, referencedScripts);
+    }
+
+    private addSelectedCss(currentCssArray: any, newCssArray: any) {
+
+        let uniqueArray = [];
+
+        // Loop through array values
+        for (let newCss of newCssArray) {
+
+            let shouldBeAdded: boolean = false;
+
+            currentCssArray.each((i, item) => {
+
+                if (item == newCss) {
+                    shouldBeAdded = false;
+                    return false;
+                }
+                else
+                    shouldBeAdded = true;
+            });
+
+            if (shouldBeAdded) 
+                    uniqueArray.push(newCss);
+        }
+        
+        return uniqueArray;
     }
 
     protected processWithTheContent(trigger: JQuery, element: JQuery, args: any, referencedScripts: JQuery) {
