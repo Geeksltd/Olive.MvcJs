@@ -61,31 +61,35 @@ export default class ResponseProcessor implements IService {
     }
 
     protected navigate(element: JQuery, trigger: JQuery, args: any) {
+        const referencedScripts = element.find("script[src]").map((i, s) => $(s).attr("src"));
+        const newCss = this.getNewCss(element);
 
-        let referencedScripts = element.find("script[src]").map((i, s) => $(s).attr("src"));
-        let referencedCss = element.find("link[rel='stylesheet']").map((i, s) => $(s).attr("href"));
         element.find("script[src]").remove();
-        element.find("link[rel='stylesheet']").remove();
+        element.find("link[rel=stylesheet]").remove();
 
-        //check for CSS links in the main tag after ajax call
-        if (referencedCss.length > 0) {
-            let contentLoaded: boolean = false;
-            referencedCss.each((i, item: any) => {
+        // Process when at least one css is loaded.
+        if (newCss.length > 0) {
+            const tags = newCss.map(item => $('<link rel="stylesheet" type="text/css" />').attr("href", item));
 
-                if (!contentLoaded) {
-                    //first add CSS files and then load content.
-                    $("head").append($('<link rel="stylesheet" type="text/css" />')
-                        .attr("href", item).load(item, () => { this.processWithTheContent(trigger, element, args, referencedScripts); }));
+            tags[0].on('load', () => this.processWithTheContent(trigger, element, args, referencedScripts));
 
-                    contentLoaded = true;
-                }
-                else if ($("link[href='" + item + "']") && $("link[href='" + item + "']").length === 0) {
-                    $("head").append($('<link rel="stylesheet" type="text/css" />').attr("href", item));
-                }
-            });
+            $("head").append(tags);
         }
         else
             this.processWithTheContent(trigger, element, args, referencedScripts);
+    }
+
+    private getNewCss(element: JQuery): string[] {
+        let referencedCss = this.getCss(element);
+        let currentCss = this.getCss($("head"));
+
+        return referencedCss.filter(x => currentCss.indexOf(x) >= 0);
+    }
+
+    private getCss(parent: JQuery): string[] {
+        let result = new Array<string>();
+        parent.find("link[rel=stylesheet]").each((i, s) => result.push($(s).attr("href")));
+        return result;
     }
 
     protected processWithTheContent(trigger: JQuery, element: JQuery, args: any, referencedScripts: JQuery) {
