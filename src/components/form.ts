@@ -33,9 +33,13 @@ export default class Form implements IService {
 
         for (let i in groupedByKeys) {
             let group = groupedByKeys[i];
+
             if (typeof (group) == 'function') continue;
+
             let key = group[0].name;
             let values = group.map(item => item.value).filter(v => v);
+
+            if (this.ignoreFormDataInput(key, values)) continue;
 
             // Fix for MVC checkboxes:
             if ($("input[name='" + key + "']", form).is(":checkbox") && values.length == 2 && values[1] == 'false'
@@ -54,6 +58,10 @@ export default class Form implements IService {
 
 
         return result;
+    }
+
+    protected ignoreFormDataInput(inputName: string, values: string[]): boolean {
+        return false;
     }
 
     public cleanJson(str): string {
