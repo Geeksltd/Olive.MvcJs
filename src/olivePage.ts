@@ -51,7 +51,7 @@ export default class OlivePage implements IServiceLocator {
     public services: ServiceContainer;
 
     public modal: ModalHelper;
-    public waiting = Waiting;
+    public waiting: Waiting;
 
     constructor() {
         this.services = new ServiceContainer();
@@ -61,6 +61,7 @@ export default class OlivePage implements IServiceLocator {
         SystemExtensions.initialize();
 
         this.modal = this.getService<ModalHelper>(Services.ModalHelper);
+        this.waiting = this.getService<Waiting>(Services.Waiting);
 
         this.initializeServices();
 
