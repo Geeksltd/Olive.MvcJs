@@ -28,7 +28,12 @@ interface Location {
 }
 
 interface ArrayConstructor {
-    groupBy(array: Array<any>, groupFunction: Function): Array<any>;
+    groupBy<T>(array: Array<T>, groupFunction: (item: T) => string | number): Dictionary<T>;
+}
+
+interface Dictionary<T> {
+    [index: string]: T[];
+    [index: number]: T[];
 }
 
 interface String {

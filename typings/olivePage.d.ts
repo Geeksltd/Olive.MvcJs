@@ -4,7 +4,7 @@ import { ServiceContainer } from "./di/serviceContainer";
 export default class OlivePage implements IServiceLocator {
     services: ServiceContainer;
     modal: ModalHelper;
-    waiting: typeof Waiting;
+    waiting: Waiting;
     constructor();
     protected initializeServices(): void;
     protected configureServices(services: ServiceContainer): void;
