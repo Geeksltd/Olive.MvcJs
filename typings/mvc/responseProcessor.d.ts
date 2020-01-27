@@ -10,6 +10,8 @@ export default class ResponseProcessor implements IService {
     protected onSubformChanged(response: any, trigger: JQuery): void;
     protected onViewChanged(container: JQuery, trigger: JQuery, isNewPage?: boolean): void;
     protected navigate(element: JQuery, trigger: JQuery, args: any): void;
+    private getNewCss;
+    private getCss;
     protected processWithTheContent(trigger: JQuery, element: JQuery, args: any, referencedScripts: JQuery): void;
     protected updateUrl(referencedScripts: JQuery, element: JQuery, trigger: JQuery): void;
     protected onProcessCompleted(): void;

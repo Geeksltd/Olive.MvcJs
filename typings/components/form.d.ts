@@ -13,6 +13,7 @@ export default class Form implements IService {
     enablecleanUpNumberField(selector: JQuery): void;
     enablesubmitCleanGet(selector: JQuery): void;
     private getCleanFormData;
+    protected ignoreFormDataInput(inputName: string, values: string[]): boolean;
     cleanJson(str: any): string;
     getPostData(trigger: JQuery): JQuerySerializeArrayElement[];
     private DefaultButtonKeyPress;

@@ -83,14 +83,14 @@ export default class SystemExtensions {
         $("<iframe style='visibility:hidden; width:1px; height:1px;'></iframe>").attr("src", url).appendTo("body");
     }
 
-    private static groupBy(array: Array<any>, groupFunction: Function) {
-        var groups = {};
+    private static groupBy<T>(array: Array<T>, groupFunction: (item: T) => string | number): Dictionary<T> {
+        var groups: Dictionary<T> = {};
         array.forEach((o) => {
             var group = JSON.stringify(groupFunction(o));
             groups[group] = groups[group] || [];
             groups[group].push(o);
         });
 
-        return Object.keys(groups).map((g) => groups[g]);
+        return Object.keys(groups).map((g) => groups[g]) as any;
     }
 }
