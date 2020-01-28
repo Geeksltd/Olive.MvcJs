@@ -157,7 +157,7 @@ export class ModalHelper implements IService {
             let pathArray: Array<string> = url.split("/").splice(3);
             url = pathArray.join("/");
         }
-		
+
         let modalUrl: string = this.url.addQuery(currentPath, "_modal", encodeURIComponent(url));
 
         if (iframe) {
@@ -181,7 +181,7 @@ export class ModalHelper implements IService {
     }
 
 
-    private openWithUrl(): void {
+    protected openWithUrl(): void {
 
         if (this.url.getQuery("_iframe") === "true") {
             new Modal(this.url, this.ajaxRedirect, this, null, this.url.getQuery("_modal")).openiFrame(false);
@@ -292,7 +292,7 @@ export default class Modal {
 
         if (options) {
             if (options.width) {
-               modalDialogStyle += "width:" + options.width + "; max-width: none;";
+                modalDialogStyle += "width:" + options.width + "; max-width: none;";
             }
 
             if (options.height) {
