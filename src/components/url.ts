@@ -104,7 +104,7 @@
 
     public removeEmptyQueries(url: string): string {
 
-        let items = this.fullQueryString(url).split('&');
+        let items = this.fullQueryString(url).trimStart('?').split('&');
         let result = '';
 
         for (let i in items) {
