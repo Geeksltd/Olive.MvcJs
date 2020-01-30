@@ -97,7 +97,7 @@
 
         if (url.indexOf("?") == -1) return '';
 
-        return url.substring(url.indexOf("?") + 1);
+        return url.substring(url.indexOf("?"));
     }
 
     public addQuery(url: string, key: string, value) { return url + (url.indexOf("?") == -1 ? "?" : "&") + key + "=" + value; }
