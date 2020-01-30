@@ -78,6 +78,10 @@
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
+    public getModalQuery(name: string): string {
+        return this.getQuery(name, this.getQuery("_modal"));
+    }
+
     public goToUrlAfterLogin(url: string) {
         window.location.href = "/login?returnUrl=/" + encodeURIComponent(this.makeRelative(url).trimStart("/"));
     }
