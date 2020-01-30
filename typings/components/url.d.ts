@@ -9,6 +9,7 @@ export default class Url implements IService {
     updateQuery(uri: any, key: any, value: any): any;
     removeQuery(url: string, parameter: string): string;
     getQuery(name: string, url?: string): string;
+    getModalQuery(name: string): string;
     goToUrlAfterLogin(url: string): void;
     private goToLoginPage;
     private fullQueryString;
