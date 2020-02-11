@@ -19,7 +19,7 @@ export default class MultiSelect implements IService {
 
     /// TODO: this method is obsolete and DI should use instead.
     public setOptions(options: any): void {
-        console.log('MultiSelect.setOptions is obsolete and will be removed in next version.');
+        console.warn('MultiSelect.setOptions is obsolete and will be removed in next version.');
         this.options = $.extend(this.defaultOptions, options)
     }
 

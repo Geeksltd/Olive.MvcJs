@@ -10,7 +10,10 @@ export default class HtmlEditor {
     static editorConfigPath: string;
     constructor(input: JQuery, modalHelper: ModalHelper);
     enable(): void;
-    private onCkEditorScriptReady;
-    private getEditorSettings;
-    private onDemandScript;
+    protected onCkEditorScriptReady(): void;
+    protected getEditorSettings(): {
+        toolbar: string;
+        customConfig: string;
+    };
+    protected onDemandScript(url: any, callback: any): void;
 }

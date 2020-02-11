@@ -19,7 +19,7 @@ export default class HtmlEditor {
         this.onDemandScript(Config.CK_EDITOR_BASE_PATH + "ckeditor.js", () => this.onCkEditorScriptReady());
     }
 
-    private onCkEditorScriptReady() {
+    protected onCkEditorScriptReady() {
         CKEDITOR.basePath = Config.CK_EDITOR_BASE_PATH;
 
         CKEDITOR.config.contentsCss = Config.CK_EDITOR_BASE_PATH + 'contents.css';
@@ -30,14 +30,14 @@ export default class HtmlEditor {
         editor.on("instanceReady", (event) => this.modalHelper.adjustHeight());
     }
 
-    private getEditorSettings() {
+    protected getEditorSettings() {
         return {
             toolbar: this.input.attr('data-toolbar') || Config.DEFAULT_HTML_EDITOR_MODE,
             customConfig: HtmlEditor.editorConfigPath
         };
     }
 
-    private onDemandScript(url, callback) {
+    protected onDemandScript(url, callback) {
         callback = (typeof callback !== "undefined") ? callback : {};
 
         $.ajax({
