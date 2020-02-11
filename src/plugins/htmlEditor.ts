@@ -33,7 +33,7 @@ export default class HtmlEditor {
     private getEditorSettings() {
         return {
             toolbar: this.input.attr('data-toolbar') || Config.DEFAULT_HTML_EDITOR_MODE,
-            customConfig: HtmlEditor.editorConfigPath
+            customConfig: this.input.attr('data-config') || HtmlEditor.editorConfigPath
         };
     }
 
