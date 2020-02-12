@@ -78,6 +78,10 @@
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
+    public getModalQuery(name: string): string {
+        return this.getQuery(name, this.getQuery("_modal"));
+    }
+
     public goToUrlAfterLogin(url: string) {
         window.location.href = "/login?returnUrl=/" + encodeURIComponent(this.makeRelative(url).trimStart("/"));
     }
@@ -93,14 +97,14 @@
 
         if (url.indexOf("?") == -1) return '';
 
-        return url.substring(url.indexOf("?") + 1);
+        return url.substring(url.indexOf("?"));
     }
 
     public addQuery(url: string, key: string, value) { return url + (url.indexOf("?") == -1 ? "?" : "&") + key + "=" + value; }
 
     public removeEmptyQueries(url: string): string {
 
-        let items = this.fullQueryString(url).split('&');
+        let items = this.fullQueryString(url).trimStart('?').split('&');
         let result = '';
 
         for (let i in items) {
