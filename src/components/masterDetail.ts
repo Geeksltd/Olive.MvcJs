@@ -14,9 +14,9 @@ export default class MasterDetail implements IService {
     public updateSubFormStates() {
         let countItems = element => $(element).parent().find(".subform-item:visible").length;
         // Hide removed items
-        $("input[name$=MustBeDeleted][value=False]").removeAttr("value");
-        $("input[name$=MustBeDeleted][value]").val("true");
-        $("input[name$=MustBeDeleted][value]").closest('.subform-item').hide();
+        $("input[name$=MustBeDeleted][value=False]").val("false");
+        $("input[name$=MustBeDeleted][value=True]").val("true");
+        $("input[name$=MustBeDeleted][value=true]").closest('.subform-item').hide();
         // hide empty headers
         $(".horizontal-subform thead").each((i, e) =>
             $(e).css('visibility', (countItems(e) > 0) ? 'visible' : 'hidden'));
