@@ -176,7 +176,14 @@ export default class GlobalSearch {
 
                                 let groupTitle = tpobj.url.split(".")[0].replace("https://", "").replace("http://", "").toUpperCase();
 
-                                let searhTitle = $("<div class='search-title'>").append($("<i>").attr("class", tpobj.icon)).append(groupTitle);
+                                let searchTitleHolder = $("<div class='search-title'>");
+
+                                if (resultfiltered[0].Colour) {
+                                    searchItem.css("color", resultfiltered[0].Colour);
+                                    searchTitleHolder.css("color", resultfiltered[0].Colour);
+                                }
+
+                                let searhTitle = searchTitleHolder.append($("<i>").attr("class", tpobj.icon)).append(groupTitle);
 
                                 searchItem.append(searhTitle);
 
@@ -187,10 +194,10 @@ export default class GlobalSearch {
                                     var item = resultfiltered[i];
 
                                     childrenItems.append($("<li>")
-                                    .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<div class='icon'>") : $("<div class='icon'>").append($("<img src='" + item.IconUrl + "'>")))
+                                        .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<div class='icon'>") : GlobalSearch.showIcon(item))
                                         .append($("<a href='" + item.Url + "'>")
                                             .html(GlobalSearch.boldSearchAll(item.Title, tpobj.text)))
-                                            .append($(" <div class='desc'>").html(item.Description)));
+                                        .append($(" <div class='desc'>").html(item.Description)));
                                 }
 
                                 searchItem.append(childrenItems);
@@ -247,6 +254,13 @@ export default class GlobalSearch {
                 }).bind(tempobj));
             console.log('ajax send to: ' + tempobj.url);
         }
+    }
+
+    private static showIcon(item: any): JQuery {
+        if (item.IconUrl.indexOf("fa-") > 0)
+            return $("<div class='icon'>").append($("<i class='" + item.IconUrl + "'></i>"))
+        else
+            return $("<div class='icon'>").append($("<img src='" + item.IconUrl + "'>"));
     }
 
     private clearValue() {
