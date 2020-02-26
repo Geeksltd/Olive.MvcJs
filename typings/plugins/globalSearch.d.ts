@@ -1,22 +1,56 @@
-export default class GlobalSearch {
+import Waiting from "olive/components/waiting";
+export declare class GlobalSearchFactory implements IService {
+    private waiting;
+    constructor(waiting: Waiting);
+    enable(selector: JQuery): void;
+}
+export default class GlobalSearch implements IService {
     private input;
-    private awaitingAutocompleteResponses;
-    private valueField;
-    private testvarable;
+    private waiting;
     private urlList;
     private isMouseInsideSearchPanel;
     private isTyping;
     private searchedText;
-    static enable(selector: JQuery): void;
-    private static boldSearch;
-    private static boldSearchAll;
-    constructor(input: JQuery);
-    private enable;
-    private inputChangeHandler;
-    private clearSearchComponent;
-    private createSearchComponent;
-    private static showIcon;
-    private clearValue;
-    private itemSelected;
-    private toObject;
+    protected boldSearch(str: string, searchText: string): string;
+    protected boldSearchAll(str: string, searchText: string): string;
+    constructor(input: JQuery, waiting: Waiting);
+    enable(): void;
+    protected clearSearchComponent(): void;
+    protected getResultPanel(): JQuery;
+    protected createSearchComponent(urls: string[]): void;
+    protected onSuccess(sender: IAjaxObject, context: ISearchContext, jqXHR: JQueryXHR): void;
+    protected isValidResult(item: IResultItemDto, context: ISearchContext): boolean;
+    protected createSearchItems(sender: IAjaxObject, context: ISearchContext, items: IResultItemDto[]): JQuery;
+    protected createItem(item: IResultItemDto, context: ISearchContext): JQuery;
+    protected onComplete(context: ISearchContext, jqXHR: JQueryXHR): void;
+    protected onError(sender: IAjaxObject, resultPanel: JQuery, jqXHR: JQueryXHR): void;
+    protected showIcon(item: any): JQuery;
+}
+export declare enum AjaxState {
+    pending = 0,
+    success = 1,
+    failed = 2
+}
+export interface ISearchContext {
+    ajaxList: IAjaxObject[];
+    resultPanel: JQuery;
+    resultCount: number;
+    searchHolder: JQuery;
+    beginSearchStarted: boolean;
+    searchedText: string;
+}
+export interface IResultItemDto {
+    Title: string;
+    Description: string;
+    IconUrl: string;
+    Url: string;
+    Colour: string;
+}
+export interface IAjaxObject {
+    url: string;
+    icon: string;
+    state: AjaxState;
+    ajx?: JQueryXHR;
+    displayMessage?: string;
+    result?: IResultItemDto[];
 }

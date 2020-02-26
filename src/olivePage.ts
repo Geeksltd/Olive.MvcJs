@@ -1,50 +1,50 @@
 
-import Config from "olive/config"
-import CrossDomainEvent from 'olive/components/crossDomainEvent'
+import Config from "olive/config";
+import CrossDomainEvent from "olive/components/crossDomainEvent";
 
-import ResponseProcessor from "./mvc/responseProcessor";
-import AjaxRedirect from 'olive/mvc/ajaxRedirect'
-import StandardAction from 'olive/mvc/standardAction'
-import ServerInvoker from "./mvc/serverInvoker";
-import WindowEx from "./mvc/windowEx";
+import ResponseProcessor from "olive/mvc/responseProcessor";
+import AjaxRedirect from "olive/mvc/ajaxRedirect";
+import StandardAction from "olive/mvc/standardAction";
+import ServerInvoker from "olive/mvc/serverInvoker";
+import WindowEx from "olive/mvc/windowEx";
 
-import Form from 'olive/components/form'
-import Url from 'olive/components/url'
-import SystemExtensions from 'olive/extensions/systemExtensions'
-import { ModalHelper } from 'olive/components/modal'
-import Validate from 'olive/components/validate'
-import Sorting from 'olive/components/sorting'
-import Paging from 'olive/components/paging'
-import MasterDetail from 'olive/components/masterDetail'
-import Alert from 'olive/components/alert'
-import Waiting from 'olive/components/waiting'
-import Grid from 'olive/components/grid'
+import Form from "olive/components/form";
+import Url from "olive/components/url";
+import SystemExtensions from "olive/extensions/systemExtensions";
+import { ModalHelper } from "olive/components/modal";
+import Validate from "olive/components/validate";
+import Sorting from "olive/components/sorting";
+import Paging from "olive/components/paging";
+import MasterDetail from "olive/components/masterDetail";
+import Alert from "olive/components/alert";
+import Waiting from "olive/components/waiting";
+import Grid from "olive/components/grid";
 
-import Select from 'olive/plugins/select'
-import PasswordStength from 'olive/plugins/passwordStength'
-import { HtmlEditorFactory } from 'olive/plugins/htmlEditor'
-import { TimeControlFactory } from 'olive/plugins/timeControl'
-import { AutoCompleteFactory } from 'olive/plugins/autoComplete'
-import GlobalSearch from 'olive/plugins/globalSearch'
-import { SliderFactory } from 'olive/plugins/slider'
-import { DatePickerFactory } from 'olive/plugins/datePicker'
-import { DateTimePickerFactory } from 'olive/plugins/dateTimePicker'
-import NumbericUpDown from 'olive/plugins/numericUpDown'
-import { FileUploadFactory } from 'olive/plugins/fileUpload'
-import ConfirmBoxFactory from 'olive/plugins/confirmBox'
-import SubMenu from 'olive/plugins/subMenu'
-import InstantSearch from 'olive/plugins/instantSearch'
-import DateDropdown from 'olive/plugins/dateDropdown'
-import UserHelp from 'olive/plugins/userHelp'
-import MultiSelect from "./plugins/multiSelect";
-import CustomCheckbox from "./plugins/customCheckbox";
-import CustomRadio from "./plugins/customRadio";
-import { CKEditorFileManagerFactory } from "./plugins/ckEditorFileManager";
-import { GroupingFactory } from "./components/grouping";
-import { ServiceContainer } from "./di/serviceContainer";
-import Services from "./di/services";
-import { ServiceDescription } from "./di/serviceDescription";
-import SanityAdapter from "./plugins/sanityAdapter";
+import Select from "olive/plugins/select";
+import PasswordStength from "olive/plugins/passwordStength";
+import { HtmlEditorFactory } from "olive/plugins/htmlEditor";
+import { TimeControlFactory } from "olive/plugins/timeControl";
+import { AutoCompleteFactory } from "olive/plugins/autoComplete";
+import { GlobalSearchFactory } from "olive/plugins/globalSearch";
+import { SliderFactory } from "olive/plugins/slider";
+import { DatePickerFactory } from "olive/plugins/datePicker";
+import { DateTimePickerFactory } from "olive/plugins/dateTimePicker";
+import NumbericUpDown from "olive/plugins/numericUpDown";
+import { FileUploadFactory } from "olive/plugins/fileUpload";
+import ConfirmBoxFactory from "olive/plugins/confirmBox";
+import SubMenu from "olive/plugins/subMenu";
+import InstantSearch from "olive/plugins/instantSearch";
+import DateDropdown from "olive/plugins/dateDropdown";
+import UserHelp from "olive/plugins/userHelp";
+import MultiSelect from "olive/plugins/multiSelect";
+import CustomCheckbox from "olive/plugins/customCheckbox";
+import CustomRadio from "olive/plugins/customRadio";
+import { CKEditorFileManagerFactory } from "olive/plugins/ckEditorFileManager";
+import { GroupingFactory } from "olive/components/grouping";
+import { ServiceContainer } from "olive/di/serviceContainer";
+import Services from "olive/di/services";
+import { ServiceDescription } from "olive/di/serviceDescription";
+import SanityAdapter from "olive/plugins/sanityAdapter";
 
 export default class OlivePage implements IServiceLocator {
 
@@ -65,14 +65,15 @@ export default class OlivePage implements IServiceLocator {
 
         this.initializeServices();
 
-        //ASP.NET needs this config for Request.IsAjaxRequest()
+        // ASP.NET needs this config for Request.IsAjaxRequest()
         $.ajaxSetup({
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            headers: { "X-Requested-With": "XMLHttpRequest" },
         });
 
         $(() => {
-            //$.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS, { backdrop: this.DEFAULT_MODAL_BACKDROP });
-            //$.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
+            // $.fn.modal.Constructor.DEFAULTS = $.extend($.fn.modal.Constructor.DEFAULTS,
+            //      { backdrop: this.DEFAULT_MODAL_BACKDROP });
+            // $.fn.modal.Constructor.DEFAULTS.backdrop = this.DEFAULT_MODAL_BACKDROP;
             this.getService<Alert>(Services.Alert).enableAlert();
             this.getService<Validate>(Services.Validate).configure();
             this.onViewChanged(null, null, true, true);
@@ -80,8 +81,9 @@ export default class OlivePage implements IServiceLocator {
 
         // TODO: Find a cleaner way.
         this.fixAlertIssues();
-        this.getService<ResponseProcessor>(Services.ResponseProcessor).viewChanged.handle(x => this.onViewChanged(x.container, x.trigger, x.isNewPage));
-        CrossDomainEvent.handle('refresh-page', x => this.refresh());
+        this.getService<ResponseProcessor>(Services.ResponseProcessor)
+            .viewChanged.handle((x) => this.onViewChanged(x.container, x.trigger, x.isNewPage));
+        CrossDomainEvent.handle("refresh-page", (x) => this.refresh());
     }
 
     protected initializeServices() {
@@ -108,46 +110,59 @@ export default class OlivePage implements IServiceLocator {
 
         services.tryAddSingleton(Services.Select, () => new Select(), out);
 
-        services.tryAddSingleton(Services.ResponseProcessor, () => new ResponseProcessor(), out)
+        services.tryAddSingleton(Services.ResponseProcessor, () => new ResponseProcessor(), out);
 
-        services.tryAddSingleton(Services.SanityAdapter, () => new SanityAdapter(), out)
+        services.tryAddSingleton(Services.SanityAdapter, () => new SanityAdapter(), out);
 
         if (services.tryAddSingleton(Services.Waiting, (url: Url) => new Waiting(url), out)) {
             out.value.withDependencies(Services.Url);
         }
 
-        if (services.tryAddSingleton(Services.CKEditorFileManagerFactory, (url: Url) => new CKEditorFileManagerFactory(url), out)) {
+        if (services.tryAddSingleton(Services.GlobalSearchFactory,
+            (waiting: Waiting) => new GlobalSearchFactory(waiting), out)) {
+            out.value.withDependencies(Services.Waiting);
+        }
+
+        if (services.tryAddSingleton(Services.CKEditorFileManagerFactory,
+            (url: Url) => new CKEditorFileManagerFactory(url), out)) {
             out.value.withDependencies(Services.Url);
         }
 
-        if (services.tryAddSingleton(Services.Sorting, (url: Url, serverInvoker: ServerInvoker) => new Sorting(url, serverInvoker), out)) {
+        if (services.tryAddSingleton(Services.Sorting,
+            (url: Url, serverInvoker: ServerInvoker) => new Sorting(url, serverInvoker), out)) {
             out.value.withDependencies(Services.Url, Services.ServerInvoker);
         }
 
-        if (services.tryAddSingleton(Services.Paging, (url: Url, serverInvoker: ServerInvoker) => new Paging(url, serverInvoker), out)) {
+        if (services.tryAddSingleton(Services.Paging,
+            (url: Url, serverInvoker: ServerInvoker) => new Paging(url, serverInvoker), out)) {
             out.value.withDependencies(Services.Url, Services.ServerInvoker);
         }
 
-        if (services.tryAddSingleton(Services.FileUploadFactory, (url: Url, serverInvoker: ServerInvoker) => new FileUploadFactory(url, serverInvoker), out)) {
+        if (services.tryAddSingleton(Services.FileUploadFactory,
+            (url: Url, serverInvoker: ServerInvoker) => new FileUploadFactory(url, serverInvoker), out)) {
             out.value.withDependencies(Services.Url, Services.ServerInvoker);
         }
 
-        if (services.tryAddSingleton(Services.GroupingFactory, (url: Url, ajaxRedirect: AjaxRedirect) => new GroupingFactory(url, ajaxRedirect), out)) {
+        if (services.tryAddSingleton(Services.GroupingFactory,
+            (url: Url, ajaxRedirect: AjaxRedirect) => new GroupingFactory(url, ajaxRedirect), out)) {
             out.value.withDependencies(Services.Url, Services.AjaxRedirect);
         }
 
-        if (services.tryAddSingleton(Services.ModalHelper, (url: Url, ajaxRedirect: AjaxRedirect, responseProcessor: ResponseProcessor) =>
-            new ModalHelper(url, ajaxRedirect, responseProcessor), out)
+        if (services.tryAddSingleton(Services.ModalHelper,
+            (url: Url, ajaxRedirect: AjaxRedirect, responseProcessor: ResponseProcessor) =>
+                new ModalHelper(url, ajaxRedirect, responseProcessor), out)
         ) {
             out.value.withDependencies(Services.Url, Services.AjaxRedirect, Services.ResponseProcessor);
         }
 
-        if (services.tryAddSingleton(Services.WindowEx, (modalHelper: ModalHelper, ajaxRedirect: AjaxRedirect) => new WindowEx(modalHelper, ajaxRedirect), out)) {
+        if (services.tryAddSingleton(Services.WindowEx,
+            (modalHelper: ModalHelper, ajaxRedirect: AjaxRedirect) => new WindowEx(modalHelper, ajaxRedirect), out)) {
             out.value.withDependencies(Services.ModalHelper, Services.AjaxRedirect);
         }
 
-        if (services.tryAddSingleton(Services.AutoCompleteFactory, (url: Url, form: Form, serverInvoker: ServerInvoker) =>
-            new AutoCompleteFactory(url, form, serverInvoker), out)
+        if (services.tryAddSingleton(Services.AutoCompleteFactory,
+            (url: Url, form: Form, serverInvoker: ServerInvoker) =>
+                new AutoCompleteFactory(url, form, serverInvoker), out)
         ) {
             out.value.withDependencies(Services.Url, Services.Form, Services.ServerInvoker);
         }
@@ -156,32 +171,36 @@ export default class OlivePage implements IServiceLocator {
             out.value.withDependencies(Services.Form);
         }
 
-        if (services.tryAddSingleton(Services.HtmlEditorFactory, (modalHelper: ModalHelper) => new HtmlEditorFactory(modalHelper), out)) {
+        if (services.tryAddSingleton(Services.HtmlEditorFactory,
+            (modalHelper: ModalHelper) => new HtmlEditorFactory(modalHelper), out)) {
             out.value.withDependencies(Services.ModalHelper);
         }
 
-        if (services.tryAddSingleton(Services.DateTimePickerFactory, (modalHelper: ModalHelper) => new DateTimePickerFactory(modalHelper), out)) {
+        if (services.tryAddSingleton(Services.DateTimePickerFactory,
+            (modalHelper: ModalHelper) => new DateTimePickerFactory(modalHelper), out)) {
             out.value.withDependencies(Services.ModalHelper);
         }
 
-        if (services.tryAddSingleton(Services.DatePickerFactory, (modalHelper: ModalHelper) => new DatePickerFactory(modalHelper), out)) {
+        if (services.tryAddSingleton(Services.DatePickerFactory,
+            (modalHelper: ModalHelper) => new DatePickerFactory(modalHelper), out)) {
             out.value.withDependencies(Services.ModalHelper);
         }
 
-        if (services.tryAddSingleton(Services.TimeControlFactory, (modalHelper: ModalHelper) => new TimeControlFactory(modalHelper), out)) {
+        if (services.tryAddSingleton(Services.TimeControlFactory,
+            (modalHelper: ModalHelper) => new TimeControlFactory(modalHelper), out)) {
             out.value.withDependencies(Services.ModalHelper);
         }
 
-        if (services.tryAddSingleton(Services.AjaxRedirect, (url: Url,
-            responseProcessor: ResponseProcessor,
-            waiting: Waiting) =>
-            new AjaxRedirect(url, responseProcessor, waiting), out)
+        if (services.tryAddSingleton(Services.AjaxRedirect,
+            (url: Url, responseProcessor: ResponseProcessor, waiting: Waiting) =>
+                new AjaxRedirect(url, responseProcessor, waiting), out)
         ) {
             out.value.withDependencies(Services.Url, Services.ResponseProcessor, Services.Waiting);
         }
 
-        if (services.tryAddSingleton(Services.Form, (url: Url, validate: Validate, waiting: Waiting, ajaxRedirect: AjaxRedirect) =>
-            new Form(url, validate, waiting, ajaxRedirect), out)) {
+        if (services.tryAddSingleton(Services.Form,
+            (url: Url, validate: Validate, waiting: Waiting, ajaxRedirect: AjaxRedirect) =>
+                new Form(url, validate, waiting, ajaxRedirect), out)) {
             out.value.withDependencies(Services.Url, Services.Validate, Services.Waiting, Services.AjaxRedirect);
         }
 
@@ -191,21 +210,34 @@ export default class OlivePage implements IServiceLocator {
             out.value.withDependencies(Services.Alert, Services.ResponseProcessor);
         }
 
-        if (services.tryAddSingleton(Services.MasterDetail, (validate: Validate, responseProcessor: ResponseProcessor) =>
-            new MasterDetail(validate, responseProcessor), out)
+        if (services.tryAddSingleton(Services.MasterDetail,
+            (validate: Validate, responseProcessor: ResponseProcessor) =>
+                new MasterDetail(validate, responseProcessor), out)
         ) {
             out.value.withDependencies(Services.Validate, Services.ResponseProcessor);
         }
 
-        if (services.tryAddSingleton(Services.StandardAction, (alert: Alert,
-            form: Form,
-            waiting: Waiting,
-            ajaxRedirect: AjaxRedirect,
-            responseProcessor: ResponseProcessor,
-            select: Select,
-            modalHelper: ModalHelper,
-            serviceLocator: IServiceLocator) =>
-            new StandardAction(alert, form, waiting, ajaxRedirect, responseProcessor, select, modalHelper, serviceLocator), out)
+        if (services.tryAddSingleton(Services.StandardAction,
+            (
+                alert: Alert,
+                form: Form,
+                waiting: Waiting,
+                ajaxRedirect: AjaxRedirect,
+                responseProcessor: ResponseProcessor,
+                select: Select,
+                modalHelper: ModalHelper,
+                serviceLocator: IServiceLocator,
+            ) =>
+                new StandardAction(
+                    alert,
+                    form,
+                    waiting,
+                    ajaxRedirect,
+                    responseProcessor,
+                    select,
+                    modalHelper,
+                    serviceLocator),
+            out)
         ) {
             out.value.withDependencies(
                 Services.Alert,
@@ -218,7 +250,8 @@ export default class OlivePage implements IServiceLocator {
                 Services.ServiceLocator);
         }
 
-        if (services.tryAddSingleton(Services.ServerInvoker, (url: Url,
+        if (services.tryAddSingleton(Services.ServerInvoker, (
+            url: Url,
             validate: Validate,
             waiting: Waiting,
             form: Form,
@@ -235,17 +268,22 @@ export default class OlivePage implements IServiceLocator {
     }
 
     private fixAlertIssues() {
-        if (!$.fn.tooltip.Constructor) $.fn.tooltip.Constructor = {};
-        window["alertify"] = <alertify.IAlertifyStatic>window.require("alertify")();
+        if (!$.fn.tooltip.Constructor) { $.fn.tooltip.Constructor = {}; }
+        window.alertify = (window.require("alertify")() as alertify.IAlertifyStatic);
     }
 
-    protected _initializeActions = [];
-    protected onInit(action) { this._initializeActions.push(action) }
+    protected initializeActions = [];
+    protected onInit(action) { this.initializeActions.push(action); }
 
-    protected _preInitializeActions = [];
-    protected onPreInit(action) { this._preInitializeActions.push(action) }
+    protected preInitializeActions = [];
+    protected onPreInit(action) { this.preInitializeActions.push(action); }
 
-    protected onViewChanged(container: JQuery = null, trigger: any = null, newPage: boolean = false, firstTime: boolean = false) {
+    protected onViewChanged(
+        container: JQuery = null,
+        trigger: any = null,
+        newPage: boolean = false,
+        firstTime: boolean = false,
+    ) {
         const standardAction = this.getService<StandardAction>(Services.StandardAction);
         standardAction.runStartup(container, trigger, "PreInit");
         try {
@@ -256,15 +294,15 @@ export default class OlivePage implements IServiceLocator {
         standardAction.runStartup(container, trigger, "Init");
 
         if (newPage) {
-            $('[autofocus]:not([data-autofocus=disabled]):first').focus();
-            if (Config.REDIRECT_SCROLLS_UP) $(window).scrollTop(0);
+            $("[autofocus]:not([data-autofocus=disabled]):first").focus();
+            if (Config.REDIRECT_SCROLLS_UP) { $(window).scrollTop(0); }
         }
 
-        if (firstTime) this.modal.tryOpenFromUrl();
+        if (firstTime) { this.modal.tryOpenFromUrl(); }
     }
 
     public initialize() {
-        this._preInitializeActions.forEach((action) => action());
+        this.preInitializeActions.forEach((action) => action());
 
         // =================== Standard Features ====================
         const grid = this.getService<Grid>(Services.Grid);
@@ -284,7 +322,8 @@ export default class OlivePage implements IServiceLocator {
         form.enablecleanUpNumberField($("[data-val-number]"));
         this.modal.enableEnsureHeight($("[data-toggle=tab]"));
         this.getService<MultiSelect>(Services.MultiSelect).enableEnhance($("select[data-control='collapsible-checkboxes']"));
-        this.getService<Select>(Services.Select).enableEnhance($("select:not([data-control='collapsible-checkboxes'])"));
+        this.getService<Select>(Services.Select)
+            .enableEnhance($("select:not([data-control='collapsible-checkboxes'])"));
         form.enableDefaultButtonKeyPress($("form input, form select"));
         UserHelp.enable($("[data-user-help]"));
         this.getService<ModalHelper>(Services.ModalHelper).enableLink($("[target='$modal'][href]"));
@@ -296,8 +335,9 @@ export default class OlivePage implements IServiceLocator {
         // =================== Plug-ins ====================
         InstantSearch.enable($("[name=InstantSearch]"));
         this.getService<AutoCompleteFactory>(Services.AutoCompleteFactory).enable($("input[autocomplete-source]"));
-        this.getService<CKEditorFileManagerFactory>(Services.CKEditorFileManagerFactory).enable($(".ckeditor-file-uri"));
-        GlobalSearch.enable($("input[data-search-source]"));
+        this.getService<CKEditorFileManagerFactory>(Services.CKEditorFileManagerFactory)
+            .enable($(".ckeditor-file-uri"));
+        this.getService<GlobalSearchFactory>(Services.GlobalSearchFactory).enable($("input[data-search-source]"));
         this.getService<DatePickerFactory>(Services.DatePickerFactory).enable($("[data-control=date-picker],[data-control=calendar]"));
         this.getService<DateTimePickerFactory>(Services.DateTimePickerFactory).enable($("[data-control='date-picker|time-picker']"));
         this.getService<TimeControlFactory>(Services.TimeControlFactory).enable($("[data-control=time-picker]"));
@@ -317,7 +357,7 @@ export default class OlivePage implements IServiceLocator {
         // =================== Request lifecycle ====================
         this.getService<WindowEx>(Services.WindowEx).enableBack($(window));
         this.getService<AjaxRedirect>(Services.AjaxRedirect).enableRedirect($("a[data-redirect=ajax]"));
-        form.enablesubmitCleanGet($('form[method=get]'));
+        form.enablesubmitCleanGet($("form[method=get]"));
 
         const formAction = this.getService<ServerInvoker>(Services.ServerInvoker);
         formAction.enableInvokeWithAjax($("[formaction]").not("[formmethod=post]"), "click.formaction", "formaction");
@@ -329,12 +369,11 @@ export default class OlivePage implements IServiceLocator {
         this.getService<MasterDetail>(Services.MasterDetail).updateSubFormStates();
         this.modal.adjustHeight();
 
-        this._initializeActions.forEach((action) => action());
+        this.initializeActions.forEach((action) => action());
 
-        window["IsOliveMvcLoaded"] = true;
+        window.IsOliveMvcLoaded = true;
 
-        try { $.validator.unobtrusive.parse('form'); }
-        catch (error) { console.error(error); }
+        try { $.validator.unobtrusive.parse("form"); } catch (error) { console.error(error); }
     }
 
     protected enableCustomCheckbox() {
@@ -348,23 +387,25 @@ export default class OlivePage implements IServiceLocator {
     protected goBack(target) {
         const url = this.getService<Url>(Services.Url);
 
-        let returnUrl = url.getQuery("ReturnUrl");
+        const returnUrl = url.getQuery("ReturnUrl");
 
-        if (returnUrl && target && $(target).is("[data-redirect=ajax]"))
+        if (returnUrl && target && $(target).is("[data-redirect=ajax]")) {
             this.getService<AjaxRedirect>(Services.AjaxRedirect).go(returnUrl, $(target), false, false, true);
-        else url.goBack();
+        } else { url.goBack(); }
 
         return false;
     }
 
-    protected customizeValidationTooltip() {
-
-    }
+    protected customizeValidationTooltip() { /** */ }
 
     protected refresh(keepScroll = false) {
-        if ($("main").length == 1 || $("main").length === 2) //if there is an ajax modal available, then we have 2 main elements.
-            this.getService<AjaxRedirect>(Services.AjaxRedirect).go(location.href, null, false /*isBack*/, keepScroll, false);
-        else location.reload();
+        if ($("main").length === 1 || $("main").length === 2) {
+            // if there is an ajax modal available, then we have 2 main elements.
+            this.getService<AjaxRedirect>(Services.AjaxRedirect)
+                .go(location.href, null, false /*isBack*/, keepScroll, false);
+        } else {
+            location.reload();
+        }
 
         return false;
     }
