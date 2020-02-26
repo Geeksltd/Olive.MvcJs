@@ -15,6 +15,7 @@ export default class GlobalSearch {
     private inputChangeHandler;
     private clearSearchComponent;
     private createSearchComponent;
+    private static showIcon;
     private clearValue;
     private itemSelected;
     private toObject;
