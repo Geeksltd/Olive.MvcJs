@@ -52,3 +52,5 @@ interface String {
 interface JQueryStatic {
     raiseEvent(event: string, owner: any, data?: any): boolean;
 }
+
+interface Window { IsOliveMvcLoaded: boolean; }

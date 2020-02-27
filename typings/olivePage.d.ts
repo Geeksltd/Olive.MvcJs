@@ -1,6 +1,6 @@
-import { ModalHelper } from 'olive/components/modal';
-import Waiting from 'olive/components/waiting';
-import { ServiceContainer } from "./di/serviceContainer";
+import { ModalHelper } from "olive/components/modal";
+import Waiting from "olive/components/waiting";
+import { ServiceContainer } from "olive/di/serviceContainer";
 export default class OlivePage implements IServiceLocator {
     services: ServiceContainer;
     modal: ModalHelper;
@@ -9,9 +9,9 @@ export default class OlivePage implements IServiceLocator {
     protected initializeServices(): void;
     protected configureServices(services: ServiceContainer): void;
     private fixAlertIssues;
-    protected _initializeActions: any[];
+    protected initializeActions: any[];
     protected onInit(action: any): void;
-    protected _preInitializeActions: any[];
+    protected preInitializeActions: any[];
     protected onPreInit(action: any): void;
     protected onViewChanged(container?: JQuery, trigger?: any, newPage?: boolean, firstTime?: boolean): void;
     initialize(): void;

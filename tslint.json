@@ -1,8 +1,24 @@
 {
+    "extends": "tslint:recommended",
     "rules": {
         "member-access": {
             "severity": "error"
         },
-        "only-arrow-functions": true
+        "only-arrow-functions": true,
+        "member-ordering": false,
+        "ordered-imports": false,
+        "object-literal-sort-keys": false,
+        "max-classes-per-file": false,
+        "no-console": {
+            "severity": "warning",
+            "options": [
+                "debug",
+                "info",
+                "log",
+                "time",
+                "timeEnd",
+                "trace"
+            ]
+        }
     }
 }

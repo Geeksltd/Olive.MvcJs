@@ -1,92 +1,98 @@
-﻿
-export default class GlobalSearch {
-    private awaitingAutocompleteResponses: number = 0;
-    private valueField: JQuery;
-    private testvarable: number = 3;
+﻿import Waiting from "olive/components/waiting";
+
+export class GlobalSearchFactory implements IService {
+    constructor(private waiting: Waiting) {
+    }
+
+    public enable(selector: JQuery) {
+        selector.each((i, e) => new GlobalSearch($(e), this.waiting).enable());
+    }
+}
+
+export default class GlobalSearch implements IService {
     private urlList: string[];
     private isMouseInsideSearchPanel: boolean = false;
     private isTyping: boolean = false;
     private searchedText: string = null;
 
-    public static enable(selector: JQuery) {
-        selector.each((i, e) => new GlobalSearch($(e)).enable());
-    }
-
-    private static boldSearch(str: string, searchText: string) {
-        var ix = -1;
-        var result: string = "";
+    protected boldSearch(str: string, searchText: string) {
+        let ix = -1;
+        let result: string = "";
         if (str !== null && str !== undefined) {
-            str = str
-                .replace(/<strong>/gi, '↨↨').replace(/<\/strong>/gi, '↑↑');
-            var strlower = str.toLowerCase();
+            str = str.replace(/<strong>/gi, "↨↨").replace(/<\/strong>/gi, "↑↑");
+
+            const strlower = str.toLowerCase();
             if (searchText !== "" && searchText !== null && searchText !== undefined) {
-                var stxt = searchText.toLowerCase();
+                const stxt = searchText.toLowerCase();
                 do {
-                    let ix_next = strlower.indexOf(stxt, ix);
-                    if (ix_next < 0)
-                        break;
-                    if (ix < 0) result = str.substr(0, ix_next);
-                    result += (ix >= 0 ? str.substr(ix, ix_next - ix) : "") + "<strong>" + str.substr(ix_next, stxt.length) + "</strong>";
-                    ix = ix_next + stxt.length;
+                    const ixNext = strlower.indexOf(stxt, ix);
+
+                    if (ixNext < 0) { break; }
+
+                    if (ix < 0) { result = str.substr(0, ixNext); }
+
+                    result += (ix >= 0 ? str.substr(ix, ixNext - ix) : "") +
+                        "<strong>" +
+                        str.substr(ixNext, stxt.length) + "</strong>";
+
+                    ix = ixNext + stxt.length;
                 } while (true);
             }
             result += (ix < 0 ? str : str.substr(ix, str.length - ix));
-            result = result
-                .replace(/↨↨/gi, '<strong>').replace(/↑↑/gi, '</strong>');
+
+            result = result.replace(/↨↨/gi, "<strong>").replace(/↑↑/gi, "</strong>");
         }
         return result;
     }
 
-    private static boldSearchAll(str: string, searchText: string) {
-        var result: string = str;
-        if (searchText != null && searchText != undefined) {
-            var splitedsearchtext = searchText.split(' ');
-            for (var strST of splitedsearchtext) {
+    protected boldSearchAll(str: string, searchText: string) {
+        let result: string = str;
+        if (searchText !== null && searchText !== undefined) {
+            const splitedsearchtext = searchText.split(" ");
+            for (const strST of splitedsearchtext) {
                 result = this.boldSearch(result, strST);
             }
         }
         return result;
     }
 
-    constructor(private input: JQuery) { }
+    constructor(private input: JQuery, private waiting: Waiting) { }
 
-    private enable() {
-        if (this.input.is("[data-globalsearch-enabled=true]")) return;
-        else this.input.attr("data-globalsearch-enabled", "true");
+    public enable() {
+        if (this.input.is("[data-globalsearch-enabled=true]")) {
+            return;
+        } else {
+            this.input.attr("data-globalsearch-enabled", "true");
+        }
+
         this.input.wrap("<div class='global-search-panel'></div>");
 
-
-
-        let urlsList = (<string>this.input.attr("data-search-source") || '').split(";");
+        const urlsList = (this.input.attr("data-search-source") || "").split(";");
         this.urlList = urlsList;
 
-        var timeout = null;
-        this.input.keyup((function (e) {
+        let timeout = null;
+        this.input.keyup((e) => {
             this.isTyping = true;
             clearTimeout(timeout);
-            timeout = setTimeout((function () {
+            timeout = setTimeout((() => {
                 this.isTyping = false;
-                if (this.searchedText != this.input.val().trim()) {
+                if (this.searchedText !== this.input.val().trim()) {
                     this.createSearchComponent(this.urlList);
                 }
-            }).bind(this), 300);
-        }).bind(this));
+            }), 300);
+        });
 
-        this.input.on("blur", (function (e) {
+        this.input.on("blur", ((e) => {
             if (this.isMouseInsideSearchPanel === false) {
                 this.clearSearchComponent();
             }
-        }).bind(this));
+        }));
     }
 
-    private inputChangeHandler() {
-        this.createSearchComponent(this.urlList);
-    }
-
-    private clearSearchComponent() {
-        let inputholder = this.input.parent();
+    protected clearSearchComponent() {
+        const inputholder = this.input.parent();
         if (inputholder !== undefined) {
-            let panel = inputholder.find(".global-search-result-panel");
+            const panel = inputholder.find(".global-search-result-panel");
             if (panel !== undefined) {
                 panel.empty();
                 panel.remove();
@@ -94,200 +100,211 @@ export default class GlobalSearch {
         }
     }
 
-    private createSearchComponent(urls: string[]) {
-        this.searchedText = this.input.val().trim();
-        var searchPanel = this.input.parent();
-        var resultPanel = searchPanel.find(".global-search-result-panel");
+    protected getResultPanel() {
+        const searchPanel = this.input.parent();
+        let resultPanel = searchPanel.find(".global-search-result-panel");
 
-        if (resultPanel == undefined || resultPanel == null || resultPanel.length == 0) {
+        if (resultPanel === undefined || resultPanel === null || resultPanel.length === 0) {
             resultPanel = $("<div class='global-search-result-panel'>")
                 .mouseenter(() => this.isMouseInsideSearchPanel = true)
                 .mouseleave(() => this.isMouseInsideSearchPanel = false);
             searchPanel.append(resultPanel);
         }
-        resultPanel.empty();
-        var beginSearchStarted = true;
-        var searchHolder = $("<div class='search-container'>");
-        // loading icon
-        if ($(".global-search-panel .loading-div").length > 0) {
-            $(".global-search-panel .loading-div").empty();
-            $(".global-search-panel .loading-div").remove();
-        }
-        $(".global-search-panel").append($("<div class='loading-div'>")
-            .append($("<i class= 'loading-icon fa fa-spinner fa-spin' > </i><div>")));
 
-        var ajaxlist = urls.map(p => {
-            let icon = p.split("#")[1].trim();
+        return resultPanel;
+    }
+
+    protected createSearchComponent(urls: string[]) {
+        this.searchedText = this.input.val().trim();
+
+        const resultPanel = this.getResultPanel();
+        resultPanel.empty();
+
+        const searchHolder = $("<div class='search-container'>");
+
+        this.waiting.show();
+
+        const ajaxList = urls.map((p): IAjaxObject => {
+            const icon = p.split("#")[1].trim();
             return {
                 url: p.split("#")[0].trim(),
-                icon: icon,
-                globalsearchRef: this,
-                text: this.searchedText,
-                state: 0, // 0 means pending, 1 means success, 2 means failed
-                ajx: {}, // the ajax object
-                displayMessage: "", // message to display on summary
-                result: [{
-                    Title: ""
-                    , Description: ""
-                    , IconUrl: ""
-                    , Url: ""
-                }],
-                template: jQuery
+                icon,
+                state: AjaxState.pending,
             };
         });
 
-        var resultcount = 0;
+        const context: ISearchContext = {
+            ajaxList,
+            resultCount: 0,
+            resultPanel,
+            searchHolder,
+            beginSearchStarted: true,
+            searchedText: this.searchedText,
+        };
 
-        for (let tempobj of ajaxlist) {
-
-            tempobj.ajx = $
+        for (const ajaxObject of context.ajaxList) {
+            ajaxObject.ajx = $
                 .ajax({
                     dataType: "json",
-                    url: tempobj.url,
+                    url: ajaxObject.url,
                     xhrFields: { withCredentials: true },
                     async: true,
-                    // additional data to be send 
-                    data: { searcher: tempobj.text },
-                    // if succesfully respond, this callback will be called
-                    success: (function (result) {
-                        let tpobj = this;
-                        if (tpobj.globalsearchRef.isTyping == false) {
-                            tpobj.result = result;
-                            if (result !== null && result !== undefined && typeof (result) === typeof ([])) {
-                                tpobj.state = 1; // 1 -> success                           
-                                // filter in client side                           
-                                let resultfiltered = result.filter(p => {
-                                    let resfilter = false;
-                                    if (tpobj.text != null && tpobj.text != undefined && tpobj.text !== '') {
-                                        var arfilter = tpobj.text.split(' ');
-                                        for (var strfilter of arfilter) {
-                                            if (((p.Description !== null && p.Description !== undefined && p.Description.match(new RegExp(strfilter, 'gi')) != null) || p.Title.match(new RegExp(strfilter, 'gi')) != null)) {
-                                                resfilter = true;
-                                                break;
-                                            }
-                                        }
-                                    } else {
-                                        resfilter = true;
-                                    }
-                                    return resfilter;
-                                });
-
-                                let searchItem = $("<div class='search-item'>");
-
-                                let groupTitle = tpobj.url.split(".")[0].replace("https://", "").replace("http://", "").toUpperCase();
-
-                                let searchTitleHolder = $("<div class='search-title'>");
-
-                                if (resultfiltered[0].Colour) {
-                                    searchItem.css("color", resultfiltered[0].Colour);
-                                    searchTitleHolder.css("color", resultfiltered[0].Colour);
-                                }
-
-                                let searhTitle = searchTitleHolder.append($("<i>").attr("class", tpobj.icon)).append(groupTitle);
-
-                                searchItem.append(searhTitle);
-
-                                let childrenItems = $("<ul>");
-
-                                for (var i = 0; i < resultfiltered.length && i < 10; i++) {
-                                    resultcount++;
-                                    var item = resultfiltered[i];
-
-                                    childrenItems.append($("<li>")
-                                        .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<div class='icon'>") : GlobalSearch.showIcon(item))
-                                        .append($("<a href='" + item.Url + "'>")
-                                            .html(GlobalSearch.boldSearchAll(item.Title, tpobj.text)))
-                                        .append($(" <div class='desc'>").html(item.Description)));
-                                }
-
-                                searchItem.append(childrenItems);
-
-                                if (resultfiltered.length === 0)
-                                    searchItem.addClass("d-none");
-
-                                searchHolder.append(searchItem);
-
-                                if (beginSearchStarted && resultfiltered.length > 0) {
-                                    beginSearchStarted = false;
-                                    resultPanel.append(searchHolder);
-                                }
-
-                            } else {
-                                tpobj.state = 2; // 2 -> fail
-                                console.log("ajax success but failed to decode the response -> wellform expcted response is like this: [{Title:'',Description:'',IconUrl:'',Url:''}] ");
-                            }
-                        }
-                    }).bind(tempobj)
-                })
-                // if failed to get data run this callback
-                .fail((function (e) {
-                    let tpobj = this;
-                    tpobj.state = 2;
-
-                    let ulFail = $("<ul>");
-                    ulFail.append($("<li>").append($("<span>").html('ajax failed Loading data from source [' + tpobj.url + ']')));
-                    resultPanel.append(ulFail);
-
-                    console.log('ajax failed Loading data from source [' + tpobj.url + ']');
-                    console.log(e);
-                }).bind(tempobj))
-                // use this callback to check whether all ajax requests, finished
-                .always((function () {
-                    let tpobj = this;
-                    console.log('always event raised for: ' + tpobj.url);
-                    // check all ajax finished            
-                    if (ajaxlist.filter(p => p.state === 0).length === 0) {
-                        console.log('All ajax completed');
-                        $(".global-search-panel .loading-div").empty();
-                        $(".global-search-panel .loading-div").remove();
-                        if (resultcount === 0) {
-                            console.log("Found nothing");
-
-                            let ulNothing = $("<ul>");
-                            ulNothing.append("<li>").append("<span>").html('Nothing found');
-                            resultPanel.append(ulNothing);
-
-                        } else {
-                            console.log('Total Found: ' + resultcount);
-                        }
-                    }
-                }).bind(tempobj));
-            console.log('ajax send to: ' + tempobj.url);
+                    data: { searcher: context.searchedText },
+                    success: (jqXhr) => this.onSuccess(ajaxObject, context, jqXhr),
+                    complete: (jqXhr) => this.onComplete(context, jqXhr),
+                    error: (jqXhr) => this.onError(ajaxObject, resultPanel, jqXhr),
+                });
         }
     }
 
-    private static showIcon(item: any): JQuery {
-        if (item.IconUrl.indexOf("fa-") > 0)
-            return $("<div class='icon'>").append($("<i class='" + item.IconUrl + "'></i>"))
-        else
-            return $("<div class='icon'>").append($("<img src='" + item.IconUrl + "'>"));
+    protected onSuccess(sender: IAjaxObject, context: ISearchContext, jqXHR: JQueryXHR) {
+        if (this.isTyping === false) {
+            sender.result = jqXHR.response;
+            const result = sender.result;
+            if (result !== null && result !== undefined && typeof (result) === typeof ([])) {
+                sender.state = AjaxState.success;
+
+                const resultfiltered = result.filter((p) => this.isValidResult(p, context));
+
+                const searchItem = this.createSearchItems(sender, context, resultfiltered);
+                context.searchHolder.append(searchItem);
+
+                if (context.beginSearchStarted && resultfiltered.length > 0) {
+                    context.beginSearchStarted = false;
+                    context.resultPanel.append(context.searchHolder);
+                }
+
+            } else {
+                sender.state = AjaxState.failed;
+                console.error("ajax success but failed to decode the response -> wellform expcted response is like this: [{Title:'',Description:'',IconUrl:'',Url:''}] ");
+            }
+        }
     }
 
-    private clearValue() {
-        if (this.input.val() === "") this.valueField.val("");
-        if (this.input.val() !== this.input.data("selected-text"))
-            this.valueField.val("");
-    }
-
-    private itemSelected(item: any) {
-
-        if (item != undefined) {
-            this.valueField.val(item.Value);
-            this.input.data("selected-text", item.Display);
-            this.input.val(item.Display);
+    protected isValidResult(item: IResultItemDto, context: ISearchContext) {
+        let resfilter = false;
+        if (context.searchedText) {
+            const arfilter = context.searchedText.split(" ");
+            for (const strfilter of arfilter) {
+                if ((
+                    (
+                        item.Description !== null &&
+                        item.Description !== undefined &&
+                        item.Description.match(new RegExp(strfilter, "gi")) !== null
+                    ) ||
+                    item.Title.match(new RegExp(strfilter, "gi")) !== null)
+                ) {
+                    resfilter = true;
+                    break;
+                }
+            }
         } else {
-            console.log("Clearing text, item is undefined");
-            this.input.data("selected-text", "");
+            resfilter = true;
         }
-        // This will invoke RunOnLoad M# method as typeahead does not fire textbox change event when it sets its value from drop down
-        this.input.trigger("change");
+        return resfilter;
     }
 
-    // Convert current form array to simple plain object
-    private toObject(arr: JQuerySerializeArrayElement[]) {
-        var rv = {};
-        for (var i = 0; i < arr.length; ++i)
-            rv[arr[i].name] = arr[i].value;
-        return rv;
+    protected createSearchItems(sender: IAjaxObject, context: ISearchContext, items: IResultItemDto[]) {
+        const searchItem = $("<div class='search-item'>");
+
+        const groupTitle = sender.url.split(".")[0]
+            .replace("https://", "")
+            .replace("http://", "").toUpperCase();
+
+        const searchTitleHolder = $("<div class='search-title'>");
+
+        if (items[0].Colour) {
+            searchItem.css("color", items[0].Colour);
+            searchTitleHolder.css("color", items[0].Colour);
+        }
+
+        const searhTitle = searchTitleHolder.append($("<i>").attr("class", sender.icon)).append(groupTitle);
+
+        searchItem.append(searhTitle);
+
+        const childrenItems = $("<ul>");
+
+        for (let i = 0; i < items.length && i < 10; i++) {
+            context.resultCount++;
+            childrenItems.append(this.createItem(items[i], context));
+        }
+
+        searchItem.append(childrenItems);
+
+        if (items.length === 0) {
+            searchItem.addClass("d-none");
+        }
+
+        return searchItem;
     }
+
+    protected createItem(item: IResultItemDto, context: ISearchContext) {
+        return $("<li>")
+            .append((item.IconUrl === null || item.IconUrl === undefined) ?
+                $("<div class='icon'>") : this.showIcon(item))
+            .append($("<a href='" + item.Url + "'>")
+                .html(this.boldSearchAll(item.Title, context.searchedText)))
+            .append($(" <div class='desc'>").html(item.Description));
+    }
+
+    protected onComplete(context: ISearchContext, jqXHR: JQueryXHR) {
+        if (context.ajaxList.filter((p) => p.state === 0).length === 0) {
+            this.waiting.hide();
+            if (context.resultCount === 0) {
+                const ulNothing = $("<ul>");
+                ulNothing.append("<li>").append("<span>").html("Nothing found");
+                context.resultPanel.append(ulNothing);
+            }
+        }
+    }
+
+    protected onError(sender: IAjaxObject, resultPanel: JQuery, jqXHR: JQueryXHR) {
+        sender.state = AjaxState.failed;
+
+        const ulFail = $("<ul>");
+        ulFail.append($("<li>").append($("<span>")
+            .html("ajax failed Loading data from source [" + sender.url + "]")));
+        resultPanel.append(ulFail);
+        console.error(jqXHR.response);
+    }
+
+    protected showIcon(item: any): JQuery {
+        if (item.IconUrl.indexOf("fa-") > 0) {
+            return $("<div class='icon'>").append($("<i class='" + item.IconUrl + "'></i>"));
+        } else {
+            return $("<div class='icon'>").append($("<img src='" + item.IconUrl + "'>"));
+        }
+    }
+}
+
+export enum AjaxState {
+    pending,
+    success,
+    failed,
+}
+
+export interface ISearchContext {
+    ajaxList: IAjaxObject[];
+    resultPanel: JQuery;
+    resultCount: number;
+    searchHolder: JQuery;
+    beginSearchStarted: boolean;
+    searchedText: string;
+}
+
+export interface IResultItemDto {
+    Title: string;
+    Description: string;
+    IconUrl: string;
+    Url: string;
+    Colour: string;
+}
+
+export interface IAjaxObject {
+    url: string;
+    icon: string;
+    state: AjaxState;
+    ajx?: JQueryXHR;
+    displayMessage?: string;
+    result?: IResultItemDto[];
 }
