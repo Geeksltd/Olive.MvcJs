@@ -18,7 +18,7 @@ export default class GlobalSearch implements IService {
     protected clearSearchComponent(): void;
     protected getResultPanel(): JQuery;
     protected createSearchComponent(urls: string[]): void;
-    protected onSuccess(sender: IAjaxObject, context: ISearchContext, jqXHR: JQueryXHR): void;
+    protected onSuccess(sender: IAjaxObject, context: ISearchContext, result: IResultItemDto[]): void;
     protected isValidResult(item: IResultItemDto, context: ISearchContext): boolean;
     protected createSearchItems(sender: IAjaxObject, context: ISearchContext, items: IResultItemDto[]): JQuery;
     protected createItem(item: IResultItemDto, context: ISearchContext): JQuery;

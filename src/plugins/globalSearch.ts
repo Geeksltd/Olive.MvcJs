@@ -150,17 +150,16 @@ export default class GlobalSearch implements IService {
                     xhrFields: { withCredentials: true },
                     async: true,
                     data: { searcher: context.searchedText },
-                    success: (jqXhr) => this.onSuccess(ajaxObject, context, jqXhr),
+                    success: (result) => this.onSuccess(ajaxObject, context, result),
                     complete: (jqXhr) => this.onComplete(context, jqXhr),
                     error: (jqXhr) => this.onError(ajaxObject, resultPanel, jqXhr),
                 });
         }
     }
 
-    protected onSuccess(sender: IAjaxObject, context: ISearchContext, jqXHR: JQueryXHR) {
+    protected onSuccess(sender: IAjaxObject, context: ISearchContext, result: IResultItemDto[]) {
         if (this.isTyping === false) {
-            sender.result = jqXHR.response;
-            const result = sender.result;
+            sender.result = result;
             if (result !== null && result !== undefined && typeof (result) === typeof ([])) {
                 sender.state = AjaxState.success;
 
@@ -265,7 +264,7 @@ export default class GlobalSearch implements IService {
         ulFail.append($("<li>").append($("<span>")
             .html("ajax failed Loading data from source [" + sender.url + "]")));
         resultPanel.append(ulFail);
-        console.error(jqXHR.response);
+        console.error(jqXHR);
     }
 
     protected showIcon(item: any): JQuery {
