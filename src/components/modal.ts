@@ -1,17 +1,19 @@
-import Url from 'olive/components/url';
-import CrossDomainEvent from 'olive/components/crossDomainEvent';
-import AjaxRedirect from 'olive/mvc/ajaxRedirect';
-import ResponseProcessor from 'olive/mvc/responseProcessor';
+import Url from "olive/components/url";
+import CrossDomainEvent from "olive/components/crossDomainEvent";
+import AjaxRedirect from "olive/mvc/ajaxRedirect";
+import ResponseProcessor from "olive/mvc/responseProcessor";
 
 export class ModalHelper implements IService {
     public current: any = null;
     public currentModal: Modal = null;
     public isAjaxModal: boolean = false;
-    private isClosingModal: boolean = false;
+    public isClosingModal: boolean = false;
 
-    constructor(private url: Url,
+    constructor(
+        private url: Url,
         private ajaxRedirect: AjaxRedirect,
-        private responseProcessor: ResponseProcessor) { }
+        private responseProcessor: ResponseProcessor,
+    ) { }
 
     public enableLink(selector: JQuery) {
         selector.off("click.open-modal").on("click.open-modal", (e) => {
@@ -19,8 +21,7 @@ export class ModalHelper implements IService {
 
             if ($(e.currentTarget).attr("data-mode") === "iframe") {
                 this.openiFrame(e);
-            }
-            else {
+            } else {
                 this.open(e);
             }
 
@@ -30,16 +31,16 @@ export class ModalHelper implements IService {
 
     public initialize() {
 
-        CrossDomainEvent.handle('set-iframe-height', x => this.setIFrameHeight(x));
-        CrossDomainEvent.handle('close-modal', x => this.close());
+        CrossDomainEvent.handle("set-iframe-height", (x) => this.setIFrameHeight(x));
+        CrossDomainEvent.handle("close-modal", (x) => this.close());
 
         this.responseProcessor.processCompleted.handle(() => this.tryOpenFromUrl());
 
-        window["isModal"] = () => {
+        window.isModal = () => {
             try {
-                if (this.isAjaxModal) return true;
-                return $('myModal').length > 0;
-                //return window.self !== window.parent;
+                if (this.isAjaxModal) { return true; }
+                return $("myModal").length > 0;
+                // return window.self !== window.parent;
             } catch (e) {
                 return true;
             }
@@ -50,9 +51,10 @@ export class ModalHelper implements IService {
         if (!this.isAjaxModal) { CrossDomainEvent.raise(parent, "close-modal"); }
         this.close();
 
-        $('body > .tooltip').each((index, elem) => {
-            if ($('[aria-discribedby=' + elem.id + ']'))
+        $("body > .tooltip").each((index, elem) => {
+            if ($("[aria-discribedby=" + elem.id + "]")) {
                 elem.remove();
+            }
         });
 
         return true;
@@ -66,29 +68,31 @@ export class ModalHelper implements IService {
                 $(window).scrollTop(this.currentModal.scrollPosition);
             }
 
-            var onClosingEvent = new CustomEvent('onClosingEvent');
+            const onClosingEvent = new CustomEvent("onClosingEvent");
             this.current[0].dispatchEvent(onClosingEvent);
 
-            this.current.modal('hide');
+            this.current.modal("hide");
             this.current.remove();
             this.current = null;
             this.currentModal = null;
         }
 
-        $('body > .tooltip').each((index, elem) => {
-            if ($('[aria-describedby=' + elem.id + ']'))
+        $("body > .tooltip").each((index, elem) => {
+            if ($("[aria-describedby=" + elem.id + "]")) {
                 elem.remove();
+            }
         });
 
         this.isClosingModal = false;
         this.isAjaxModal = false;
 
-        //remove modal query string
+        // remove modal query string
         let currentPath = this.url.removeQuery(this.url.current(), "_modal");
         currentPath = this.url.removeQuery(currentPath, "_iframe");
 
-        if (currentPath.endsWith("?"))
+        if (currentPath.endsWith("?")) {
             currentPath = currentPath.trimEnd("?");
+        }
 
         history.pushState({}, "", currentPath);
 
@@ -97,15 +101,17 @@ export class ModalHelper implements IService {
 
     private setIFrameHeight(arg: any) {
         try {
-            let iframe = $("iframe").filter((i, f) => f["src"] == arg.url);
-            if (iframe.attr("data-has-explicit-height") === 'true') return;
-            iframe.height(arg.height + 30); //we have 30px padding
+            const iframe = $("iframe").filter((_, f: HTMLIFrameElement) => f.src === arg.url);
+            if (iframe.attr("data-has-explicit-height") === "true") { return; }
+            iframe.height(arg.height + 30); // we have 30px padding
         } catch (error) {
             console.error(error);
         }
     }
 
-    public enableEnsureHeight(selector: JQuery) { selector.off("click.tab-toggle").on("click.tab-toggle", () => this.ensureHeight()); }
+    public enableEnsureHeight(selector: JQuery) {
+        selector.off("click.tab-toggle").on("click.tab-toggle", () => this.ensureHeight());
+    }
 
     private ensureHeight() {
         setTimeout(() => this.adjustHeight(), 1);
@@ -117,32 +123,34 @@ export class ModalHelper implements IService {
             CrossDomainEvent.raise(parent, "set-iframe-height",
                 {
                     url: window.location.href,
-                    height: document.body.scrollHeight + (overflow || 0)
+                    height: document.body.scrollHeight + (overflow || 0),
                 });
         }
     }
 
     public expandToFitPicker(target: any) {
-        let datepicker = $(target.currentTarget).siblings('.bootstrap-datetimepicker-widget');
+        const datepicker = $(target.currentTarget).siblings(".bootstrap-datetimepicker-widget");
 
         if (datepicker.length === 0) {
             this.adjustHeight();
             return;
         }
 
-        let offset = Math.ceil(datepicker.offset().top + datepicker[0].offsetHeight) - document.body.offsetHeight + 6;
-        let overflow = Math.max(offset, 0);
+        const offset = Math.ceil(datepicker.offset().top + datepicker[0].offsetHeight) - document.body.offsetHeight + 6;
+        const overflow = Math.max(offset, 0);
         this.adjustHeight(overflow);
     }
 
     private ensureNonModal() {
-        if (window.isModal())
+        if (window.isModal()) {
             parent.window.location.href = location.href;
+        }
     }
 
     public tryOpenFromUrl() {
-        if (this.url.getQuery("_modal") && $('.modal-dialog').length == 0)
+        if (this.url.getQuery("_modal") && $(".modal-dialog").length === 0) {
             this.openWithUrl();
+        }
     }
 
     public changeUrl(url: string, iframe: boolean = false) {
@@ -150,11 +158,12 @@ export class ModalHelper implements IService {
         let currentPath: string = this.url.removeQuery(this.url.current(), "_modal");
         currentPath = this.url.removeQuery(currentPath, "_iframe");
 
-        if (currentPath.endsWith("?"))
+        if (currentPath.endsWith("?")) {
             currentPath = currentPath.trimEnd("?");
+        }
 
         if (this.url.isAbsolute(url)) {
-            let pathArray: Array<string> = url.split("/").splice(3);
+            const pathArray: string[] = url.split("/").splice(3);
             url = pathArray.join("/");
         }
 
@@ -166,7 +175,6 @@ export class ModalHelper implements IService {
 
         history.pushState({}, "", modalUrl);
     }
-
 
     public isOrGoingToBeModal(): boolean {
         return window.isModal() || !!this.url.getQuery("_modal");
@@ -180,20 +188,18 @@ export class ModalHelper implements IService {
         new Modal(this.url, this.ajaxRedirect, this, event, url, options).openiFrame();
     }
 
-
     protected openWithUrl(): void {
 
         if (this.url.getQuery("_iframe") === "true") {
             new Modal(this.url, this.ajaxRedirect, this, null, this.url.getQuery("_modal")).openiFrame(false);
-        }
-        else {
+        } else {
             new Modal(this.url, this.ajaxRedirect, this, null, this.url.getQuery("_modal")).open(false);
         }
     }
 }
 
 export default class Modal {
-    private isOpening: boolean = false;
+    public isOpening: boolean = false;
     public opener: JQuery;
     private url: string;
     private rawUrl: string;
@@ -208,14 +214,14 @@ export default class Modal {
         targeturl?: string,
         opt?: any) {
 
-        let target = event ? $(event.currentTarget) : null;
+        const target = event ? $(event.currentTarget) : null;
         this.opener = target;
         this.url = targeturl ? targeturl : target.attr("href");
         this.rawUrl = this.url;
         this.url = this.urlService.effectiveUrlProvider(this.url, target);
 
-        let options = opt ? opt : (target ? target.attr("data-modal-options") : null);
-        if (options) this.modalOptions = JSON.safeParse(options);
+        const options = opt ? opt : (target ? target.attr("data-modal-options") : null);
+        if (options) { this.modalOptions = JSON.safeParse(options); }
     }
 
     public open(changeUrl: boolean = true): boolean {
@@ -233,15 +239,16 @@ export default class Modal {
             this.shouldKeepScroll(),
             changeUrl,
             () => {
-                if (changeUrl && window.isModal())
+                if (changeUrl && window.isModal()) {
                     this.helper.changeUrl(this.url);
+                }
             });
 
         $("body").append(this.helper.current);
 
         this.helper.current.modal("show");
 
-        this.helper.current.on('hidden.bs.modal', () => {
+        this.helper.current.on("hidden.bs.modal", () => {
             CrossDomainEvent.raise(window.self, "close-modal");
         });
     }
@@ -249,21 +256,23 @@ export default class Modal {
     public openiFrame(changeUrl: boolean = true) {
         this.isOpening = true;
         this.helper.isAjaxModal = false;
-        if (this.helper.current)
-            if (this.helper.close() === false) return false;
+        if (this.helper.current) {
+            if (this.helper.close() === false) { return false; }
+        }
 
         this.helper.current = $(this.getModalTemplateForiFrame(this.modalOptions));
         this.helper.currentModal = this;
         this.scrollPosition = $(window).scrollTop();
 
-        if (true /* TODO: Change to if Internet Explorer only */)
+        if (true /* TODO: Change to if Internet Explorer only */) {
             this.helper.current.removeClass("fade");
+        }
 
-        let frame = this.helper.current.find("iframe");
+        const frame = this.helper.current.find("iframe");
 
         const url = this.url;
 
-        frame.attr("src", url).on("load", e => {
+        frame.attr("src", url).on("load", (e) => {
             this.isOpening = false;
             if (changeUrl) {
                 this.helper.changeUrl(url, true);
@@ -272,8 +281,8 @@ export default class Modal {
         });
 
         $("body").append(this.helper.current);
-        this.helper.current.modal('show');
-        this.helper.current.on('hidden.bs.modal', () => {
+        this.helper.current.modal("show");
+        this.helper.current.on("hidden.bs.modal", () => {
             CrossDomainEvent.raise(window.self, "close-modal");
         });
     }
@@ -337,7 +346,7 @@ export default class Modal {
 
         return "<div class='modal fade' id='myModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel'\
          aria-hidden='true'>\
-                    <div class='modal-dialog' style='"+ modalDialogStyle + "'>\
+                    <div class='modal-dialog' style='" + modalDialogStyle + "'>\
             <div class='modal-content'>\
             <div class='modal-header'>\
                 <button type='button' class='close' data-dismiss='modal' aria-label='Close'>\
@@ -346,7 +355,7 @@ export default class Modal {
             </div>\
             <div class='modal-body'>\
                 <div class='row text-center'><i class='fa fa-spinner fa-spin fa-2x'></i></div>\
-                <iframe style='"+ iframeStyle + "' " + iframeAttributes + "></iframe>\
+                <iframe style='" + iframeStyle + "' " + iframeAttributes + "></iframe>\
             </div>\
         </div></div></div>";
     }

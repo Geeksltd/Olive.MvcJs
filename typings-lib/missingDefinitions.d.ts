@@ -17,6 +17,7 @@ interface Window {
     isModal(): boolean;
     download(url: string);
     page: any;
+    testingContext: ITestingContext;
 }
 
 interface JSON {
@@ -53,4 +54,11 @@ interface JQueryStatic {
     raiseEvent(event: string, owner: any, data?: any): boolean;
 }
 
-interface Window { IsOliveMvcLoaded: boolean; }
+interface ITestingContext {
+    isAjaxRedirecting(): boolean;
+    isOpeningModal(): boolean;
+    isClosingModal(): boolean;
+    isAwaitingAjaxResponse(): boolean;
+    isOliveMvcLoaded(): boolean;
+    onPageInitialized(): void;
+}
