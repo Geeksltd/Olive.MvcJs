@@ -52,6 +52,7 @@ const Services = {
     UserHelp: "userHelp",
     ServiceLocator: "serviceLocator",
     GlobalSearchFactory: "GlobalSearchFactory",
+    TestingContext: "TestingContext",
 };
 
 export default Services;

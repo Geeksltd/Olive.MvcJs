@@ -211,7 +211,7 @@ export default class GlobalSearch implements IService {
             .replace("http://", "").toUpperCase();
 
         const searchTitleHolder = $("<div class='search-title'>");
-        
+
         if (items?.length > 0 && items[0].Colour) {
             searchItem.css("color", items[0].Colour);
             searchTitleHolder.css("color", items[0].Colour);

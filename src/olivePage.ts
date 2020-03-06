@@ -1,4 +1,3 @@
-
 import Config from "olive/config";
 import CrossDomainEvent from "olive/components/crossDomainEvent";
 
@@ -45,9 +44,9 @@ import { ServiceContainer } from "olive/di/serviceContainer";
 import Services from "olive/di/services";
 import { ServiceDescription } from "olive/di/serviceDescription";
 import SanityAdapter from "olive/plugins/sanityAdapter";
+import TestingContext from "./plugins/testingContext";
 
 export default class OlivePage implements IServiceLocator {
-
     public services: ServiceContainer;
 
     public modal: ModalHelper;
@@ -62,6 +61,7 @@ export default class OlivePage implements IServiceLocator {
 
         this.modal = this.getService<ModalHelper>(Services.ModalHelper);
         this.waiting = this.getService<Waiting>(Services.Waiting);
+        window.testingContext = this.getService<TestingContext>(Services.TestingContext);
 
         this.initializeServices();
 
@@ -215,6 +215,13 @@ export default class OlivePage implements IServiceLocator {
                 new MasterDetail(validate, responseProcessor), out)
         ) {
             out.value.withDependencies(Services.Validate, Services.ResponseProcessor);
+        }
+
+        if (services.tryAddSingleton(Services.TestingContext,
+            (ajaxRedirect: AjaxRedirect, modalHelper: ModalHelper, serverInvoker: ServerInvoker) =>
+                new TestingContext(ajaxRedirect, modalHelper, serverInvoker), out)
+        ) {
+            out.value.withDependencies(Services.AjaxRedirect, Services.ModalHelper, Services.ServerInvoker);
         }
 
         if (services.tryAddSingleton(Services.StandardAction,
@@ -371,7 +378,7 @@ export default class OlivePage implements IServiceLocator {
 
         this.initializeActions.forEach((action) => action());
 
-        window.IsOliveMvcLoaded = true;
+        window.testingContext.onPageInitialized();
 
         try { $.validator.unobtrusive.parse("form"); } catch (error) { console.error(error); }
     }

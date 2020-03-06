@@ -52,5 +52,6 @@ declare const Services: {
     UserHelp: string;
     ServiceLocator: string;
     GlobalSearchFactory: string;
+    TestingContext: string;
 };
 export default Services;
