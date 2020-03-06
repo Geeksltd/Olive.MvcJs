@@ -204,11 +204,10 @@ export default class GlobalSearch implements IService {
     }
 
     protected createSearchItems(sender: IAjaxObject, context: ISearchContext, items: IResultItemDto[]) {
+        
         const searchItem = $("<div class='search-item'>");
-
-        const groupTitle = sender.url.split(".")[0]
-            .replace("https://", "")
-            .replace("http://", "").toUpperCase();
+        
+        const groupTitle = (items?.length > 0 && items[0].GroupTitle?.length > 0) ? items[0].GroupTitle : sender.url.split(".")[0].replace("https://", "").replace("http://", "").toUpperCase();
 
         const searchTitleHolder = $("<div class='search-title'>");
 
@@ -297,6 +296,7 @@ export interface IResultItemDto {
     IconUrl: string;
     Url: string;
     Colour: string;
+    GroupTitle: string;
 }
 
 export interface IAjaxObject {

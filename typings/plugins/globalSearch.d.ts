@@ -45,6 +45,7 @@ export interface IResultItemDto {
     IconUrl: string;
     Url: string;
     Colour: string;
+    GroupTitle: string;
 }
 export interface IAjaxObject {
     url: string;
