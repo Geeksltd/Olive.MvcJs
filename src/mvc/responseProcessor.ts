@@ -101,11 +101,12 @@ export default class ResponseProcessor implements IService {
         if (targetMainName) {
             oldMain = $("main[name='" + targetMainName + "']");
             if (oldMain.length === 0) console.error("There is no <main> object with the name of '" + targetMainName + "'.");
-            else newMain.attr("name", targetMainName);
         }
         else targetMainName = oldMain.attr("name");
 
         if (oldMain.length === 0) oldMain = $("main");
+
+        if (targetMainName) newMain.attr("name", targetMainName);
 
         let tooltips = $('body > .tooltip');
 
