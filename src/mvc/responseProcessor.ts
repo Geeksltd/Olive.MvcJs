@@ -92,7 +92,7 @@ export default class ResponseProcessor implements IService {
         return result;
     }
 
-    protected processWithTheContent(trigger: JQuery, element: JQuery, args: any, referencedScripts: JQuery) {
+    protected processWithTheContent(trigger: JQuery, newMain: JQuery, args: any, referencedScripts: JQuery) {
 
         let width = $(window).width();
 
@@ -100,10 +100,10 @@ export default class ResponseProcessor implements IService {
         var targetMainName = trigger.attr("target");
         if (targetMainName) {
             oldMain = $("main[name='" + targetMainName + "']");
-            if (oldMain.length === 0)
-                console.error("There is no <main> object with the name of '" + targetMainName + "'.");
-            else element.attr("name", targetMainName).attr("id", targetMainName);
+            if (oldMain.length === 0) console.error("There is no <main> object with the name of '" + targetMainName + "'.");
+            else newMain.attr("name", targetMainName);
         }
+        else targetMainName = oldMain.attr("name");
 
         if (oldMain.length === 0) oldMain = $("main");
 
@@ -115,7 +115,7 @@ export default class ResponseProcessor implements IService {
         });
 
         if (width <= 800 && trigger.data("transition") == "slide") {
-            let newMain = element.appendTo(oldMain.parent());
+            newMain.appendTo(oldMain.parent());
 
             oldMain.css("position", "fixed");
 
@@ -131,12 +131,12 @@ export default class ResponseProcessor implements IService {
             setTimeout(() => {
                 oldMain.remove();
                 newMain.removeClass("w3-animate-left").removeClass("w3-animate-right");
-                this.updateUrl(referencedScripts, element, trigger);
+                this.updateUrl(referencedScripts, newMain, trigger);
             }, 400);
         }
         else {
-            oldMain.replaceWith(element);
-            this.updateUrl(referencedScripts, element, trigger);
+            oldMain.replaceWith(newMain);
+            this.updateUrl(referencedScripts, newMain, trigger);
         }
     }
 

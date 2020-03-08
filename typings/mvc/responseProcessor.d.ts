@@ -12,7 +12,7 @@ export default class ResponseProcessor implements IService {
     protected navigate(element: JQuery, trigger: JQuery, args: any): void;
     private getNewCss;
     private getCss;
-    protected processWithTheContent(trigger: JQuery, element: JQuery, args: any, referencedScripts: JQuery): void;
+    protected processWithTheContent(trigger: JQuery, newMain: JQuery, args: any, referencedScripts: JQuery): void;
     protected updateUrl(referencedScripts: JQuery, element: JQuery, trigger: JQuery): void;
     protected onProcessCompleted(): void;
 }
