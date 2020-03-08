@@ -97,6 +97,14 @@ export default class ResponseProcessor implements IService {
         let width = $(window).width();
 
         let oldMain = trigger.closest("main");
+        var targetMainName = trigger.attr("target");
+        if (targetMainName) {
+            oldMain = $("main[name='" + targetMainName + "']");
+            if (oldMain.length === 0)
+                console.error("There is no <main> object with the name of '" + targetMainName + "'.");
+            else element.attr("name", targetMainName).attr("id", targetMainName);
+        }
+
         if (oldMain.length === 0) oldMain = $("main");
 
         let tooltips = $('body > .tooltip');
@@ -108,6 +116,7 @@ export default class ResponseProcessor implements IService {
 
         if (width <= 800 && trigger.data("transition") == "slide") {
             let newMain = element.appendTo(oldMain.parent());
+
             oldMain.css("position", "fixed");
 
             if (args == "back") {
