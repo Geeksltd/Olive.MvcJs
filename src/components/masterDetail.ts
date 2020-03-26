@@ -40,8 +40,8 @@ export default class MasterDetail implements IService {
         const container = button.parents(".subform-item");
         this.validate.removeTooltipsRelatedTo(container);
         container.find("input[name$=MustBeDeleted]").val("true");
-        container.find("input[data-val=true]").data("val", false);
-        container.find("input[data-val=true]").attr("data-val", "false");
+        container.find("[data-val=true]").data("val", false);
+        container.find("[data-val=true]").attr("data-val", "false");
         this.updateSubFormStates();
         event.preventDefault();
     }
