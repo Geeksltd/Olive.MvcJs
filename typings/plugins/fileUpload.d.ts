@@ -1,5 +1,6 @@
 import Url from "olive/components/url";
 import ServerInvoker from "olive/mvc/serverInvoker";
+import "file-style";
 export declare class FileUploadFactory implements IService {
     private url;
     private serverInvoker;

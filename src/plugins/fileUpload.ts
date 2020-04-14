@@ -1,18 +1,22 @@
 // import FormAction from "olive/mvc/formAction"
-import Url from "olive/components/url"
+import Url from "olive/components/url";
 import CrossDomainEvent from "olive/components/crossDomainEvent";
 import ServerInvoker from "olive/mvc/serverInvoker";
+import "file-style";
 
 // For configuration see:
-// http://markusslima.github.io/bootstrap-filestyle/ 
+// http://markusslima.github.io/bootstrap-filestyle/
 // https://blueimp.github.io/jQuery-File-Upload/
 
 export class FileUploadFactory implements IService {
 
-    constructor(private url: Url,
+    constructor(
+        private url: Url,
         private serverInvoker: ServerInvoker) { }
 
-    public enable(selector: JQuery) { selector.each((i, e) => new FileUpload($(e), this.url, this.serverInvoker).enable()); }
+    public enable(selector: JQuery) {
+        selector.each((i, e) => new FileUpload($(e), this.url, this.serverInvoker).enable());
+    }
 }
 
 export default class FileUpload {
@@ -34,47 +38,49 @@ export default class FileUpload {
         // this.input.before(this.input.siblings('input'));
 
         this.container = this.input.closest(".file-upload");
-        //this.idInput = this.container.find("input.file-id");
-        //this.fileLabel = this.input.parent().find(':text');
+        // this.idInput = this.container.find("input.file-id");
+        // this.fileLabel = this.input.parent().find(':text');
 
         this.actionInput = this.container.find(".Action");
         this.tempFileIdInput = this.container.find(".TempFileId");
         this.filenameInput = this.container.find(".Filename");
         this.validationInput = this.container.find(".validation");
 
-        this.deleteButton = this.container.find(".delete-file").click(e => this.onDeleteButtonClicked());
+        this.deleteButton = this.container.find(".delete-file").click((e) => this.onDeleteButtonClicked());
     }
 
     public enable() {
         this.input.attr("data-url", this.url.effectiveUrlProvider("/upload", this.input));
         const options = {
-            'input': this.input.attr('data-input') !== 'false',
-            'htmlIcon': this.input.attr('data-icon'),
-            'buttonBefore': this.input.attr('data-buttonBefore') ? this.input.attr('data-buttonBefore') !== 'false' : true,
-            'disabled': this.input.attr('data-disabled') === 'true',
-            'size': this.input.attr('data-size'),
-            'text': this.input.attr('data-text'),
-            'btnClass': this.input.attr('data-btnClass'),
-            'badge': this.input.attr('data-badge') === 'true',
-            'dragdrop': this.input.attr('data-dragdrop') !== 'false',
-            'badgeName': this.input.attr('data-badgeName'),
-            'placeholder': this.input.attr('data-placeholder')
+            input: this.input.attr("data-input") !== "false",
+            htmlIcon: this.input.attr("data-icon"),
+            buttonBefore: this.input.attr("data-buttonBefore") ?
+                this.input.attr("data-buttonBefore") !== "false" : true,
+            disabled: this.input.attr("data-disabled") === "true",
+            size: this.input.attr("data-size"),
+            text: this.input.attr("data-text"),
+            btnClass: this.input.attr("data-btnClass"),
+            badge: this.input.attr("data-badge") === "true",
+            dragdrop: this.input.attr("data-dragdrop") !== "false",
+            badgeName: this.input.attr("data-badgeName"),
+            placeholder: this.input.attr("data-placeholder"),
         };
         this.input.filestyle(options);
-        this.container.find('.bootstrap-filestyle > input:text').wrap($("<div class='progress'></div>"));
+        this.container.find(".bootstrap-filestyle > input:text").wrap($("<div class='progress'></div>"));
         this.progressBar = this.container.find(".progress-bar");
-        this.container.find('.bootstrap-filestyle > .progress').prepend(this.progressBar);
-        if (this.actionInput.val() != "Removed") {
-            this.currentFileLink = this.container.find('.current-file > a');
-            this.existingFileNameInput = this.container.find('.bootstrap-filestyle > .progress > input:text');
+        this.container.find(".bootstrap-filestyle > .progress").prepend(this.progressBar);
+        if (this.actionInput.val() !== "Removed") {
+            this.currentFileLink = this.container.find(".current-file > a");
+            this.existingFileNameInput = this.container.find(".bootstrap-filestyle > .progress > input:text");
         }
 
-        if (this.hasExistingFile() && this.existingFileNameInput.val() == "")
+        if (this.hasExistingFile() && this.existingFileNameInput.val() === "") {
             this.showExistingFile();
+        }
 
         this.input.fileupload({
-            dataType: 'json',
-            dropZone: this.container.find('*'),
+            dataType: "json",
+            dropZone: this.container.find("*"),
             replaceFileInput: false,
             drop: this.onDragDropped.bind(this),
             change: this.onChange.bind(this),
@@ -82,39 +88,39 @@ export default class FileUpload {
             error: this.onUploadError,
             success: this.onUploadSuccess.bind(this),
             xhrFields: { withCredentials: true },
-            complete: this.onUploadCompleted.bind(this)
+            complete: this.onUploadCompleted.bind(this),
         });
     }
 
     private fixMasterDetailsInputName(): void {
-        let nameParts = this.input.attr('name').split('.');
-        this.input.attr('name', nameParts[nameParts.length - 1]);
+        const nameParts = this.input.attr("name").split(".");
+        this.input.attr("name", nameParts[nameParts.length - 1]);
     }
 
     private hasExistingFile(): boolean {
-        if (!this.currentFileLink) return false;
-        let name = this.currentFileLink.text();
-        if (!name) return false;
-        if (name === "«UNCHANGED»") return false;
-        if (name === "NoFile.Empty") return false;
+        if (!this.currentFileLink) { return false; }
+        const name = this.currentFileLink.text();
+        if (!name) { return false; }
+        if (name === "«UNCHANGED»") { return false; }
+        if (name === "NoFile.Empty") { return false; }
         return true;
     }
 
     private showExistingFile() {
         this.deleteButton.show();
-        this.progressBar.width('100%');
+        this.progressBar.width("100%");
 
         this.existingFileNameInput
             .val(this.currentFileLink.text())
-            .removeAttr('disabled')
-            .addClass('file-target')
-            .attr('readonly', 'readonly')
+            .removeAttr("disabled")
+            .addClass("file-target")
+            .attr("readonly", "readonly")
             .click(() => this.currentFileLink[0].click());
     }
 
     private removeExistingFile() {
-        if (!this.hasExistingFile()) return;
-        this.existingFileNameInput.removeClass('file-target').attr('disabled', 'true').off();
+        if (!this.hasExistingFile()) { return; }
+        this.existingFileNameInput.removeClass("file-target").attr("disabled", "true").off();
     }
 
     private onDeleteButtonClicked() {
@@ -122,37 +128,35 @@ export default class FileUpload {
         this.actionInput.val("Removed");
         this.setValidationValue("");
         this.progressBar.width(0);
-        this.input.filestyle('clear');
+        this.input.filestyle("clear");
         this.removeExistingFile();
     }
 
     private onDragDropped(e, data) {
         if (this.filenameInput.length > 0 && data.files.length > 0) {
-            this.filenameInput.val(data.files.map(x => x.name));
+            this.filenameInput.val(data.files.map((x) => x.name));
         }
     }
 
     private onProgressAll(e, data: any) {
-        let progress = parseInt((data.loaded / data.total * 100).toString(), 10);
-        this.progressBar.width(progress + '%');
+        const progress = parseInt((data.loaded / data.total * 100).toString(), 10);
+        this.progressBar.width(progress + "%");
     }
 
     private onUploadError = (jqXHR: JQueryXHR, status: string, error: string) => {
         this.serverInvoker.onAjaxResponseError(jqXHR, status, error);
-        this.filenameInput.val('');
+        this.filenameInput.val("");
     }
 
     private onUploadSuccess(response) {
         if (response.Error) {
-            this.serverInvoker.onAjaxResponseError(<any>{ responseText: response.Error }, "error", response.Error);
-            this.filenameInput.val('');
-        }
-        else {
+            this.serverInvoker.onAjaxResponseError({ responseText: response.Error } as any, "error", response.Error);
+            this.filenameInput.val("");
+        } else {
             if (this.input.is("[multiple]")) {
                 this.tempFileIdInput.val(this.tempFileIdInput.val() + "|" + response.Result.ID);
                 this.filenameInput.val(this.filenameInput.val() + ", " + response.Result.Name);
-            }
-            else {
+            } else {
                 this.tempFileIdInput.val(response.Result.ID);
                 this.filenameInput.val(response.Result.Name);
             }
@@ -172,6 +176,6 @@ export default class FileUpload {
 
     private setValidationValue(value: string) {
         this.validationInput.val(value);
-        this.input.closest('form').validate().element(this.validationInput);
+        this.input.closest("form").validate().element(this.validationInput);
     }
 }
