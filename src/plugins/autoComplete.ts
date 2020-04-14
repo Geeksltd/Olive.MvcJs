@@ -112,6 +112,7 @@ export default class AutoComplete {
             delay: 500,
             backdrop: false,
             correlativeTemplate: true,
+            templateValue: "{{Text}}",
             emptyTemplate: "<div class='tt-suggestion'>Not found</div>"
         };
     }
