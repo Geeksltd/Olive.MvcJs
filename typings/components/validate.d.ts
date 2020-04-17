@@ -12,4 +12,12 @@ export default class Validate implements IService {
     validateForm(trigger: JQuery): boolean;
     reloadRules(form: JQuery): void;
     removeTooltipsRelatedTo(parent: JQuery): void;
+    protected needsValidation(trigger: JQuery): boolean;
+    protected getForm(trigger: JQuery): JQuery;
+    protected getValidator(trigger: JQuery, form: JQuery): Validator;
+    protected extendValidatorSettings(validator: Validator, trigger: JQuery): void;
+    protected focusOnInvalid(validator: Validator, form: JQuery, trigger: JQuery): void;
+    protected showAdditionalErrors(validator: Validator): void;
+    protected handleMessageBoxStyle(validator: Validator, form: JQuery, trigger: JQuery): void;
+    protected handleInvalidForm(validator: Validator, form: JQuery, trigger: JQuery): void;
 }

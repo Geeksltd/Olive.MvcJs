@@ -9,6 +9,7 @@
         "ordered-imports": false,
         "object-literal-sort-keys": false,
         "max-classes-per-file": false,
+        "space-before-function-paren": false,
         "no-console": {
             "severity": "warning",
             "options": [
