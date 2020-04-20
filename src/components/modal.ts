@@ -310,7 +310,7 @@ export default class Modal {
         }
 
         return (
-            "<div class='modal' id='myModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel'\
+            "<div class='modal fade' id='myModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel'\
            aria-hidden='true'>\
               <div class='modal-dialog' style='" + modalDialogStyle + "'>\
               <div class='modal-content' >\

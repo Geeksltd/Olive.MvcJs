@@ -257,7 +257,7 @@ define(["require", "exports", "olive/components/crossDomainEvent"], function (re
                     modalDialogStyle += "height:" + options.height + ";";
                 }
             }
-            return ("<div class='modal' id='myModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel'\
+            return ("<div class='modal fade' id='myModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel'\
            aria-hidden='true'>\
               <div class='modal-dialog' style='" + modalDialogStyle + "'>\
               <div class='modal-content' >\
