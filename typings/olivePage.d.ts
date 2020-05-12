@@ -20,5 +20,6 @@ export default class OlivePage implements IServiceLocator {
     protected goBack(target: any): boolean;
     protected customizeValidationTooltip(): void;
     protected refresh(keepScroll?: boolean): boolean;
+    protected useS3FileUpload(services: ServiceContainer, bucketUrl: string): void;
     getService<T extends IService>(key: string): T;
 }

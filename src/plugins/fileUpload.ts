@@ -11,8 +11,9 @@ import "file-style";
 export class FileUploadFactory implements IService {
 
     constructor(
-        private url: Url,
-        private serverInvoker: ServerInvoker) { }
+        protected url: Url,
+        protected serverInvoker: ServerInvoker,
+    ) { }
 
     public enable(selector: JQuery) {
         selector.each((i, e) => new FileUpload($(e), this.url, this.serverInvoker).enable());
@@ -20,18 +21,18 @@ export class FileUploadFactory implements IService {
 }
 
 export default class FileUpload {
-    private container: JQuery;
-    private deleteButton: JQuery;
-    private progressBar: JQuery;
-    private currentFileLink: JQuery;
-    private existingFileNameInput: JQuery;
+    protected container: JQuery;
+    protected deleteButton: JQuery;
+    protected progressBar: JQuery;
+    protected currentFileLink: JQuery;
+    protected existingFileNameInput: JQuery;
 
-    private actionInput: JQuery;
-    private tempFileIdInput: JQuery;
-    private filenameInput: JQuery;
-    private validationInput: JQuery;
+    protected actionInput: JQuery;
+    protected tempFileIdInput: JQuery;
+    protected filenameInput: JQuery;
+    protected validationInput: JQuery;
 
-    constructor(private input: JQuery, private url: Url, private serverInvoker: ServerInvoker) {
+    constructor(protected input: JQuery, protected url: Url, protected serverInvoker: ServerInvoker) {
         this.fixMasterDetailsInputName();
 
         // console.log("Check me!!")
@@ -50,8 +51,30 @@ export default class FileUpload {
     }
 
     public enable() {
-        this.input.attr("data-url", this.url.effectiveUrlProvider("/upload", this.input));
-        const options = {
+        this.input.attr("data-url", this.getDataUrlAttribute());
+        this.input.filestyle(this.getFilestyleOptions());
+
+        this.container.find(".bootstrap-filestyle > input:text").wrap($("<div class='progress'></div>"));
+        this.progressBar = this.container.find(".progress-bar");
+        this.container.find(".bootstrap-filestyle > .progress").prepend(this.progressBar);
+        if (this.actionInput.val() !== "Removed") {
+            this.currentFileLink = this.container.find(".current-file > a");
+            this.existingFileNameInput = this.container.find(".bootstrap-filestyle > .progress > input:text");
+        }
+
+        if (this.hasExistingFile() && this.existingFileNameInput.val() === "") {
+            this.showExistingFile();
+        }
+
+        this.input.fileupload(this.getFileuploadOptions());
+    }
+
+    protected getDataUrlAttribute(): string {
+        return this.url.effectiveUrlProvider("/upload", this.input);
+    }
+
+    protected getFilestyleOptions(): any {
+        return {
             input: this.input.attr("data-input") !== "false",
             htmlIcon: this.input.attr("data-icon"),
             buttonBefore: this.input.attr("data-buttonBefore") ?
@@ -65,20 +88,10 @@ export default class FileUpload {
             badgeName: this.input.attr("data-badgeName"),
             placeholder: this.input.attr("data-placeholder"),
         };
-        this.input.filestyle(options);
-        this.container.find(".bootstrap-filestyle > input:text").wrap($("<div class='progress'></div>"));
-        this.progressBar = this.container.find(".progress-bar");
-        this.container.find(".bootstrap-filestyle > .progress").prepend(this.progressBar);
-        if (this.actionInput.val() !== "Removed") {
-            this.currentFileLink = this.container.find(".current-file > a");
-            this.existingFileNameInput = this.container.find(".bootstrap-filestyle > .progress > input:text");
-        }
+    }
 
-        if (this.hasExistingFile() && this.existingFileNameInput.val() === "") {
-            this.showExistingFile();
-        }
-
-        this.input.fileupload({
+    protected getFileuploadOptions(): any {
+        return {
             dataType: "json",
             dropZone: this.container.find("*"),
             replaceFileInput: false,
@@ -89,7 +102,7 @@ export default class FileUpload {
             success: this.onUploadSuccess.bind(this),
             xhrFields: { withCredentials: true },
             complete: this.onUploadCompleted.bind(this),
-        });
+        };
     }
 
     private fixMasterDetailsInputName(): void {
@@ -138,7 +151,7 @@ export default class FileUpload {
         }
     }
 
-    private onProgressAll(e, data: any) {
+    protected onProgressAll(e, data: any) {
         const progress = parseInt((data.loaded / data.total * 100).toString(), 10);
         this.progressBar.width(progress + "%");
     }
@@ -174,7 +187,7 @@ export default class FileUpload {
         this.removeExistingFile();
     }
 
-    private setValidationValue(value: string) {
+    protected setValidationValue(value: string) {
         this.validationInput.val(value);
         this.input.closest("form").validate().element(this.validationInput);
     }
