@@ -22,8 +22,7 @@ export class FileUploadFactory implements IService {
 
             if (!s3Url) {
                 new FileUpload(input, this.url, this.serverInvoker).enable();
-            }
-            else {
+            } else {
                 new FileUploadS3(input, this.url, this.serverInvoker, s3Url).enable();
             }
         });
@@ -139,6 +138,8 @@ export default class FileUpload {
             .addClass("file-target")
             .attr("readonly", "readonly")
             .click(() => this.currentFileLink[0].click());
+
+        this.setValidationValue("value");
     }
 
     private removeExistingFile() {
