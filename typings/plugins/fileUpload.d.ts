@@ -38,3 +38,11 @@ export default class FileUpload {
     private onChange;
     protected setValidationValue(value: string): void;
 }
+export declare class FileUploadS3 extends FileUpload {
+    protected bucketUrl: string;
+    constructor(input: JQuery, url: Url, serverInvoker: ServerInvoker, bucketUrl: string);
+    protected getDataUrlAttribute(): string;
+    protected getFileuploadOptions(): any;
+    private add;
+    private uuidv4;
+}

@@ -45,7 +45,6 @@ import Services from "olive/di/services";
 import { ServiceDescription } from "olive/di/serviceDescription";
 import SanityAdapter from "olive/plugins/sanityAdapter";
 import TestingContext from "olive/plugins/testingContext";
-import { FileUploadS3Factory } from "olive/plugins/fileUploadS3";
 
 export default class OlivePage implements IServiceLocator {
     public services: ServiceContainer;
@@ -416,13 +415,6 @@ export default class OlivePage implements IServiceLocator {
         }
 
         return false;
-    }
-
-    protected useS3FileUpload(services: ServiceContainer, bucketUrl: string) {
-        services.addSingleton(
-            Services.FileUploadFactory,
-            (url: Url, serverInvoker: ServerInvoker) => new FileUploadS3Factory(url, serverInvoker, bucketUrl),
-        ).withDependencies(Services.Url, Services.ServerInvoker);
     }
 
     public getService<T extends IService>(key: string) {
