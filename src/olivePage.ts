@@ -385,14 +385,14 @@ export default class OlivePage implements IServiceLocator {
 
     protected enableCustomCheckbox() {
         const all = $("input[type=checkbox]");
-        const shouldSkip = $(".as-cards-input input[type=checkbox]");
+        const shouldSkip = $(".as-buttons-input input[type=checkbox]");
 
         CustomCheckbox.enable(all.not(shouldSkip));
     }
 
     protected enableCustomRadio() {
         const all = $("input[type=radio]");
-        const shouldSkip = $(".as-cards-input input[type=radio]");
+        const shouldSkip = $(".as-buttons-input input[type=radio]");
 
         CustomRadio.enable(all.not(shouldSkip));
     }
