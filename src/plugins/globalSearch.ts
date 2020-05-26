@@ -114,11 +114,12 @@ export default class GlobalSearch implements IService {
             resultPanel.show();
         }
 
-        $(window).keydown((e) => {
+        $(window).on("keydown", (e) => {
             if (e.keyCode === 27) {
-                resultPanel.hide();
+                resultPanel.hide("fast", () => {
+                    $(window).off("keydown");
+                });
                 $('input[name=searcher]').val('');
-                $('a.logo').focus();
             }
         });
 
