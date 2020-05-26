@@ -72,6 +72,11 @@ export default class GlobalSearch implements IService {
 
         let timeout = null;
         this.input.keyup((e) => {
+
+            if (e.keyCode === 27) {
+                return;
+            }
+
             this.isTyping = true;
             clearTimeout(timeout);
             timeout = setTimeout((() => {
@@ -116,7 +121,7 @@ export default class GlobalSearch implements IService {
 
         $(window).on("keydown", (e) => {
             if (e.keyCode === 27) {
-                resultPanel.hide("fast", () => {
+                resultPanel.hide(null, () => {
                     $(window).off("keydown");
                 });
                 $('input[name=searcher]').val('');
