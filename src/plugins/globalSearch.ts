@@ -110,6 +110,17 @@ export default class GlobalSearch implements IService {
                 .mouseleave(() => this.isMouseInsideSearchPanel = false);
             searchPanel.append(resultPanel);
         }
+        else {
+            resultPanel.show();
+        }
+
+        $(window).keydown((e) => {
+            if (e.keyCode === 27) {
+                resultPanel.hide();
+                $('input[name=searcher]').val('');
+                $('a.logo').focus();
+            }
+        });
 
         return resultPanel;
     }
