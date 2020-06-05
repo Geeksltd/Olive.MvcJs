@@ -154,6 +154,7 @@ export default class FileUpload {
         this.progressBar.width(0);
         this.input.filestyle("clear");
         this.removeExistingFile();
+        this.tempFileIdInput.val("");
     }
 
     private onDragDropped(e, data) {
