@@ -1,3 +1,4 @@
+import Form from "olive/components/form";
 import { ModalHelper } from "olive/components/modal";
 import Waiting from "olive/components/waiting";
 import { ServiceContainer } from "olive/di/serviceContainer";
@@ -16,6 +17,7 @@ export default class OlivePage implements IServiceLocator {
     protected onViewChanged(container?: JQuery, trigger?: any, newPage?: boolean, firstTime?: boolean): void;
     initialize(): void;
     protected enableCustomCheckbox(): void;
+    protected enablecleanUpNumberField(form: Form): void;
     protected enableCustomRadio(): void;
     protected goBack(target: any): boolean;
     protected customizeValidationTooltip(): void;

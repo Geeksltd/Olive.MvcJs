@@ -1,7 +1,7 @@
-import Url from 'olive/components/url';
-import Validate from 'olive/components/validate';
-import Waiting from 'olive/components/waiting';
-import AjaxRedirect from 'olive/mvc/ajaxRedirect';
+import Url from "olive/components/url";
+import Validate from "olive/components/validate";
+import Waiting from "olive/components/waiting";
+import AjaxRedirect from "olive/mvc/ajaxRedirect";
 export default class Form implements IService {
     private url;
     private validate;

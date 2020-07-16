@@ -326,7 +326,7 @@ export default class OlivePage implements IServiceLocator {
         sorting.enableAjaxSorting($("a[data-sort]"));
         sorting.setSortHeaderClass($("th[data-sort]"));
         const form = this.getService<Form>(Services.Form);
-        form.enablecleanUpNumberField($("[data-val-number]"));
+        this.enablecleanUpNumberField(form);
         this.modal.enableEnsureHeight($("[data-toggle=tab]"));
         this.getService<MultiSelect>(Services.MultiSelect).enableEnhance($("select[data-control='collapsible-checkboxes']"));
         this.getService<Select>(Services.Select)
@@ -388,6 +388,10 @@ export default class OlivePage implements IServiceLocator {
         const shouldSkip = $(".as-buttons-input input[type=checkbox]");
 
         CustomCheckbox.enable(all.not(shouldSkip));
+    }
+
+    protected enablecleanUpNumberField(form: Form) {
+        form.enablecleanUpNumberField($("[data-val-number]"));
     }
 
     protected enableCustomRadio() {

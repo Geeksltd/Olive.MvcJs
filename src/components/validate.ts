@@ -20,6 +20,29 @@ export default class Validate implements IService {
             return moment(value, format).isValid();
         };
 
+        const originalNumberMehtod = methods.number;
+        const originalMinMehtod = methods.min;
+        const originalMaxMehtod = methods.max;
+        const originalRangeMehtod = methods.range;
+
+        const clearMaskedNumber = (value: string) => value.replace(",", "");
+
+        methods.number = function (value: string, element: any) {
+            return originalNumberMehtod.call(this, value, element);
+        };
+
+        methods.min = function (value: string, element: any, param: any) {
+            return originalMinMehtod.call(this, clearMaskedNumber(value), element, param);
+        };
+
+        methods.max = function (value: string, element: any, param: any) {
+            return originalMaxMehtod.call(this, clearMaskedNumber(value), element, param);
+        };
+
+        methods.range = function (value: string, element: any, param: any) {
+            return originalRangeMehtod.call(this, clearMaskedNumber(value), element, param);
+        };
+
         // TODO: datetime, time
     }
 
