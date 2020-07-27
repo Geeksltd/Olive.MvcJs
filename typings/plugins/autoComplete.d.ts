@@ -1,5 +1,5 @@
 import Form from "olive/components/form";
-import Url from 'olive/components/url';
+import Url from "olive/components/url";
 import ServerInvoker from "olive/mvc/serverInvoker";
 export declare class AutoCompleteFactory implements IService {
     private url;
@@ -15,6 +15,7 @@ export default class AutoComplete {
     private serverInvoker;
     private static customOptions;
     protected valueField: JQuery;
+    private selectedItemOnEnter;
     static setOptions(options: RunningCoder.Typeahead.Options): void;
     constructor(input: JQuery, url: Url, form: Form, serverInvoker: ServerInvoker);
     enable(): void;
