@@ -25,7 +25,7 @@ export default class Validate implements IService {
         const originalMaxMehtod = methods.max;
         const originalRangeMehtod = methods.range;
 
-        const clearMaskedNumber = (value: string) => value.replace(",", "");
+        const clearMaskedNumber = (value: string) => value.replace(/,/g, "");
 
         methods.number = function (value: string, element: any) {
             return originalNumberMehtod.call(this, value, element);
