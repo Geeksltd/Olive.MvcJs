@@ -378,6 +378,8 @@ export default class OlivePage implements IServiceLocator {
 
         this.initializeActions.forEach((action) => action());
 
+        $(this).trigger("initialized");
+
         window.testingContext.onPageInitialized();
 
         try { $.validator.unobtrusive.parse("form"); } catch (error) { console.error(error); }
