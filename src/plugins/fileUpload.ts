@@ -288,7 +288,7 @@ export class FileUploadS3 extends FileUpload {
     }
 
     protected onUploadCompleted({ id, filename }) {
-        const url = `${this.bucketUrl}/${id}/${filename}`;
+        const url = `${this.bucketUrl}${id}/${filename}`;
 
         this.UploadCompleted({ id, filename, url });
     }
