@@ -34,7 +34,8 @@ export default class FileUpload {
     protected onProgressAll(e: any, data: any): void;
     private onUploadError;
     private onUploadSuccess;
-    private onUploadCompleted;
+    protected onUploadCompleted(response: any): void;
+    protected UploadCompleted(args: IFileUploadedEventArgs): void;
     private onChange;
     protected setValidationValue(value: string): void;
 }
@@ -44,5 +45,14 @@ export declare class FileUploadS3 extends FileUpload {
     protected getDataUrlAttribute(): string;
     protected getFileuploadOptions(): any;
     private add;
+    protected onUploadCompleted({ id, filename }: {
+        id: any;
+        filename: any;
+    }): void;
     private uuidv4;
+}
+export interface IFileUploadedEventArgs {
+    id: string;
+    filename: string;
+    url: string;
 }

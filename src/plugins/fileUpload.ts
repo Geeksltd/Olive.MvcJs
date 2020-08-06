@@ -190,8 +190,19 @@ export default class FileUpload {
         }
     }
 
-    private onUploadCompleted(response) {
-        CrossDomainEvent.raise(parent, "file-uploaded", response);
+    protected onUploadCompleted(response) {
+        const id = response.responseJSON.Result.ID;
+        const filename = response.responseJSON.Result.Name;
+
+        this.UploadCompleted({
+            url: this.url.makeAbsolute(undefined, `/temp-file/${id}`),
+            id,
+            filename,
+        });
+    }
+
+    protected UploadCompleted(args: IFileUploadedEventArgs) {
+        CrossDomainEvent.raise(parent, "file-uploaded", args);
     }
 
     private onChange(e, data) {
@@ -252,6 +263,10 @@ export class FileUploadS3 extends FileUpload {
                     this.tempFileIdInput.val(id);
                     this.filenameInput.val(file.name);
                 }
+                this.onUploadCompleted({
+                    id,
+                    filename: file.name,
+                });
                 this.deleteButton.show();
                 this.setValidationValue("value");
             },
@@ -272,6 +287,12 @@ export class FileUploadS3 extends FileUpload {
         });
     }
 
+    protected onUploadCompleted({ id, filename }) {
+        const url = `${this.bucketUrl}/${id}/${filename}`;
+
+        this.UploadCompleted({ id, filename, url });
+    }
+
     private uuidv4 = () => {
         return "xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
             // tslint:disable-next-line: no-bitwise
@@ -281,4 +302,10 @@ export class FileUploadS3 extends FileUpload {
             return v.toString(16);
         });
     }
+}
+
+export interface IFileUploadedEventArgs {
+    id: string;
+    filename: string;
+    url: string;
 }
