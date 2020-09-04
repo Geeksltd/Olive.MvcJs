@@ -17,13 +17,20 @@ export default class TimeControl {
         }
 
         input.attr("data-autofocus", "disabled");
-        input.datetimepicker({
+
+        const options = {
             format: Config.TIME_FORMAT,
             useCurrent: false,
             stepping: parseInt(input.attr("data-minute-steps") || Config.MINUTE_INTERVALS.toString()),
             keepInvalid: input.closest("form").find("[data-change-action]").length == 0,
-            locale: Config.DATE_LOCALE
-        }).data("DateTimePicker").keyBinds().clear = null;
+            locale: Config.DATE_LOCALE,
+            icons: {
+                up: "fas fa-chevron-up",
+                down: "fas fa-chevron-down"
+            }
+        };
+
+        input.datetimepicker(options).data("DateTimePicker").keyBinds().clear = null;
 
         input.parent().find(".fa-clock-o").parent(".input-group-addon").click(() => { input.focus(); });
     }
