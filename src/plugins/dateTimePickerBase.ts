@@ -21,19 +21,19 @@ export default abstract class dateTimePickerBase {
         const stepping = Number(this.input.data("minute-steps") || "1");
 
         if (control == this.controlType) {
-            let options = {
+            const options = {
                 format: this.format,
                 useCurrent: false,
                 showTodayButton: true,
                 icons: {
-                    today: "fa fa-calendar",
-                    clear: "fa fa-eraser",
-                    time: "fa fa-clock-o",
-                    date: "fa fa-calendar",
-                    up: "fa fa-chevron-up",
-                    down: "fa fa-chevron-down",
-                    next: "fa fa-chevron-right",
-                    previous: "fa fa-chevron-left"
+                    today: "fas fa-calendar-check",
+                    clear: "fas fa-eraser",
+                    time: "fas fa-clock",
+                    date: "fas fa-calendar-alt",
+                    up: "fas fa-chevron-up",
+                    down: "fas fa-chevron-down",
+                    next: "fas fa-chevron-right",
+                    previous: "fas fa-chevron-left"
                 },
                 keepInvalid: this.input.closest("form").find("[data-change-action]").length == 0,
                 locale: Config.DATE_LOCALE,
