@@ -103,7 +103,7 @@ export default class AutoComplete {
             },
             onPopulateSource: (node, data) => {
                 const text = this.input.val();
-                const index = (data as any).findIndex((x) => x.Text.trim().toLowerCase() === text.toLowerCase().trim());
+                const index = (data as any).findIndex((x) => (x.Text || '').trim().toLowerCase() === text.toLowerCase().trim());
                 if (index >= 0) {
                     this.valueField.val(data[index].Value);
                 }
