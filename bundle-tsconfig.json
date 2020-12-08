@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "olive/*": [ "src/*" ]
+        },
+        "module": "amd",
+        "target": "es5",
+        "outFile": "dist/bundle.js",
+        "noImplicitUseStrict": true,
+        "inlineSourceMap": true,
+        "noImplicitAny": false,
+        "noEmitOnError": true,
+        "removeComments": false
+    },
+    "exclude": [
+        "typings",
+        "dist"
+    ],
+    "compileOnSave": true     
+}
