@@ -198,7 +198,7 @@ export class ModalHelper implements IService {
         }
 
         // Prevent Open Redirection
-        if (modalQuery.indexOf("http://") !== 0 || modalQuery.indexOf("https://") !== 0) {
+        if (modalQuery.indexOf("http://") === 0 || modalQuery.indexOf("https://") === 0) {
 
             let newHostName = new URL(modalQuery).hostname;
             let currentHostName = new URL(this.url.current()).hostname;
