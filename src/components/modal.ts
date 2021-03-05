@@ -190,6 +190,25 @@ export class ModalHelper implements IService {
 
     protected openWithUrl(): void {
 
+        // Prevent XSS
+        let modalQuery = this.url.getQuery("_modal").toLowerCase();
+        if (modalQuery.contains("javascript:")) {
+            alert("Dangerous script detected!!! Request is now aborted!");
+            return;
+        }
+
+        // Prevent Open Redirection
+        if (modalQuery.indexOf("http://") !== 0 || modalQuery.indexOf("https://") !== 0) {
+
+            let newHostName = new URL(modalQuery).hostname;
+            let currentHostName = new URL(this.url.current()).hostname;
+
+            if (newHostName !== currentHostName) {
+                alert("Dangerous script detected!!! Request is now aborted!");
+                return;
+            }
+        }
+        
         if (this.url.getQuery("_iframe") === "true") {
             new Modal(this.url, this.ajaxRedirect, this, null, this.url.getQuery("_modal")).openiFrame(false);
         } else {
