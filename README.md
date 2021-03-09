@@ -20,14 +20,14 @@
 - `/dist/bundle-requireJs-help.md (Auto Generated)` - This file contains the [RequireJs bundle configuration](https://requirejs.org/docs/api.html#config-bundles) for 'Olive.MvcJs' bundling.
 - `/dist/bundle.js (Auto Generated)` - All of the 'Olive.MvcJs' .js files will be bundled into this file.
 - `/bundle-build.bat`
-	The batch file to handle the bundling automaticly.
+	The batch file to handle the bundling automatically.
 - `/bundle-tsconfig.json` - The config file for compiling the .ts files into a single (bundled) .js file.
 
 
 > **Notic:** Please run the `/bundle-build.bat` file before pushing the changes that you made in the .ts files.
 
 ## How to use (with RequireJS)
-You need to made two changes in the 'RequireJs' config:
+You need to make two changes in the 'RequireJs' config:
 
 1. Remove the `'olive': "olive.mvc/dist"` from the map section
 2. Add the bundle that is provided in the `bundle-requireJs-help.md` file.
