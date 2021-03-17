@@ -1,7 +1,7 @@
 export default class Alert implements IService {
 
     public enableAlert() {
-        let w: any = window;
+        const w: any = window;
         w.alert = (text: string, callback) => this.alert(text, null, callback);
     }
 
@@ -10,7 +10,7 @@ export default class Alert implements IService {
         if (text === undefined) text = "";
         text = text.trim();
 
-        if (text.indexOf("<") != 0) {
+        if (text.indexOf("<") !== 0) {
             text = text.replace(/\r/g, "<br />");
             alertify.alert(text, callback, style);
         }
@@ -25,7 +25,7 @@ export default class Alert implements IService {
         if (text === undefined) text = "";
         text = text.trim();
 
-        if (text.indexOf("<") != 0) {
+        if (text.indexOf("<") !== 0) {
             text = text.replace(/\r/g, "<br />");
             alertify.confirm(text, callback, style);
         }

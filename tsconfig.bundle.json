@@ -2,7 +2,7 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "olive/*": [ "src/*" ]
+            "olive/*": ["src/*"]
         },
         "module": "amd",
         "target": "es5",
@@ -17,5 +17,5 @@
         "typings",
         "dist"
     ],
-    "compileOnSave": true     
+    "compileOnSave": true
 }

@@ -1,6 +1,6 @@
-import Url from "olive/components/url";
 import "jquery-sortable";
 import ServerInvoker from "olive/mvc/serverInvoker";
+import Url from "olive/components/url";
 export default class Sorting implements IService {
     private url;
     private serverInvoker;

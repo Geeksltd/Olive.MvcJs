@@ -2,12 +2,13 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "olive/*": [ "src/*" ]
+            "olive/*": ["src/*"]
         },
         "module": "amd",
-        "target": "es5",  
+        "target": "es5",
         "outDir": "dist",
         "declaration": true,
+        "esModuleInterop": true,
         "declarationDir": "typings",
         "noImplicitUseStrict": true,
         "inlineSourceMap": true,
@@ -19,23 +20,5 @@
         "typings",
         "dist"
     ],
-    "compileOnSave": true     
+    "compileOnSave": true
 }
-
-// {
-//     "compilerOptions": {
-//         "target": "es5",
-//         "module": "amd",
-//         "sourceMap": true,
-//         "outDir": "dist",
-//         "declaration": true,
-//         "declarationDir": "typings",
-//         // "noImplicitUseStrict": true,
-//         "sourceRoot": "src"
-//     },
-//     "exclude": [
-//       "typings",
-//       "dist"
-//     ],
-//     "compileOnSave": true
-// }

@@ -14,7 +14,7 @@ export default class Form implements IService {
     enablesubmitCleanGet(selector: JQuery): void;
     private getCleanFormData;
     protected ignoreFormDataInput(inputName: string, values: string[]): boolean;
-    cleanJson(str: any): string;
+    cleanJson(str: string): string;
     getPostData(trigger: JQuery): JQuerySerializeArrayElement[];
     private DefaultButtonKeyPress;
     private cleanUpNumberField;

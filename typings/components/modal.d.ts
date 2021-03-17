@@ -1,6 +1,6 @@
-import Url from "olive/components/url";
 import AjaxRedirect from "olive/mvc/ajaxRedirect";
 import ResponseProcessor from "olive/mvc/responseProcessor";
+import Url from "olive/components/url";
 export declare class ModalHelper implements IService {
     private url;
     private ajaxRedirect;

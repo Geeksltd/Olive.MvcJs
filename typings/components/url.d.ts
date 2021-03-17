@@ -3,7 +3,7 @@ export default class Url implements IService {
     onAuthenticationFailed: (() => void);
     makeAbsolute(baseUrl: string, relativeUrl: string): string;
     makeRelative(url: string): string;
-    isAbsolute(url: string): Boolean;
+    isAbsolute(url: string): boolean;
     current(): string;
     goBack(): void;
     updateQuery(uri: any, key: any, value: any): any;

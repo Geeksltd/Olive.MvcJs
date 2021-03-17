@@ -1,7 +1,7 @@
-import Url from "olive/components/url";
-import CrossDomainEvent from "olive/components/crossDomainEvent";
 import AjaxRedirect from "olive/mvc/ajaxRedirect";
+import CrossDomainEvent from "olive/components/crossDomainEvent";
 import ResponseProcessor from "olive/mvc/responseProcessor";
+import Url from "olive/components/url";
 
 export class ModalHelper implements IService {
     public current: any = null;
@@ -191,7 +191,7 @@ export class ModalHelper implements IService {
     protected openWithUrl(): void {
 
         // Prevent XSS
-        let modalQuery = this.url.getQuery("_modal").toLowerCase();
+        const modalQuery = this.url.getQuery("_modal").toLowerCase();
         if (modalQuery.contains("javascript:")) {
             alert("Dangerous script detected!!! Request is now aborted!");
             return;
@@ -200,15 +200,15 @@ export class ModalHelper implements IService {
         // Prevent Open Redirection
         if (modalQuery.indexOf("http://") === 0 || modalQuery.indexOf("https://") === 0) {
 
-            let newHostName = new URL(modalQuery).hostname;
-            let currentHostName = new URL(this.url.current()).hostname;
+            const newHostName = new URL(modalQuery).hostname;
+            const currentHostName = new URL(this.url.current()).hostname;
 
             if (newHostName !== currentHostName) {
                 alert("Dangerous script detected!!! Request is now aborted!");
                 return;
             }
         }
-        
+
         if (this.url.getQuery("_iframe") === "true") {
             new Modal(this.url, this.ajaxRedirect, this, null, this.url.getQuery("_modal")).openiFrame(false);
         } else {

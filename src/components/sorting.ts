@@ -1,7 +1,7 @@
-
-import Url from "olive/components/url";
 import "jquery-sortable";
+
 import ServerInvoker from "olive/mvc/serverInvoker";
+import Url from "olive/components/url";
 
 export default class Sorting implements IService {
 
@@ -9,9 +9,9 @@ export default class Sorting implements IService {
         private url: Url,
         private serverInvoker: ServerInvoker) { }
 
-    public enableDragSort(selector: JQuery) { selector.each((i, e) => this.DragSort($(e))); }
+    public enableDragSort(selector: JQuery) { selector.each((_, e) => this.DragSort($(e))); }
 
-    public enablesetSortHeaderClass(selector: JQuery) { selector.each((i, e) => this.setSortHeaderClass($(e))); }
+    public enablesetSortHeaderClass(selector: JQuery) { selector.each((_, e) => this.setSortHeaderClass($(e))); }
 
     public enableAjaxSorting(selector: JQuery) {
         selector.off("click.ajax-sorting").on("click.ajax-sorting", (e) => this.AjaxSorting(e));
@@ -23,8 +23,7 @@ export default class Sorting implements IService {
         let key = "s";
 
         if (sort.split("=").length > 1) {
-            key = sort.split("=")[0];
-            sort = sort.split("=")[1];
+            [key, sort] = sort.split("=");
         }
 
         const input = $("[name='" + key + "']");
@@ -52,7 +51,7 @@ export default class Sorting implements IService {
         currentThead.append("<i />");
     }
 
-    private DragSort(container) {
+    private DragSort(container: JQuery) {
 
         const itemsSelector = "> li";
 

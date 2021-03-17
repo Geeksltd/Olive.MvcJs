@@ -1,5 +1,5 @@
-import Url from 'olive/components/url';
 import ServerInvoker from 'olive/mvc/serverInvoker';
+import Url from 'olive/components/url';
 export default class Paging implements IService {
     private url;
     private serverInvoker;

@@ -1,6 +1,5 @@
-// import AjaxRedirect from "olive/mvc/ajaxRedirect";
-import Url from "./url";
 import AjaxRedirect from "olive/mvc/ajaxRedirect";
+import Url from "./url";
 
 export class GroupingFactory implements IService {
     constructor(
@@ -8,7 +7,7 @@ export class GroupingFactory implements IService {
         private ajaxRedirect: AjaxRedirect
     ) { }
 
-    public enable(selector: JQuery): void { selector.each((_, elem) => new Grouping($(elem), this.url, this.ajaxRedirect)) }
+    public enable(selector: JQuery): void { selector.each((_, elem) => new Grouping($(elem), this.url, this.ajaxRedirect)); }
 }
 
 export default class Grouping {

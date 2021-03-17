@@ -1,5 +1,7 @@
 import LiteEvent from "olive/components/liteEvent";
 
+// import html2canvas from 'html2canvas';
+
 export default class ResponseProcessor implements IService {
     private dynamicallyLoadedScriptFiles = [];
 
@@ -94,10 +96,10 @@ export default class ResponseProcessor implements IService {
 
     protected processWithTheContent(trigger: JQuery, newMain: JQuery, args: any, referencedScripts: JQuery) {
 
-        let width = $(window).width();
+        const width = $(window).width();
 
         let oldMain = trigger.closest("main");
-        var targetMainName = trigger.attr("target");
+        let targetMainName = trigger.attr("target");
         if (targetMainName) {
             oldMain = $("main[name='" + targetMainName + "']");
             if (oldMain.length === 0) console.error("There is no <main> object with the name of '" + targetMainName + "'.");
@@ -108,7 +110,7 @@ export default class ResponseProcessor implements IService {
 
         if (targetMainName) newMain.attr("name", targetMainName);
 
-        let tooltips = $('body > .tooltip');
+        const tooltips = $('body > .tooltip');
 
         tooltips.each((index, elem) => {
             if ($('[aria-discribedby=' + elem.id + ']'))
@@ -120,7 +122,7 @@ export default class ResponseProcessor implements IService {
 
             oldMain.css("position", "fixed");
 
-            if (args == "back") {
+            if (args === "back") {
                 newMain.addClass("w3-animate-left");
                 oldMain.addClass("w3-animate-righter");
             }
@@ -137,6 +139,9 @@ export default class ResponseProcessor implements IService {
         }
         else {
             oldMain.replaceWith(newMain);
+            // html2canvas(oldMain.get(0)).then(
+            //     document.body.appendChild
+            // );
             this.updateUrl(referencedScripts, newMain, trigger);
         }
     }

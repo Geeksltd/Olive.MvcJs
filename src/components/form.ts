@@ -79,7 +79,7 @@ export default class Form implements IService {
         return false;
     }
 
-    public cleanJson(str): string {
+    public cleanJson(str: string): string {
         return str.replace(/(\s*?{\s*?|\s*?,\s*?)(['"])?([a-zA-Z0-9]+)(['"])?:/g, '$1"$3":');
     }
 
@@ -112,7 +112,6 @@ export default class Form implements IService {
     }
 
     private cleanUpNumberField(field: JQuery) {
-        const domElement = field.get(0) as HTMLInputElement;
         field.val(field.val().replace(/[^\d.-]/g, ""));
     }
 

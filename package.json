@@ -1,0 +1,31 @@
+{
+  "name": "@olive/mvcjs",
+  "version": "1.0.0",
+  "description": "Used js files in the Olive MVC projects.",
+  "keywords": [
+    "olive"
+  ],
+  "authors": [
+    "Geeks Ltd <https://www.geeks.ltd.uk/>"
+  ],
+  "license": "GPL",
+  "bugs": {
+    "url": "https://github.com/Geeksltd/Olive.MvcJs/issues"
+  },
+  "private": false,
+  "homepage": "https://github.com/Geeksltd/Olive.MvcJs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Geeksltd/Olive.MvcJs.git"
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "bundle": "tsc --project tsconfig.bundle.json && node ./bundling-helper/fix-bundle-modules",
+    "release": "git pull && build && git add . && git commit -m=Release && git push && explorer https://github.com/Geeksltd/Olive.MvcJs/releases/new",
+    "copy-to-local": "build && copy-to-local.bat"
+  },
+  "dependencies": {
+    "@types/html2canvas": "^0.0.36",
+    "html2canvas": "^1.0.0-rc.7"
+  }
+}

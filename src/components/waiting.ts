@@ -1,4 +1,4 @@
-﻿import Url from 'olive/components/url'
+﻿import Url from 'olive/components/url';
 
 export default class Waiting implements IService {
 
@@ -11,7 +11,7 @@ export default class Waiting implements IService {
                 if (!$(document.forms[i]).valid()) return;
         }
 
-        let screen = $("<div class='wait-screen' />").appendTo("body");
+        const screen = $("<div class='wait-screen' />").appendTo("body");
         if (blockScreen) {
             $("<div class='cover' />")
                 .width(Math.max($(document).width(), $(window).width()))
@@ -19,7 +19,7 @@ export default class Waiting implements IService {
                 .appendTo(screen);
         }
 
-        var imageUrl = this.url.ofContent('/img/loading.gif');
+        const imageUrl = this.url.ofContent('/img/loading.gif');
 
         $("<div class='wait-container'><div class='wait-box'><img src='" + imageUrl + "'/></div>")
             .appendTo(screen)

@@ -1,11 +1,11 @@
 ﻿export default class LiteEvent<T> {
-    private handlers: { (data?: T): void; }[] = [];
+    private handlers: ((data?: T) => void)[] = [];
 
-    public handle(handler: { (data?: T): void }): void {
+    public handle(handler: (data?: T) => void): void {
         this.handlers.push(handler);
     }
 
-    public remove(handler: { (data?: T): void }): void {
+    public remove(handler: (data?: T) => void): void {
         this.handlers = this.handlers.filter(h => h !== handler);
     }
 

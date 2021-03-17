@@ -1,6 +1,6 @@
-import Waiting from "olive/components/waiting";
-import Url from "olive/components/url";
 import ResponseProcessor from "olive/mvc/responseProcessor";
+import Url from "olive/components/url";
+import Waiting from "olive/components/waiting";
 
 export default class AjaxRedirect implements IService {
     private requestCounter = 0;
@@ -79,9 +79,7 @@ export default class AjaxRedirect implements IService {
             success: (response) => {
                 // this.formAction.events_fa = {};
 
-                if (onComplete) {
-                    onComplete(true);
-                }
+                onComplete?.call(true);
 
                 if (!isBack) {
                     this.ajaxChangedUrl++;
