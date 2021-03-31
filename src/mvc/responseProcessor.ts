@@ -164,7 +164,11 @@ export default class ResponseProcessor implements IService {
         }
         else this.onViewChanged(element, trigger, true);
 
-        document.title = $("#page_meta_title").val();
+        let modalTitleAttribute = $(".modal-dialog #page_meta_title").attr("value");
+        let pageTitleAttribute = $("#page_meta_title").attr("value");
+
+        if (modalTitleAttribute !== undefined || modalTitleAttribute !== undefined)
+            document.title = modalTitleAttribute ?? pageTitleAttribute;
 
         this.onProcessCompleted();
     }

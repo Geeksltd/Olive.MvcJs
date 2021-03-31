@@ -63,6 +63,8 @@ export class ModalHelper implements IService {
     public close(): boolean {
         this.isClosingModal = true;
 
+        let hasModalContent = this.current;
+
         if (this.current) {
             if (this.currentModal.shouldKeepScroll()) {
                 $(window).scrollTop(this.currentModal.scrollPosition);
@@ -94,7 +96,10 @@ export class ModalHelper implements IService {
             currentPath = currentPath.trimEnd("?");
         }
 
-        history.pushState({}, "", currentPath);
+        if (hasModalContent) {
+            history.pushState({}, "", currentPath);
+            document.title = $("#page_meta_title").val();
+        }
 
         return true;
     }
@@ -208,7 +213,7 @@ export class ModalHelper implements IService {
                 return;
             }
         }
-        
+
         if (this.url.getQuery("_iframe") === "true") {
             new Modal(this.url, this.ajaxRedirect, this, null, this.url.getQuery("_modal")).openiFrame(false);
         } else {
