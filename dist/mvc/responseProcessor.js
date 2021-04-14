@@ -66,7 +66,7 @@ define(["require", "exports", "olive/components/liteEvent"], function (require, 
         };
         ResponseProcessor.prototype.getNewCss = function (element) {
             var referencedCss = this.getCss(element);
-            var currentCss = this.getCss($("head"));
+            var currentCss = this.getCss($("body"));
             return referencedCss.filter(function (x) { return currentCss.indexOf(x) === -1; });
         };
         ResponseProcessor.prototype.getCss = function (parent) {

@@ -81,7 +81,7 @@ export default class ResponseProcessor implements IService {
 
     private getNewCss(element: JQuery): string[] {
         let referencedCss = this.getCss(element);
-        let currentCss = this.getCss($("head"));
+        let currentCss = this.getCss($("body"));
 
         return referencedCss.filter(x => currentCss.indexOf(x) === -1);
     }
