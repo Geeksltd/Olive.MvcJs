@@ -11,7 +11,8 @@ export default class CustomRadio {
     constructor(private input: JQuery) { }
 
     private enable() {
-        let radio = $('<div class="radio-helper"/>');
+        let radio = $('<div class="radio-helper"/>')
+            .append('<div class="radio-helper-inner"/>');
 
         let check = () => {
             if (this.input.attr('disabled')) return;
