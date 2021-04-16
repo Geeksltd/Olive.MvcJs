@@ -4,5 +4,5 @@ export default class MultiSelect implements IService {
     private options;
     enableEnhance(selector: JQuery): void;
     setOptions(options: any): void;
-    protected enhance;
+    protected enhance(selectControl: JQuery): void;
 }
