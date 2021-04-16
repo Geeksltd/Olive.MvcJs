@@ -23,7 +23,7 @@ export default class MultiSelect implements IService {
         this.options = $.extend(this.defaultOptions, options)
     }
 
-    private enhance(selectControl: JQuery) {
+    protected enhance(selectControl: JQuery) {
         selectControl.selectpicker(this.options);
     }
 }
