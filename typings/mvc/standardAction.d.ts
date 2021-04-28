@@ -20,7 +20,7 @@ export default class StandardAction implements IService {
     runAll(actions: any, trigger?: any): void;
     private run;
     private notify;
-    private redirect;
+    protected redirect(action: any, trigger: any): void;
     private openModal;
     private loadServiceAfterConfiguration;
     private loadService;
