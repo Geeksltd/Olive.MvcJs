@@ -98,7 +98,7 @@ export default class StandardAction implements IService {
         else this.alert.alert(action.Notify, action.Style);
     }
 
-    private redirect(action: any, trigger: any) {
+    protected redirect(action: any, trigger: any) {
         if (action.Redirect.indexOf('/') != 0 && action.Redirect.indexOf('http') != 0)
             action.Redirect = '/' + action.Redirect;
 
