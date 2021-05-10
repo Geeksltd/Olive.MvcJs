@@ -92,6 +92,12 @@ export default class GlobalSearch implements IService {
                 this.clearSearchComponent();
             }
         }));
+        this.input.on("focus", ((e) => {
+            const inputholder = this.input.parent();
+            const panel = inputholder.find(".global-search-result-panel");
+            if (panel.children().length > 0)
+                panel.fadeIn('fast');
+        }));
     }
 
     protected clearSearchComponent() {
@@ -99,8 +105,9 @@ export default class GlobalSearch implements IService {
         if (inputholder !== undefined) {
             const panel = inputholder.find(".global-search-result-panel");
             if (panel !== undefined) {
-                panel.empty();
-                panel.remove();
+                panel.fadeOut('fast');
+                // panel.empty();
+                // panel.remove();
             }
         }
     }
@@ -116,7 +123,7 @@ export default class GlobalSearch implements IService {
             searchPanel.append(resultPanel);
         }
         else {
-            resultPanel.show();
+            resultPanel.empty().fadeIn('fast');
         }
 
         $(window).on("keydown", (e) => {
