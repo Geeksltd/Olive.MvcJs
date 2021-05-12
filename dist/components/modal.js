@@ -18,8 +18,8 @@ define(["require", "exports", "olive/components/crossDomainEvent"], function (re
                 if ($(e.currentTarget).attr("data-mode") === "iframe") {
                     _this.openiFrame(e);
                 }
-                else {
-                    _this.open(e);
+                else {                    
+                    setTimeout(() => _this.open(e), 0);
                 }
                 return false;
             });
