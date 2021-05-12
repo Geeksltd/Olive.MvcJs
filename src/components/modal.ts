@@ -22,7 +22,7 @@ export class ModalHelper implements IService {
             if ($(e.currentTarget).attr("data-mode") === "iframe") {
                 this.openiFrame(e);
             } else {
-                this.open(e);
+                setTimeout(() => this.open(e), 0);
             }
 
             return false;
