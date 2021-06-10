@@ -247,7 +247,9 @@ export default class Modal {
         const options = opt ? opt : (target ? target.attr("data-modal-options") : null);
         if (options) { this.modalOptions = JSON.safeParse(options); }
     }
+    public onComplete(success:Boolean){
 
+    }
     public open(changeUrl: boolean = true): boolean {
         this.isOpening = true;
         this.helper.isAjaxModal = true;
@@ -262,7 +264,9 @@ export default class Modal {
             true,
             this.shouldKeepScroll(),
             changeUrl,
-            () => {
+            (success:Boolean) => {
+                if(this.onComplete != null && this.onComplete != undefined)
+                    this.onComplete(success);
                 if (changeUrl && window.isModal()) {
                     this.helper.changeUrl(this.url);
                 }

@@ -38,6 +38,7 @@ export default class Modal {
     private modalOptions;
     scrollPosition: number;
     constructor(urlService: Url, ajaxRedirect: AjaxRedirect, helper: ModalHelper, event?: JQueryEventObject, targeturl?: string, opt?: any);
+    onComplete(success: Boolean): void;
     open(changeUrl?: boolean): boolean;
     openiFrame(changeUrl?: boolean): boolean;
     shouldKeepScroll(): boolean;
