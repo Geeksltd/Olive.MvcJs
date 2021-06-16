@@ -30,14 +30,21 @@ export default class AjaxRedirect implements IService {
             open(url, "_blank");
         }
     }
-
+    public enableAjaxHref(element: JQuery) {
+        if ($(element).closest("service[of]")) {
+            let url = element.attr("href");
+            element.attr("ajax-href", url)
+            url = this.responseProcessor.fixUrlForOpenNewWindows(url)
+            element.attr("ajax-href", url)
+        }
+    }
     private redirect(event: JQueryEventObject) {
         if (event.ctrlKey || event.button === 1) { return true; }
         const link = $(event.currentTarget);
         let url = link.attr("href");
         const ajaxUrl = link.attr("ajax-href");
-        if(ajaxUrl != null && ajaxUrl != undefined)
-            url=ajaxUrl;
+        if (ajaxUrl != null && ajaxUrl != undefined)
+            url = ajaxUrl;
         this.go(url, link, false, false, true);
         return false;
     }
@@ -82,7 +89,7 @@ export default class AjaxRedirect implements IService {
             success: (response) => {
                 // this.formAction.events_fa = {};
 
-               
+
                 if (!isBack) {
                     this.ajaxChangedUrl++;
                     if (addToHistory && !window.isModal()) {
