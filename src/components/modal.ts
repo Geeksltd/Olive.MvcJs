@@ -247,7 +247,10 @@ export default class Modal {
         const options = opt ? opt : (target ? target.attr("data-modal-options") : null);
         if (options) { this.modalOptions = JSON.safeParse(options); }
     }
-    public onComplete(success:Boolean){
+    public onComplete(success: Boolean) {
+
+    }
+    public onClose() {
 
     }
     public open(changeUrl: boolean = true): boolean {
@@ -264,8 +267,8 @@ export default class Modal {
             true,
             this.shouldKeepScroll(),
             changeUrl,
-            (success:Boolean) => {
-                if(this.onComplete != null && this.onComplete != undefined)
+            (success: Boolean) => {
+                if (this.onComplete != null && this.onComplete != undefined)
                     this.onComplete(success);
                 if (changeUrl && window.isModal()) {
                     this.helper.changeUrl(this.url);
@@ -277,6 +280,8 @@ export default class Modal {
         this.helper.current.modal("show");
 
         this.helper.current.on("hidden.bs.modal", () => {
+            if (this.onClose != null && this.onClose != undefined)
+                this.onClose();
             CrossDomainEvent.raise(window.self, "close-modal");
         });
     }
