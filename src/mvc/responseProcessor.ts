@@ -9,8 +9,8 @@ export default class ResponseProcessor implements IService {
     public nothingFoundToProcess = new LiteEvent<IResponseProcessorEventArgs>();
 
     public processAjaxResponse(response: any, containerModule: JQuery, trigger: JQuery, args: any) {
-
         let asElement = $(response);
+        asElement = this.fixUrlsForOpenNewWindows(response);
 
         if (asElement.is("main")) {
             this.navigate(asElement, trigger, args);
@@ -47,7 +47,21 @@ export default class ResponseProcessor implements IService {
         // List of actions
         this.onNothingFoundToProcess(response, trigger);
     }
-
+    protected fixUrlsForOpenNewWindows(response: any) {
+        let asElement = $(response);
+        for (var i = 0; i < asElement.children().length; i++) {
+            var element = asElement.children().get(i)
+            let url = $(element).attr("href")
+            $(element).attr("ajax-href", url)
+            var service = $("service[of]").attr("of")
+            if (url.startsWith("/"))
+                url = service + url;
+            else
+                url = service + "/" + url;
+            $(element).attr("href", url)
+        }
+        return asElement;
+    }
     protected onNothingFoundToProcess(response: any, trigger: JQuery) {
         this.nothingFoundToProcess.raise({ response: response, trigger: trigger });
     }
