@@ -256,7 +256,7 @@ export default class Modal {
     public open(changeUrl: boolean = true): boolean {
         this.isOpening = true;
         this.helper.isAjaxModal = true;
-        if (this.helper.current) { if (this.helper.close() === false) { return false; } }
+        if (this.helper.current) { if (this.helper.close() === false) { return false; } }   
 
         this.helper.current = $(this.getModalTemplateForAjax(this.modalOptions));
         this.helper.currentModal = this;
@@ -282,7 +282,8 @@ export default class Modal {
         this.helper.current.on("hidden.bs.modal", () => {
             if (this.onClose != null && this.onClose != undefined)
                 this.onClose();
-            CrossDomainEvent.raise(window.self, "close-modal");
+            else
+                CrossDomainEvent.raise(window.self, "close-modal");
         });
     }
 
