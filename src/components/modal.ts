@@ -279,11 +279,14 @@ export default class Modal {
 
         this.helper.current.modal("show");
 
-        this.helper.current.on("hidden.bs.modal", () => {
+        this.helper.current.on("hide.bs.modal", () => {
             if (this.onClose != null && this.onClose != undefined)
-                this.onClose();
-            else
-                CrossDomainEvent.raise(window.self, "close-modal");
+             {
+                    this.onClose();
+                    return false;
+             }
+            CrossDomainEvent.raise(window.self, "close-modal");
+            return true;
         });
     }
 
