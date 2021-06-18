@@ -31,6 +31,7 @@ export default class AjaxRedirect implements IService {
         }
     }
     public enableAjaxHref(element: JQuery) {
+        if($(element).closest(".hub-service"))return;
         if ($(element).closest("service[of]")) {
             let url = element.attr("href");
             if(!url.startsWith("http")){
