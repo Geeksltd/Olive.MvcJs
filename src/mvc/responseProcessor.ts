@@ -48,6 +48,8 @@ export default class ResponseProcessor implements IService {
         this.onNothingFoundToProcess(response, trigger);
     }
     public fixUrlForOpenNewWindows(url: string) {
+        if (url.startsWith("http"))
+            return url;
         var service = $("service[of]").attr("of")
         if (service == "hub") return url;
         if (url.startsWith("/"))
@@ -56,8 +58,23 @@ export default class ResponseProcessor implements IService {
             url = "/" + service + "/" + url;
         return url;
     }
+    
+    public fixElementForOpenNewWindows(element: JQuery) {
+        if($(element).closest(".hub-service"))return;
+        if ($(element).closest("service[of]")) {
+            let url = element.attr("href");
+            if(!url.startsWith("http")){
+                element.attr("ajax-href", url)
+                url = this.fixUrlForOpenNewWindows(url)
+                element.attr("ajax-href", url)
+            }   
+        }
+    }
     public fixUrlsForOpenNewWindows(response: any) {
         var asElement = $(response);
+        if($(element).closest(".hub-service") || asElement.hasClass("hub-service"))
+            return asElement;
+
         var aTags = asElement.find("a:not([target='$modal'])")
         for (var i = 0; i < aTags.length; i++) {
             var element = aTags.get(i);

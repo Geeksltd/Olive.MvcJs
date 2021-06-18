@@ -7,6 +7,7 @@ export default class ResponseProcessor implements IService {
     nothingFoundToProcess: LiteEvent<IResponseProcessorEventArgs>;
     processAjaxResponse(response: any, containerModule: JQuery, trigger: JQuery, args: any): void;
     fixUrlForOpenNewWindows(url: string): string;
+    fixElementForOpenNewWindows(element: JQuery): void;
     fixUrlsForOpenNewWindows(response: any): JQuery;
     protected onNothingFoundToProcess(response: any, trigger: JQuery): void;
     protected onSubformChanged(response: any, trigger: JQuery): void;

@@ -30,17 +30,7 @@ export default class AjaxRedirect implements IService {
             open(url, "_blank");
         }
     }
-    public enableAjaxHref(element: JQuery) {
-        if($(element).closest(".hub-service"))return;
-        if ($(element).closest("service[of]")) {
-            let url = element.attr("href");
-            if(!url.startsWith("http")){
-                element.attr("ajax-href", url)
-                url = this.responseProcessor.fixUrlForOpenNewWindows(url)
-                element.attr("ajax-href", url)
-            }   
-        }
-    }
+
     private redirect(event: JQueryEventObject) {
         if (event.ctrlKey || event.button === 1) { return true; }
         const link = $(event.currentTarget);
