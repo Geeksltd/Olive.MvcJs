@@ -71,11 +71,11 @@ export default class AjaxRedirect implements IService {
         // this.serverInvoker.isAwaitingAjaxResponse = true;
 
         const requestCounter = ++this.requestCounter;
-        if (window.stop) {
-            window.stop();
-        } else if (document.execCommand !== undefined) {
-            document.execCommand("Stop", false);
-        }
+        // if (window.stop) {
+        //     window.stop();
+        // } else if (document.execCommand !== undefined) {
+        //     document.execCommand("Stop", false);
+        // }
 
         let scrollTopBefore;
         if (keepScroll) {
