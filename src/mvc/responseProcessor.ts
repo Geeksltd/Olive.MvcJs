@@ -49,6 +49,7 @@ export default class ResponseProcessor implements IService {
     }
     public fixUrlForOpenNewWindows(url: string) {
         var service = $("service[of]").attr("of")
+        if (service == "hub") return url;
         if (url.startsWith("/"))
             url = "/" + service + url;
         else
@@ -57,17 +58,17 @@ export default class ResponseProcessor implements IService {
     }
     public fixUrlsForOpenNewWindows(response: any) {
         var asElement = $(response);
-            var aTags = asElement.find("a:not([target='$modal'])")
-            for (var i = 0; i < aTags.length; i++) {
-                var element = aTags.get(i);
-                var url = $(element).attr("href");
-                if(url != undefined && url != null){
-                    $(element).attr("ajax-href", url);
-                    url = this.fixUrlForOpenNewWindows(url)
-                    $(element).attr("href", url);
-                }
-                
+        var aTags = asElement.find("a:not([target='$modal'])")
+        for (var i = 0; i < aTags.length; i++) {
+            var element = aTags.get(i);
+            var url = $(element).attr("href");
+            if (url != undefined && url != null) {
+                $(element).attr("ajax-href", url);
+                url = this.fixUrlForOpenNewWindows(url)
+                $(element).attr("href", url);
             }
+
+        }
         return asElement;
     }
     protected onNothingFoundToProcess(response: any, trigger: JQuery) {
