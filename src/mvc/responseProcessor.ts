@@ -60,8 +60,8 @@ export default class ResponseProcessor implements IService {
     }
     
     public fixElementForOpenNewWindows(element: JQuery) {
-        if($(element).closest(".hub-service"))return;
-        if ($(element).closest("service[of]")) {
+        if($(element).closest(".hub-service").length > 0)return;
+        if ($(element).closest("service[of]").length > 0 ) {
             let url = element.attr("href");
             if(!url.startsWith("http")){
                 element.attr("ajax-href", url)
@@ -72,7 +72,7 @@ export default class ResponseProcessor implements IService {
     }
     public fixUrlsForOpenNewWindows(response: any) {
         var asElement = $(response);
-        if($(element).closest(".hub-service") || asElement.hasClass("hub-service"))
+        if($(element).closest(".hub-service").length > 0 || asElement.hasClass("hub-service"))
             return asElement;
 
         var aTags = asElement.find("a:not([target='$modal'])")
