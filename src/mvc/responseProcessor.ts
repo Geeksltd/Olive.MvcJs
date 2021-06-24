@@ -72,7 +72,7 @@ export default class ResponseProcessor implements IService {
     }
     public fixUrlsForOpenNewWindows(response: any) {
         var asElement = $(response);
-        if($(element).closest(".hub-service").length > 0 || asElement.hasClass("hub-service"))
+        if($(element).closest(".hub-service").length > 0 || asElement.hasClass("hub-service") || $(asElement).attr("data-module") == "MYPriorityView")
             return asElement;
 
         var aTags = asElement.find("a:not([target='$modal'])")
