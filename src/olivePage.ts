@@ -305,7 +305,7 @@ export default class OlivePage implements IServiceLocator {
             if (Config.REDIRECT_SCROLLS_UP) { $(window).scrollTop(0); }
         }
 
-        if (firstTime) { this.modal.tryOpenFromUrl(); }
+        //if (firstTime) { this.modal.tryOpenFromUrl(); }
     }
 
     public initialize() {
