@@ -253,7 +253,8 @@ export default class Modal {
 
     }
     public onClose() {
-
+        this.onClose = null;
+        $(this.helper.current).modal('hide');
     }
     public open(changeUrl: boolean = true): boolean {
         this.isOpening = true;
