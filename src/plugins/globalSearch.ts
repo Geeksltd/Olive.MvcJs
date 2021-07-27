@@ -255,6 +255,10 @@ export default class GlobalSearch implements IService {
             context.resultCount++;
             childrenItems.append(this.createItem(items[i], context));
         }
+        $(childrenItems).find("[target='$modal'][href]").off("click").click(function () {
+            $(".global-search-result-panel").fadeOut();
+        });
+        this.modalHelper.enableLink($(childrenItems).find("[target='$modal'][href]"));
 
         searchItem.append(childrenItems);
 
@@ -288,8 +292,6 @@ export default class GlobalSearch implements IService {
                 ulNothing.append("<li>").append("<span>").html("Nothing found");
                 context.resultPanel.append(ulNothing);
             }
-        this.modalHelper.enableLink($(".global-search-result-panel [target='$modal'][href]"));
-
         }
     }
 
