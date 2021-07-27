@@ -119,7 +119,7 @@ export default class OlivePage implements IServiceLocator {
         }
 
         if (services.tryAddSingleton(Services.GlobalSearchFactory,
-            (waiting: Waiting) => new GlobalSearchFactory(waiting), out)) {
+            (waiting: Waiting,modalHelper: ModalHelper) => new GlobalSearchFactory(waiting,modalHelper), out)) {
             out.value.withDependencies(Services.Waiting);
         }
 
