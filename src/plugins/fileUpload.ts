@@ -238,8 +238,8 @@ export class FileUploadS3 extends FileUpload {
             super.getFileuploadOptions());
     }
 
-    private add = (e: JQueryEventObject) => {
-        const file = (e.target as HTMLInputElement).files[0];
+    private add = (e: JQueryEventObject,snedData:any) => {
+        const file =snedData.files[0];// (e.target as HTMLInputElement).files[0];
         const id = this.uuidv4();
         const key = `${id}/${file.name}`;
 
