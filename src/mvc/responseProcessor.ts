@@ -45,7 +45,8 @@ export default class ResponseProcessor implements IService {
         }
 
         // List of actions
-        this.onNothingFoundToProcess(response, trigger);
+        if (typeof (response) == typeof ([]))
+            this.onNothingFoundToProcess(response, trigger);
     }
     public fixUrlForOpenNewWindows(url: string) {
         if (url.startsWith("http"))
@@ -58,21 +59,21 @@ export default class ResponseProcessor implements IService {
             url = "/" + service + "/" + url;
         return url;
     }
-    
+
     public fixElementForOpenNewWindows(element: JQuery) {
-        if($(element).closest(".hub-service").length > 0)return;
-        if ($(element).closest("service[of]").length > 0 ) {
+        if ($(element).closest(".hub-service").length > 0) return;
+        if ($(element).closest("service[of]").length > 0) {
             let url = element.attr("href");
-            if(!url.startsWith("http")){
+            if (!url.startsWith("http")) {
                 element.attr("ajax-href", url)
                 url = this.fixUrlForOpenNewWindows(url)
                 element.attr("ajax-href", url)
-            }   
+            }
         }
     }
     public fixUrlsForOpenNewWindows(response: any) {
         var asElement = $(response);
-        if($(element).closest(".hub-service").length > 0 || asElement.hasClass("hub-service") || $(asElement).attr("data-module") == "MYPriorityView")
+        if ($(element).closest(".hub-service").length > 0 || asElement.hasClass("hub-service") || $(asElement).attr("data-module") == "MYPriorityView")
             return asElement;
 
         var aTags = asElement.find("a:not([target='$modal'])")
