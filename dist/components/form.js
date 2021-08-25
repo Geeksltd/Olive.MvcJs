@@ -117,8 +117,9 @@ define(["require", "exports"], function (require, exports) {
             try {
                 form.find("input:checkbox:unchecked").each(function (ind, e) { return url = _this.url.removeQuery(url, $(e).attr("name")); });
                 for (var _i = 0, formData_1 = formData; _i < formData_1.length; _i++) {
-                    var item = formData_1[_i];
-                    url = this.url.updateQuery(url, item.name, item.value);
+                    var item = formData_1[_i];                    
+                    var value = encodeURIComponent(item.value);
+                    url = this.url.updateQuery(url, item.name, value);
                 }
                 url = this.url.removeEmptyQueries(url);
                 if (form.is("[data-redirect=ajax]")) {
