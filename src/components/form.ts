@@ -129,7 +129,8 @@ export default class Form implements IService {
             form.find("input:checkbox:unchecked").each((ind, e) => url = this.url.removeQuery(url, $(e).attr("name")));
 
             for (const item of formData) {
-                url = this.url.updateQuery(url, item.name, item.value);
+                let value = encodeURIComponent(item.value);
+                url = this.url.updateQuery(url, item.name, value);
             }
 
             url = this.url.removeEmptyQueries(url);
