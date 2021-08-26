@@ -14,9 +14,11 @@ jobs:
       with:
         node-version: '12.x'
     
-    - run: yarn install --frozen-lockfile
+    - run: npm install typescript -g
     
-    - run: yarn pack --filename=release.tgz
+    - run: call tsc --project bundle-tsconfig.json
+
+    - run: node ./bundling-helper/fix-bundle-modules
 
     - uses: Klemensas/action-autotag@stable
       id: update_tag
