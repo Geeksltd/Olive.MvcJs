@@ -16,7 +16,7 @@ jobs:
     
     - run: npm install typescript -g
     
-    - run: call tsc --project bundle-tsconfig.json
+    - run: tsc --project bundle-tsconfig.json
 
     - run: node ./bundling-helper/fix-bundle-modules
 
