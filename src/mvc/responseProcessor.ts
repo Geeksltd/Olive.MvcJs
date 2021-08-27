@@ -23,14 +23,14 @@ export default class ResponseProcessor implements IService {
             return;
         }
 
-        if (response.length == 1 && response[0].ReplaceView) {
+        if (response.length == 1 && response[0].ReplaceView && containerModule != null) {
             asElement = $("<div/>").append(response[0].ReplaceView);
             containerModule.replaceWith(asElement);
             this.onViewChanged(asElement, trigger);
             return;
         }
 
-        if (trigger && trigger.is("[data-add-subform]")) {
+        if (trigger && trigger.is("[data-add-subform]") && containerModule != null) {
             let subFormName = trigger.attr("data-add-subform");
             let container = containerModule.find("[data-subform=" + subFormName + "] > table tbody:first");
 
@@ -52,7 +52,7 @@ export default class ResponseProcessor implements IService {
         if (url.startsWith("http"))
             return url;
         var service = $("service[of]").attr("of")
-        if (service == "hub") return url;
+        if (service == "hub" || service == undefined || service == null) return url;
         if (url.startsWith("/"))
             url = "/" + service + url;
         else
