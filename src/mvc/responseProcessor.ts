@@ -52,7 +52,7 @@ export default class ResponseProcessor implements IService {
         if (url.startsWith("http"))
             return url;
         var service = $("service[of]").attr("of")
-        if (service == "hub" || service ==undefined || service ==null) return url;
+        if (service == "hub" || service == undefined || service == null) return url;
         if (url.startsWith("/"))
             url = "/" + service + url;
         else
