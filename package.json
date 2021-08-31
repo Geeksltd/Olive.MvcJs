@@ -1,0 +1,12 @@
+{
+  "name": "olive.mvc",
+  "description": "Used js files in the Olive MVC projects.",
+  "main": "./src/olivePage.ts",
+  "types": "./typings/olivePage.d.ts",
+  "authors": [
+    "Geeks Ltd <https://www.geeks.ltd.uk/>"
+  ],
+  "license": "GPL",
+  "private": false,
+  "homepage": "https://github.com/Geeksltd/Olive.MvcJs"
+} 
