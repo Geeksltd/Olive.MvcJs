@@ -20,9 +20,9 @@ jobs:
 
     - run: node ./bundling-helper/fix-bundle-modules
 
-    - run: yarn install --frozen-lockfile
+  #  - run: yarn install --frozen-lockfile
 
-    - run: yarn pack --filename=SourceCode.tgz
+  #  - run: yarn pack --filename=SourceCode.tgz
 
     - uses: Klemensas/action-autotag@stable
       id: update_tag
@@ -37,7 +37,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         tag_name: ${{ steps.update_tag.outputs.tagname }}
-        release_name: Release ${{ steps.update_tag.outputs.tagname }}
+        release_name: ${{ steps.update_tag.outputs.tagname }}
 
     - name: Upload Release Asset
       if: steps.update_tag.outputs.tagname
@@ -47,6 +47,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./SourceCode.tgz
-        asset_name: SourceCode.tgz
-        asset_content_type: application/tgz
+  #      asset_path: ./SourceCode.tgz
+  #      asset_name: SourceCode.tgz
+  #      asset_content_type: application/tgz
