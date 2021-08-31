@@ -17,7 +17,7 @@ export default class ResponseProcessor implements IService {
             return;
         }
 
-        if (asElement.is("[data-module]")) {
+        if (asElement.is("[data-module]") && containerModule != null) {
             containerModule.replaceWith(asElement);
             this.onViewChanged(asElement, trigger);
             return;
