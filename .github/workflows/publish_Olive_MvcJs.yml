@@ -2,7 +2,7 @@ name: Publish Olive MvcJs Package
 
 on:
   push:
-    branches: [ Add-Github-Action ]
+    branches: [ master ]
 
 jobs:
   build:
