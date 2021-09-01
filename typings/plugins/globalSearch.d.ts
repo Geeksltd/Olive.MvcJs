@@ -1,7 +1,9 @@
 import Waiting from "olive/components/waiting";
+import { ModalHelper } from 'olive/components/modal';
 export declare class GlobalSearchFactory implements IService {
     private waiting;
-    constructor(waiting: Waiting);
+    private modalHelper;
+    constructor(waiting: Waiting, modalHelper: ModalHelper);
     enable(selector: JQuery): void;
 }
 export default class GlobalSearch implements IService {
@@ -11,9 +13,10 @@ export default class GlobalSearch implements IService {
     private isMouseInsideSearchPanel;
     private isTyping;
     private searchedText;
+    private modalHelper;
     protected boldSearch(str: string, searchText: string): string;
     protected boldSearchAll(str: string, searchText: string): string;
-    constructor(input: JQuery, waiting: Waiting);
+    constructor(input: JQuery, waiting: Waiting, modalHelper: ModalHelper);
     enable(): void;
     protected clearSearchComponent(): void;
     protected getResultPanel(): JQuery;
@@ -46,6 +49,7 @@ export interface IResultItemDto {
     Url: string;
     Colour: string;
     GroupTitle: string;
+    Action: ActionEnum;
 }
 export interface IAjaxObject {
     url: string;
@@ -54,4 +58,9 @@ export interface IAjaxObject {
     ajx?: JQueryXHR;
     displayMessage?: string;
     result?: IResultItemDto[];
+}
+export declare enum ActionEnum {
+    Redirect = 0,
+    Popup = 1,
+    NewWindow = 2
 }

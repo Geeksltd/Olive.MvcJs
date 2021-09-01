@@ -22,7 +22,7 @@ export class ModalHelper implements IService {
             if ($(e.currentTarget).attr("data-mode") === "iframe") {
                 this.openiFrame(e);
             } else {
-                this.open(e);
+                setTimeout(() => this.open(e), 0);
             }
 
             return false;
@@ -74,9 +74,11 @@ export class ModalHelper implements IService {
             this.current[0].dispatchEvent(onClosingEvent);
 
             this.current.modal("hide");
-            this.current.remove();
-            this.current = null;
-            this.currentModal = null;
+            if (this.currentModal.onClose == null && this.currentModal.onClose == undefined) {
+                this.current.remove();
+                this.current = null;
+                this.currentModal = null;
+            }
         }
 
         $("body > .tooltip").each((index, elem) => {
@@ -247,7 +249,13 @@ export default class Modal {
         const options = opt ? opt : (target ? target.attr("data-modal-options") : null);
         if (options) { this.modalOptions = JSON.safeParse(options); }
     }
+    public onComplete(success: Boolean) {
 
+    }
+    public onClose() {
+        this.onClose = null;
+        $(this.helper.current).modal('hide');
+    }
     public open(changeUrl: boolean = true): boolean {
         this.isOpening = true;
         this.helper.isAjaxModal = true;
@@ -262,7 +270,9 @@ export default class Modal {
             true,
             this.shouldKeepScroll(),
             changeUrl,
-            () => {
+            (success: Boolean) => {
+                if (this.onComplete != null && this.onComplete != undefined)
+                    this.onComplete(success);
                 if (changeUrl && window.isModal()) {
                     this.helper.changeUrl(this.url);
                 }
@@ -272,8 +282,13 @@ export default class Modal {
 
         this.helper.current.modal("show");
 
-        this.helper.current.on("hidden.bs.modal", () => {
+        this.helper.current.on("hide.bs.modal", () => {
+            if (this.onClose != null && this.onClose != undefined) {
+                this.onClose();
+                return false;
+            }
             CrossDomainEvent.raise(window.self, "close-modal");
+            return true;
         });
     }
 

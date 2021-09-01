@@ -9,28 +9,28 @@ export default class ResponseProcessor implements IService {
     public nothingFoundToProcess = new LiteEvent<IResponseProcessorEventArgs>();
 
     public processAjaxResponse(response: any, containerModule: JQuery, trigger: JQuery, args: any) {
-
         let asElement = $(response);
+        asElement = this.fixUrlsForOpenNewWindows(response);
 
         if (asElement.is("main")) {
             this.navigate(asElement, trigger, args);
             return;
         }
 
-        if (asElement.is("[data-module]")) {
+        if (asElement.is("[data-module]") && containerModule != null) {
             containerModule.replaceWith(asElement);
             this.onViewChanged(asElement, trigger);
             return;
         }
 
-        if (response.length == 1 && response[0].ReplaceView) {
+        if (response.length == 1 && response[0].ReplaceView && containerModule != null) {
             asElement = $("<div/>").append(response[0].ReplaceView);
             containerModule.replaceWith(asElement);
             this.onViewChanged(asElement, trigger);
             return;
         }
 
-        if (trigger && trigger.is("[data-add-subform]")) {
+        if (trigger && trigger.is("[data-add-subform]") && containerModule != null) {
             let subFormName = trigger.attr("data-add-subform");
             let container = containerModule.find("[data-subform=" + subFormName + "] > table tbody:first");
 
@@ -45,9 +45,50 @@ export default class ResponseProcessor implements IService {
         }
 
         // List of actions
-        this.onNothingFoundToProcess(response, trigger);
+        if (typeof (response) == typeof ([]))
+            this.onNothingFoundToProcess(response, trigger);
+    }
+    public fixUrlForOpenNewWindows(url: string) {
+        if (url.startsWith("http"))
+            return url;
+        var service = $("service[of]").attr("of")
+        if (service == "hub" || service == undefined || service == null) return url;
+        if (url.startsWith("/"))
+            url = "/" + service + url;
+        else
+            url = "/" + service + "/" + url;
+        return url;
     }
 
+    public fixElementForOpenNewWindows(element: JQuery) {
+        if ($(element).closest(".hub-service").length > 0) return;
+        if ($(element).closest("service[of]").length > 0) {
+            let url = element.attr("href");
+            if (!url.startsWith("http")) {
+                element.attr("ajax-href", url)
+                url = this.fixUrlForOpenNewWindows(url)
+                element.attr("ajax-href", url)
+            }
+        }
+    }
+    public fixUrlsForOpenNewWindows(response: any) {
+        var asElement = $(response);
+        if ($(element).closest(".hub-service").length > 0 || asElement.hasClass("hub-service") || $(asElement).attr("data-module") == "MYPriorityView")
+            return asElement;
+
+        var aTags = asElement.find("a:not([target='$modal'])")
+        for (var i = 0; i < aTags.length; i++) {
+            var element = aTags.get(i);
+            var url = $(element).attr("href");
+            if (url != undefined && url != null) {
+                $(element).attr("ajax-href", url);
+                url = this.fixUrlForOpenNewWindows(url)
+                $(element).attr("href", url);
+            }
+
+        }
+        return asElement;
+    }
     protected onNothingFoundToProcess(response: any, trigger: JQuery) {
         this.nothingFoundToProcess.raise({ response: response, trigger: trigger });
     }

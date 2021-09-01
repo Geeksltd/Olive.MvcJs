@@ -1,11 +1,12 @@
 ﻿import Waiting from "olive/components/waiting";
+import { ModalHelper } from 'olive/components/modal'
 
 export class GlobalSearchFactory implements IService {
-    constructor(private waiting: Waiting) {
+    constructor(private waiting: Waiting,private modalHelper: ModalHelper) {
     }
 
     public enable(selector: JQuery) {
-        selector.each((i, e) => new GlobalSearch($(e), this.waiting).enable());
+        selector.each((i, e) => new GlobalSearch($(e), this.waiting,this.modalHelper).enable());
     }
 }
 
@@ -14,6 +15,7 @@ export default class GlobalSearch implements IService {
     private isMouseInsideSearchPanel: boolean = false;
     private isTyping: boolean = false;
     private searchedText: string = null;
+    private modalHelper: ModalHelper
 
     protected boldSearch(str: string, searchText: string) {
         let ix = -1;
@@ -56,7 +58,11 @@ export default class GlobalSearch implements IService {
         return result;
     }
 
-    constructor(private input: JQuery, private waiting: Waiting) { }
+    constructor(private input: JQuery, private waiting: Waiting,modalHelper: ModalHelper) {
+
+        this.modalHelper=modalHelper;
+
+     }
 
     public enable() {
         if (this.input.is("[data-globalsearch-enabled=true]")) {
@@ -249,6 +255,10 @@ export default class GlobalSearch implements IService {
             context.resultCount++;
             childrenItems.append(this.createItem(items[i], context));
         }
+        $(childrenItems).find("[target='$modal'][href]").off("click").click(function () {
+            $(".global-search-result-panel").fadeOut();
+        });
+        this.modalHelper.enableLink($(childrenItems).find("[target='$modal'][href]"));
 
         searchItem.append(childrenItems);
 
@@ -260,10 +270,16 @@ export default class GlobalSearch implements IService {
     }
 
     protected createItem(item: IResultItemDto, context: ISearchContext) {
+        var attr = "";
+        if (item.Action == ActionEnum.Popup)
+            attr = "target=\"$modal\"";
+        else if (item.Action == ActionEnum.NewWindow)
+            attr = "target=\"_blank\"";
+            
         return $("<li>")
             .append((item.IconUrl === null || item.IconUrl === undefined) ?
                 $("<div class='icon'>") : this.showIcon(item))
-            .append($("<a href='" + item.Url + "'>")
+            .append($("<a href='" + item.Url + "' " + attr + ">")
                 .html(this.boldSearchAll(item.Title, context.searchedText)))
             .append($(" <div class='desc'>").html(item.Description));
     }
@@ -320,6 +336,7 @@ export interface IResultItemDto {
     Url: string;
     Colour: string;
     GroupTitle: string;
+    Action: ActionEnum;
 }
 
 export interface IAjaxObject {
@@ -329,4 +346,10 @@ export interface IAjaxObject {
     ajx?: JQueryXHR;
     displayMessage?: string;
     result?: IResultItemDto[];
+}
+
+export enum ActionEnum {
+    Redirect,
+    Popup,
+    NewWindow,
 }

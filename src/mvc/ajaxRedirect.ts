@@ -34,7 +34,10 @@ export default class AjaxRedirect implements IService {
     private redirect(event: JQueryEventObject) {
         if (event.ctrlKey || event.button === 1) { return true; }
         const link = $(event.currentTarget);
-        const url = link.attr("href");
+        let url = link.attr("href");
+        const ajaxUrl = link.attr("ajax-href");
+        if (ajaxUrl != null && ajaxUrl != undefined)
+            url = ajaxUrl;
         this.go(url, link, false, false, true);
         return false;
     }
@@ -59,11 +62,11 @@ export default class AjaxRedirect implements IService {
         // this.serverInvoker.isAwaitingAjaxResponse = true;
 
         const requestCounter = ++this.requestCounter;
-        if (window.stop) {
-            window.stop();
-        } else if (document.execCommand !== undefined) {
-            document.execCommand("Stop", false);
-        }
+        // if (window.stop) {
+        //     window.stop();
+        // } else if (document.execCommand !== undefined) {
+        //     document.execCommand("Stop", false);
+        // }
 
         let scrollTopBefore;
         if (keepScroll) {
@@ -79,9 +82,6 @@ export default class AjaxRedirect implements IService {
             success: (response) => {
                 // this.formAction.events_fa = {};
 
-                if (onComplete) {
-                    onComplete(true);
-                }
 
                 if (!isBack) {
                     this.ajaxChangedUrl++;
@@ -104,6 +104,11 @@ export default class AjaxRedirect implements IService {
 
                 this.responseProcessor.processAjaxResponse(response, null, trigger, isBack ? "back" : null);
                 if (keepScroll) { $(document).scrollTop(scrollTopBefore); }
+
+                if (onComplete) {
+                    onComplete(true);
+                }
+
             },
             error: (response) => {
                 if (onComplete) {
