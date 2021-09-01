@@ -418,14 +418,14 @@ export default class OlivePage implements IServiceLocator {
     protected customizeValidationTooltip() { /** */ }
 
     protected refresh(keepScroll = false) {
-        if ($("main").length === 1 || $("main").length === 2) {
-            // if there is an ajax modal available, then we have 2 main elements.
-            this.getService<AjaxRedirect>(Services.AjaxRedirect)
-                .go(location.href, null, false /*isBack*/, keepScroll, false);
-        } else {
-            location.reload();
-        }
-
+        // if ($("main").length === 1 || $("main").length === 2) {
+        //     // if there is an ajax modal available, then we have 2 main elements.
+        //     this.getService<AjaxRedirect>(Services.AjaxRedirect)
+        //         .go(location.href, null, false /*isBack*/, keepScroll, false);
+        // } else {
+        //     location.reload();
+        // }
+        location.reload();
         return false;
     }
 
