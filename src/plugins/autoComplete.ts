@@ -129,6 +129,7 @@ export default class AutoComplete {
         const clientSideSearch = this.input.attr("clientside") || false;
 
         return {
+            maxItem: 0,
             minLength: 0,
             dynamic: !clientSideSearch,
             searchOnFocus: true,
