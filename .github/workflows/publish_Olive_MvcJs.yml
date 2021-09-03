@@ -16,6 +16,8 @@ jobs:
     
     - run: npm install typescript@4.2.3 -g
     
+    - run: tsc
+
     - run: tsc --project bundle-tsconfig.json
 
     - run: yarn install --frozen-lockfile
