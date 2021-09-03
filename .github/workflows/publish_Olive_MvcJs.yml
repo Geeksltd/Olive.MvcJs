@@ -18,7 +18,7 @@ jobs:
     
     - run: tsc --project bundle-tsconfig.json
 
-    - run: yarn install
+    - run: yarn install --frozen-lockfile
 
     - run: yarn pack --filename=package.tgz
 
