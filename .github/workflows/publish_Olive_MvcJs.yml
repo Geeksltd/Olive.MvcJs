@@ -2,7 +2,7 @@ name: Publish Olive MvcJs Package
 
 on:
   push:
-    branches: [ pipeline-fix ]
+    branches: [ master ]
 
 jobs:
   build:
