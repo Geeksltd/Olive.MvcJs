@@ -2,7 +2,7 @@ name: Publish Olive MvcJs Package
 
 on:
   push:
-    branches: [ master ]
+    branches: [ pipeline-fix ]
 
 jobs:
   build:
@@ -18,9 +18,7 @@ jobs:
     
     - run: tsc --project bundle-tsconfig.json
 
-    - run: node ./bundling-helper/fix-bundle-modules
-
-    - run: yarn install --frozen-lockfile
+    - run: yarn install
 
     - run: yarn pack --filename=package.tgz
 
