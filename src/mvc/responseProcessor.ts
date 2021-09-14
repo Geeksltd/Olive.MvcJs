@@ -49,7 +49,7 @@ export default class ResponseProcessor implements IService {
             this.onNothingFoundToProcess(response, trigger);
     }
     public fixUrlForOpenNewWindows(url: string) {
-        if (url.startsWith("http"))
+        if (url.contains(":"))
             return url;
         var service = $("service[of]").attr("of")
         if (service == "hub" || service == undefined || service == null) return url;
@@ -64,7 +64,7 @@ export default class ResponseProcessor implements IService {
         if ($(element).closest(".hub-service").length > 0) return;
         if ($(element).closest("service[of]").length > 0) {
             let url = element.attr("href");
-            if (!url.startsWith("http")) {
+            if (!url.contains(":")) {
                 element.attr("ajax-href", url)
                 url = this.fixUrlForOpenNewWindows(url)
                 element.attr("ajax-href", url)
@@ -80,7 +80,7 @@ export default class ResponseProcessor implements IService {
         for (var i = 0; i < aTags.length; i++) {
             var element = aTags.get(i);
             var url = $(element).attr("href");
-            if (url != undefined && url != null) {
+            if (url != undefined && url != null && !url.contains(":")) {
                 $(element).attr("ajax-href", url);
                 url = this.fixUrlForOpenNewWindows(url)
                 $(element).attr("href", url);
