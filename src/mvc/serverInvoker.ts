@@ -20,6 +20,7 @@ export default class ServerInvoker implements IService {
         selector.off(event).on(event,
             (e) => {
                 let trigger = $(e.currentTarget);
+                this.fixDowpdownSetSlectedItem(trigger);
                 let url = this.url.effectiveUrlProvider(trigger.attr(attrName), trigger);
                 this.invokeWithAjax(e, url, false);
                 return false;
@@ -138,5 +139,11 @@ export default class ServerInvoker implements IService {
         }
         else if (error) alert(error);
         else alert("Error: response status: " + status);
+    }
+
+    private fixDowpdownSetSlectedItem(dropdownElemnt) {
+        var items = dropdownElemnt.find(":selected");
+        dropdownElemnt.find("> option").removeAttr("selected");
+        items.attr("selected", "selected");
     }
 }
