@@ -59,7 +59,7 @@ export default class StandardAction implements IService {
     private run(action: any, trigger: any): boolean {
         if (action.Notify || action.Notify == "") this.notify(action, trigger);
         else if (action.Script) eval(action.Script);
-        else if (action.ServiceConfigurationUrl) this.loadServiceAfterConfiguration(action.ServiceConfigurationUrl, acion.ServiceKey, action.Function, action.Arguments);
+        else if (action.ServiceConfigurationUrl) this.loadServiceAfterConfiguration(action.ServiceConfigurationUrl, action.ServiceKey, action.Function, action.Arguments);
         else if (action.ServiceKey && action.Function == "go") {
             action.Arguments[2] = trigger;
             this.loadService(action.ServiceKey, action.Function, action.Arguments);
