@@ -12,7 +12,7 @@ export default class CKEditorFileManager {
     public enable() {
         this.item.on('click', () => {
             const uri = this.item.data('download-uri');
-            window.opener.CKEDITOR.tools.callFunction(this.url.getQuery('CKEditorFuncNum'), uri);
+            window.opener["CKEDITOR"].tools.callFunction(this.url.getQuery('CKEditorFuncNum'), uri);
             window.close();
         });
     }
