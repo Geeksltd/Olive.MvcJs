@@ -67,12 +67,21 @@ export default class ResponseProcessor implements IService {
         element.find("link[rel=stylesheet]").remove();
 
         // Process when at least one css is loaded.
+        var loadedCssCount = 0;
+        var $this = this;
+        function _processWithTheContent($this, cssCount){
+            loadedCssCount++;
+            if(loadedCssCount>= cssCount)
+                $this.processWithTheContent(trigger, element, args, referencedScripts)
+        }
         if (newCss.length > 0) {
             const tags = newCss.map(item => $('<link rel="stylesheet" type="text/css" />').attr("href", item));
-
-            tags[0].on('load', () => this.processWithTheContent(trigger, element, args, referencedScripts));
-
-            $("head").append(tags);
+            tags.forEach(e => {
+                e.on('load', () => _processWithTheContent($this, newCss.length));
+                $("head").append(e);
+            });
+            //tags[0].on('load', () => this.processWithTheContent(trigger, element, args, referencedScripts));
+            //$("head").append(tags);
         }
         else
             this.processWithTheContent(trigger, element, args, referencedScripts);
