@@ -2,11 +2,11 @@
 import { ModalHelper } from 'olive/components/modal'
 
 export class GlobalSearchFactory implements IService {
-    constructor(private waiting: Waiting,private modalHelper: ModalHelper) {
+    constructor(private waiting: Waiting, private modalHelper: ModalHelper) {
     }
 
     public enable(selector: JQuery) {
-        selector.each((i, e) => new GlobalSearch($(e), this.waiting,this.modalHelper).enable());
+        selector.each((i, e) => new GlobalSearch($(e), this.waiting, this.modalHelper).enable());
     }
 }
 
@@ -58,11 +58,11 @@ export default class GlobalSearch implements IService {
         return result;
     }
 
-    constructor(private input: JQuery, private waiting: Waiting,modalHelper: ModalHelper) {
+    constructor(private input: JQuery, private waiting: Waiting, modalHelper: ModalHelper) {
 
-        this.modalHelper=modalHelper;
+        this.modalHelper = modalHelper;
 
-     }
+    }
 
     public enable() {
         if (this.input.is("[data-globalsearch-enabled=true]")) {
@@ -102,7 +102,7 @@ export default class GlobalSearch implements IService {
             const inputholder = this.input.parent();
             const panel = inputholder.find(".global-search-result-panel");
             if (panel.children().length > 0)
-                panel.fadeIn('fast');
+                panel.show();
         }));
     }
 
@@ -129,7 +129,7 @@ export default class GlobalSearch implements IService {
             searchPanel.append(resultPanel);
         }
         else {
-            resultPanel.empty().fadeIn('fast');
+            resultPanel.empty().show();
         }
 
         $(window).on("keydown", (e) => {
@@ -275,7 +275,7 @@ export default class GlobalSearch implements IService {
             attr = "target=\"$modal\"";
         else if (item.Action == ActionEnum.NewWindow)
             attr = "target=\"_blank\"";
-            
+
         return $("<li>")
             .append((item.IconUrl === null || item.IconUrl === undefined) ?
                 $("<div class='icon'>") : this.showIcon(item))

@@ -23,7 +23,7 @@ export default class Waiting implements IService {
 
         $("<div class='wait-container'><div class='wait-box'><img src='" + imageUrl + "'/></div>")
             .appendTo(screen)
-            .fadeIn('slow');
+            .show();
     }
 
     public hide() {
