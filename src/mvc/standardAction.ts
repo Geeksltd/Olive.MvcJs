@@ -111,10 +111,8 @@ export default class StandardAction implements IService {
         console.log(action.WithAjax);
         console.log(action.WithAjax);
         console.log(trigger);
-
         if (action.Redirect.indexOf('/') != 0 && action.Redirect.indexOf('http') != 0)
             action.Redirect = '/' + action.Redirect;
-
         if (action.OutOfModal && window.isModal()) parent.window.location.href = action.Redirect;
         else if (action.Target == '$modal') this.openModal({ currentTarget: trigger }, action.Redirect, null);
         else if (action.Target && action.Target != '') window.open(action.Redirect, action.Target);
