@@ -103,6 +103,15 @@ export default class StandardAction implements IService {
     }
 
     protected redirect(action: any, trigger: any) {
+
+        console.log("action is:");
+        console.log(action);
+        console.log(action.Redirect);
+        console.log(action.Target);
+        console.log(action.WithAjax);
+        console.log(action.WithAjax);
+        console.log(trigger);
+
         if (action.Redirect.indexOf('/') != 0 && action.Redirect.indexOf('http') != 0)
             action.Redirect = '/' + action.Redirect;
 
