@@ -69,9 +69,9 @@ export default class ResponseProcessor implements IService {
         // Process when at least one css is loaded.
         var loadedCssCount = 0;
         var $this = this;
-        function _processWithTheContent($this, cssCount){
+        function _processWithTheContent($this, cssCount) {
             loadedCssCount++;
-            if(loadedCssCount>= cssCount)
+            if (loadedCssCount >= cssCount)
                 $this.processWithTheContent(trigger, element, args, referencedScripts)
         }
         if (newCss.length > 0) {
@@ -106,6 +106,11 @@ export default class ResponseProcessor implements IService {
 
         let oldMain = trigger.closest("main");
         var targetMainName = trigger.attr("target");
+        var ajaxTargetMainName = trigger.attr("ajax-target");
+        if (ajaxTargetMainName) {
+            console.log("Implementing...");
+            return;
+        }
         if (targetMainName) {
             oldMain = $("main[name='" + targetMainName + "']");
             if (oldMain.length === 0) console.error("There is no <main> object with the name of '" + targetMainName + "'.");
