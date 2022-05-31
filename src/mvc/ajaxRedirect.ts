@@ -46,7 +46,7 @@ export default class AjaxRedirect implements IService {
     public go(
         url: string,
         trigger: JQuery = null,
-        ajaxTarget: string,
+        ajaxTarget: string = null,
         isBack: boolean = false,
         keepScroll: boolean = false,
         addToHistory = true,
@@ -54,7 +54,7 @@ export default class AjaxRedirect implements IService {
 
         if (!trigger) { trigger = $(window); }
 
-        if (ajaxTarget) {
+        if (ajaxTarget != undefined && ajaxTarget != null) {
 
             var mainTags = document.getElementsByTagName("main");
             for (let i = 0; i < mainTags.length; ++i) {
