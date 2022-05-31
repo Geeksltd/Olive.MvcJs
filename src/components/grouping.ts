@@ -16,7 +16,7 @@ export default class Grouping {
         private url: Url,
         private ajaxRedirect: AjaxRedirect) {
         dropdown.on('change', () => {
-            this.ajaxRedirect.go(this.url.updateQuery(this.url.current(), "GroupBy", dropdown.val()), dropdown, false, true, false);
+            this.ajaxRedirect.go(this.url.updateQuery(this.url.current(), "GroupBy", dropdown.val()), dropdown,null, false, true, false);
         });
     }
 }

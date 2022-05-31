@@ -118,7 +118,7 @@ export default class StandardAction implements IService {
         else if (action.Target && action.Target != '') window.open(action.Redirect, action.Target);
         else if (action.WithAjax === false) location.replace(action.Redirect);
         else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true)
-            this.ajaxRedirect.go(action.Redirect, trigger, false, false, true);
+            this.ajaxRedirect.go(action.Redirect, trigger,null, false, false, true);
         else location.replace(action.Redirect);
     }
 

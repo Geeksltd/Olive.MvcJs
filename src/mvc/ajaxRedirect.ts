@@ -36,21 +36,43 @@ export default class AjaxRedirect implements IService {
         const link = $(event.currentTarget);
         let url = link.attr("href");
         const ajaxUrl = link.attr("ajax-href");
+        let ajaxTarget = link.attr("ajax-target");
         if (ajaxUrl != null && ajaxUrl != undefined)
             url = ajaxUrl;
-        this.go(url, link, false, false, true);
+        this.go(url, link, ajaxTarget, false, false, true);
         return false;
     }
 
     public go(
         url: string,
         trigger: JQuery = null,
+        ajaxTarget: string,
         isBack: boolean = false,
         keepScroll: boolean = false,
         addToHistory = true,
         onComplete?: (successful: boolean) => void): boolean {
 
         if (!trigger) { trigger = $(window); }
+
+        if (ajaxTarget) {
+
+            var mainTags = document.getElementsByTagName("main");
+            for (let i = 0; i < mainTags.length; ++i) {
+                if (mainTags[i].getAttribute("name") != undefined && mainTags[i].getAttribute("name") == ajaxTarget) {
+                    var mainTag = mainTags[i];
+                    break;
+                }
+            }
+            if (mainTag) {
+                console.log(mainTag);
+                history.pushState({}, "", "?$" + ajaxTarget + "=" + url);
+                return
+            }
+            else {
+                console.error("There is no <main> object with the name of '" + ajaxTarget + "'.");
+            }
+            return;
+        }
 
         url = this.url.effectiveUrlProvider(url, trigger);
 
