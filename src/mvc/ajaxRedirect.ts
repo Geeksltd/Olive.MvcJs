@@ -46,7 +46,7 @@ export default class AjaxRedirect implements IService {
     public go(
         url: string,
         trigger: JQuery = null,
-        ajaxTarget: string = undefined,
+        ajaxTarget: string,
         isBack: boolean = false,
         keepScroll: boolean = false,
         addToHistory = true,
