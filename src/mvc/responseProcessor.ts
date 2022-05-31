@@ -107,10 +107,26 @@ export default class ResponseProcessor implements IService {
         let oldMain = trigger.closest("main");
         var targetMainName = trigger.attr("target");
         var ajaxTargetMainName = trigger.attr("ajax-target");
-        if (ajaxTargetMainName) {
-            console.log("Implementing...");
-            return;
-        }
+        //if (ajaxTargetMainName) {
+        //    var mainTags = document.getElementsByTagName("main");
+        //    for (let i = 0; i < mainTags.length; ++i) {
+        //        if (mainTags[i].getAttribute("name") != undefined && mainTags[i].getAttribute("name") == ajaxTargetMainName) {
+        //            var mainTag = mainTags[i];
+        //            break;
+        //        }
+        //    }
+        //    if (mainTag) {
+        //        console.log(mainTag);
+        //        oldMain = $("main[name='" + ajaxTargetMainName + "']");
+        //        oldMain.replaceWith(newMain);
+        //        this.updateUrl(referencedScripts, newMain, trigger);
+        //        history.pushState({}, "", "www.google.com");
+        //    }
+        //    else {
+        //        console.error("There is no <main> object with the name of '" + ajaxTargetMainName + "'.");
+        //    }
+        //    return;
+        //}
         if (targetMainName) {
             oldMain = $("main[name='" + targetMainName + "']");
             if (oldMain.length === 0) console.error("There is no <main> object with the name of '" + targetMainName + "'.");
