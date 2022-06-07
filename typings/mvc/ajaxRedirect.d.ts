@@ -14,4 +14,5 @@ export default class AjaxRedirect implements IService {
     protected onRedirectionFailed(url: string, response: JQueryXHR): void;
     private redirect;
     go(url: string, trigger?: JQuery, isBack?: boolean, keepScroll?: boolean, addToHistory?: boolean, onComplete?: (successful: boolean) => void): boolean;
+    goWithajaxTarget(url: string, trigger: JQuery, ajaxTarget: string, isBack?: boolean, keepScroll?: boolean, addToHistory?: boolean, onComplete?: (successful: boolean) => void): boolean;
 }
