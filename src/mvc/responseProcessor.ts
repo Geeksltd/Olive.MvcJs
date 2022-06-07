@@ -106,11 +106,6 @@ export default class ResponseProcessor implements IService {
 
         let oldMain = trigger.closest("main");
         var targetMainName = trigger.attr("target");
-        var ajaxTargetMainName = trigger.attr("ajax-target");
-        if (ajaxTargetMainName) {
-            console.log("Implementing...");
-            return;
-        }
         if (targetMainName) {
             oldMain = $("main[name='" + targetMainName + "']");
             if (oldMain.length === 0) console.error("There is no <main> object with the name of '" + targetMainName + "'.");
