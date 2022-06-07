@@ -267,7 +267,6 @@ export default class Modal {
 
         this.ajaxRedirect.go(this.url,
             $(this.helper.current).find("main"),
-            null,
             true,
             this.shouldKeepScroll(),
             changeUrl,
