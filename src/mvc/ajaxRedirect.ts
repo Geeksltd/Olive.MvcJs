@@ -42,12 +42,13 @@ export default class AjaxRedirect implements IService {
         if (ajaxUrl != null && ajaxUrl != undefined)
             url = ajaxUrl;
 
-        if (ajaxTarget || url.contains("?$")) {
-            this.goWithajaxTarget(url, link, ajaxTarget, false, false, true);
-        }
-        else {
-            this.go(url, link, false, false, true);
-        }
+        this.go(url, link, false, false, true, undefined, ajaxTarget);
+        //if (ajaxTarget || url.contains("?$")) {
+        //    this.goWithajaxTarget(url, link, ajaxTarget, false, false, true);
+        //}
+        //else {
+        //    this.go(url, link, false, false, true, undefined, ajaxTarget);
+        //}
         return false;
     }
 
@@ -57,7 +58,9 @@ export default class AjaxRedirect implements IService {
         isBack: boolean = false,
         keepScroll: boolean = false,
         addToHistory = true,
-        onComplete?: (successful: boolean) => void): boolean {
+        onComplete?: (successful: boolean) => void,
+        ajaxTarget: string = undefined
+    ): boolean {
 
         if (!trigger) { trigger = $(window); }
 
@@ -89,9 +92,6 @@ export default class AjaxRedirect implements IService {
             type: "GET",
             xhrFields: { withCredentials: true },
             success: (response) => {
-                // this.formAction.events_fa = {};
-
-
                 if (!isBack) {
                     this.ajaxChangedUrl++;
                     if (addToHistory && !window.isModal()) {
@@ -109,77 +109,6 @@ export default class AjaxRedirect implements IService {
                 }
 
                 // this.serverInvoker.isAwaitingAjaxResponse = false;
-                this.isAjaxRedirecting = false;
-
-                this.responseProcessor.processAjaxResponse(response, null, trigger, isBack ? "back" : null);
-                if (keepScroll) { $(document).scrollTop(scrollTopBefore); }
-
-                if (onComplete) {
-                    onComplete(true);
-                }
-
-            },
-            error: (response) => {
-                if (onComplete) {
-                    onComplete(false);
-                }
-                if (this.requestCounter === requestCounter) {
-                    this.onRedirectionFailed(url, response);
-                }
-            },
-            complete: (response) => this.waiting.hide(),
-        });
-        return false;
-    }
-
-    public goWithajaxTarget(
-        url: string,
-        trigger: JQuery = null,
-        ajaxTarget: string,
-        isBack: boolean = false,
-        keepScroll: boolean = false,
-        addToHistory = true,
-        onComplete?: (successful: boolean) => void): boolean {
-
-        if (!trigger) { trigger = $(window); }
-
-        url = this.url.effectiveUrlProvider(url, trigger);
-
-        if (url.indexOf(this.url.baseContentUrl + "/##") === 0) {
-            url = url.substring(this.url.baseContentUrl.length).substring(3);
-        }
-
-        this.isAjaxRedirecting = true;
-
-        const requestCounter = ++this.requestCounter;
-
-        let scrollTopBefore;
-        if (keepScroll) {
-            scrollTopBefore = $(document).scrollTop();
-        }
-
-        this.waiting.show(false, false);
-
-        $.ajax({
-            url,
-            type: "GET",
-            xhrFields: { withCredentials: true },
-            success: (response) => {
-                if (!isBack) {
-                    this.ajaxChangedUrl++;
-                    if (addToHistory && !window.isModal()) {
-
-                        const title = $("#page_meta_title").val();
-
-                        let addressBar = trigger.attr("data-addressbar") || url;
-                        try {
-                            this.onRedirected(title, addressBar);
-                        } catch (error) {
-                            addressBar = this.url.makeAbsolute(this.url.baseContentUrl, "/##" + addressBar);
-                            history.pushState({}, title, addressBar);
-                        }
-                    }
-                }
                 this.isAjaxRedirecting = false;
 
                 this.responseProcessor.processAjaxResponse(response, null, trigger, isBack ? "back" : null);
