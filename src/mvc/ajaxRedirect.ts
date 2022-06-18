@@ -41,14 +41,7 @@ export default class AjaxRedirect implements IService {
         const ajaxUrl = link.attr("ajax-href");
         if (ajaxUrl != null && ajaxUrl != undefined)
             url = ajaxUrl;
-
         this.go(url, link, false, false, true, undefined, ajaxTarget);
-        //if (ajaxTarget || url.contains("?$")) {
-        //    this.goWithajaxTarget(url, link, ajaxTarget, false, false, true);
-        //}
-        //else {
-        //    this.go(url, link, false, false, true, undefined, ajaxTarget);
-        //}
         return false;
     }
 
@@ -59,7 +52,7 @@ export default class AjaxRedirect implements IService {
         keepScroll: boolean = false,
         addToHistory = true,
         onComplete?: (successful: boolean) => void,
-        ajaxTarget: string = undefined
+        ajaxTarget?: string
     ): boolean {
 
         if (!trigger) { trigger = $(window); }

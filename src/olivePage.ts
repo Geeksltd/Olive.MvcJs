@@ -119,7 +119,7 @@ export default class OlivePage implements IServiceLocator {
         }
 
         if (services.tryAddSingleton(Services.GlobalSearchFactory,
-            (waiting: Waiting) => new GlobalSearchFactory(waiting,this.getService<ModalHelper>(Services.ModalHelper)), out)) {
+            (waiting: Waiting) => new GlobalSearchFactory(waiting, this.getService<ModalHelper>(Services.ModalHelper)), out)) {
             out.value.withDependencies(Services.Waiting);
         }
 
@@ -409,7 +409,14 @@ export default class OlivePage implements IServiceLocator {
         const returnUrl = url.getQuery("ReturnUrl");
 
         if (returnUrl && target && $(target).is("[data-redirect=ajax]")) {
-            this.getService<AjaxRedirect>(Services.AjaxRedirect).go(returnUrl, $(target), false, false, true);
+            const link = $(target);
+            if (link != undefined && link != null) {
+                let ajaxTarget = link.attr("ajax-target");
+                this.getService<AjaxRedirect>(Services.AjaxRedirect).go(returnUrl, $(target), false, false, true, undefined, ajaxTarget);
+            }
+            else {
+                this.getService<AjaxRedirect>(Services.AjaxRedirect).go(returnUrl, $(target), false, false, true);
+            }
         } else { url.goBack(); }
 
         return false;

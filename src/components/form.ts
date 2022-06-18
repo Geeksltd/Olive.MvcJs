@@ -136,7 +136,14 @@ export default class Form implements IService {
             url = this.url.removeEmptyQueries(url);
 
             if (form.is("[data-redirect=ajax]")) {
-                this.ajaxRedirect.go(url, form, false, false, true);
+                const link = $(event.currentTarget);
+                if (link != undefined && link != null) {
+                    let ajaxTarget = link.attr("ajax-target");
+                    this.ajaxRedirect.go(url, form, false, false, true, undefined, ajaxTarget);
+                }
+                else {
+                    this.ajaxRedirect.go(url, form, false, false, true);
+                }
             } else { location.href = url; }
         } catch (error) {
             console.error(error);
