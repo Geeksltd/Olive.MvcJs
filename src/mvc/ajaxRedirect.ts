@@ -37,11 +37,11 @@ export default class AjaxRedirect implements IService {
         let url = link.attr("href");
 
         const ajaxTarget = link.attr("ajax-target");
-
+        const ajaxhref = link.attr("href");
         const ajaxUrl = link.attr("ajax-href");
         if (ajaxUrl != null && ajaxUrl != undefined)
             url = ajaxUrl;
-        this.go(url, link, false, false, true, undefined, ajaxTarget);
+        this.go(url, link, false, false, true, undefined, ajaxTarget, ajaxhref);
         return false;
     }
 

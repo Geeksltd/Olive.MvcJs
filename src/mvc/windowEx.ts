@@ -18,7 +18,8 @@ export default class WindowEx implements IService {
             const link = $(event.currentTarget);
             if (link != undefined && link != null) {
                 let ajaxTarget = link.attr("ajax-target");
-                this.ajaxRedirect.go(location.href, null, false, false, true, undefined, ajaxTarget);
+                let ajaxhref = link.attr("href");
+                this.ajaxRedirect.go(location.href, null, false, false, true, undefined, ajaxTarget, ajaxhref);
             }
             else {
                 this.ajaxRedirect.go(location.href, null, true, false, false);
