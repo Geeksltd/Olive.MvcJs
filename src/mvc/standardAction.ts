@@ -73,7 +73,7 @@ export default class StandardAction implements IService {
             if (opener) {
                 let data = this.form.getPostData(opener.parents('form'));
                 $.post(window.location.href, data, (response) => {
-                    this.responseProcessor.processAjaxResponse(response, opener.closest("[data-module]"), opener, null);
+                    this.responseProcessor.processAjaxResponse(response, opener.closest("[data-module]"), opener, null,null);
                 });
             }
             else {

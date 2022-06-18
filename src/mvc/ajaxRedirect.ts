@@ -36,7 +36,7 @@ export default class AjaxRedirect implements IService {
         const link = $(event.currentTarget);
         let url = link.attr("href");
 
-        let ajaxTarget = link.attr("ajax-target");
+        const ajaxTarget = link.attr("ajax-target");
 
         const ajaxUrl = link.attr("ajax-href");
         if (ajaxUrl != null && ajaxUrl != undefined)
@@ -104,7 +104,7 @@ export default class AjaxRedirect implements IService {
                 // this.serverInvoker.isAwaitingAjaxResponse = false;
                 this.isAjaxRedirecting = false;
 
-                this.responseProcessor.processAjaxResponse(response, null, trigger, isBack ? "back" : null);
+                this.responseProcessor.processAjaxResponse(response, null, trigger, isBack ? "back" : null, ajaxTarget);
                 if (keepScroll) { $(document).scrollTop(scrollTopBefore); }
 
                 if (onComplete) {

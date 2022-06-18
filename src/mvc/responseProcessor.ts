@@ -8,8 +8,12 @@ export default class ResponseProcessor implements IService {
     public processCompleted = new LiteEvent<IEventArgs>();
     public nothingFoundToProcess = new LiteEvent<IResponseProcessorEventArgs>();
 
-    public processAjaxResponse(response: any, containerModule: JQuery, trigger: JQuery, args: any) {
+    public processAjaxResponse(response: any, containerModule: JQuery, trigger: JQuery, args: any, ajaxTarget?: string) {
         let asElement = $(response);
+
+        if (ajaxTarget) {
+            return;
+        }
 
         if (asElement.is("main")) {
             this.navigate(asElement, trigger, args);

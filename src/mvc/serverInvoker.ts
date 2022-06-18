@@ -77,7 +77,7 @@ export default class ServerInvoker implements IService {
             xhrFields: { withCredentials: true },
             async: !syncCall,
             data: data_before_disable,
-            success: (result) => { $(".tooltip").remove(); this.waiting.hide(); this.responseProcessor.processAjaxResponse(result, containerModule, trigger, null); },
+            success: (result) => { $(".tooltip").remove(); this.waiting.hide(); this.responseProcessor.processAjaxResponse(result, containerModule, trigger, null, null); },
             error: this.onAjaxResponseError,
             statusCode: {
                 401: (data) => {
