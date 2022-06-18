@@ -91,6 +91,23 @@ export default class ResponseProcessor implements IService {
             this.processWithTheContent(trigger, element, args, referencedScripts);
     }
 
+    protected navigatebyAjaxTarget(element: JQuery, ajaxTarget: string) {
+        const ajaxTargesList = document.getElementsByName(ajaxTarget);
+        if (ajaxTargesList != undefined && ajaxTargesList != null && ajaxTargesList.length > 0) {
+            for (var i = 0; i < ajaxTargesList.length; ++i) {
+                if (ajaxTargesList[i].tagName == "main") {
+                    var ajaxTargetElement = ajaxTargesList[i];
+                    break;
+                }
+            }
+        }
+
+        if (ajaxTargetElement == undefined || ajaxTargetElement == null) {
+            console.log("There is not any main tag by name " + ajaxTarget + " in document");
+            return;
+        }
+    }
+
     private getNewCss(element: JQuery): string[] {
         let referencedCss = this.getCss(element);
         let currentCss = this.getCss($("body"));
