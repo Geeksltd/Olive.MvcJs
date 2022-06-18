@@ -139,7 +139,8 @@ export default class Form implements IService {
                 const link = $(event.currentTarget);
                 if (link != undefined && link != null) {
                     let ajaxTarget = link.attr("ajax-target");
-                    this.ajaxRedirect.go(url, form, false, false, true, undefined, ajaxTarget);
+                    let ajaxhref = link.attr("href");
+                    this.ajaxRedirect.go(url, form, false, false, true, undefined, ajaxTarget, ajaxhref);
                 }
                 else {
                     this.ajaxRedirect.go(url, form, false, false, true);

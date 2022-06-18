@@ -8,7 +8,7 @@ export default class ResponseProcessor implements IService {
     public processCompleted = new LiteEvent<IEventArgs>();
     public nothingFoundToProcess = new LiteEvent<IResponseProcessorEventArgs>();
 
-    public processAjaxResponse(response: any, containerModule: JQuery, trigger: JQuery, args: any, ajaxTarget?: string) {
+    public processAjaxResponse(response: any, containerModule: JQuery, trigger: JQuery, args: any, ajaxTarget?: string, ajaxhref?: string) {
         let asElement = $(response);
 
         if (ajaxTarget) {
@@ -92,20 +92,41 @@ export default class ResponseProcessor implements IService {
     }
 
     protected navigatebyAjaxTarget(element: JQuery, ajaxTarget: string) {
-        const ajaxTargesList = document.getElementsByName(ajaxTarget);
-        if (ajaxTargesList != undefined && ajaxTargesList != null && ajaxTargesList.length > 0) {
-            for (var i = 0; i < ajaxTargesList.length; ++i) {
-                if (ajaxTargesList[i].tagName == "main") {
-                    var ajaxTargetElement = ajaxTargesList[i];
-                    break;
-                }
-            }
-        }
+        //const ajaxTargesList = document.getElementsByName(ajaxTarget);
+        //if (ajaxTargesList != undefined && ajaxTargesList != null && ajaxTargesList.length > 0) {
+        //    for (var i = 0; i < ajaxTargesList.length; ++i) {
+        //        if (ajaxTargesList[i].tagName == "MAIN") {
+        //            var ajaxTargetElement = ajaxTargesList[i];
+        //            break;
+        //        }
+        //    }
+        //}
 
-        if (ajaxTargetElement == undefined || ajaxTargetElement == null) {
-            console.log("There is not any main tag by name " + ajaxTarget + " in document");
+        //if (ajaxTargetElement == undefined || ajaxTargetElement == null) {
+        //    console.log("There is not any main tag by name " + ajaxTarget + " in document");
+        //    return;
+        //}
+
+        element.find("script[src]").remove();
+        element.find("link[rel=stylesheet]").remove();
+
+        let oldMain = $("main[name='" + ajaxTarget + "']");
+        if (oldMain.length === 0) {
+            console.error("There is no <main> object with the name of '" + ajaxTarget + "'.");
             return;
         }
+        element.attr("name", ajaxTarget);
+
+        let tooltips = $('body > .tooltip');
+
+        tooltips.each((index, elem) => {
+            if ($('[aria-discribedby=' + elem.id + ']'))
+                elem.remove();
+        });
+
+        oldMain.replaceWith(element);
+        this.onViewChanged(element, oldMain, true);
+        this.onProcessCompleted();
     }
 
     private getNewCss(element: JQuery): string[] {

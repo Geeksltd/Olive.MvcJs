@@ -5,7 +5,7 @@ export default class ResponseProcessor implements IService {
     viewChanged: LiteEvent<IViewUpdatedEventArgs>;
     processCompleted: LiteEvent<IEventArgs>;
     nothingFoundToProcess: LiteEvent<IResponseProcessorEventArgs>;
-    processAjaxResponse(response: any, containerModule: JQuery, trigger: JQuery, args: any, ajaxTarget?: string): void;
+    processAjaxResponse(response: any, containerModule: JQuery, trigger: JQuery, args: any, ajaxTarget?: string, ajaxhref?: string): void;
     protected onNothingFoundToProcess(response: any, trigger: JQuery): void;
     protected onSubformChanged(response: any, trigger: JQuery): void;
     protected onViewChanged(container: JQuery, trigger: JQuery, isNewPage?: boolean): void;

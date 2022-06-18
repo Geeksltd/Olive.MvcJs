@@ -52,7 +52,8 @@ export default class AjaxRedirect implements IService {
         keepScroll: boolean = false,
         addToHistory = true,
         onComplete?: (successful: boolean) => void,
-        ajaxTarget?: string
+        ajaxTarget?: string,
+        ajaxhref?: string
     ): boolean {
 
         if (!trigger) { trigger = $(window); }
@@ -104,7 +105,7 @@ export default class AjaxRedirect implements IService {
                 // this.serverInvoker.isAwaitingAjaxResponse = false;
                 this.isAjaxRedirecting = false;
 
-                this.responseProcessor.processAjaxResponse(response, null, trigger, isBack ? "back" : null, ajaxTarget);
+                this.responseProcessor.processAjaxResponse(response, null, trigger, isBack ? "back" : null, ajaxTarget, ajaxhref);
                 if (keepScroll) { $(document).scrollTop(scrollTopBefore); }
 
                 if (onComplete) {

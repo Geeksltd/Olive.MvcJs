@@ -412,7 +412,8 @@ export default class OlivePage implements IServiceLocator {
             const link = $(target);
             if (link != undefined && link != null) {
                 let ajaxTarget = link.attr("ajax-target");
-                this.getService<AjaxRedirect>(Services.AjaxRedirect).go(returnUrl, $(target), false, false, true, undefined, ajaxTarget);
+                let ajaxhref = link.attr("href");
+                this.getService<AjaxRedirect>(Services.AjaxRedirect).go(returnUrl, $(target), false, false, true, undefined, ajaxTarget, ajaxhref);
             }
             else {
                 this.getService<AjaxRedirect>(Services.AjaxRedirect).go(returnUrl, $(target), false, false, true);
