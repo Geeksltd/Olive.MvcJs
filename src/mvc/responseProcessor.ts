@@ -125,8 +125,8 @@ export default class ResponseProcessor implements IService {
         });
 
         oldMain.replaceWith(element);
-        this.onViewChanged(element, oldMain, true);
-        this.onProcessCompleted();
+        //this.onViewChanged(element, oldMain, true);
+        //this.onProcessCompleted();
     }
 
     private getNewCss(element: JQuery): string[] {

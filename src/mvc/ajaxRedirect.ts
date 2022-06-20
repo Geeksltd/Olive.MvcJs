@@ -57,7 +57,9 @@ export default class AjaxRedirect implements IService {
     ): boolean {
 
         if (!trigger) { trigger = $(window); }
-
+        if (ajaxTarget && trigger.prop("tagName") != "A" && trigger.prop("tagName") != "MAIN") {
+            return;
+        }
         url = this.url.effectiveUrlProvider(url, trigger);
 
         if (url.indexOf(this.url.baseContentUrl + "/##") === 0) {
@@ -86,7 +88,10 @@ export default class AjaxRedirect implements IService {
             type: "GET",
             xhrFields: { withCredentials: true },
             success: (response) => {
-                if (!isBack) {
+                if (ajaxTarget || document.URL.contains("?$")) {
+
+                }
+                else if (!isBack) {
                     this.ajaxChangedUrl++;
                     if (addToHistory && !window.isModal()) {
 
