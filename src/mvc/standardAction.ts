@@ -40,6 +40,14 @@ export default class StandardAction implements IService {
                     stringResult += itm + "},{";
                 });
                 stringResult = stringResult.trimEnd(",{") + "]";
+
+                var currentUrl = document.URL;
+                if (currentUrl != undefined && currentUrl != null && currentUrl.contains("/hub/project/")) {
+                    if (stringResult.contains("[{\"ServiceKey\":\"hub\",\"Function\":\"go\",\"Arguments\":[\"[dashboard]/")) {
+                        stringResult = stringResult.replace("true", "false");
+                    }
+                }
+
                 actions.push(stringResult);
             }
 

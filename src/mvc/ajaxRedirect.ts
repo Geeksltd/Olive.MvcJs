@@ -88,7 +88,7 @@ export default class AjaxRedirect implements IService {
             type: "GET",
             xhrFields: { withCredentials: true },
             success: (response) => {
-                if (ajaxTarget || document.URL.contains("?$")) {
+                if ((ajaxTarget || document.URL.contains("?$")) && (ajaxhref == undefined)) {
 
                 }
                 else if (!isBack) {
