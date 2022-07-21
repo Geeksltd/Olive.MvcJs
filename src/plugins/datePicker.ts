@@ -19,8 +19,6 @@ export default class DatePicker extends dateTimePickerBase {
     protected modifyOptions(options: any): void {
         $.extend(options, {
             viewMode: this.input.attr("data-view-mode") || 'days',
-            minDate: this.input.attr("min-date"),
-            maxDate: this.input.attr("max-date")
         });
     }
 }

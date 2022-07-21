@@ -20,8 +20,6 @@ export default class DateTimePicker extends dateTimePickerBase {
         $.extend(options, {
             sideBySide: true,
             showClear: true,
-            minDate: this.input.attr("min-date"),
-            maxDate: this.input.attr("max-date")
         });
     }
 }

@@ -37,7 +37,10 @@ export default abstract class dateTimePickerBase {
                 },
                 keepInvalid: this.input.closest("form").find("[data-change-action]").length == 0,
                 locale: Config.DATE_LOCALE,
-                stepping: stepping
+                stepping: stepping,
+                minDate: this.input.attr("min-date") || null,
+                maxDate: this.input.attr("max-date") || null,
+                
             };
 
             this.modifyOptions(options);

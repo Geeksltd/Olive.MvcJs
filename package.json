@@ -3,11 +3,11 @@
   "description": "Used js files in the Olive MVC projects.",
   "main": "./src/olivePage.ts",
   "types": "./typings/olivePage.d.ts",
-  "version": "2.1.42",
+  "version": "2.1.43",
   "authors": [
     "Geeks Ltd <https://www.geeks.ltd.uk/>"
-  ],  
-  
+  ],
+
   "repository": {
     "type": "git",
     "url": "git://github.com/Geeksltd/Olive.MvcJs.git"
@@ -18,4 +18,4 @@
   "license": "GPL",
   "private": false,
   "homepage": "https://github.com/Geeksltd/Olive.MvcJs"
-} 
+}
