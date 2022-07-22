@@ -2731,7 +2731,7 @@ define("olive/plugins/dateTimePickerBase", ["require", "exports", "olive/config"
                 minimumDate = "01/01/1900";
             }
             if (maximumDate == undefined || maximumDate == null || maximumDate == "null") {
-                minimumDate = "01/01/2080";
+                maximumDate = "01/01/2090";
             }
             if (control == this.controlType) {
                 var options = {

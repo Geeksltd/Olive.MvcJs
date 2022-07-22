@@ -27,7 +27,7 @@ export default abstract class dateTimePickerBase {
         }
 
         if (maximumDate == undefined || maximumDate == null || maximumDate == "null") {
-            minimumDate = "01/01/2080"
+            maximumDate = "01/01/2090"
         }
 
         if (control == this.controlType) {
