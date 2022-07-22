@@ -19,13 +19,16 @@ export default abstract class dateTimePickerBase {
         this.input.attr("data-autofocus", "disabled");
         const control = this.input.data("control");
         const stepping = Number(this.input.data("minute-steps") || "1");
-        const minimumDate = this.input.attr("min-date") || "null";
-        const maximumDate = this.input.attr("max-date") || "null";
+        var minimumDate = this.input.attr("min-date") || "null";
+        var maximumDate = this.input.attr("max-date") || "null";
 
-        console.log("minimum Date:");
-        console.log(minimumDate);
-        console.log("maximum Date:");
-        console.log(maximumDate);
+        if (minimumDate == undefined || minimumDate == null) {
+            minimumDate = "01/01/1900"
+        }
+
+        if (maximumDate == undefined || maximumDate == null) {
+            minimumDate = "01/01/2080"
+        }
 
         if (control == this.controlType) {
             const options = {
