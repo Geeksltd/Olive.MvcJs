@@ -66,6 +66,7 @@ export default class AutoComplete {
                 AutoComplete.customOptions,
                 this.getMandatoryOptions()),
             );
+        $("fa-chevron-down").on("click", () => this.input.trigger("focus.select"));
     }
 
     private getMandatoryOptions(): RunningCoder.Typeahead.Options {
@@ -139,6 +140,7 @@ export default class AutoComplete {
             correlativeTemplate: true,
             templateValue: "{{Text}}",
             emptyTemplate: "<div class='tt-suggestion'>Not found</div>",
+
         };
     }
 
