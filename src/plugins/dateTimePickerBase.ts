@@ -22,11 +22,11 @@ export default abstract class dateTimePickerBase {
         var minimumDate = this.input.attr("min-date") || "null";
         var maximumDate = this.input.attr("max-date") || "null";
 
-        if (minimumDate == undefined || minimumDate == null) {
+        if (minimumDate == undefined || minimumDate == null || minimumDate == "null") {
             minimumDate = "01/01/1900"
         }
 
-        if (maximumDate == undefined || maximumDate == null) {
+        if (maximumDate == undefined || maximumDate == null || maximumDate == "null") {
             minimumDate = "01/01/2080"
         }
 
