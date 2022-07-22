@@ -19,8 +19,8 @@ export default abstract class dateTimePickerBase {
         this.input.attr("data-autofocus", "disabled");
         const control = this.input.data("control");
         const stepping = Number(this.input.data("minute-steps") || "1");
-        const minimumDate = this.input.attr("min-date") || null;
-        const maximumDate = this.input.attr("max-date") || null;
+        const minimumDate = this.input.attr("min-date") || "null";
+        const maximumDate = this.input.attr("max-date") || "null";
 
         console.log("minimum Date:");
         console.log(minimumDate);
