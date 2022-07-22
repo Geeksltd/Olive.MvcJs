@@ -19,6 +19,13 @@ export default abstract class dateTimePickerBase {
         this.input.attr("data-autofocus", "disabled");
         const control = this.input.data("control");
         const stepping = Number(this.input.data("minute-steps") || "1");
+        const minimumDate = this.input.attr("min-date") || null;
+        const maximumDate = this.input.attr("max-date") || null;
+
+        console.log("minimum Date:");
+        console.log(minimumDate);
+        console.log("maximum Date:");
+        console.log(maximumDate);
 
         if (control == this.controlType) {
             const options = {
@@ -38,9 +45,8 @@ export default abstract class dateTimePickerBase {
                 keepInvalid: this.input.closest("form").find("[data-change-action]").length == 0,
                 locale: Config.DATE_LOCALE,
                 stepping: stepping,
-                minDate: this.input.attr("min-date") || null,
-                maxDate: this.input.attr("max-date") || null,
-                
+                minDate: minimumDate,
+                maxDate: maximumDate,
             };
 
             this.modifyOptions(options);
@@ -49,6 +55,8 @@ export default abstract class dateTimePickerBase {
 
             // Now make calendar icon clickable as well             
             this.input.parent().find(".fa-calendar").parent(".input-group-addon").click(() => this.input.focus());
+
+
         }
         else alert("Don't know how to handle date control of " + control);
     }
