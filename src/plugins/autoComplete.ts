@@ -66,7 +66,13 @@ export default class AutoComplete {
                 AutoComplete.customOptions,
                 this.getMandatoryOptions()),
             );
-        $("fa-chevron-down").on("click", () => this.input.trigger("focus.select"));
+        var chevorchild = this.input.parent().children().first();
+        chevorchild.on("click", () => this.input.trigger("focus.select"));
+        chevorchild.on("click", () => this.input.trigger("click"));
+
+        var chevr = $("fa-chevron-down");
+        chevr.on("click", () => this.input.trigger("focus.select"));
+        chevr.on("click", () => this.input.trigger("click"));
     }
 
     private getMandatoryOptions(): RunningCoder.Typeahead.Options {
