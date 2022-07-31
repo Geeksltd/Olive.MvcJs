@@ -1,8 +1,13 @@
 import 'bootstrap-select';
+import { ModalHelper } from "olive/components/modal";
+export declare class MultiSelectFactory implements IService {
+    private modalHelper;
+    constructor(modalHelper: ModalHelper);
+    enable(selector: JQuery): void;
+}
 export default class MultiSelect implements IService {
-    private defaultOptions;
-    private options;
-    enableEnhance(selector: JQuery): void;
-    setOptions(options: any): void;
-    protected enhance(selectControl: JQuery): void;
+    protected selectControl: JQuery;
+    private modalHelper;
+    constructor(selectControl: JQuery, modalHelper: ModalHelper);
+    show(): void;
 }

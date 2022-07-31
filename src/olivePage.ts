@@ -35,7 +35,7 @@ import SubMenu from "olive/plugins/subMenu";
 import InstantSearch from "olive/plugins/instantSearch";
 import DateDropdown from "olive/plugins/dateDropdown";
 import UserHelp from "olive/plugins/userHelp";
-import MultiSelect from "olive/plugins/multiSelect";
+import MultiSelect, { MultiSelectFactory } from "olive/plugins/multiSelect";
 import CustomCheckbox from "olive/plugins/customCheckbox";
 import CustomRadio from "olive/plugins/customRadio";
 import { CKEditorFileManagerFactory } from "olive/plugins/ckEditorFileManager";
@@ -106,7 +106,7 @@ export default class OlivePage implements IServiceLocator {
 
         services.tryAddSingleton(Services.Grid, () => new Grid(), out);
 
-        services.tryAddSingleton(Services.MultiSelect, () => new MultiSelect(), out);
+
 
         services.tryAddSingleton(Services.Select, () => new Select(), out);
 
@@ -183,6 +183,11 @@ export default class OlivePage implements IServiceLocator {
 
         if (services.tryAddSingleton(Services.DatePickerFactory,
             (modalHelper: ModalHelper) => new DatePickerFactory(modalHelper), out)) {
+            out.value.withDependencies(Services.ModalHelper);
+        }
+
+        if (services.tryAddSingleton(Services.MultiSelectFactory,
+            (modalHelper: ModalHelper) => new MultiSelectFactory(modalHelper), out)) {
             out.value.withDependencies(Services.ModalHelper);
         }
 
@@ -328,7 +333,7 @@ export default class OlivePage implements IServiceLocator {
         const form = this.getService<Form>(Services.Form);
         this.enablecleanUpNumberField(form);
         this.modal.enableEnsureHeight($("[data-toggle=tab]"));
-        this.getService<MultiSelect>(Services.MultiSelect).enableEnhance($("select[data-control='collapsible-checkboxes']"));
+        //this.getService<MultiSelect>(Services.MultiSelect).enableEnhance($("select[data-control='collapsible-checkboxes']"));
         this.getService<Select>(Services.Select)
             .enableEnhance($("select:not([data-control='collapsible-checkboxes'])"));
         form.enableDefaultButtonKeyPress($("form input, form select"));
@@ -347,6 +352,7 @@ export default class OlivePage implements IServiceLocator {
         this.getService<GlobalSearchFactory>(Services.GlobalSearchFactory).enable($("input[data-search-source]"));
         this.getService<DatePickerFactory>(Services.DatePickerFactory).enable($("[data-control=date-picker],[data-control=calendar]"));
         this.getService<DateTimePickerFactory>(Services.DateTimePickerFactory).enable($("[data-control='date-picker|time-picker']"));
+        this.getService<MultiSelectFactory>(Services.MultiSelectFactory).enable($("[data-control=collapsible-checkboxes]"));
         this.getService<TimeControlFactory>(Services.TimeControlFactory).enable($("[data-control=time-picker]"));
         DateDropdown.enable($("[data-control=date-drop-downs]"));
         this.getService<HtmlEditorFactory>(Services.HtmlEditorFactory).enable($("[data-control=html-editor]"));

@@ -53,5 +53,6 @@ declare const Services: {
     ServiceLocator: string;
     GlobalSearchFactory: string;
     TestingContext: string;
+    MultiSelectFactory: string;
 };
 export default Services;
