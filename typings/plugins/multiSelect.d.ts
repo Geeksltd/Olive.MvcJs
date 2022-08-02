@@ -10,4 +10,5 @@ export default class MultiSelect implements IService {
     private modalHelper;
     constructor(selectControl: JQuery, modalHelper: ModalHelper);
     show(): void;
+    private MoveActionButtons;
 }
