@@ -29,7 +29,7 @@ export default class MultiSelect implements IService {
         var header = this.selectControl.attr("header") || false;
         var hideDisabled = this.selectControl.attr("hideDisabled") || false;
         var iconBase = this.selectControl.attr("iconBase") || "glyphicon";
-        var liveSearch = this.selectControl.attr("liveSearch") || false;
+        var liveSearch = this.selectControl.attr("liveSearch") || true;
         var liveSearchNormalize = this.selectControl.attr("liveSearchNormalize") || false;
         var liveSearchPlaceholder = this.selectControl.attr("liveSearchPlaceholder") || null;
         var liveSearchStyle = this.selectControl.attr("liveSearchStyle") || "contains";
@@ -44,7 +44,7 @@ export default class MultiSelect implements IService {
         var showContent = this.selectControl.attr("showContent") || true;
         var showIcon = this.selectControl.attr("showIcon") || true;
         var showSubtext = this.selectControl.attr("showSubtext") || false;
-        var showTick = this.selectControl.attr("showTick") || false;
+        var showTick = this.selectControl.attr("showTick") || true;
         var size = this.selectControl.attr("size") || "auto";
         var styleBase = this.selectControl.attr("styleBase") || "btn";
         var tickIcon = this.selectControl.attr("tickIcon") || "glyphicon-ok";
