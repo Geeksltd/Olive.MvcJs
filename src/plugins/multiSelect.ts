@@ -39,7 +39,7 @@ export default class MultiSelect implements IService {
         var noneSelectedText = this.selectControl.attr("noneSelectedText") || "Nothing selected";
         var noneResultsText = this.selectControl.attr("noneResultsText") || "No results matched";
         var selectAllText = this.selectControl.attr("selectAllText") || "Select All";
-        var selectedTextFormat = this.selectControl.attr("selectedTextFormat") || "values";
+        var selectedTextFormat = this.selectControl.attr("selectedTextFormat") || "count > 1";
         var selectOnTab = this.selectControl.attr("selectOnTab") || false;
         var showContent = this.selectControl.attr("showContent") || true;
         var showIcon = this.selectControl.attr("showIcon") || true;
@@ -96,8 +96,10 @@ export default class MultiSelect implements IService {
     }
 
     private MoveActionButtons() {
-        var actionbuttons = $(".bs-actionsbox");
-        if (actionbuttons != undefined && actionbuttons != null)
-            actionbuttons.parent().prepend($(".bs-actionsbox"));
+        //var actionbuttons = $(".bs-actionsbox");
+        //if (actionbuttons != undefined && actionbuttons != null)
+        //    actionbuttons.parent().prepend($(".bs-actionsbox"));
     }
+
+
 }
