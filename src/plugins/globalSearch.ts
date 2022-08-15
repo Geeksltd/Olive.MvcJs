@@ -251,7 +251,9 @@ export default class GlobalSearch implements IService {
 
         const childrenItems = $("<ul>");
 
-        for (let i = 0; i < items.length && i < 10; i++) {
+        const resultItemsCount = 100;
+
+        for (let i = 0; i < items.length && i < resultItemsCount; i++) {
             context.resultCount++;
             childrenItems.append(this.createItem(items[i], context));
         }
