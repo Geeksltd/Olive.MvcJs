@@ -1,6 +1,7 @@
 ﻿export default class Url implements IService {
 
     public effectiveUrlProvider: ((url: string, trigger: JQuery) => string) = (u, t) => u;
+
     public onAuthenticationFailed: (() => void) = this.goToLoginPage;
 
     public makeAbsolute(baseUrl: string, relativeUrl: string): string {
@@ -73,9 +74,17 @@
         if (url) url = this.fullQueryString(url); else url = location.search;
 
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-        let regex = new RegExp("[\\?&]" + name + "=([^&#]*)", "i"),
-            results = regex.exec(url);
-        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        if (name.toLowerCase() == "returnurl") {
+            let regex = new RegExp("[\\?&]" + name + "=([^#]*)", "i"),
+                results = regex.exec(url);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+        else {
+            let regex = new RegExp("[\\?&]" + name + "=([^&#]*)", "i"),
+                results = regex.exec(url);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+
     }
 
     public getModalQuery(name: string): string {
@@ -124,6 +133,7 @@
     }
 
     public baseContentUrl = window["BaseThemeUrl"] || '/';
+
     public ofContent(relativeUrl: string) {
         let base = this.baseContentUrl;
         while (base.length > 0 && base[base.length - 1] === '/')
