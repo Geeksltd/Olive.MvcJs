@@ -193,12 +193,12 @@ export default class GlobalSearch implements IService {
             if (result !== null && result !== undefined && typeof (result) === typeof ([])) {
                 sender.state = AjaxState.success;
 
-                const resultfiltered = result.filter((p) => this.isValidResult(p, context));
+                //const resultfiltered = result.filter((p) => this.isValidResult(p, context));
 
-                const searchItem = this.createSearchItems(sender, context, resultfiltered);
+                const searchItem = this.createSearchItems(sender, context, result);
                 context.searchHolder.append(searchItem);
 
-                if (context.beginSearchStarted && resultfiltered.length > 0) {
+                if (context.beginSearchStarted && result.length > 0) {
                     context.beginSearchStarted = false;
                     context.resultPanel.append(context.searchHolder);
                 }
@@ -251,7 +251,9 @@ export default class GlobalSearch implements IService {
 
         const childrenItems = $("<ul>");
 
-        for (let i = 0; i < items.length && i < 10; i++) {
+        const resultItemsCount = 100;
+
+        for (let i = 0; i < items.length && i < resultItemsCount; i++) {
             context.resultCount++;
             childrenItems.append(this.createItem(items[i], context));
         }
