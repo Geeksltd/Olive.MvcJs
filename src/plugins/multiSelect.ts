@@ -20,16 +20,32 @@ export default class MultiSelect implements IService {
     public show() {
 
         var maxOptions = this.selectControl.attr("maxOptions") || false;
-        var actionsBox = this.selectControl.attr("actionsBox") || true;
+        var actionsBox = true;
+        var attrib = this.selectControl.attr("actionsBox");
+        if (attrib != undefined && attrib != null && attrib == "false") {
+            actionsBox = false;
+        }
         var container = this.selectControl.attr("container") || false;
         var countSelectedText = this.selectControl.attr("countSelectedText") || "count"
         var deselectAllText = this.selectControl.attr("deselectAllText") || "Deselect All";
         var dropdownAlignRight = this.selectControl.attr("dropdownAlignRight") || false;
-        var dropupAuto = this.selectControl.attr("dropupAuto") || true;
+        var dropupAuto = true;
+        var attrib = this.selectControl.attr("dropupAuto");
+        if (attrib != undefined && attrib != null && attrib == "false") {
+            dropupAuto = false;
+        }
         var header = this.selectControl.attr("header") || false;
         var hideDisabled = this.selectControl.attr("hideDisabled") || false;
-        var iconBase = this.selectControl.attr("iconBase") || "glyphicon";
-        var liveSearch = this.selectControl.attr("liveSearch") || true;
+        var iconBase = "glyphicon";
+        var attrib = this.selectControl.attr("iconBase");
+        if (attrib != undefined && attrib != null) {
+            iconBase = attrib;
+        }
+        var liveSearch = true;
+        var attrib = this.selectControl.attr("liveSearch");
+        if (attrib != undefined && attrib != null && attrib == "false") {
+            liveSearch = false;
+        }
         var liveSearchNormalize = this.selectControl.attr("liveSearchNormalize") || false;
         var liveSearchPlaceholder = this.selectControl.attr("liveSearchPlaceholder") || null;
         var liveSearchStyle = this.selectControl.attr("liveSearchStyle") || "contains";
@@ -41,10 +57,22 @@ export default class MultiSelect implements IService {
         var selectAllText = this.selectControl.attr("selectAllText") || "Select All";
         var selectedTextFormat = this.selectControl.attr("selectedTextFormat") || "count > 1";
         var selectOnTab = this.selectControl.attr("selectOnTab") || false;
-        var showContent = this.selectControl.attr("showContent") || true;
-        var showIcon = this.selectControl.attr("showIcon") || true;
+        var showContent = true;
+        var attrib = this.selectControl.attr("showContent");
+        if (attrib != undefined && attrib != null && attrib == "false") {
+            showContent = false;
+        }
+        var showIcon = true;
+        var attrib = this.selectControl.attr("showIcon");
+        if (attrib != undefined && attrib != null && attrib == "false") {
+            showIcon = false;
+        }
         var showSubtext = this.selectControl.attr("showSubtext") || false;
-        var showTick = this.selectControl.attr("showTick") || true;
+        var showTick = true;
+        var attrib = this.selectControl.attr("showTick");
+        if (attrib != undefined && attrib != null && attrib == "false") {
+            showTick = false;
+        }
         var size = this.selectControl.attr("size") || "auto";
         var styleBase = this.selectControl.attr("styleBase") || "btn";
         var tickIcon = this.selectControl.attr("tickIcon") || "glyphicon-ok";
@@ -52,7 +80,11 @@ export default class MultiSelect implements IService {
         var virtualScroll = this.selectControl.attr("virtualScroll") || false;
         var width = this.selectControl.attr("width") || false;
         var windowPadding = this.selectControl.attr("windowPadding") || 0;
-        var sanitize = this.selectControl.attr("sanitize") || true;
+        var sanitize = true;
+        var attrib = this.selectControl.attr("sanitize");
+        if (attrib != undefined && attrib != null && attrib == "false") {
+            sanitize = false;
+        }
 
         const options = {
             maxOptions: maxOptions,
