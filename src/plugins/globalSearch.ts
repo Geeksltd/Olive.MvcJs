@@ -242,7 +242,7 @@ export default class GlobalSearch implements IService {
 
         if (items?.length > 0 && items[0].Colour) {
             searchItem.css("color", items[0].Colour);
-            searchTitleHolder.css("color", items[0].Colour);
+            //searchTitleHolder.css("color", items[0].Colour);
         }
 
         const searhTitle = searchTitleHolder.append($("<i>").attr("class", sender.icon)).append(groupTitle);
@@ -278,12 +278,31 @@ export default class GlobalSearch implements IService {
         else if (item.Action == ActionEnum.NewWindow)
             attr = "target=\"_blank\"";
 
-        return $("<li>")
-            .append((item.IconUrl === null || item.IconUrl === undefined) ?
-                $("<div class='icon'>") : this.showIcon(item))
-            .append($("<a href='" + item.Url + "' " + attr + ">")
-                .html(this.boldSearchAll(item.Title, context.searchedText)))
-            .append($(" <div class='desc'>").html(item.Description));
+            const descArray = item.Description.split("|");
+            const type = descArray.shift();
+            const body = descArray.join(" | ");
+
+            return $("<li>")
+                .append($("<div class='result-item'>")
+                    .append($("<p class='icon'>")
+                        .append($(`<a name = 'Photo' class='profile-photo' href='${item.Url}'>`)
+                            .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<div class='icon'>") : this.showIcon(item)) // it should be modified
+                        ))
+                    .append($("<div class='result-item-content'>")
+                        .append($("<p class='type'>")
+                            .append($(`<a href='${item.Url}' ${attr}>`).html(this.boldSearchAll(type, context.searchedText))))  //.html(item.Type))) // it should be added
+                        .append($("<p class='title'>")
+                            .append($(`<a href='${item.Url}' ${attr}>`).html(this.boldSearchAll(item.Title, context.searchedText))))
+                        .append($("<p class='body'>")
+                            .append($(`<a href='${item.Url}' ${attr}>`).html(this.boldSearchAll(body, context.searchedText)))))
+                );
+
+        // return $("<li>")
+        //     .append((item.IconUrl === null || item.IconUrl === undefined) ?
+        //         $("<div class='icon'>") : this.showIcon(item))
+        //     .append($("<a href='" + item.Url + "' " + attr + ">")
+        //         .html(this.boldSearchAll(item.Title, context.searchedText)))
+        //     .append($(" <div class='desc'>").html(item.Description));
     }
 
     protected onComplete(context: ISearchContext, jqXHR: JQueryXHR) {
@@ -309,9 +328,11 @@ export default class GlobalSearch implements IService {
 
     protected showIcon(item: any): JQuery {
         if (item.IconUrl.indexOf("fa-") > 0) {
-            return $("<div class='icon'>").append($("<i class='" + item.IconUrl + "'></i>"));
-        } else {
-            return $("<div class='icon'>").append($("<img src='" + item.IconUrl + "'>"));
+            return $(`<span class='icon-background' style = 'background-color: ${item.Colour}'>`)
+                .append($(`<span class='${item.IconUrl}' >`));
+        }
+        else {
+            return $(`<img src='${item.IconUrl}' />`);
         }
     }
 }
