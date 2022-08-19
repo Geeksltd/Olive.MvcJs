@@ -72,19 +72,10 @@
 
     public getQuery(name: string, url: string = null): string {
         if (url) url = this.fullQueryString(url); else url = location.search;
-
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-        if (name.toLowerCase() == "returnurl") {
-            let regex = new RegExp("[\\?&]" + name + "=([^#]*)", "i"),
-                results = regex.exec(url);
-            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-        }
-        else {
-            let regex = new RegExp("[\\?&]" + name + "=([^&#]*)", "i"),
-                results = regex.exec(url);
-            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
-        }
-
+        let regex = new RegExp("[\\?&]" + name + "=([^&#]*)", "i"),
+            results = regex.exec(url);
+        return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
     public getModalQuery(name: string): string {
