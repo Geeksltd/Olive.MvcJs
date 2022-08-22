@@ -92,8 +92,8 @@ export default class Url implements IService {
     }
 
     public getQuery(name: string, url: string = null): string {
-        url = this.decodeGzipUrl(url);
         if (url) url = this.fullQueryString(url); else url = location.search;
+        url = this.decodeGzipUrl(url);
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
         let regex = new RegExp("[\\?&]" + name + "=([^&#]*)", "i"),
             results = regex.exec(url);
@@ -116,10 +116,9 @@ export default class Url implements IService {
     }
 
     private fullQueryString(url: string): string {
-        url = this.decodeGzipUrl(url);
         if (url == undefined || url == null)
             url = this.current();
-
+        url = this.decodeGzipUrl(url);
         if (url.indexOf("?") == -1) return '';
 
         return url.substring(url.indexOf("?"));
