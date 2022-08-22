@@ -15,7 +15,12 @@ export default class Url implements IService {
         var binaryArray = Uint8Array.from(atob(encodedUrl), c => c.charCodeAt(0));
         var unzippedBinaryArray = pako.ungzip(binaryArray);
         var decodedString = String.fromCharCode.apply(null, unzippedBinaryArray);
-        return decodedString;
+        if (inputUrl.startsWith("...")) {
+            return decodedString;
+        }
+        else {
+            return inputUrl.substring(0, inputUrl.toLowerCase().indexOf("returnurl=") + 9) + decodedString;
+        }
     }
 
     public effectiveUrlProvider: ((url: string, trigger: JQuery) => string) = (u, t) => this.decodeGzipUrl(u);
