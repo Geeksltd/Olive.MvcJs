@@ -1,9 +1,12 @@
 {
     "compilerOptions": {
         "baseUrl": ".",
-        "paths": {
-            "olive/*": [ "src/*" ]
-        },
+      "paths": {
+        "olive/*": [ "src/*" ],
+        "pako": [
+          "node_modules/pako/dist/pako"
+        ]
+      },
         "module": "amd",
         "target": "es5",  
         "outDir": "dist",

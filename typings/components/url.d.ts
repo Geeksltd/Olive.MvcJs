@@ -1,4 +1,5 @@
 export default class Url implements IService {
+    decodeGzipUrl(inputUrl: string): string;
     effectiveUrlProvider: ((url: string, trigger: JQuery) => string);
     onAuthenticationFailed: (() => void);
     makeAbsolute(baseUrl: string, relativeUrl: string): string;
@@ -15,6 +16,6 @@ export default class Url implements IService {
     private fullQueryString;
     addQuery(url: string, key: string, value: any): string;
     removeEmptyQueries(url: string): string;
-    baseContentUrl: any;
+    baseContentUrl: string;
     ofContent(relativeUrl: string): string;
 }
