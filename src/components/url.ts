@@ -3,11 +3,13 @@
 export default class Url implements IService {
 
     public decodeGzipUrl(inputUrl: string): string {
-        if (inputUrl === undefined || inputUrl === null || inputUrl.startsWith("...") == false) return inputUrl;
+        if (inputUrl === undefined || inputUrl === null) return inputUrl;
         var tempUrl = inputUrl;
         if (tempUrl.toLowerCase().contains("returnurl=")) {
             tempUrl = tempUrl.substring(tempUrl.indexOf("returnurl=") + 10);
         }
+        if (tempUrl.startsWith("...") == false) return inputUrl
+
         var encodedUrl = tempUrl.substring(3).replace(new RegExp("%7E", 'g'), "~").replace(new RegExp("~", 'g'), "+").replace(new RegExp("_", 'g'), "/").replace(new RegExp("-", 'g'), "=");
         if (encodedUrl === null || encodedUrl.length <= 0) return;
         var binaryArray = Uint8Array.from(atob(encodedUrl), c => c.charCodeAt(0));
