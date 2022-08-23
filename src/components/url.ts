@@ -2,34 +2,11 @@
 
 export default class Url implements IService {
 
-    public decodeGzipUrl(inputUrl: string): string {
-        if (inputUrl === undefined || inputUrl === null) return inputUrl;
-        var tempUrl = inputUrl;
-        if (tempUrl.toLowerCase().contains("returnurl=")) {
-            tempUrl = tempUrl.substring(tempUrl.toLowerCase().indexOf("returnurl=") + 10);
-        }
-        if (tempUrl.startsWith("...") == false) return inputUrl
-
-        var encodedUrl = tempUrl.substring(3).replace(new RegExp("%7E", 'g'), "~").replace(new RegExp("~", 'g'), "+").replace(new RegExp("_", 'g'), "/").replace(new RegExp("-", 'g'), "=");
-        if (encodedUrl === null || encodedUrl.length <= 0) return;
-        var binaryArray = Uint8Array.from(atob(encodedUrl), c => c.charCodeAt(0));
-        var unzippedBinaryArray = pako.ungzip(binaryArray);
-        var decodedString = String.fromCharCode.apply(null, unzippedBinaryArray);
-        if (inputUrl.startsWith("...")) {
-            return decodedString;
-        }
-        else {
-            return inputUrl.substring(0, inputUrl.toLowerCase().indexOf("returnurl=") + 10) + decodedString;
-        }
-    }
-
-    public effectiveUrlProvider: ((url: string, trigger: JQuery) => string) = (u, t) => this.decodeGzipUrl(u);
+    public effectiveUrlProvider: ((url: string, trigger: JQuery) => string) = (u, t) => u;
 
     public onAuthenticationFailed: (() => void) = this.goToLoginPage;
 
     public makeAbsolute(baseUrl: string, relativeUrl: string): string {
-        baseUrl = this.decodeGzipUrl(baseUrl);
-        relativeUrl = this.decodeGzipUrl(relativeUrl);
         baseUrl = baseUrl || window.location.origin;
         relativeUrl = relativeUrl || '';
 
@@ -38,11 +15,10 @@ export default class Url implements IService {
         if (baseUrl.charAt(baseUrl.length - 1) == '/')
             baseUrl = baseUrl.substring(0, baseUrl.length - 1);
 
-        return this.decodeGzipUrl(baseUrl + relativeUrl);
+        return baseUrl + relativeUrl;
     }
 
     public makeRelative(url: string): string {
-        url = this.decodeGzipUrl(url)
         if (this.isAbsolute(url))
             return url.split("/").splice(3).join("/");
         else return url;
@@ -54,7 +30,7 @@ export default class Url implements IService {
         return url.indexOf("http://") === 0 || url.indexOf("https://") === 0;
     }
 
-    public current(): string { return this.decodeGzipUrl(window.location.href); }
+    public current(): string { return window.location.href; }
 
     public goBack(): void {
         if (this.current().indexOf(this.baseContentUrl + "/##") === 0) history.back();
@@ -68,17 +44,15 @@ export default class Url implements IService {
 
     public updateQuery(uri, key, value) {
         if (uri == null) uri = window.location.href;
-        uri = this.decodeGzipUrl(uri);
+
         let re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
         let separator = uri.indexOf('?') !== -1 ? "&" : "?";
         if (uri.match(re)) return uri.replace(re, '$1' + key + "=" + value + '$2');
         else return uri + separator + key + "=" + value;
-
     }
 
     public removeQuery(url: string, parameter: string) {
         //prefer to use l.search if you have a location/link object
-        url = this.decodeGzipUrl(url);
         let urlParts = url.split('?');
         if (urlParts.length >= 2) {
             let prefix = encodeURIComponent(parameter).toLowerCase() + '=';
@@ -115,28 +89,27 @@ export default class Url implements IService {
     }
 
     public goToUrlAfterLogin(url: string) {
-        url = this.decodeGzipUrl(url);
         window.location.href = "/login?returnUrl=/" + encodeURIComponent(this.makeRelative(url).trimStart("/"));
     }
 
     private goToLoginPage() {
-        let query: string = this.decodeGzipUrl(this.current()).split("/").splice(3).join("/");
+        let query: string = this.current().split("/").splice(3).join("/");
         window.location.href = "/login?returnUrl=/" + query.trimStart("/");
     }
 
     private fullQueryString(url: string): string {
         if (url == undefined || url == null)
             url = this.current();
-        url = this.decodeGzipUrl(url);
+
         if (url.indexOf("?") == -1) return '';
 
         return url.substring(url.indexOf("?"));
     }
 
-    public addQuery(url: string, key: string, value) { return this.decodeGzipUrl(url) + (this.decodeGzipUrl(url).indexOf("?") == -1 ? "?" : "&") + key + "=" + value; }
+    public addQuery(url: string, key: string, value) { return url + (url.indexOf("?") == -1 ? "?" : "&") + key + "=" + value; }
 
     public removeEmptyQueries(url: string): string {
-        url = this.decodeGzipUrl(url);
+
         let items = this.fullQueryString(url).trimStart('?').split('&');
         let result = '';
 
@@ -156,12 +129,10 @@ export default class Url implements IService {
         return result;
     }
 
-    public baseContentUrl = this.decodeGzipUrl(window["BaseThemeUrl"]) || '/';
+    public baseContentUrl = window["BaseThemeUrl"] || '/';
 
     public ofContent(relativeUrl: string) {
-        relativeUrl = this.decodeGzipUrl(relativeUrl);
         let base = this.baseContentUrl;
-        base = this.decodeGzipUrl(base);
         while (base.length > 0 && base[base.length - 1] === '/')
             base = base.substring(0, base.length - 1);
 
@@ -169,5 +140,26 @@ export default class Url implements IService {
             relativeUrl = relativeUrl.substring(1);
 
         return base + '/' + relativeUrl;
+    }
+
+    private decodeGzipUrl(inputUrl: string): string {
+        if (inputUrl === undefined || inputUrl === null) return inputUrl;
+        var tempUrl = inputUrl;
+        if (tempUrl.toLowerCase().contains("returnurl=")) {
+            tempUrl = tempUrl.substring(tempUrl.toLowerCase().indexOf("returnurl=") + 10);
+        }
+        if (tempUrl.startsWith("...") == false) return inputUrl
+
+        var encodedUrl = tempUrl.substring(3).replace(new RegExp("%7E", 'g'), "~").replace(new RegExp("~", 'g'), "+").replace(new RegExp("_", 'g'), "/").replace(new RegExp("-", 'g'), "=");
+        if (encodedUrl === null || encodedUrl.length <= 0) return;
+        var binaryArray = Uint8Array.from(atob(encodedUrl), c => c.charCodeAt(0));
+        var unzippedBinaryArray = pako.ungzip(binaryArray);
+        var decodedString = String.fromCharCode.apply(null, unzippedBinaryArray);
+        if (inputUrl.startsWith("...")) {
+            return decodedString;
+        }
+        else {
+            return inputUrl.substring(0, inputUrl.toLowerCase().indexOf("returnurl=") + 10) + decodedString;
+        }
     }
 }
