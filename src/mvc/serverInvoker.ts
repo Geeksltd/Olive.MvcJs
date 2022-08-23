@@ -71,6 +71,14 @@ export default class ServerInvoker implements IService {
 
         this.onInvocation(event, context);
 
+        if (actionUrl != undefined && actionUrl != null && actionUrl.toLowerCase().contains("returnurl=")) {
+            var baseurl = actionUrl.substring(0, actionUrl.toLowerCase().indexOf("returnurl="));
+            var returnurl = actionUrl.substring(actionUrl.toLowerCase().indexOf("returnurl="));
+            returnurl = returnurl.replace(new RegExp("&", 'g'), "%26");
+            actionUrl = baseurl + returnurl;
+        }
+
+
         $.ajax({
             url: actionUrl,
             type: trigger.attr("data-ajax-method") || 'POST',

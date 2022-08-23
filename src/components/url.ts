@@ -73,6 +73,7 @@ export default class Url implements IService {
         let separator = uri.indexOf('?') !== -1 ? "&" : "?";
         if (uri.match(re)) return uri.replace(re, '$1' + key + "=" + value + '$2');
         else return uri + separator + key + "=" + value;
+
     }
 
     public removeQuery(url: string, parameter: string) {
@@ -102,8 +103,10 @@ export default class Url implements IService {
         if (url) url = this.fullQueryString(url); else url = location.search;
         url = this.decodeGzipUrl(url);
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
-        let regex = new RegExp("[\\?&]" + name + "=([^&#]*)", "i"),
-            results = regex.exec(url);
+        let regex = new RegExp("[\\?&]" + name + "=([^&#]*)", "i");
+        if (name.toLowerCase() == "returnurl")
+            regex = new RegExp("[\\?&]" + name + "=([^#]*)", "i");
+        var results = regex.exec(url);
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
 
