@@ -6,7 +6,7 @@ export default class Url implements IService {
         if (inputUrl === undefined || inputUrl === null) return inputUrl;
         var tempUrl = inputUrl;
         if (tempUrl.toLowerCase().contains("returnurl=")) {
-            tempUrl = tempUrl.substring(tempUrl.indexOf("returnurl=") + 10);
+            tempUrl = tempUrl.substring(tempUrl.toLowerCase().indexOf("returnurl=") + 10);
         }
         if (tempUrl.startsWith("...") == false) return inputUrl
 
@@ -19,7 +19,7 @@ export default class Url implements IService {
             return decodedString;
         }
         else {
-            return inputUrl.substring(0, inputUrl.toLowerCase().indexOf("returnurl=") + 9) + decodedString;
+            return inputUrl.substring(0, inputUrl.toLowerCase().indexOf("returnurl=") + 10) + decodedString;
         }
     }
 
@@ -117,8 +117,7 @@ export default class Url implements IService {
     }
 
     private goToLoginPage() {
-        let query: string = this.current().split("/").splice(3).join("/");
-        query = this.decodeGzipUrl(query);
+        let query: string = this.decodeGzipUrl(this.current()).split("/").splice(3).join("/");
         window.location.href = "/login?returnUrl=/" + query.trimStart("/");
     }
 
