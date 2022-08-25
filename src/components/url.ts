@@ -2,9 +2,30 @@
 
 export default class Url implements IService {
 
-    public effectiveUrlProvider: ((url: string, trigger: JQuery) => string) = (u, t) => u;
+    public effectiveUrlProvider: ((url: string, trigger: JQuery) => string) = (u, t) => this.decodeGzipUrl(u);
 
     public onAuthenticationFailed: (() => void) = this.goToLoginPage;
+
+    public decodeGzipUrl(inputUrl: string): string {
+        if (inputUrl === undefined || inputUrl === null) return inputUrl;
+        var tempUrl = inputUrl;
+        if (tempUrl.toLowerCase().contains("returnurl=")) {
+            tempUrl = tempUrl.substring(tempUrl.toLowerCase().indexOf("returnurl=") + 10);
+        }
+        if (tempUrl.startsWith("...") == false) return inputUrl
+
+        var encodedUrl = tempUrl.substring(3).replace(new RegExp("%7E", 'g'), "~").replace(new RegExp("~", 'g'), "+").replace(new RegExp("_", 'g'), "/").replace(new RegExp("-", 'g'), "=");
+        if (encodedUrl === null || encodedUrl.length <= 0) return;
+        var binaryArray = Uint8Array.from(atob(encodedUrl), c => c.charCodeAt(0));
+        var unzippedBinaryArray = pako.ungzip(binaryArray);
+        var decodedString = String.fromCharCode.apply(null, unzippedBinaryArray);
+        if (inputUrl.startsWith("...")) {
+            return decodedString;
+        }
+        else {
+            return inputUrl.substring(0, inputUrl.toLowerCase().indexOf("returnurl=") + 10) + decodedString;
+        }
+    }
 
     public makeAbsolute(baseUrl: string, relativeUrl: string): string {
         baseUrl = baseUrl || window.location.origin;
@@ -142,24 +163,5 @@ export default class Url implements IService {
         return base + '/' + relativeUrl;
     }
 
-    private decodeGzipUrl(inputUrl: string): string {
-        if (inputUrl === undefined || inputUrl === null) return inputUrl;
-        var tempUrl = inputUrl;
-        if (tempUrl.toLowerCase().contains("returnurl=")) {
-            tempUrl = tempUrl.substring(tempUrl.toLowerCase().indexOf("returnurl=") + 10);
-        }
-        if (tempUrl.startsWith("...") == false) return inputUrl
 
-        var encodedUrl = tempUrl.substring(3).replace(new RegExp("%7E", 'g'), "~").replace(new RegExp("~", 'g'), "+").replace(new RegExp("_", 'g'), "/").replace(new RegExp("-", 'g'), "=");
-        if (encodedUrl === null || encodedUrl.length <= 0) return;
-        var binaryArray = Uint8Array.from(atob(encodedUrl), c => c.charCodeAt(0));
-        var unzippedBinaryArray = pako.ungzip(binaryArray);
-        var decodedString = String.fromCharCode.apply(null, unzippedBinaryArray);
-        if (inputUrl.startsWith("...")) {
-            return decodedString;
-        }
-        else {
-            return inputUrl.substring(0, inputUrl.toLowerCase().indexOf("returnurl=") + 10) + decodedString;
-        }
-    }
 }
