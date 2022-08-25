@@ -154,7 +154,15 @@ export default class ResponseProcessor implements IService {
         }
         else targetMainName = oldMain.attr("name");
 
-        if (oldMain.length === 0) oldMain = $("main");
+        if (oldMain != undefined && oldMain != null && oldMain.length > 0) {
+            var mainName = oldMain[0].className;
+            if (mainName != undefined && mainName != null && mainName.length > 0) {
+                var validNode = $("main[name='" + mainName + "']");
+                if (validNode == undefined || validNode == null || validNode.length == 0) oldMain = null;
+            }
+        }
+
+        if (oldMain == undefined || oldMain == null || oldMain.length === 0) oldMain = $("main");
 
         if (targetMainName) newMain.attr("name", targetMainName);
 
