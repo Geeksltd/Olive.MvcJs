@@ -2,7 +2,7 @@
 
 export default class Url implements IService {
 
-    public effectiveUrlProvider: ((url: string, trigger: JQuery) => string) = (u, t) => this.decodeGzipUrl(u);
+    public effectiveUrlProvider: ((url: string, trigger: JQuery) => string) = (u, t) => u;
 
     public onAuthenticationFailed: (() => void) = this.goToLoginPage;
 
