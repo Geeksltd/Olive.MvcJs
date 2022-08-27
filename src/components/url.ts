@@ -23,7 +23,8 @@ export default class Url implements IService {
             return decodedString;
         }
         else {
-            return inputUrl.substring(0, inputUrl.toLowerCase().indexOf("returnurl=") + 10) + decodedString;
+            var result = inputUrl.substring(0, inputUrl.toLowerCase().indexOf("returnurl=") + 10) + decodedString;
+            return result;
         }
     }
 
