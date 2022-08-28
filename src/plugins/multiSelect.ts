@@ -36,11 +36,7 @@ export default class MultiSelect implements IService {
         }
         var header = this.selectControl.attr("header") || false;
         var hideDisabled = this.selectControl.attr("hideDisabled") || false;
-        var iconBase = "glyphicon";
-        var attrib = this.selectControl.attr("iconBase");
-        if (attrib != undefined && attrib != null) {
-            iconBase = attrib;
-        }
+
         var liveSearch = true;
         var attrib = this.selectControl.attr("liveSearch");
         if (attrib != undefined && attrib != null && attrib == "false") {
@@ -68,14 +64,8 @@ export default class MultiSelect implements IService {
             showIcon = false;
         }
         var showSubtext = this.selectControl.attr("showSubtext") || false;
-        var showTick = true;
-        var attrib = this.selectControl.attr("showTick");
-        if (attrib != undefined && attrib != null && attrib == "false") {
-            showTick = false;
-        }
         var size = this.selectControl.attr("size") || "auto";
         var styleBase = this.selectControl.attr("styleBase") || "btn";
-        var tickIcon = this.selectControl.attr("tickIcon") || "glyphicon-ok";
         var title = this.selectControl.attr("title") || null;
         var virtualScroll = this.selectControl.attr("virtualScroll") || false;
         var width = this.selectControl.attr("width") || false;
@@ -96,7 +86,6 @@ export default class MultiSelect implements IService {
             dropupAuto: dropupAuto,
             header: header,
             hideDisabled: hideDisabled,
-            iconBase: iconBase,
             liveSearch: liveSearch,
             liveSearchNormalize: liveSearchNormalize,
             liveSearchPlaceholder: liveSearchPlaceholder,
@@ -112,10 +101,8 @@ export default class MultiSelect implements IService {
             showContent: showContent,
             showIcon: showIcon,
             showSubtext: showSubtext,
-            showTick: showTick,
             size: size,
             styleBase: styleBase,
-            tickIcon: tickIcon,
             title: title,
             virtualScroll: virtualScroll,
             width: width,

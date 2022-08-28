@@ -157,8 +157,16 @@ export default class ResponseProcessor implements IService {
         if (oldMain != undefined && oldMain != null && oldMain.length > 0) {
             var mainName = oldMain[0].className;
             if (mainName != undefined && mainName != null && mainName.length > 0) {
-                var validNode = $("main[name='" + mainName + "']");
-                if (validNode == undefined || validNode == null || validNode.length == 0) oldMain = null;
+                var validNode = false;
+                var SimilarNodes = document.getElementsByTagName("MAIN");
+                for (var i = 0; i < SimilarNodes.length; ++i) {
+                    var SimilarNode = SimilarNodes[i];
+                    if (SimilarNode.className == mainName) {
+                        validNode = true;
+                        break;
+                    }
+                }
+                if (validNode == false) oldMain = null;
             }
         }
 
