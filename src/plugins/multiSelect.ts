@@ -26,7 +26,6 @@ export default class MultiSelect implements IService {
             actionsBox = false;
         }
         var container = this.selectControl.attr("container") || false;
-        var countSelectedText = this.selectControl.attr("countSelectedText") || "count"
         var deselectAllText = this.selectControl.attr("deselectAllText") || "Deselect All";
         var dropdownAlignRight = this.selectControl.attr("dropdownAlignRight") || false;
         var dropupAuto = true;
@@ -51,7 +50,13 @@ export default class MultiSelect implements IService {
         var noneSelectedText = this.selectControl.attr("noneSelectedText") || "Nothing selected";
         var noneResultsText = this.selectControl.attr("noneResultsText") || "No results matched";
         var selectAllText = this.selectControl.attr("selectAllText") || "Select All";
-        var selectedTextFormat = this.selectControl.attr("selectedTextFormat") || "count > 1";
+
+        var selectedTextFormat = "count > 1";
+        var attrib = this.selectControl.attr("selectedTextFormat");
+        if (attrib != undefined && attrib != null) {
+            selectedTextFormat = attrib;
+        }
+
         var selectOnTab = this.selectControl.attr("selectOnTab") || false;
         var showContent = true;
         var attrib = this.selectControl.attr("showContent");
@@ -80,7 +85,6 @@ export default class MultiSelect implements IService {
             maxOptions: maxOptions,
             actionsBox: actionsBox,
             container: container,
-            countSelectedText: countSelectedText,
             deselectAllText: deselectAllText,
             dropdownAlignRight: dropdownAlignRight,
             dropupAuto: dropupAuto,
