@@ -19,6 +19,7 @@ export default class Url implements IService {
         var binaryArray = Uint8Array.from(atob(encodedUrl), c => c.charCodeAt(0));
         var unzippedBinaryArray = pako.ungzip(binaryArray);
         var decodedString = String.fromCharCode.apply(null, unzippedBinaryArray);
+        decodedString = decodedString.replace('&', '%26');
         if (inputUrl.startsWith("...")) {
             return decodedString;
         }
@@ -100,8 +101,6 @@ export default class Url implements IService {
         url = this.decodeGzipUrl(url);
         name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
         let regex = new RegExp("[\\?&]" + name + "=([^&#]*)", "i");
-        if (name.toLowerCase() == "returnurl")
-            regex = new RegExp("[\\?&]" + name + "=([^#]*)", "i");
         var results = regex.exec(url);
         return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
     }
