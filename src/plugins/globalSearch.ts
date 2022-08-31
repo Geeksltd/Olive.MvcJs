@@ -278,9 +278,17 @@ export default class GlobalSearch implements IService {
         else if (item.Action == ActionEnum.NewWindow)
             attr = "target=\"_blank\"";
 
-            const descArray = item.Description.split("|");
-            const type = descArray.shift();
-            const body = descArray.join(" | ");
+            var type = "";
+            var body = "";
+
+            if (item.Description === null || item.Description.indexOf("|") < 0) {
+                type = "Hub";
+                body = item.Description ?? "";
+            } else {
+                var descArray = item.Description.split("|");
+                type = descArray.shift();
+                body = descArray.join(" | ");
+            }
 
             return $("<li>")
                 .append($("<div class='result-item'>")
