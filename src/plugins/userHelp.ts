@@ -5,5 +5,7 @@ export default class UserHelp {
         element.click(() => false);
         let message = element.attr('data-user-help');
         element['popover']({ trigger: 'focus', content: message, html: true });
+        var inputsibling = element.siblings("input");
+        inputsibling['popover']({ trigger: 'focus', content: message, html: true });
     }
 }
