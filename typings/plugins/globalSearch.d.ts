@@ -28,6 +28,7 @@ export default class GlobalSearch implements IService {
     protected onComplete(context: ISearchContext, jqXHR: JQueryXHR): void;
     protected onError(sender: IAjaxObject, resultPanel: JQuery, jqXHR: JQueryXHR): void;
     protected showIcon(item: any): JQuery;
+    protected groupBy(array: any, key: any): any;
 }
 export declare enum AjaxState {
     pending = 0,

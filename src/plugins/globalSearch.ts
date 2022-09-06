@@ -193,14 +193,34 @@ export default class GlobalSearch implements IService {
             if (result !== null && result !== undefined && typeof (result) === typeof ([])) {
                 sender.state = AjaxState.success;
 
-                //const resultfiltered = result.filter((p) => this.isValidResult(p, context));
+                var resultWithType = result.map(x => {
 
-                const searchItem = this.createSearchItems(sender, context, result);
-                context.searchHolder.append(searchItem);
+                    if (x.Description === null || x.Description.indexOf("|") < 0) {
+                        return x;
+                    }
+                    var descArray = x.Description.split("|");
+                    var type = descArray.shift();
 
-                if (context.beginSearchStarted && result.length > 0) {
-                    context.beginSearchStarted = false;
-                    context.resultPanel.append(context.searchHolder);
+                    x.GroupTitle = type;
+
+                    return x;
+                })
+
+
+                const groupedByResult = this.groupBy(resultWithType, 'GroupTitle');
+
+                for (let item in groupedByResult) {
+
+
+                    var searchItem = this.createSearchItems(sender, context, groupedByResult[item]);
+                    context.searchHolder.append(searchItem);
+
+
+                    if (context.beginSearchStarted && result.length > 0) {
+                        context.beginSearchStarted = false;
+                        context.resultPanel.append(context.searchHolder);
+                    }
+
                 }
 
             } else {
@@ -342,6 +362,13 @@ export default class GlobalSearch implements IService {
         else {
             return $(`<img src='${item.IconUrl}' />`);
         }
+    }
+
+    protected groupBy(array: any, key: any){
+        return array.reduce((rv, x) => {
+                    (rv[x[key]] = rv[x[key]] || []).push(x);
+                    return rv;
+                }, {});
     }
 }
 
