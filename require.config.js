@@ -2,8 +2,7 @@ require.config({
     paths: {
         "jquery": "jquery.enhancements.ts",
         "plugins": "/plugins",
-        "component": "/components",
-        "pako": "/pako/dist/pako"
+        "component": "/components"
     }
 });
 //# sourceMappingURL=require.config.js.map

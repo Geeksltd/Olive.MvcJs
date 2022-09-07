@@ -1,4 +1,4 @@
-﻿import pako = require('pako');
+﻿import pako = require('pako/dist/pako');
 
 export default class Url implements IService {
 

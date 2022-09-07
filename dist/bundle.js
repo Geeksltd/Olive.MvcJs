@@ -307,7 +307,7 @@ define("olive/mvc/responseProcessor", ["require", "exports", "olive/components/l
     }());
     exports.default = ResponseProcessor;
 });
-define("olive/components/url", ["require", "exports", "pako"], function (require, exports, pako) {
+define("olive/components/url", ["require", "exports", "pako/dist/pako"], function (require, exports, pako) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var Url = /** @class */ (function () {
         function Url() {

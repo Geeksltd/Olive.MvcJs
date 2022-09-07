@@ -1,10 +1,10 @@
 {
     "compilerOptions": {
         "baseUrl": ".",
-        "paths": {
-            "olive/*": [ "src/*" ],
-             "pako": ["node_modules/pako/dist/pako"]
-        },
+      "paths": {
+        "olive/*": [ "src/*" ],
+        "pako/dist/pako": [ "node_modules/pako/dist/pako" ]
+      },
         "module": "amd",
         "target": "es5",
         "outFile": "dist/bundle.js",

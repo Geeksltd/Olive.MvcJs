@@ -1,4 +1,4 @@
-define(["require", "exports", "pako"], function (require, exports, pako) {
+define(["require", "exports", "pako/dist/pako"], function (require, exports, pako) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var Url = /** @class */ (function () {
         function Url() {
