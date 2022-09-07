@@ -193,18 +193,20 @@ export default class GlobalSearch implements IService {
             if (result !== null && result !== undefined && typeof (result) === typeof ([])) {
                 sender.state = AjaxState.success;
 
+                // Results from GlobalSearch MS have the GroupTitle in their description field separated with $$$
                 var resultWithType = result.map(x => {
 
-                    if (x.Description === null || x.Description.indexOf("|") < 0) {
+                    if (x.Description === null || x.Description.indexOf("$$$") < 0) {
                         return x;
                     }
-                    var descArray = x.Description.split("|");
-                    var type = descArray.shift();
+                    var descArray = x.Description.split("$$$");
+                    var groupTitle = descArray.shift();
 
-                    x.GroupTitle = type;
+                    x.GroupTitle = groupTitle;
+                    x.Description = descArray.join("");
 
                     return x;
-                })
+                });
 
 
                 const groupedByResult = this.groupBy(resultWithType, 'GroupTitle');
@@ -298,39 +300,21 @@ export default class GlobalSearch implements IService {
         else if (item.Action == ActionEnum.NewWindow)
             attr = "target=\"_blank\"";
 
-            var type = "";
-            var body = "";
-
-            if (item.Description === null || item.Description.indexOf("|") < 0) {
-                type = "Hub";
-                body = item.Description ?? "";
-            } else {
-                var descArray = item.Description.split("|");
-                type = descArray.shift();
-                body = descArray.join(" | ");
-            }
-
             return $("<li>")
                 .append($("<div class='result-item'>")
                     .append($("<p class='icon'>")
                         .append($(`<a name = 'Photo' class='profile-photo' href='${item.Url}'>`)
-                            .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<div class='icon'>") : this.showIcon(item)) // it should be modified
+                            .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<div class='icon'>") : this.showIcon(item))
                         ))
                     .append($("<div class='result-item-content'>")
                         .append($("<p class='type'>")
-                            .append($(`<a href='${item.Url}' ${attr}>`).html(this.boldSearchAll(type, context.searchedText))))  //.html(item.Type))) // it should be added
+                            .append($(`<a href='${item.Url}' ${attr}>`).html(this.boldSearchAll(item.GroupTitle, context.searchedText))))
                         .append($("<p class='title'>")
                             .append($(`<a href='${item.Url}' ${attr}>`).html(this.boldSearchAll(item.Title, context.searchedText))))
                         .append($("<p class='body'>")
-                            .append($(`<a href='${item.Url}' ${attr}>`).html(this.boldSearchAll(body, context.searchedText)))))
+                            .append($(`<a href='${item.Url}' ${attr}>`).html(this.boldSearchAll(item.Description, context.searchedText)))))
                 );
 
-        // return $("<li>")
-        //     .append((item.IconUrl === null || item.IconUrl === undefined) ?
-        //         $("<div class='icon'>") : this.showIcon(item))
-        //     .append($("<a href='" + item.Url + "' " + attr + ">")
-        //         .html(this.boldSearchAll(item.Title, context.searchedText)))
-        //     .append($(" <div class='desc'>").html(item.Description));
     }
 
     protected onComplete(context: ISearchContext, jqXHR: JQueryXHR) {
