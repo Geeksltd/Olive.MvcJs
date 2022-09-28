@@ -285,22 +285,43 @@ export default class GlobalSearch implements IService {
             childrenItems.append(this.createItem(items[i], context));
         }
         
-        if(childrenItems.length > 5)
+        if(childrenItems.children('li').length > 5)
         {
-            childrenItems.children('li').each((index, element)=>{
-                if (index < 5) {
-                    return;
-                }
+            const removeExceededItems = () => {
+                childrenItems.children('li').each(function (index, element) {
 
-                $(this).css('display','none');
-            })
+                    if (index < 5) {
+                        return;
+                    }
 
-            const showMoreItem = $("<li class='show-more'>").html("Show more");            
+                    $(element).css('display', 'none');
+
+                });
+            }
+
+            removeExceededItems();
+
+            const showMoreClass = 'show-more';
+
+            const showMoreItem = $("<li class='show-toggle'>").html("Show more");
+            showMoreItem.addClass(showMoreClass);
+
             childrenItems.append(showMoreItem);
 
             showMoreItem.click(()=>{
-                showMoreItem.siblings().css("display", "list-item" );
-                showMoreItem.css( "display", "none" );
+               if (showMoreItem.hasClass(showMoreClass)) {
+                        showMoreItem.siblings().css("display", "list-item");
+                        
+                        showMoreItem.toggleClass(showMoreClass)
+                        showMoreItem.html("Show less");
+                    }
+                    else {
+                        removeExceededItems();
+
+                        showMoreItem.toggleClass(showMoreClass);
+                        showMoreItem.css("display", "list-item");
+                        showMoreItem.html("Show more");
+                    }
             })
         }
 
