@@ -269,6 +269,11 @@ export default class GlobalSearch implements IService {
 
         const searhTitle = searchTitleHolder.append($("<i>").attr("class", sender.icon)).append(groupTitle);
 
+        // we may need to use the search title to implement show more.
+        // but we may only need to add li (show more) at the end of list and after it is clicked,
+        // it makes all hidden items visible
+
+
         searchItem.append(searhTitle);
 
         const childrenItems = $("<ul>");
@@ -279,6 +284,26 @@ export default class GlobalSearch implements IService {
             context.resultCount++;
             childrenItems.append(this.createItem(items[i], context));
         }
+        
+        if(childrenItems.length > 5)
+        {
+            childrenItems.children('li').each((index, element)=>{
+                if (index < 5) {
+                    return;
+                }
+
+                $(this).css('display','none');
+            })
+
+            const showMoreItem = $("<li class='show-more'>").html("Show more");            
+            childrenItems.append(showMoreItem);
+
+            showMoreItem.click(()=>{
+                showMoreItem.siblings().css("display", "list-item" );
+                showMoreItem.css( "display", "none" );
+            })
+        }
+
         $(childrenItems).find("[target='$modal'][href]").off("click").click(function () {
             $(".global-search-result-panel").fadeOut();
         });
