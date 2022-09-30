@@ -213,22 +213,13 @@ export default class GlobalSearch implements IService {
 
                 for (let item in groupedByResult) {
 
-                    const searchElementWithThisGroup = context.searchHolder.children()
-                                                                           .filter((i, element) => 
-                                                                           { 
-                                                                                return $(element).hasClass(item);
-                                                                            });
-                   
-                    if (searchElementWithThisGroup.length > 0) {
-                        continue;
-                    }
-
                     var searchItem = this.createSearchItems(sender, context, groupedByResult[item]);
                     context.searchHolder.append(searchItem);
 
 
                     if (context.beginSearchStarted && result.length > 0) {
                         context.beginSearchStarted = false;
+                        context.resultPanel.empty();
                         context.resultPanel.append(context.searchHolder);
                     }
 
@@ -274,7 +265,7 @@ export default class GlobalSearch implements IService {
                                                                     .replace("\"", "")
                                                                     .toUpperCase();
 
-        const searchItem = $(`<div class='search-item ${groupTitle}'>`);
+        const searchItem = $(`<div class='search-item'>`);
 
         const searchTitleHolder = $("<div class='search-title'>");
 
