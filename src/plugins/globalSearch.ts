@@ -213,6 +213,15 @@ export default class GlobalSearch implements IService {
 
                 for (let item in groupedByResult) {
 
+                    const searchElementWithThisGroup = context.searchHolder.children()
+                                                                           .filter((i, element) => 
+                                                                           { 
+                                                                                return $(element).hasClass(item);
+                                                                            });
+                   
+                    if (searchElementWithThisGroup.length > 0) {
+                        continue;
+                    }
 
                     var searchItem = this.createSearchItems(sender, context, groupedByResult[item]);
                     context.searchHolder.append(searchItem);
@@ -256,9 +265,16 @@ export default class GlobalSearch implements IService {
     }
 
     protected createSearchItems(sender: IAjaxObject, context: ISearchContext, items: IResultItemDto[]) {
-        const searchItem = $("<div class='search-item'>");
+        
+        const groupTitle = (items?.length > 0 && items[0].GroupTitle?.length > 0) ? 
+                                    items[0].GroupTitle : sender.url.split(".")[0]
+                                                                    .replace("https://", "")
+                                                                    .replace("http://", "")
+                                                                    .replace("'", "")
+                                                                    .replace("\"", "")
+                                                                    .toUpperCase();
 
-        const groupTitle = (items?.length > 0 && items[0].GroupTitle?.length > 0) ? items[0].GroupTitle : sender.url.split(".")[0].replace("https://", "").replace("http://", "").toUpperCase();
+        const searchItem = $(`<div class='search-item ${groupTitle}'>`);
 
         const searchTitleHolder = $("<div class='search-title'>");
 
