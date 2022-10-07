@@ -1,4 +1,5 @@
-﻿import pako = require('pako/dist/pako');
+﻿import { param } from 'jquery';
+import pako = require('pako/dist/pako');
 
 export default class Url implements IService {
 
@@ -10,7 +11,11 @@ export default class Url implements IService {
         if (inputUrl === undefined || inputUrl === null) return inputUrl;
         var tempUrl = inputUrl;
         if (tempUrl.toLowerCase().contains("returnurl=")) {
-            tempUrl = tempUrl.substring(tempUrl.toLowerCase().indexOf("returnurl=") + 10);
+            new URLSearchParams(inputUrl).forEach(function (name, value) {
+                if (name.toLowerCase() == 'returnurl') {
+                    tempUrl = value;
+                }
+            });
         }
         if (tempUrl.startsWith("...") == false) return inputUrl
 
