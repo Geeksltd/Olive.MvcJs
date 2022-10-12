@@ -19,4 +19,6 @@ export default class ServerInvoker implements IService {
     protected onInvocationProcessed(event: JQueryEventObject, context: IInvocationContext): void;
     protected onInvocationCompleted(event: JQueryEventObject, context: IInvocationContext): void;
     onAjaxResponseError: (jqXHR: JQueryXHR, status: string, error: string) => void;
+    protected showWaitingBar: () => void;
+    protected removeWaitingBar: () => void;
 }

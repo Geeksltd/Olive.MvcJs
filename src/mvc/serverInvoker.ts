@@ -54,7 +54,12 @@ export default class ServerInvoker implements IService {
         let disableToo = Config.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
         if (disableToo) trigger.attr('disabled', 'disabled');
         trigger.addClass('loading-action-result');
+
         this.isAwaitingAjaxResponse = true;
+
+        if (containerModule.is("[waiting-bar]")) {
+            this.showWaitingBar();
+        }
 
         actionUrl = this.url.effectiveUrlProvider(actionUrl, trigger);
 
@@ -85,7 +90,7 @@ export default class ServerInvoker implements IService {
             xhrFields: { withCredentials: true },
             async: !syncCall,
             data: data_before_disable,
-            success: (result) => { $(".tooltip").remove(); this.waiting.hide(); this.responseProcessor.processAjaxResponse(result, containerModule, trigger, null, null, null); },
+            success: (result) => { $(".tooltip").remove(); this.waiting.hide(); this.removeWaitingBar(); this.responseProcessor.processAjaxResponse(result, containerModule, trigger, null, null, null); },
             error: this.onAjaxResponseError,
             statusCode: {
                 401: (data) => {
@@ -94,10 +99,16 @@ export default class ServerInvoker implements IService {
             },
             complete: (x) => {
                 this.isAwaitingAjaxResponse = false;
+
+                this.removeWaitingBar();
+
                 this.onInvocationCompleted(event, context);
 
                 trigger.removeClass('loading-action-result');
                 if (disableToo) trigger.removeAttr('disabled');
+
+                
+
 
                 let triggerTabIndex: number = $(":focusable").not("[tabindex='-1']").index($(triggerUniqueSelector));
 
@@ -147,4 +158,49 @@ export default class ServerInvoker implements IService {
         else if (error) alert(error);
         else alert("Error: response status: " + status);
     }
+
+    protected showWaitingBar = () => {
+        let body = $("body");
+
+            let waitingBar = $(`<div id="waiting-bar" style="position:fixed; 
+                                                            top:0; 
+                                                            left:0;
+                                                            width:100vw;
+                                                            height:100vh; 
+                                                            background-color: rgba(0,0,0,0.4);
+                                                            z-index:100;
+                                                            overflow: auto; 
+                                                            display:flex; 
+                                                            justify-content:center; 
+                                                            align-items:center;">`)
+                .append($(`<div style="width:300px; height:30px;">`)
+                    .append($(`<div class="progress" style="height: 100%;">`)
+                        .append($(`<div class="progress-bar progress-bar-striped progress-bar-animated"
+                                        role="progressbar" 
+                                        aria-valuenow="100" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100" 
+                                        style="width: 100%;
+                                              animation: 1s linear infinite progress-bar-stripes;">`))));
+
+            body.append(waitingBar);
+
+    }
+
+    protected removeWaitingBar = () => {
+               
+        let waitingBar = $("#waiting-bar");
+
+        if (waitingBar.length > 0) {
+            waitingBar.remove();
+        }
+    }
 }
+
+// <div style="position:fixed; top:0; left:0;width:100vw;height:100vh; rgba(0,0,0,0.4);z-index:100;overflow: auto; display:flex; justify-content:center; align-items:center">
+//     <div style="width:300px; height:30px; background-color:white; opacity:1">
+//         <div class="progress" style="height: 100%;">
+//             <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+//         </div>
+//     </div>
+// </div>
