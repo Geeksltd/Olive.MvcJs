@@ -412,8 +412,8 @@ export default class OlivePage implements IServiceLocator {
     protected goBack(target) {
         const url = this.getService<Url>(Services.Url);
 
-        const returnUrl = url.getQuery("ReturnUrl");
-
+        var returnUrl = url.getQuery("ReturnUrl");
+        returnUrl = url.decodeGzipUrl(returnUrl);
         if (returnUrl && target && $(target).is("[data-redirect=ajax]")) {
             const link = $(target);
             if (link != undefined && link != null) {
