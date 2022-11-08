@@ -155,7 +155,15 @@ export default class Url implements IService {
         return result;
     }
 
-    public baseContentUrl = window["BaseThemeUrl"] || '/';
+    public getBaseThemeUrl() {
+        let domain = window.location.hostname;
+        if (domain.startsWith("hub.")) {
+            domain = domain.substring(4);
+        }
+        return "https://" + domain + "/hub/";
+    };
+
+    public baseContentUrl = window["BaseThemeUrl"] || this.getBaseThemeUrl() || '/';
 
     public ofContent(relativeUrl: string) {
         let base = this.baseContentUrl;
