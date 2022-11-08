@@ -160,13 +160,13 @@ export default class Url implements IService {
         if (domain.startsWith("hub.")) {
             domain = domain.substring(4);
         }
-        return "https://" + domain + "/hub/";
+        return "https://" + domain + "/hub";
     };
 
-    public baseContentUrl = window["BaseThemeUrl"] || this.getBaseThemeUrl() || '/';
+    public baseContentUrl = window["BaseThemeUrl"] || '/';
 
     public ofContent(relativeUrl: string) {
-        let base = this.baseContentUrl;
+        let base = this.getBaseThemeUrl();
         while (base.length > 0 && base[base.length - 1] === '/')
             base = base.substring(0, base.length - 1);
 
