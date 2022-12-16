@@ -16,6 +16,7 @@ export default class Url implements IService {
     private fullQueryString;
     addQuery(url: string, key: string, value: any): string;
     removeEmptyQueries(url: string): string;
+    getBaseThemeUrl(): string;
     baseContentUrl: any;
     ofContent(relativeUrl: string): string;
 }
