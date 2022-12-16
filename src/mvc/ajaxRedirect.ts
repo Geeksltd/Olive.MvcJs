@@ -89,7 +89,26 @@ export default class AjaxRedirect implements IService {
             xhrFields: { withCredentials: true },
             success: (response) => {
                 if ((ajaxTarget || document.URL.contains("?$")) && (ajaxhref == undefined)) {
+                    const documentUrl = document.URL;
+                    const newUrl = trigger.attr("data-addressbar") || url;
+                    const title = $("#page_meta_title").val();
 
+
+                    const childaddress = document.URL.substring(documentUrl.indexOf("=") + 1);
+                    const childaddresswithouthttp = document.URL.substring(documentUrl.indexOf("=") + 1).replace("https://", "").replace("http://","");
+
+                    const firstindex = childaddresswithouthttp.indexOf("/");
+                    const secondindex = childaddresswithouthttp.indexOf("/", firstindex+1);
+                    const servicename = childaddresswithouthttp.substring(firstindex+1, secondindex);
+
+                    const extractedaddress = childaddress.replace("://hub", "://" + servicename).replace("/" + servicename+"/","/");
+
+                    if (newUrl.toLowerCase().contains(extractedaddress.substring(0, extractedaddress.indexOf("?")).toLowerCase())) {
+
+                        const modifiedaddress = newUrl.substring(0, newUrl.indexOf("://") + 3) + newUrl.replace("://" + servicename, "://hub").replace("https://", "").replace("http://", "").replace("/", "/" + servicename + "/");
+                        const newaddress = document.URL.substring(0, documentUrl.indexOf("=") + 1) + modifiedaddress;
+                        window.history.pushState(null, title, newaddress);
+                    }
                 }
                 else if (!isBack) {
                     this.ajaxChangedUrl++;

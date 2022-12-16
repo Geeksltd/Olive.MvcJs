@@ -42,38 +42,38 @@ const {
 /* ===========================================================================*/
 
 
-const    HEAD = 1;       /* i: waiting for magic header */
-const    FLAGS = 2;      /* i: waiting for method and flags (gzip) */
-const    TIME = 3;       /* i: waiting for modification time (gzip) */
-const    OS = 4;         /* i: waiting for extra flags and operating system (gzip) */
-const    EXLEN = 5;      /* i: waiting for extra length (gzip) */
-const    EXTRA = 6;      /* i: waiting for extra bytes (gzip) */
-const    NAME = 7;       /* i: waiting for end of file name (gzip) */
-const    COMMENT = 8;    /* i: waiting for end of comment (gzip) */
-const    HCRC = 9;       /* i: waiting for header crc (gzip) */
-const    DICTID = 10;    /* i: waiting for dictionary check value */
-const    DICT = 11;      /* waiting for inflateSetDictionary() call */
-const        TYPE = 12;      /* i: waiting for type bits, including last-flag bit */
-const        TYPEDO = 13;    /* i: same, but skip check to exit inflate on new block */
-const        STORED = 14;    /* i: waiting for stored size (length and complement) */
-const        COPY_ = 15;     /* i/o: same as COPY below, but only first time in */
-const        COPY = 16;      /* i/o: waiting for input or output to copy stored block */
-const        TABLE = 17;     /* i: waiting for dynamic block table lengths */
-const        LENLENS = 18;   /* i: waiting for code length code lengths */
-const        CODELENS = 19;  /* i: waiting for length/lit and distance code lengths */
-const            LEN_ = 20;      /* i: same as LEN below, but only first time in */
-const            LEN = 21;       /* i: waiting for length/lit/eob code */
-const            LENEXT = 22;    /* i: waiting for length extra bits */
-const            DIST = 23;      /* i: waiting for distance code */
-const            DISTEXT = 24;   /* i: waiting for distance extra bits */
-const            MATCH = 25;     /* o: waiting for output space to copy string */
-const            LIT = 26;       /* o: waiting for output space to write literal */
-const    CHECK = 27;     /* i: waiting for 32-bit check value */
-const    LENGTH = 28;    /* i: waiting for 32-bit length (gzip) */
-const    DONE = 29;      /* finished check, done -- remain here until reset */
-const    BAD = 30;       /* got a data error -- remain here until reset */
-const    MEM = 31;       /* got an inflate() memory error -- remain here until reset */
-const    SYNC = 32;      /* looking for synchronization bytes to restart inflate() */
+const    HEAD = 16180;       /* i: waiting for magic header */
+const    FLAGS = 16181;      /* i: waiting for method and flags (gzip) */
+const    TIME = 16182;       /* i: waiting for modification time (gzip) */
+const    OS = 16183;         /* i: waiting for extra flags and operating system (gzip) */
+const    EXLEN = 16184;      /* i: waiting for extra length (gzip) */
+const    EXTRA = 16185;      /* i: waiting for extra bytes (gzip) */
+const    NAME = 16186;       /* i: waiting for end of file name (gzip) */
+const    COMMENT = 16187;    /* i: waiting for end of comment (gzip) */
+const    HCRC = 16188;       /* i: waiting for header crc (gzip) */
+const    DICTID = 16189;    /* i: waiting for dictionary check value */
+const    DICT = 16190;      /* waiting for inflateSetDictionary() call */
+const        TYPE = 16191;      /* i: waiting for type bits, including last-flag bit */
+const        TYPEDO = 16192;    /* i: same, but skip check to exit inflate on new block */
+const        STORED = 16193;    /* i: waiting for stored size (length and complement) */
+const        COPY_ = 16194;     /* i/o: same as COPY below, but only first time in */
+const        COPY = 16195;      /* i/o: waiting for input or output to copy stored block */
+const        TABLE = 16196;     /* i: waiting for dynamic block table lengths */
+const        LENLENS = 16197;   /* i: waiting for code length code lengths */
+const        CODELENS = 16198;  /* i: waiting for length/lit and distance code lengths */
+const            LEN_ = 16199;      /* i: same as LEN below, but only first time in */
+const            LEN = 16200;       /* i: waiting for length/lit/eob code */
+const            LENEXT = 16201;    /* i: waiting for length extra bits */
+const            DIST = 16202;      /* i: waiting for distance code */
+const            DISTEXT = 16203;   /* i: waiting for distance extra bits */
+const            MATCH = 16204;     /* o: waiting for output space to copy string */
+const            LIT = 16205;       /* o: waiting for output space to write literal */
+const    CHECK = 16206;     /* i: waiting for 32-bit check value */
+const    LENGTH = 16207;    /* i: waiting for 32-bit length (gzip) */
+const    DONE = 16208;      /* finished check, done -- remain here until reset */
+const    BAD = 16209;       /* got a data error -- remain here until reset */
+const    MEM = 16210;       /* got an inflate() memory error -- remain here until reset */
+const    SYNC = 16211;      /* looking for synchronization bytes to restart inflate() */
 
 /* ===========================================================================*/
 
@@ -98,11 +98,14 @@ const zswap32 = (q) => {
 
 
 function InflateState() {
-  this.mode = 0;             /* current inflate mode */
+  this.strm = null;           /* pointer back to this zlib stream */
+  this.mode = 0;              /* current inflate mode */
   this.last = false;          /* true if processing last block */
-  this.wrap = 0;              /* bit 0 true for zlib, bit 1 true for gzip */
+  this.wrap = 0;              /* bit 0 true for zlib, bit 1 true for gzip,
+                                 bit 2 true to validate check value */
   this.havedict = false;      /* true if dictionary provided */
-  this.flags = 0;             /* gzip header method and flags (0 if zlib) */
+  this.flags = 0;             /* gzip header method and flags (0 if zlib), or
+                                 -1 if raw or no header yet */
   this.dmax = 0;              /* zlib header max distance (INFLATE_STRICT) */
   this.check = 0;             /* protected copy of check value */
   this.total = 0;             /* protected copy of output count */
@@ -156,9 +159,23 @@ function InflateState() {
 }
 
 
+const inflateStateCheck = (strm) => {
+
+  if (!strm) {
+    return 1;
+  }
+  const state = strm.state;
+  if (!state || state.strm !== strm ||
+    state.mode < HEAD || state.mode > SYNC) {
+    return 1;
+  }
+  return 0;
+};
+
+
 const inflateResetKeep = (strm) => {
 
-  if (!strm || !strm.state) { return Z_STREAM_ERROR; }
+  if (inflateStateCheck(strm)) { return Z_STREAM_ERROR; }
   const state = strm.state;
   strm.total_in = strm.total_out = state.total = 0;
   strm.msg = ''; /*Z_NULL*/
@@ -168,6 +185,7 @@ const inflateResetKeep = (strm) => {
   state.mode = HEAD;
   state.last = 0;
   state.havedict = 0;
+  state.flags = -1;
   state.dmax = 32768;
   state.head = null/*Z_NULL*/;
   state.hold = 0;
@@ -185,7 +203,7 @@ const inflateResetKeep = (strm) => {
 
 const inflateReset = (strm) => {
 
-  if (!strm || !strm.state) { return Z_STREAM_ERROR; }
+  if (inflateStateCheck(strm)) { return Z_STREAM_ERROR; }
   const state = strm.state;
   state.wsize = 0;
   state.whave = 0;
@@ -199,7 +217,7 @@ const inflateReset2 = (strm, windowBits) => {
   let wrap;
 
   /* get the state */
-  if (!strm || !strm.state) { return Z_STREAM_ERROR; }
+  if (inflateStateCheck(strm)) { return Z_STREAM_ERROR; }
   const state = strm.state;
 
   /* extract wrap request from windowBits parameter */
@@ -208,7 +226,7 @@ const inflateReset2 = (strm, windowBits) => {
     windowBits = -windowBits;
   }
   else {
-    wrap = (windowBits >> 4) + 1;
+    wrap = (windowBits >> 4) + 5;
     if (windowBits < 48) {
       windowBits &= 15;
     }
@@ -239,7 +257,9 @@ const inflateInit2 = (strm, windowBits) => {
   //if (state === Z_NULL) return Z_MEM_ERROR;
   //Tracev((stderr, "inflate: allocated\n"));
   strm.state = state;
+  state.strm = strm;
   state.window = null/*Z_NULL*/;
+  state.mode = HEAD;     /* to pass state test in inflateReset2() */
   const ret = inflateReset2(strm, windowBits);
   if (ret !== Z_OK) {
     strm.state = null/*Z_NULL*/;
@@ -388,7 +408,7 @@ const inflate = (strm, flush) => {
     new Uint8Array([ 16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15 ]);
 
 
-  if (!strm || !strm.state || !strm.output ||
+  if (inflateStateCheck(strm) || !strm.output ||
       (!strm.input && strm.avail_in !== 0)) {
     return Z_STREAM_ERROR;
   }
@@ -429,6 +449,9 @@ const inflate = (strm, flush) => {
         }
         //===//
         if ((state.wrap & 2) && hold === 0x8b1f) {  /* gzip header */
+          if (state.wbits === 0) {
+            state.wbits = 15;
+          }
           state.check = 0/*crc32(0L, Z_NULL, 0)*/;
           //=== CRC2(state.check, hold);
           hbuf[0] = hold & 0xff;
@@ -443,7 +466,6 @@ const inflate = (strm, flush) => {
           state.mode = FLAGS;
           break;
         }
-        state.flags = 0;           /* expect zlib header */
         if (state.head) {
           state.head.done = false;
         }
@@ -466,7 +488,7 @@ const inflate = (strm, flush) => {
         if (state.wbits === 0) {
           state.wbits = len;
         }
-        else if (len > state.wbits) {
+        if (len > 15 || len > state.wbits) {
           strm.msg = 'invalid window size';
           state.mode = BAD;
           break;
@@ -477,6 +499,7 @@ const inflate = (strm, flush) => {
         state.dmax = 1 << state.wbits;
         //state.dmax = 1 << len;
 
+        state.flags = 0;               /* indicate zlib header */
         //Tracev((stderr, "inflate:   zlib header ok\n"));
         strm.adler = state.check = 1/*adler32(0L, Z_NULL, 0)*/;
         state.mode = hold & 0x200 ? DICTID : TYPE;
@@ -508,7 +531,7 @@ const inflate = (strm, flush) => {
         if (state.head) {
           state.head.text = ((hold >> 8) & 1);
         }
-        if (state.flags & 0x0200) {
+        if ((state.flags & 0x0200) && (state.wrap & 4)) {
           //=== CRC2(state.check, hold);
           hbuf[0] = hold & 0xff;
           hbuf[1] = (hold >>> 8) & 0xff;
@@ -533,7 +556,7 @@ const inflate = (strm, flush) => {
         if (state.head) {
           state.head.time = hold;
         }
-        if (state.flags & 0x0200) {
+        if ((state.flags & 0x0200) && (state.wrap & 4)) {
           //=== CRC4(state.check, hold)
           hbuf[0] = hold & 0xff;
           hbuf[1] = (hold >>> 8) & 0xff;
@@ -561,7 +584,7 @@ const inflate = (strm, flush) => {
           state.head.xflags = (hold & 0xff);
           state.head.os = (hold >> 8);
         }
-        if (state.flags & 0x0200) {
+        if ((state.flags & 0x0200) && (state.wrap & 4)) {
           //=== CRC2(state.check, hold);
           hbuf[0] = hold & 0xff;
           hbuf[1] = (hold >>> 8) & 0xff;
@@ -588,7 +611,7 @@ const inflate = (strm, flush) => {
           if (state.head) {
             state.head.extra_len = hold;
           }
-          if (state.flags & 0x0200) {
+          if ((state.flags & 0x0200) && (state.wrap & 4)) {
             //=== CRC2(state.check, hold);
             hbuf[0] = hold & 0xff;
             hbuf[1] = (hold >>> 8) & 0xff;
@@ -630,7 +653,7 @@ const inflate = (strm, flush) => {
               //        len + copy > state.head.extra_max ?
               //        state.head.extra_max - len : copy);
             }
-            if (state.flags & 0x0200) {
+            if ((state.flags & 0x0200) && (state.wrap & 4)) {
               state.check = crc32(state.check, input, copy, next);
             }
             have -= copy;
@@ -656,7 +679,7 @@ const inflate = (strm, flush) => {
             }
           } while (len && copy < have);
 
-          if (state.flags & 0x0200) {
+          if ((state.flags & 0x0200) && (state.wrap & 4)) {
             state.check = crc32(state.check, input, copy, next);
           }
           have -= copy;
@@ -681,7 +704,7 @@ const inflate = (strm, flush) => {
               state.head.comment += String.fromCharCode(len);
             }
           } while (len && copy < have);
-          if (state.flags & 0x0200) {
+          if ((state.flags & 0x0200) && (state.wrap & 4)) {
             state.check = crc32(state.check, input, copy, next);
           }
           have -= copy;
@@ -703,7 +726,7 @@ const inflate = (strm, flush) => {
             bits += 8;
           }
           //===//
-          if (hold !== (state.check & 0xffff)) {
+          if ((state.wrap & 4) && hold !== (state.check & 0xffff)) {
             strm.msg = 'header crc mismatch';
             state.mode = BAD;
             break;
@@ -1356,15 +1379,15 @@ const inflate = (strm, flush) => {
           _out -= left;
           strm.total_out += _out;
           state.total += _out;
-          if (_out) {
+          if ((state.wrap & 4) && _out) {
             strm.adler = state.check =
-                /*UPDATE(state.check, put - _out, _out);*/
+                /*UPDATE_CHECK(state.check, put - _out, _out);*/
                 (state.flags ? crc32(state.check, output, _out, put - _out) : adler32(state.check, output, _out, put - _out));
 
           }
           _out = left;
           // NB: crc32 stored as signed 32-bit int, zswap32 returns signed too
-          if ((state.flags ? hold : zswap32(hold)) !== state.check) {
+          if ((state.wrap & 4) && (state.flags ? hold : zswap32(hold)) !== state.check) {
             strm.msg = 'incorrect data check';
             state.mode = BAD;
             break;
@@ -1387,7 +1410,7 @@ const inflate = (strm, flush) => {
             bits += 8;
           }
           //===//
-          if (hold !== (state.total & 0xffffffff)) {
+          if ((state.wrap & 4) && hold !== (state.total & 0xffffffff)) {
             strm.msg = 'incorrect length check';
             state.mode = BAD;
             break;
@@ -1445,8 +1468,8 @@ const inflate = (strm, flush) => {
   strm.total_in += _in;
   strm.total_out += _out;
   state.total += _out;
-  if (state.wrap && _out) {
-    strm.adler = state.check = /*UPDATE(state.check, strm.next_out - _out, _out);*/
+  if ((state.wrap & 4) && _out) {
+    strm.adler = state.check = /*UPDATE_CHECK(state.check, strm.next_out - _out, _out);*/
       (state.flags ? crc32(state.check, output, _out, strm.next_out - _out) : adler32(state.check, output, _out, strm.next_out - _out));
   }
   strm.data_type = state.bits + (state.last ? 64 : 0) +
@@ -1461,7 +1484,7 @@ const inflate = (strm, flush) => {
 
 const inflateEnd = (strm) => {
 
-  if (!strm || !strm.state /*|| strm->zfree == (free_func)0*/) {
+  if (inflateStateCheck(strm)) {
     return Z_STREAM_ERROR;
   }
 
@@ -1477,7 +1500,7 @@ const inflateEnd = (strm) => {
 const inflateGetHeader = (strm, head) => {
 
   /* check state */
-  if (!strm || !strm.state) { return Z_STREAM_ERROR; }
+  if (inflateStateCheck(strm)) { return Z_STREAM_ERROR; }
   const state = strm.state;
   if ((state.wrap & 2) === 0) { return Z_STREAM_ERROR; }
 
@@ -1496,7 +1519,7 @@ const inflateSetDictionary = (strm, dictionary) => {
   let ret;
 
   /* check state */
-  if (!strm /* == Z_NULL */ || !strm.state /* == Z_NULL */) { return Z_STREAM_ERROR; }
+  if (inflateStateCheck(strm)) { return Z_STREAM_ERROR; }
   state = strm.state;
 
   if (state.wrap !== 0 && state.mode !== DICT) {
@@ -1537,6 +1560,7 @@ module.exports.inflateSetDictionary = inflateSetDictionary;
 module.exports.inflateInfo = 'pako inflate (from Nodeca project)';
 
 /* Not implemented
+module.exports.inflateCodesUsed = inflateCodesUsed;
 module.exports.inflateCopy = inflateCopy;
 module.exports.inflateGetDictionary = inflateGetDictionary;
 module.exports.inflateMark = inflateMark;
@@ -1544,4 +1568,5 @@ module.exports.inflatePrime = inflatePrime;
 module.exports.inflateSync = inflateSync;
 module.exports.inflateSyncPoint = inflateSyncPoint;
 module.exports.inflateUndermine = inflateUndermine;
+module.exports.inflateValidate = inflateValidate;
 */

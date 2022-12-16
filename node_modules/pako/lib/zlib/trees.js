@@ -276,10 +276,10 @@ const bi_flush = (s) => {
  *     The length opt_len is updated; static_len is also updated if stree is
  *     not null.
  */
-const gen_bitlen = (s, desc) =>
+const gen_bitlen = (s, desc) => {
 //    deflate_state *s;
 //    tree_desc *desc;    /* the tree descriptor */
-{
+
   const tree            = desc.dyn_tree;
   const max_code        = desc.max_code;
   const stree           = desc.stat_desc.static_tree;
@@ -328,7 +328,7 @@ const gen_bitlen = (s, desc) =>
   }
   if (overflow === 0) { return; }
 
-  // Trace((stderr,"\nbit length overflow\n"));
+  // Tracev((stderr,"\nbit length overflow\n"));
   /* This happens for example on obj2 and pic of the Calgary corpus */
 
   /* Find the first bit length which could increase: */
@@ -355,7 +355,7 @@ const gen_bitlen = (s, desc) =>
       m = s.heap[--h];
       if (m > max_code) { continue; }
       if (tree[m * 2 + 1]/*.Len*/ !== bits) {
-        // Trace((stderr,"code %d bits %d->%d\n", m, tree[m].Len, bits));
+        // Tracev((stderr,"code %d bits %d->%d\n", m, tree[m].Len, bits));
         s.opt_len += (bits - tree[m * 2 + 1]/*.Len*/) * tree[m * 2]/*.Freq*/;
         tree[m * 2 + 1]/*.Len*/ = bits;
       }
@@ -373,11 +373,11 @@ const gen_bitlen = (s, desc) =>
  * OUT assertion: the field code is set for all tree elements of non
  *     zero code length.
  */
-const gen_codes = (tree, max_code, bl_count) =>
+const gen_codes = (tree, max_code, bl_count) => {
 //    ct_data *tree;             /* the tree to decorate */
 //    int max_code;              /* largest code with non zero frequency */
 //    ushf *bl_count;            /* number of codes at each bit length */
-{
+
   const next_code = new Array(MAX_BITS + 1); /* next code value for each bit length */
   let code = 0;              /* running code value */
   let bits;                  /* bit index */
@@ -387,7 +387,8 @@ const gen_codes = (tree, max_code, bl_count) =>
    * without bit reversal.
    */
   for (bits = 1; bits <= MAX_BITS; bits++) {
-    next_code[bits] = code = (code + bl_count[bits - 1]) << 1;
+    code = (code + bl_count[bits - 1]) << 1;
+    next_code[bits] = code;
   }
   /* Check that the bit counts in bl_count are consistent. The last code
    * must be all ones.
@@ -527,7 +528,7 @@ const init_block = (s) => {
 
   s.dyn_ltree[END_BLOCK * 2]/*.Freq*/ = 1;
   s.opt_len = s.static_len = 0;
-  s.last_lit = s.matches = 0;
+  s.sym_next = s.matches = 0;
 };
 
 
@@ -544,29 +545,6 @@ const bi_windup = (s) =>
   }
   s.bi_buf = 0;
   s.bi_valid = 0;
-};
-
-/* ===========================================================================
- * Copy a stored block, storing first the length and its
- * one's complement if requested.
- */
-const copy_block = (s, buf, len, header) =>
-//DeflateState *s;
-//charf    *buf;    /* the input data */
-//unsigned len;     /* its length */
-//int      header;  /* true if block header must be written */
-{
-  bi_windup(s);        /* align on byte boundary */
-
-  if (header) {
-    put_short(s, len);
-    put_short(s, ~len);
-  }
-//  while (len--) {
-//    put_byte(s, *buf++);
-//  }
-  s.pending_buf.set(s.window.subarray(buf, buf + len), s.pending);
-  s.pending += len;
 };
 
 /* ===========================================================================
@@ -587,11 +565,11 @@ const smaller = (tree, n, m, depth) => {
  * when the heap property is re-established (each father smaller than its
  * two sons).
  */
-const pqdownheap = (s, tree, k) =>
+const pqdownheap = (s, tree, k) => {
 //    deflate_state *s;
 //    ct_data *tree;  /* the tree to restore */
 //    int k;               /* node to move down */
-{
+
   const v = s.heap[k];
   let j = k << 1;  /* left son of k */
   while (j <= s.heap_len) {
@@ -620,23 +598,22 @@ const pqdownheap = (s, tree, k) =>
 /* ===========================================================================
  * Send the block data compressed using the given Huffman trees
  */
-const compress_block = (s, ltree, dtree) =>
+const compress_block = (s, ltree, dtree) => {
 //    deflate_state *s;
 //    const ct_data *ltree; /* literal tree */
 //    const ct_data *dtree; /* distance tree */
-{
+
   let dist;           /* distance of matched string */
   let lc;             /* match length or unmatched char (if dist == 0) */
-  let lx = 0;         /* running index in l_buf */
+  let sx = 0;         /* running index in sym_buf */
   let code;           /* the code to send */
   let extra;          /* number of extra bits to send */
 
-  if (s.last_lit !== 0) {
+  if (s.sym_next !== 0) {
     do {
-      dist = (s.pending_buf[s.d_buf + lx * 2] << 8) | (s.pending_buf[s.d_buf + lx * 2 + 1]);
-      lc = s.pending_buf[s.l_buf + lx];
-      lx++;
-
+      dist = s.pending_buf[s.sym_buf + sx++] & 0xff;
+      dist += (s.pending_buf[s.sym_buf + sx++] & 0xff) << 8;
+      lc = s.pending_buf[s.sym_buf + sx++];
       if (dist === 0) {
         send_code(s, lc, ltree); /* send a literal byte */
         //Tracecv(isgraph(lc), (stderr," '%c' ", lc));
@@ -661,11 +638,10 @@ const compress_block = (s, ltree, dtree) =>
         }
       } /* literal or match pair ? */
 
-      /* Check that the overlay between pending_buf and d_buf+l_buf is ok: */
-      //Assert((uInt)(s->pending) < s->lit_bufsize + 2*lx,
-      //       "pendingBuf overflow");
+      /* Check that the overlay between pending_buf and sym_buf is ok: */
+      //Assert(s->pending < s->lit_bufsize + sx, "pendingBuf overflow");
 
-    } while (lx < s.last_lit);
+    } while (sx < s.sym_next);
   }
 
   send_code(s, END_BLOCK, ltree);
@@ -680,10 +656,10 @@ const compress_block = (s, ltree, dtree) =>
  *     and corresponding code. The length opt_len is updated; static_len is
  *     also updated if stree is not null. The field max_code is set.
  */
-const build_tree = (s, desc) =>
+const build_tree = (s, desc) => {
 //    deflate_state *s;
 //    tree_desc *desc; /* the tree descriptor */
-{
+
   const tree     = desc.dyn_tree;
   const stree    = desc.stat_desc.static_tree;
   const has_stree = desc.stat_desc.has_stree;
@@ -776,11 +752,11 @@ const build_tree = (s, desc) =>
  * Scan a literal or distance tree to determine the frequencies of the codes
  * in the bit length tree.
  */
-const scan_tree = (s, tree, max_code) =>
+const scan_tree = (s, tree, max_code) => {
 //    deflate_state *s;
 //    ct_data *tree;   /* the tree to be scanned */
 //    int max_code;    /* and its largest code of non zero frequency */
-{
+
   let n;                     /* iterates over all tree elements */
   let prevlen = -1;          /* last emitted length */
   let curlen;                /* length of current code */
@@ -842,11 +818,11 @@ const scan_tree = (s, tree, max_code) =>
  * Send a literal or distance tree in compressed form, using the codes in
  * bl_tree.
  */
-const send_tree = (s, tree, max_code) =>
+const send_tree = (s, tree, max_code) => {
 //    deflate_state *s;
 //    ct_data *tree; /* the tree to be scanned */
 //    int max_code;       /* and its largest code of non zero frequency */
-{
+
   let n;                     /* iterates over all tree elements */
   let prevlen = -1;          /* last emitted length */
   let curlen;                /* length of current code */
@@ -950,10 +926,10 @@ const build_bl_tree = (s) => {
  * lengths of the bit length codes, the literal tree and the distance tree.
  * IN assertion: lcodes >= 257, dcodes >= 1, blcodes >= 4.
  */
-const send_all_trees = (s, lcodes, dcodes, blcodes) =>
+const send_all_trees = (s, lcodes, dcodes, blcodes) => {
 //    deflate_state *s;
 //    int lcodes, dcodes, blcodes; /* number of codes for each tree */
-{
+
   let rank;                    /* index in bl_order */
 
   //Assert (lcodes >= 257 && dcodes >= 1 && blcodes >= 4, "not enough codes");
@@ -981,9 +957,9 @@ const send_all_trees = (s, lcodes, dcodes, blcodes) =>
  * Check if the data type is TEXT or BINARY, using the following algorithm:
  * - TEXT if the two conditions below are satisfied:
  *    a) There are no non-portable control characters belonging to the
- *       "black list" (0..6, 14..25, 28..31).
+ *       "block list" (0..6, 14..25, 28..31).
  *    b) There is at least one printable character belonging to the
- *       "white list" (9 {TAB}, 10 {LF}, 13 {CR}, 32..255).
+ *       "allow list" (9 {TAB}, 10 {LF}, 13 {CR}, 32..255).
  * - BINARY otherwise.
  * - The following partially-portable control characters form a
  *   "gray list" that is ignored in this detection algorithm:
@@ -991,21 +967,21 @@ const send_all_trees = (s, lcodes, dcodes, blcodes) =>
  * IN assertion: the fields Freq of dyn_ltree are set.
  */
 const detect_data_type = (s) => {
-  /* black_mask is the bit mask of black-listed bytes
+  /* block_mask is the bit mask of block-listed bytes
    * set bits 0..6, 14..25, and 28..31
    * 0xf3ffc07f = binary 11110011111111111100000001111111
    */
-  let black_mask = 0xf3ffc07f;
+  let block_mask = 0xf3ffc07f;
   let n;
 
-  /* Check for non-textual ("black-listed") bytes. */
-  for (n = 0; n <= 31; n++, black_mask >>>= 1) {
-    if ((black_mask & 1) && (s.dyn_ltree[n * 2]/*.Freq*/ !== 0)) {
+  /* Check for non-textual ("block-listed") bytes. */
+  for (n = 0; n <= 31; n++, block_mask >>>= 1) {
+    if ((block_mask & 1) && (s.dyn_ltree[n * 2]/*.Freq*/ !== 0)) {
       return Z_BINARY;
     }
   }
 
-  /* Check for textual ("white-listed") bytes. */
+  /* Check for textual ("allow-listed") bytes. */
   if (s.dyn_ltree[9 * 2]/*.Freq*/ !== 0 || s.dyn_ltree[10 * 2]/*.Freq*/ !== 0 ||
       s.dyn_ltree[13 * 2]/*.Freq*/ !== 0) {
     return Z_TEXT;
@@ -1016,7 +992,7 @@ const detect_data_type = (s) => {
     }
   }
 
-  /* There are no "black-listed" or "white-listed" bytes:
+  /* There are no "block-listed" or "allow-listed" bytes:
    * this stream either is empty or has tolerated ("gray-listed") bytes only.
    */
   return Z_BINARY;
@@ -1051,14 +1027,20 @@ const _tr_init = (s) =>
 /* ===========================================================================
  * Send a stored block
  */
-const _tr_stored_block = (s, buf, stored_len, last) =>
+const _tr_stored_block = (s, buf, stored_len, last) => {
 //DeflateState *s;
 //charf *buf;       /* input block */
 //ulg stored_len;   /* length of input block */
 //int last;         /* one if this is the last block for a file */
-{
+
   send_bits(s, (STORED_BLOCK << 1) + (last ? 1 : 0), 3);    /* send block type */
-  copy_block(s, buf, stored_len, true); /* with header */
+  bi_windup(s);        /* align on byte boundary */
+  put_short(s, stored_len);
+  put_short(s, ~stored_len);
+  if (stored_len) {
+    s.pending_buf.set(s.window.subarray(buf, buf + stored_len), s.pending);
+  }
+  s.pending += stored_len;
 };
 
 
@@ -1075,14 +1057,14 @@ const _tr_align = (s) => {
 
 /* ===========================================================================
  * Determine the best encoding for the current block: dynamic trees, static
- * trees or store, and output the encoded block to the zip file.
+ * trees or store, and write out the encoded block.
  */
-const _tr_flush_block = (s, buf, stored_len, last) =>
+const _tr_flush_block = (s, buf, stored_len, last) => {
 //DeflateState *s;
 //charf *buf;       /* input block, or NULL if too old */
 //ulg stored_len;   /* length of input block */
 //int last;         /* one if this is the last block for a file */
-{
+
   let opt_lenb, static_lenb;  /* opt_len and static_len in bytes */
   let max_blindex = 0;        /* index of last bit length code of non zero freq */
 
@@ -1117,7 +1099,7 @@ const _tr_flush_block = (s, buf, stored_len, last) =>
 
     // Tracev((stderr, "\nopt %lu(%lu) stat %lu(%lu) stored %lu lit %u ",
     //        opt_lenb, s->opt_len, static_lenb, s->static_len, stored_len,
-    //        s->last_lit));
+    //        s->sym_next / 3));
 
     if (static_lenb <= opt_lenb) { opt_lenb = static_lenb; }
 
@@ -1164,19 +1146,14 @@ const _tr_flush_block = (s, buf, stored_len, last) =>
  * Save the match info and tally the frequency counts. Return true if
  * the current block must be flushed.
  */
-const _tr_tally = (s, dist, lc) =>
+const _tr_tally = (s, dist, lc) => {
 //    deflate_state *s;
 //    unsigned dist;  /* distance of matched string */
 //    unsigned lc;    /* match length-MIN_MATCH or unmatched char (if dist==0) */
-{
-  //let out_length, in_length, dcode;
 
-  s.pending_buf[s.d_buf + s.last_lit * 2]     = (dist >>> 8) & 0xff;
-  s.pending_buf[s.d_buf + s.last_lit * 2 + 1] = dist & 0xff;
-
-  s.pending_buf[s.l_buf + s.last_lit] = lc & 0xff;
-  s.last_lit++;
-
+  s.pending_buf[s.sym_buf + s.sym_next++] = dist;
+  s.pending_buf[s.sym_buf + s.sym_next++] = dist >> 8;
+  s.pending_buf[s.sym_buf + s.sym_next++] = lc;
   if (dist === 0) {
     /* lc is the unmatched char */
     s.dyn_ltree[lc * 2]/*.Freq*/++;
@@ -1192,34 +1169,7 @@ const _tr_tally = (s, dist, lc) =>
     s.dyn_dtree[d_code(dist) * 2]/*.Freq*/++;
   }
 
-// (!) This block is disabled in zlib defaults,
-// don't enable it for binary compatibility
-
-//#ifdef TRUNCATE_BLOCK
-//  /* Try to guess if it is profitable to stop the current block here */
-//  if ((s.last_lit & 0x1fff) === 0 && s.level > 2) {
-//    /* Compute an upper bound for the compressed length */
-//    out_length = s.last_lit*8;
-//    in_length = s.strstart - s.block_start;
-//
-//    for (dcode = 0; dcode < D_CODES; dcode++) {
-//      out_length += s.dyn_dtree[dcode*2]/*.Freq*/ * (5 + extra_dbits[dcode]);
-//    }
-//    out_length >>>= 3;
-//    //Tracev((stderr,"\nlast_lit %u, in %ld, out ~%ld(%ld%%) ",
-//    //       s->last_lit, in_length, out_length,
-//    //       100L - out_length*100L/in_length));
-//    if (s.matches < (s.last_lit>>1)/*int /2*/ && out_length < (in_length>>1)/*int /2*/) {
-//      return true;
-//    }
-//  }
-//#endif
-
-  return (s.last_lit === s.lit_bufsize - 1);
-  /* We avoid equality with lit_bufsize because of wraparound at 64K
-   * on 16 bit machines and because stored blocks are restricted to
-   * 64K-1 bytes.
-   */
+  return (s.sym_next === s.sym_end);
 };
 
 module.exports._tr_init  = _tr_init;
