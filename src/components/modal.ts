@@ -94,6 +94,15 @@ export class ModalHelper implements IService {
         let currentPath = this.url.removeQuery(this.url.current(), "_modal");
         currentPath = this.url.removeQuery(currentPath, "_iframe");
 
+        if (document.URL.contains("?$")) {
+            if (document.URL.contains("_modal="))
+                currentPath = document.URL.substring(0, document.URL.indexOf("_modal=") - 1);
+            if (currentPath.contains("_iframe=")) {
+                currentPath = currentPath.substring(0, document.URL.indexOf("_iframe=") - 1);
+            }
+        }
+
+
         if (currentPath.endsWith("?")) {
             currentPath = currentPath.trimEnd("?");
         }
