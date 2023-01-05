@@ -189,6 +189,15 @@ export class ModalHelper implements IService {
             modalUrl = this.url.addQuery(modalUrl, "_iframe", "true");
         }
 
+        var addressurl = document.URL;
+
+        if (addressurl != null && addressurl.contains("?$")) {
+            modalUrl = this.url.addQuery(addressurl, "_modal", encodeURIComponent(url));
+            if (iframe) {
+                modalUrl = this.url.addQuery(addressurl, "_iframe", "true");
+            }
+        }
+
         history.pushState({}, "", modalUrl);
     }
 
