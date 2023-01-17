@@ -1,4 +1,4 @@
-define(["require", "exports", "jquery-sortable", "jquery-ui-mouse", "jquery-ui-widget", "jquery-ui", "jquery-ui-touch-punch"], function (require, exports) {
+define(["require", "exports", "jquery-sortable", "jquery-ui-mouse", "jquery-ui-widget", "jqueryui-ui", "jquery-ui-touch-punch"], function (require, exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
     var Sorting = /** @class */ (function () {
         function Sorting(url, serverInvoker) {
