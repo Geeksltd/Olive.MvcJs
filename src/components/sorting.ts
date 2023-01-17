@@ -3,8 +3,9 @@ import Url from "olive/components/url";
 import "jquery-sortable";
 import "jquery-ui-mouse";
 import "jquery-ui-widget";
-import "jqueryui-ui";
+import "jquery-ui-all";
 import "jquery-ui-touch-punch";
+
 import ServerInvoker from "olive/mvc/serverInvoker";
 
 export default class Sorting implements IService {
