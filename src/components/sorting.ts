@@ -2,6 +2,8 @@
 import Url from "olive/components/url";
 import "jquery-sortable";
 import "jquery-ui-mouse"
+import "jquery-ui-widget"
+import "jquery-ui"
 import "jquery-ui-touch-punch";
 import ServerInvoker from "olive/mvc/serverInvoker";
 
