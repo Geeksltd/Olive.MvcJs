@@ -2,7 +2,7 @@
 import Url from "olive/components/url";
 
 import "jquery-sortable";
-import "jquery-ui-touch-punch";
+import "olive/components/touchpunch";
 
 import ServerInvoker from "olive/mvc/serverInvoker";
 

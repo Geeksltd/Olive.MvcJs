@@ -11,6 +11,7 @@ declare const Services: {
     ModalHelper: string;
     Paging: string;
     Sorting: string;
+    TouchPunch: string;
     Url: string;
     Validate: string;
     Waiting: string;
