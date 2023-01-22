@@ -11,7 +11,6 @@ const Services = {
     ModalHelper: "modalHelper",
     Paging: "paging",
     Sorting: "sorting",
-    TouchPunch: "touchpunch",
     Url: "url",
     Validate: "validate",
     Waiting: "waiting",

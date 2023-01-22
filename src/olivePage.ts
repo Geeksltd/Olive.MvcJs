@@ -45,7 +45,6 @@ import Services from "olive/di/services";
 import { ServiceDescription } from "olive/di/serviceDescription";
 import SanityAdapter from "olive/plugins/sanityAdapter";
 import TestingContext from "olive/plugins/testingContext";
-import TouchPunch from "olive/components/touchpunch";
 
 export default class OlivePage implements IServiceLocator {
     public services: ServiceContainer;
@@ -131,11 +130,6 @@ export default class OlivePage implements IServiceLocator {
 
         if (services.tryAddSingleton(Services.Sorting,
             (url: Url, serverInvoker: ServerInvoker) => new Sorting(url, serverInvoker), out)) {
-            out.value.withDependencies(Services.Url, Services.ServerInvoker);
-        }
-
-        if (services.tryAddSingleton(Services.TouchPunch,
-            (url: Url, serverInvoker: ServerInvoker) => new TouchPunch(url, serverInvoker), out)) {
             out.value.withDependencies(Services.Url, Services.ServerInvoker);
         }
 
