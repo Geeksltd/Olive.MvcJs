@@ -91,7 +91,9 @@ export default class AjaxRedirect implements IService {
                 if ((ajaxTarget || document.URL.contains("?$")) && (ajaxhref == undefined)) {
                     const documentUrl = document.URL;
                     const newUrl = trigger.attr("data-addressbar") || url;
-                    const title = $("#page_meta_title").val();
+                    var title = $(response).find("#page_meta_title").val();
+                    if (title == undefined || title == null)
+                        title = $("#page_meta_title").val();
 
 
                     const childaddress = document.URL.substring(documentUrl.indexOf("=") + 1);
@@ -113,8 +115,9 @@ export default class AjaxRedirect implements IService {
                 else if (!isBack) {
                     this.ajaxChangedUrl++;
                     if (addToHistory && !window.isModal()) {
-
-                        const title = $("#page_meta_title").val();
+                        var title = $(response).find("#page_meta_title").val();
+                        if (title == undefined || title == null)
+                            title = $("#page_meta_title").val();
 
                         let addressBar = trigger.attr("data-addressbar") || url;
                         try {
