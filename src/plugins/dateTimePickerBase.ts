@@ -2,6 +2,8 @@ import { ModalHelper } from "olive/components/modal"
 import Config from "olive/config"
 
 export default abstract class dateTimePickerBase {
+    //https://getdatepicker.com/4/Options/
+
     protected abstract controlType: string;
     protected abstract format: string;
 
@@ -50,6 +52,7 @@ export default abstract class dateTimePickerBase {
                 stepping: stepping,
                 minDate: minimumDate,
                 maxDate: maximumDate,
+                
             };
 
             this.modifyOptions(options);

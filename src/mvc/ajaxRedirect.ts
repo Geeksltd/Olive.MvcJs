@@ -57,9 +57,13 @@ export default class AjaxRedirect implements IService {
     ): boolean {
 
         if (!trigger) { trigger = $(window); }
-        if (ajaxTarget && trigger.prop("tagName") != "A" && trigger.prop("tagName") != "MAIN") {
+
+        var activebutton = trigger.children(".board-header").first().children(".col-md-10").first().children(".board-links").first().children(".active");
+
+        if (ajaxTarget && (trigger.prop("tagName") != "A" && trigger.prop("tagName") != "MAIN") && (activebutton == null || activebutton == undefined || activebutton.length == 0)) {
             return;
         }
+
         url = this.url.effectiveUrlProvider(url, trigger);
 
         if (url.indexOf(this.url.baseContentUrl + "/##") === 0) {
