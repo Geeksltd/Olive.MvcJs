@@ -156,6 +156,7 @@ export default class Url implements IService {
     }
 
     public getBaseThemeUrl() {
+        if (document.URL.startsWith("http://localhost")) return '';
         let domain = window.location.hostname;
         if (domain.startsWith("hub.")) {
             domain = domain.substring(4);
