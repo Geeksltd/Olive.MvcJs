@@ -88,7 +88,7 @@ define(["require", "exports"], function (require, exports) {
                         var servicename = childaddresswithouthttp.substring(firstindex + 1, secondindex);
                         var extractedaddress = childaddress.replace("://hub", "://" + servicename).replace("/" + servicename + "/", "/");
                         if (newUrl.toLowerCase().contains(extractedaddress.substring(0, extractedaddress.indexOf("?")).toLowerCase())) {
-                            var modifiedaddress = newUrl.substring(0, newUrl.indexOf("://") + 3) + newUrl.replace("://" + servicename.toLowerCase(), "://hub").replace("https://", "").replace("http://", "").replace("/", "/" + servicename + "/");
+                            var modifiedaddress = newUrl.substring(0, newUrl.indexOf("://") + 3) + newUrl.replace("://" + servicename, "://hub").replace("https://", "").replace("http://", "").replace("/", "/" + servicename + "/");
                             var newaddress = document.URL.substring(0, documentUrl.indexOf("=") + 1) + modifiedaddress;
                             window.history.pushState(null, title, newaddress);
                         }

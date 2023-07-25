@@ -355,32 +355,65 @@ export default class Modal {
 
     protected getModalTemplateForAjax(options: any): string {
         let modalDialogStyle: string = "";
+        var modalCustomClasses = "";
 
         if (options) {
+            if (options.position) {
+                modalDialogStyle += "margin:0;";
+                if (options.position === "right" || options.position === "left") {
+                    modalDialogStyle += `float:${options.position};`;
+                }
+            }
+
             if (options.width) {
                 modalDialogStyle += "width:" + options.width + "; max-width: none;";
             }
+            else {
+                if (options.position) {
+                    if (options.position === "right" || options.position === "left") {
+                        modalDialogStyle += "width:30%; max-width: none;";
+                    }
+                    else if (options.position === "top" || options.position === "bottom") {
+                        modalDialogStyle += "width:100%; max-width: 100%;";
+                    }
+                }
+            }
 
             if (options.height) {
-                modalDialogStyle += "height:" + options.height + ";";
+                if (options.position && options.position === "bottom") {
+                    modalDialogStyle += `top:${100 - parseInt(options.height.replace('%', ''), 10)};height:${options.height};`;
+                }
+                else {
+                    modalDialogStyle += "height:" + options.height + ";";
+                }
+            }
+            else if (options.position) {
+                if (options.position === "top") {
+                    modalDialogStyle += "height:30%;";
+                }
+                else if (options.position === "bottom") {
+                    modalDialogStyle += "top:70%;height:30%;";
+                }
+            }
+
+            if (options.customClasses) {
+                modalCustomClasses += options.customClasses;
             }
         }
 
-        return (
-            "<div class='modal' id='myModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel'\
-           aria-hidden='true'>\
-              <div class='modal-dialog' style='" + modalDialogStyle + "'>\
-              <div class='modal-content' >\
-              <div class='modal-header'>\
-                  <button type='button' class='close' data-dismiss='modal' aria-label='Close'>\
-                      <i class='fa fa-times-circle'></i>\
-                  </button>\
-              </div>\
-              <div class='modal-body'>\
-                  <main></main>\
-              </div>\
-          </div></div></div>"
-        );
+        return (`<div class='modal ${modalCustomClasses}' id='myModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel'\
+                     aria-hidden='true'>\
+                     <div class='modal-dialog' style='${modalDialogStyle}'>\
+                     <div class='modal-content' >\
+                     <div class='modal-header'>\
+                     <button type='button' class='close' data-dismiss='modal' aria-label='Close'>\
+                     <i class='fa fa-times-circle'></i>\
+                     </button>\
+                     </div>\
+                     <div class='modal-body'>\
+                     <main></main>\
+                     </div>\
+                     </div></div></div>`);
     }
 
     protected getModalTemplateForiFrame(options: any) {
