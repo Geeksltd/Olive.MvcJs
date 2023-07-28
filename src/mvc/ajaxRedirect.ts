@@ -111,7 +111,7 @@ export default class AjaxRedirect implements IService {
 
                     if (newUrl.toLowerCase().contains(extractedaddress.substring(0, extractedaddress.indexOf("?")).toLowerCase())) {
 
-                        const modifiedaddress = newUrl.substring(0, newUrl.indexOf("://") + 3) + newUrl.replace("://" + servicename, "://hub").replace("https://", "").replace("http://", "").replace("/", "/" + servicename + "/");
+                        const modifiedaddress = newUrl.substring(0, newUrl.indexOf("://") + 3) + newUrl.replace("://" + servicename.toLowerCase(), "://hub").replace("https://", "").replace("http://", "").replace("/", "/" + servicename + "/");
                         const newaddress = document.URL.substring(0, documentUrl.indexOf("=") + 1) + modifiedaddress;
                         window.history.pushState(null, title, newaddress);
                     }
