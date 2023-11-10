@@ -19,9 +19,16 @@ export default class Waiting implements IService {
                 .appendTo(screen);
         }
 
-        var imageUrl = this.url.ofContent('/img/loading.gif');
+        var loadingContent = '';
+        var customLoading = $("#loading");
+        if (customLoading.length) {
+            loadingContent = customLoading.html();
+        } else {
+            var imageUrl = this.url.ofContent('/img/loading.gif');
+            loadingContent = "<img src='" + imageUrl + "'/>";
+        }
 
-        $("<div class='wait-container'><div class='wait-box'><img src='" + imageUrl + "'/></div>")
+        $("<div class='wait-container'><div class='wait-box'>" + loadingContent + "</div>")
             .appendTo(screen)
             .show();
     }
