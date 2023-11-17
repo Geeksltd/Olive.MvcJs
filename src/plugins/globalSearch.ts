@@ -12,44 +12,25 @@ export class GlobalSearchFactory implements IService {
 
 export default class GlobalSearch implements IService {
     private urlList: string[];
-    private isMouseInsideSearchPanel: boolean = false;
+    private resultItemClass: string;
+
+    private panel: JQuery;
+    private helpPanel: JQuery;
+    private groupsPanel: JQuery;
+    private resultsPanel: JQuery;
+
     private isTyping: boolean = false;
     private searchedText: string = null;
     private modalHelper: ModalHelper
 
     protected boldSearch(str: string, searchText: string) {
-        let ix = -1;
-        let result: string = "";
-        if (str !== null && str !== undefined) {
-            str = str.replace(/<strong>/gi, "↨↨").replace(/<\/strong>/gi, "↑↑");
-
-            const strlower = str.toLowerCase();
-            if (searchText !== "" && searchText !== null && searchText !== undefined) {
-                const stxt = searchText.toLowerCase();
-                do {
-                    const ixNext = strlower.indexOf(stxt, ix);
-
-                    if (ixNext < 0) { break; }
-
-                    if (ix < 0) { result = str.substr(0, ixNext); }
-
-                    result += (ix >= 0 ? str.substr(ix, ixNext - ix) : "") +
-                        "<strong>" +
-                        str.substr(ixNext, stxt.length) + "</strong>";
-
-                    ix = ixNext + stxt.length;
-                } while (true);
-            }
-            result += (ix < 0 ? str : str.substr(ix, str.length - ix));
-
-            result = result.replace(/↨↨/gi, "<strong>").replace(/↑↑/gi, "</strong>");
-        }
-        return result;
+        if (!str) return "";
+        return str.replace(new RegExp('(' + searchText + ')', "gi"), "<b>$1</b>");
     }
 
     protected boldSearchAll(str: string, searchText: string) {
         let result: string = str;
-        if (searchText !== null && searchText !== undefined) {
+        if (searchText) {
             const splitedsearchtext = searchText.split(" ");
             for (const strST of splitedsearchtext) {
                 result = this.boldSearch(result, strST);
@@ -71,10 +52,17 @@ export default class GlobalSearch implements IService {
             this.input.attr("data-globalsearch-enabled", "true");
         }
 
-        this.input.wrap("<div class='global-search-panel'></div>");
+        $('#global-search-modal').on('shown.bs.modal', function () {
+            $('#global-search-modal .form-control').trigger('focus')
+        })
 
-        const urlsList = (this.input.attr("data-search-source") || "").split(";");
-        this.urlList = urlsList;
+        this.urlList = (this.input.attr("data-search-source") || "").split(";");
+        this.resultItemClass = this.input.attr("data-result-item-class");
+
+        this.panel = $("#global-search-modal .global-search-panel")
+        this.helpPanel = $("#global-search-modal .global-search-help")
+        this.groupsPanel = $("#global-search-modal .global-search-groups")
+        this.resultsPanel = $("#global-search-modal .global-search-results")
 
         let timeout = null;
         this.input.keyup((e) => {
@@ -92,67 +80,21 @@ export default class GlobalSearch implements IService {
                 }
             }), 300);
         });
-
-        this.input.on("blur", ((e) => {
-            if (this.isMouseInsideSearchPanel === false) {
-                this.clearSearchComponent();
-            }
-        }));
-        this.input.on("focus", ((e) => {
-            const inputholder = this.input.parent();
-            const panel = inputholder.find(".global-search-result-panel");
-            if (panel.children().length > 0)
-                panel.show();
-        }));
-    }
-
-    protected clearSearchComponent() {
-        const inputholder = this.input.parent();
-        if (inputholder !== undefined) {
-            const panel = inputholder.find(".global-search-result-panel");
-            if (panel !== undefined) {
-                panel.fadeOut('fast');
-                // panel.empty();
-                // panel.remove();
-            }
-        }
-    }
-
-    protected getResultPanel() {
-        const searchPanel = this.input.parent();
-        let resultPanel = searchPanel.find(".global-search-result-panel");
-
-        if (resultPanel === undefined || resultPanel === null || resultPanel.length === 0) {
-            resultPanel = $("<div class='global-search-result-panel'>")
-                .mouseenter(() => this.isMouseInsideSearchPanel = true)
-                .mouseleave(() => this.isMouseInsideSearchPanel = false);
-            searchPanel.append(resultPanel);
-        }
-        else {
-            resultPanel.empty().show();
-        }
-
-        $(window).on("keydown", (e) => {
-            if (e.keyCode === 27) {
-                resultPanel.hide(null, () => {
-                    $(window).off("keydown");
-                });
-                $('input[name=searcher]').val('');
-            }
-        });
-
-        return resultPanel;
     }
 
     protected createSearchComponent(urls: string[]) {
         this.searchedText = this.input.val().trim();
 
-        const resultPanel = this.getResultPanel();
-        resultPanel.empty();
+        this.groupsPanel.empty();
+        this.resultsPanel.empty();
+        if (this.searchedText) {
+            this.helpPanel.hide();
+        }
+        else {
+            this.helpPanel.show();
+            return;
+        }
 
-        const searchHolder = $("<div class='search-container'>");
-
-        this.waiting.show();
 
         const ajaxList = urls.map((p): IAjaxObject => {
             const icon = p.split("#")[1].trim();
@@ -166,11 +108,14 @@ export default class GlobalSearch implements IService {
         const context: ISearchContext = {
             ajaxList,
             resultCount: 0,
-            resultPanel,
-            searchHolder,
+            groupsPanel: this.groupsPanel,
+            resultsPanel: this.resultsPanel,
             beginSearchStarted: true,
             searchedText: this.searchedText,
         };
+
+        if (context.ajaxList.length)
+            this.waiting.show();
 
         for (const ajaxObject of context.ajaxList) {
             ajaxObject.ajx = $
@@ -182,53 +127,50 @@ export default class GlobalSearch implements IService {
                     data: { searcher: context.searchedText },
                     success: (result) => this.onSuccess(ajaxObject, context, result),
                     complete: (jqXhr) => this.onComplete(context, jqXhr),
-                    error: (jqXhr) => this.onError(ajaxObject, resultPanel, jqXhr),
+                    error: (jqXhr) => this.onError(ajaxObject, jqXhr),
                 });
         }
     }
 
     protected onSuccess(sender: IAjaxObject, context: ISearchContext, result: IResultItemDto[]) {
-        if (this.isTyping === false) {
-            sender.result = result;
-            if (result !== null && result !== undefined && typeof (result) === typeof ([])) {
-                sender.state = AjaxState.success;
+        if (this.isTyping) {
+            return;
+        }
 
-                // Results from GlobalSearch MS have the GroupTitle in their description field separated with $$$
-                var resultWithType = result.map(x => {
+        sender.result = result;
+        if (result?.length) {
 
-                    if (x.Description === null || x.Description.indexOf("$$$") < 0) {
-                        return x;
-                    }
-                    var descArray = x.Description.split("$$$");
-                    var groupTitle = descArray.shift();
+            sender.state = AjaxState.success;
 
-                    x.GroupTitle = groupTitle;
-                    x.Description = descArray.join("");
-
+            // Results from GlobalSearch MS have the GroupTitle in their description field separated with $$$
+            var resultWithType = result.map(x => {
+                if (x.Description === null || x.Description.indexOf("$$$") < 0) {
                     return x;
-                });
-
-
-                const groupedByResult = this.groupBy(resultWithType, 'GroupTitle');
-
-                for (let item in groupedByResult) {
-
-                    var searchItem = this.createSearchItems(sender, context, groupedByResult[item]);
-                    context.searchHolder.append(searchItem);
-
-
-                    if (context.beginSearchStarted && result.length > 0) {
-                        context.beginSearchStarted = false;
-                        context.resultPanel.empty();
-                        context.resultPanel.append(context.searchHolder);
-                    }
-
                 }
+                var descArray = x.Description.split("$$$");
+                var groupTitle = descArray.shift();
 
-            } else {
-                sender.state = AjaxState.failed;
-                console.error("ajax success but failed to decode the response -> wellform expcted response is like this: [{Title:'',Description:'',IconUrl:'',Url:''}] ");
+                x.GroupTitle = groupTitle;
+                x.Description = descArray.join("");
+
+                return x;
+            });
+
+
+            const groupedByResult = this.groupBy(resultWithType, 'GroupTitle');
+            let index = 0;
+            for (let item in groupedByResult) {
+                if (!groupedByResult[item].length) continue;
+                this.createSearchItems(sender, context, index++, item, groupedByResult[item]);
+
+                if (context.beginSearchStarted && result.length > 0) {
+                    context.beginSearchStarted = false;
+                }
             }
+
+        } else {
+            sender.state = AjaxState.failed;
+            console.error("ajax success but failed to decode the response -> wellform expcted response is like this: [{Title:'',Description:'',IconUrl:'',Url:''}] ");
         }
     }
 
@@ -255,95 +197,47 @@ export default class GlobalSearch implements IService {
         return resfilter;
     }
 
-    protected createSearchItems(sender: IAjaxObject, context: ISearchContext, items: IResultItemDto[]) {
-        
-        const groupTitle = (items?.length > 0 && items[0].GroupTitle?.length > 0) ? 
-                                    items[0].GroupTitle : sender.url.split(".")[0]
-                                                                    .replace("https://", "")
-                                                                    .replace("http://", "")
-                                                                    .replace("'", "")
-                                                                    .replace("\"", "")
-                                                                    .toUpperCase();
+    protected createSearchItems(sender: IAjaxObject, context: ISearchContext, groupIndex: number, groupTitle: string, items: IResultItemDto[]) {
 
-        const searchItem = $(`<div class='search-item'>`);
+        groupTitle = groupTitle || (items?.length > 0 && items[0].GroupTitle?.length > 0) ?
+            items[0].GroupTitle : sender.url.split(".")[0]
+                .replace("https://", "")
+                .replace("http://", "")
+                .replace("'", "")
+                .replace("\"", "")
+                .toUpperCase();
 
-        const searchTitleHolder = $("<div class='search-title'>");
+        const id = ((groupTitle || 'group').replace(/ /g, "-")) + "-" + groupIndex;
+        const active = this.groupsPanel.children().length == 0 ? "active" : "";
 
-        if (items?.length > 0 && items[0].Colour) {
-            searchItem.css("color", items[0].Colour);
-            //searchTitleHolder.css("color", items[0].Colour);
-        }
-
-        const searhTitle = searchTitleHolder.append($("<i>").attr("class", sender.icon)).append(groupTitle);
+        const searchTitle = $(`<li class='nav-item'><a class='nav-link ${active}' href='#${id}' role='tab' data-toggle='tab'><i class='${sender.icon}'></i> ${groupTitle || "Global"} <span class='badge badge-secondary'>${items.length}</span></a></li>`)
 
         // we may need to use the search title to implement show more.
         // but we may only need to add li (show more) at the end of list and after it is clicked,
         // it makes all hidden items visible
 
+        this.groupsPanel.append(searchTitle);
+        let childrenItems = $("<div class='row'>");
 
-        searchItem.append(searhTitle);
+        const maxResultItemsCount = 100;
 
-        const childrenItems = $("<ul>");
-
-        const resultItemsCount = 100;
-
-        for (let i = 0; i < items.length && i < resultItemsCount; i++) {
+        for (let i = 0; i < items.length && i < maxResultItemsCount; i++) {
             context.resultCount++;
             childrenItems.append(this.createItem(items[i], context));
         }
-        
-        if(childrenItems.children('li').length > 5)
-        {
-            const removeExceededItems = () => {
-                childrenItems.children('li').each(function (index, element) {
 
-                    if (index < 5) {
-                        return;
-                    }
+        childrenItems = $("<div role='tabpanel' class='tab-pane " + active + "' id='" + id + "'>").append(childrenItems);
 
-                    $(element).css('display', 'none');
-
-                });
-            }
-
-            removeExceededItems();
-
-            const showMoreClass = 'show-more';
-
-            const showMoreItem = $("<li class='show-toggle'>").html("Show more");
-            showMoreItem.addClass(showMoreClass);
-
-            childrenItems.append(showMoreItem);
-
-            showMoreItem.click(()=>{
-               if (showMoreItem.hasClass(showMoreClass)) {
-                        showMoreItem.siblings().css("display", "list-item");
-                        
-                        showMoreItem.toggleClass(showMoreClass)
-                        showMoreItem.html("Show less");
-                    }
-                    else {
-                        removeExceededItems();
-
-                        showMoreItem.toggleClass(showMoreClass);
-                        showMoreItem.css("display", "list-item");
-                        showMoreItem.html("Show more");
-                    }
-            })
+        if (items?.length > 0 && items[0].Colour) {
+            childrenItems.css("color", items[0].Colour);
         }
 
         $(childrenItems).find("[target='$modal'][href]").off("click").click(function () {
-            $(".global-search-result-panel").fadeOut();
+            $('#global-search-modal').modal('hide')
         });
         this.modalHelper.enableLink($(childrenItems).find("[target='$modal'][href]"));
 
-        searchItem.append(childrenItems);
-
-        if (items.length === 0) {
-            searchItem.addClass("d-none");
-        }
-
-        return searchItem;
+        this.resultsPanel.append(childrenItems);
     }
 
     protected createItem(item: IResultItemDto, context: ISearchContext) {
@@ -353,20 +247,21 @@ export default class GlobalSearch implements IService {
         else if (item.Action == ActionEnum.NewWindow)
             attr = "target=\"_blank\"";
 
-            return $("<li>")
-                .append($("<div class='result-item'>")
-                    .append($("<p class='icon'>")
-                        .append($(`<a name = 'Photo' class='profile-photo' href='${item.Url}'>`)
-                            .append((item.IconUrl === null || item.IconUrl === undefined) ? $("<div class='icon'>") : this.showIcon(item))
-                        ))
-                    .append($("<div class='result-item-content'>")
-                        .append($("<p class='type'>")
-                            .append($(`<a href='${item.Url}' ${attr}>`).html(this.boldSearchAll(item.GroupTitle, context.searchedText))))
-                        .append($("<p class='title'>")
-                            .append($(`<a href='${item.Url}' ${attr}>`).html(this.boldSearchAll(item.Title, context.searchedText))))
-                        .append($("<p class='body'>")
-                            .append($(`<a href='${item.Url}' ${attr}>`).html(this.boldSearchAll(item.Description, context.searchedText)))))
-                );
+        return $(
+            `<div class='${this.resultItemClass}'>` +
+            `<div class='search-item'>` +
+            `<div class='icon'>` +
+            `<a name='Photo' class='profile-photo' href='${item.Url}'>` +
+            (!item.IconUrl ? "<div class='icon'></div>" : this.showIcon(item)) +
+            `</a>` +
+            `</div>` +
+            `<div class='result-item-content'>` +
+            `<div class='type'><a href='${item.Url}' ${attr}>${this.boldSearchAll(item.GroupTitle, context.searchedText)}</a></div>` +
+            `<div class='title'><a href='${item.Url}' ${attr}>${this.boldSearchAll(item.Title, context.searchedText)}</a></div>` +
+            `<div class='body'><a href='${item.Url}' ${attr}>${this.boldSearchAll(item.Description, context.searchedText)}</a></div>` +
+            `</div>` +
+            `</div>` +
+            `</div>`);
 
     }
 
@@ -374,38 +269,31 @@ export default class GlobalSearch implements IService {
         if (context.ajaxList.filter((p) => p.state === 0).length === 0) {
             this.waiting.hide();
             if (context.resultCount === 0) {
-                const ulNothing = $("<ul>");
-                ulNothing.append("<li>").append("<span>").html("Nothing found");
-                context.resultPanel.append(ulNothing);
+                context.resultsPanel.html("Nothing found");
             }
         }
     }
 
-    protected onError(sender: IAjaxObject, resultPanel: JQuery, jqXHR: JQueryXHR) {
+    protected onError(sender: IAjaxObject, jqXHR: JQueryXHR) {
         sender.state = AjaxState.failed;
-
-        const ulFail = $("<ul>");
-        ulFail.append($("<li>").append($("<span>")
-            .html("ajax failed Loading data from source [" + sender.url + "]")));
-        resultPanel.append(ulFail);
+        // this.resultsPanel.append($("ajax failed Loading data from source [" + sender.url + "]"));
         console.error(jqXHR);
     }
 
-    protected showIcon(item: any): JQuery {
+    protected showIcon(item: any): string {
         if (item.IconUrl.indexOf("fa-") > 0) {
-            return $(`<span class='icon-background' style = 'background-color: ${item.Colour}'>`)
-                .append($(`<span class='${item.IconUrl}' >`));
+            return `<span class='icon-background' style='background-color: ${item.Colour}'><span class='${item.IconUrl}'></span></span>`;
         }
         else {
-            return $(`<img src='${item.IconUrl}' />`);
+            return `<img src='${item.IconUrl}' />`;
         }
     }
 
-    protected groupBy(array: any, key: any){
+    protected groupBy(array: IResultItemDto[], key: string): IResultGroupDto {
         return array.reduce((rv, x) => {
-                    (rv[x[key]] = rv[x[key]] || []).push(x);
-                    return rv;
-                }, {});
+            (rv[x[key]] = rv[x[key]] || []).push(x);
+            return rv;
+        }, {});
     }
 }
 
@@ -417,11 +305,15 @@ export enum AjaxState {
 
 export interface ISearchContext {
     ajaxList: IAjaxObject[];
-    resultPanel: JQuery;
+    groupsPanel: JQuery;
+    resultsPanel: JQuery;
     resultCount: number;
-    searchHolder: JQuery;
     beginSearchStarted: boolean;
     searchedText: string;
+}
+
+export interface IResultGroupDto {
+    [key: string]: IResultItemDto[]
 }
 
 export interface IResultItemDto {

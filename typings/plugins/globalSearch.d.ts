@@ -10,7 +10,11 @@ export default class GlobalSearch implements IService {
     private input;
     private waiting;
     private urlList;
-    private isMouseInsideSearchPanel;
+    private resultItemClass;
+    private panel;
+    private helpPanel;
+    private groupsPanel;
+    private resultsPanel;
     private isTyping;
     private searchedText;
     private modalHelper;
@@ -18,17 +22,15 @@ export default class GlobalSearch implements IService {
     protected boldSearchAll(str: string, searchText: string): string;
     constructor(input: JQuery, waiting: Waiting, modalHelper: ModalHelper);
     enable(): void;
-    protected clearSearchComponent(): void;
-    protected getResultPanel(): JQuery;
     protected createSearchComponent(urls: string[]): void;
     protected onSuccess(sender: IAjaxObject, context: ISearchContext, result: IResultItemDto[]): void;
     protected isValidResult(item: IResultItemDto, context: ISearchContext): boolean;
-    protected createSearchItems(sender: IAjaxObject, context: ISearchContext, items: IResultItemDto[]): JQuery;
+    protected createSearchItems(sender: IAjaxObject, context: ISearchContext, groupIndex: number, groupTitle: string, items: IResultItemDto[]): void;
     protected createItem(item: IResultItemDto, context: ISearchContext): JQuery;
     protected onComplete(context: ISearchContext, jqXHR: JQueryXHR): void;
-    protected onError(sender: IAjaxObject, resultPanel: JQuery, jqXHR: JQueryXHR): void;
-    protected showIcon(item: any): JQuery;
-    protected groupBy(array: any, key: any): any;
+    protected onError(sender: IAjaxObject, jqXHR: JQueryXHR): void;
+    protected showIcon(item: any): string;
+    protected groupBy(array: IResultItemDto[], key: string): IResultGroupDto;
 }
 export declare enum AjaxState {
     pending = 0,
@@ -37,11 +39,14 @@ export declare enum AjaxState {
 }
 export interface ISearchContext {
     ajaxList: IAjaxObject[];
-    resultPanel: JQuery;
+    groupsPanel: JQuery;
+    resultsPanel: JQuery;
     resultCount: number;
-    searchHolder: JQuery;
     beginSearchStarted: boolean;
     searchedText: string;
+}
+export interface IResultGroupDto {
+    [key: string]: IResultItemDto[];
 }
 export interface IResultItemDto {
     Title: string;
