@@ -1,3 +1,5 @@
+import moment = require("typings-lib/moment/moment-node");
+
 export default class DateDropdown {
     public static enable(selector: JQuery) { selector.each((i, e) => new DateDropdown($(e)).enable()); }
 
