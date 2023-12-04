@@ -4,5 +4,3 @@
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
 /// <reference path="moment-node.d.ts" />
-
-declare var moment: moment.MomentStatic;
