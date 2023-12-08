@@ -39,7 +39,7 @@ export class ModalHelper implements IService {
         window.isModal = () => {
             try {
                 if (this.isAjaxModal) { return true; }
-                return $("myModal").length > 0;
+                return $("#myModal").length > 0;
                 // return window.self !== window.parent;
             } catch (e) {
                 return true;
@@ -164,7 +164,7 @@ export class ModalHelper implements IService {
     }
 
     public tryOpenFromUrl() {
-        if (this.url.getQuery("_modal") && $(".modal-dialog").length === 0) {
+        if (this.url.getQuery("_modal") && $("#myModal").length === 0) {
             this.openWithUrl();
         }
     }
