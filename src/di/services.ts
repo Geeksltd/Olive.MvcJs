@@ -9,6 +9,8 @@ const Services = {
     MasterDetail: "masterDetail",
     Modal: "modal",
     ModalHelper: "modalHelper",
+    MainTag:"mainTag",
+    MainTagHelper:"mainTagHelper",
     Paging: "paging",
     Sorting: "sorting",
     Url: "url",

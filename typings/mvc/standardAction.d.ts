@@ -2,6 +2,7 @@ import Alert from 'olive/components/alert';
 import Select from 'olive/plugins/select';
 import Waiting from 'olive/components/waiting';
 import { ModalHelper } from '../components/modal';
+import { MainTagHelper } from 'olive/components/mainTag';
 import AjaxRedirect from 'olive/mvc/ajaxRedirect';
 import Form from 'olive/components/form';
 import ResponseProcessor from 'olive/mvc/responseProcessor';
@@ -13,8 +14,9 @@ export default class StandardAction implements IService {
     private responseProcessor;
     private select;
     private modalHelper;
+    private mainTagHelper;
     private serviceLocator;
-    constructor(alert: Alert, form: Form, waiting: Waiting, ajaxRedirect: AjaxRedirect, responseProcessor: ResponseProcessor, select: Select, modalHelper: ModalHelper, serviceLocator: IServiceLocator);
+    constructor(alert: Alert, form: Form, waiting: Waiting, ajaxRedirect: AjaxRedirect, responseProcessor: ResponseProcessor, select: Select, modalHelper: ModalHelper, mainTagHelper: MainTagHelper, serviceLocator: IServiceLocator);
     initialize(): void;
     runStartup(container?: JQuery, trigger?: any, stage?: string): void;
     runAll(actions: any, trigger?: any): void;
@@ -22,6 +24,7 @@ export default class StandardAction implements IService {
     private notify;
     protected redirect(action: any, trigger: any): void;
     private openModal;
+    private renderMainTag;
     private loadServiceAfterConfiguration;
     private loadService;
 }

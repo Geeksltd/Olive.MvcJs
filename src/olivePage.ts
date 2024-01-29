@@ -45,12 +45,14 @@ import Services from "olive/di/services";
 import { ServiceDescription } from "olive/di/serviceDescription";
 import SanityAdapter from "olive/plugins/sanityAdapter";
 import TestingContext from "olive/plugins/testingContext";
+import { MainTagHelper } from "./components/mainTag";
 
 export default class OlivePage implements IServiceLocator {
     public services: ServiceContainer;
 
     public modal: ModalHelper;
     public waiting: Waiting;
+    public mainTag: MainTagHelper;
 
     constructor() {
         this.services = new ServiceContainer();
@@ -61,6 +63,7 @@ export default class OlivePage implements IServiceLocator {
 
         this.modal = this.getService<ModalHelper>(Services.ModalHelper);
         this.waiting = this.getService<Waiting>(Services.Waiting);
+        this.mainTag = this.getService<MainTagHelper>(Services.MainTagHelper);
         window.testingContext = this.getService<TestingContext>(Services.TestingContext);
 
         this.initializeServices();
@@ -88,6 +91,7 @@ export default class OlivePage implements IServiceLocator {
 
     protected initializeServices() {
         this.modal.initialize();
+        this.mainTag.initialize();
         this.getService<StandardAction>(Services.StandardAction).initialize();
         this.getService<Validate>(Services.Validate).initialize();
         this.getService<MasterDetail>(Services.MasterDetail).initialize();
@@ -122,7 +126,6 @@ export default class OlivePage implements IServiceLocator {
             (waiting: Waiting) => new GlobalSearchFactory(waiting, this.getService<ModalHelper>(Services.ModalHelper)), out)) {
             out.value.withDependencies(Services.Waiting);
         }
-
         if (services.tryAddSingleton(Services.CKEditorFileManagerFactory,
             (url: Url) => new CKEditorFileManagerFactory(url), out)) {
             out.value.withDependencies(Services.Url);
@@ -151,6 +154,13 @@ export default class OlivePage implements IServiceLocator {
         if (services.tryAddSingleton(Services.ModalHelper,
             (url: Url, ajaxRedirect: AjaxRedirect, responseProcessor: ResponseProcessor) =>
                 new ModalHelper(url, ajaxRedirect, responseProcessor), out)
+        ) {
+            out.value.withDependencies(Services.Url, Services.AjaxRedirect, Services.ResponseProcessor);
+        }
+
+        if (services.tryAddSingleton(Services.MainTagHelper,
+            (url: Url, ajaxRedirect: AjaxRedirect, responseProcessor: ResponseProcessor) =>
+                new MainTagHelper(url, ajaxRedirect, responseProcessor), out)
         ) {
             out.value.withDependencies(Services.Url, Services.AjaxRedirect, Services.ResponseProcessor);
         }
@@ -238,7 +248,8 @@ export default class OlivePage implements IServiceLocator {
                 responseProcessor: ResponseProcessor,
                 select: Select,
                 modalHelper: ModalHelper,
-                serviceLocator: IServiceLocator,
+                mainTagHelper: MainTagHelper,
+                serviceLocator: IServiceLocator
             ) =>
                 new StandardAction(
                     alert,
@@ -248,6 +259,7 @@ export default class OlivePage implements IServiceLocator {
                     responseProcessor,
                     select,
                     modalHelper,
+                    mainTagHelper,
                     serviceLocator),
             out)
         ) {
@@ -339,6 +351,9 @@ export default class OlivePage implements IServiceLocator {
         form.enableDefaultButtonKeyPress($("form input, form select"));
         UserHelp.enable($("[data-user-help]"));
         this.getService<ModalHelper>(Services.ModalHelper).enableLink($("[target='$modal'][href]"));
+
+        this.getService<MainTagHelper>(Services.MainTagHelper).enableLink($("[target^='$']:not([target = '$modal'])[href]"));
+
         this.getService<GroupingFactory>(Services.GroupingFactory).enable($(".form-group #GroupBy"));
 
         $("iframe[data-adjust-height=true]").off("load.auto-adjust").on("load.auto-adjust",

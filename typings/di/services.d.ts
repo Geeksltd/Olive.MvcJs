@@ -9,6 +9,8 @@ declare const Services: {
     MasterDetail: string;
     Modal: string;
     ModalHelper: string;
+    MainTag: string;
+    MainTagHelper: string;
     Paging: string;
     Sorting: string;
     Url: string;

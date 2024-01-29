@@ -2,10 +2,12 @@ import Form from "olive/components/form";
 import { ModalHelper } from "olive/components/modal";
 import Waiting from "olive/components/waiting";
 import { ServiceContainer } from "olive/di/serviceContainer";
+import { MainTagHelper } from "./components/mainTag";
 export default class OlivePage implements IServiceLocator {
     services: ServiceContainer;
     modal: ModalHelper;
     waiting: Waiting;
+    mainTag: MainTagHelper;
     constructor();
     protected initializeServices(): void;
     protected configureServices(services: ServiceContainer): void;
