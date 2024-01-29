@@ -12,7 +12,7 @@ export default class CrossDomainEvent {
 
                 let info = null;
 
-                if (e.data.startsWith("{")) {
+                if (e.data && typeof e.data === "string" && e.data.startsWith("{")) {
                     info = JSON.parse(e.data);
                 } else {
                     info = JSON.parse('"' + e.data + '"');
