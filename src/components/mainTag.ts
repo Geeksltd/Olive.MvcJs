@@ -81,15 +81,8 @@ export default class MainTag {
         private mainTagName: string,
         private trigger: JQuery) {
 
-        if (!this.isValidUrl(baseUrl)) {
-            return;
-        }
-
-        if (this.urlService.isAbsolute(baseUrl)) {
-            const pathArray: string[] = baseUrl.split("/").splice(3);
-            this.url = pathArray.join("/");
-        } else {
-            this.url = baseUrl
+        if (this.isValidUrl(baseUrl)) {
+            this.url = this.urlService.makeRelative(decodeURIComponent(baseUrl));
         }
 
         this.element = $("main[name='$" + this.mainTagName + "']");
@@ -119,16 +112,14 @@ export default class MainTag {
 
         this.helper.data[this.mainTagName].url = this.url;
         this.helper.data[this.mainTagName].status = "loading";
-
+        
         this.ajaxRedirect.go(this.url,
             this.element,
             false,
             false,
-            false,
+            changeUrl,
             (success: Boolean) => {
                 this.onComplete(success);
-                if (changeUrl)
-                    this.helper.changeUrl(this.url, this.mainTagName);
             });
     }
 
@@ -136,7 +127,7 @@ export default class MainTag {
 
         // Prevent XSS
         if (mainTagUrl.contains("javascript:")) {
-            alert("Dangerous script detected!!! Request is now aborted!");
+            console.error("Dangerous script detected!!! Request is now aborted!");
             return false;
         }
 
@@ -147,7 +138,7 @@ export default class MainTag {
             let currentHostName = new URL(this.urlService.current()).hostname;
 
             if (newHostName !== currentHostName) {
-                alert("Dangerous script detected!!! Request is now aborted!");
+                console.error("Dangerous destination detected!!! Request is now aborted!");
                 return false;
             }
         }

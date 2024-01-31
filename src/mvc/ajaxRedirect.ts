@@ -24,7 +24,7 @@ export default class AjaxRedirect implements IService {
         // we need to edit a query string parameter as _{main tag name without $}={url pathname}
         const mainTag = trigger.is("main[name^='$']") ? trigger : trigger.closest("main[name^='$']")
         if (mainTag && mainTag.length) {
-            url = this.url.updateQuery(this.url.current(), mainTag.attr("name").replace("$", "_"), url);
+            url = this.url.updateQuery(this.url.current(), mainTag.attr("name").replace("$", "_"), encodeURIComponent(url));
             history.pushState({}, title, url);
 
             return;
@@ -55,7 +55,7 @@ export default class AjaxRedirect implements IService {
     }
 
     public go(
-        url: string,
+        inputUrl: string,
         trigger: JQuery = null,
         isBack: boolean = false,
         keepScroll: boolean = false,
@@ -73,7 +73,7 @@ export default class AjaxRedirect implements IService {
             return;
         }
 
-        url = this.url.effectiveUrlProvider(url, trigger);
+        let url = this.url.effectiveUrlProvider(inputUrl, trigger);
 
         if (url.indexOf(this.url.baseContentUrl + "/##") === 0) {
             url = url.substring(this.url.baseContentUrl.length).substring(3);
