@@ -28,7 +28,9 @@ export class MainTagHelper implements IService {
 
     public initialize() {
         this.data = {};
-        this.responseProcessor.processCompleted.handle(() => this.tryOpenFromUrl());
+        this.responseProcessor.processCompleted.handle((e) => {
+            this.tryOpenFromUrl();
+        });
     }
 
     public tryOpenFromUrl() {
@@ -48,11 +50,6 @@ export class MainTagHelper implements IService {
             currentPath = currentPath.trimEnd("?");
         }
 
-        // if (this.url.isAbsolute(url)) {
-        //     const pathArray: string[] = url.split("/").splice(3);
-        //     url = pathArray.join("/");
-        // }
-
         let mainTagUrl: string = this.url.addQuery(currentPath, "_" + mainTagName, encodeURIComponent(url));
 
         history.pushState({}, "", mainTagUrl);
@@ -62,25 +59,38 @@ export class MainTagHelper implements IService {
         const target = $(event.currentTarget);
         let mainTagUrl = url ? url : target.attr("href");
         let mainTagName = target.attr("target").replace("$", "");
-        new MainTag(this.url, this.ajaxRedirect, this, mainTagUrl, mainTagName).render();
+        new MainTag(this.url, this.ajaxRedirect, this, mainTagUrl, mainTagName, target).render();
     }
 
     protected openWithUrl(mainTagName: string): void {
 
         let mainTagUrl = this.url.getQuery("_" + mainTagName).toLowerCase();
-        new MainTag(this.url, this.ajaxRedirect, this, mainTagUrl, mainTagName).render(false);
+        new MainTag(this.url, this.ajaxRedirect, this, mainTagUrl, mainTagName, undefined).render(false);
     }
 }
 
 export default class MainTag {
     private element: JQuery;
+    private url: string;
 
     constructor(
         private urlService: Url,
         private ajaxRedirect: AjaxRedirect,
         private helper: MainTagHelper,
-        private url: string,
-        private mainTagName: string) {
+        baseUrl: string,
+        private mainTagName: string,
+        private trigger: JQuery) {
+
+        if (!this.isValidUrl(baseUrl)) {
+            return;
+        }
+
+        if (this.urlService.isAbsolute(baseUrl)) {
+            const pathArray: string[] = baseUrl.split("/").splice(3);
+            this.url = pathArray.join("/");
+        } else {
+            this.url = baseUrl
+        }
 
         this.element = $("main[name='$" + this.mainTagName + "']");
     }
@@ -91,24 +101,21 @@ export default class MainTag {
 
     public render(changeUrl: boolean = true) {
 
-        if (!this.element || !this.element.length || !this.url || !this.isValidUrl(this.url)) {
+        if (!this.element || !this.element.length || !this.url) {
             return;
         }
-
-        this.url = this.urlService.effectiveUrlProvider(this.url, null);
 
         const urlData = this.helper.data[this.mainTagName];
         if (urlData) {
             if (urlData.url === this.url &&
                 (urlData.status === "loading" ||
                     urlData.status === "loaded")) {
+                if (urlData.status === "loaded") this.onComplete(true);
                 return;
             }
         } else {
             this.helper.data[this.mainTagName] = {} as UrlData;
         }
-
-        console.log(this.url, this.mainTagName)
 
         this.helper.data[this.mainTagName].url = this.url;
         this.helper.data[this.mainTagName].status = "loading";

@@ -6,7 +6,7 @@ export default class Url implements IService {
     makeRelative(url: string): string;
     isAbsolute(url: string): Boolean;
     current(): string;
-    goBack(): void;
+    goBack(target: any): void;
     updateQuery(uri: any, key: any, value: any): any;
     removeQuery(url: string, parameter: string): string;
     getQuery(name: string, url?: string): string;

@@ -117,7 +117,7 @@ export default class StandardAction implements IService {
             action.Redirect = '/' + action.Redirect;
         if (action.OutOfModal && window.isModal()) parent.window.location.href = action.Redirect;
         else if (action.Target == '$modal') this.openModal({ currentTarget: trigger }, action.Redirect, null);
-        else if(action.Target.indexOf('$') === 0) this.renderMainTag({ currentTarget: trigger }, action.redirect);
+        else if (action.Target && action.Target.indexOf('$') === 0) this.renderMainTag({ currentTarget: trigger }, action.redirect);
         else if (action.Target && action.Target != '') window.open(action.Redirect, action.Target);
         else if (action.WithAjax === false) location.replace(action.Redirect);
         else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true) {
@@ -140,7 +140,7 @@ export default class StandardAction implements IService {
     }
 
     private renderMainTag(event, url?): any {
-        setTimeout(() => this.mainTagHelper.render( event, url), 0);
+        setTimeout(() => this.mainTagHelper.render(event, url), 0);
     }
 
     private loadServiceAfterConfiguration(serviceConfigurationUrl: string, key: string, func: string, args: any) {

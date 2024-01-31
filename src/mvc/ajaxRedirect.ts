@@ -10,7 +10,7 @@ export default class AjaxRedirect implements IService {
     // public onRedirectionFailed: ((url: string, response: JQueryXHR) => void) = this.defaultOnRedirectionFailed;
 
     constructor(
-        private url: Url,
+        protected url: Url,
         private responseProcessor: ResponseProcessor,
         private waiting: Waiting,
     ) { }
@@ -19,7 +19,16 @@ export default class AjaxRedirect implements IService {
         selector.off("click.ajax-redirect").on("click.ajax-redirect", (e) => this.redirect(e));
     }
 
-    protected onRedirected(title: string, url: string) {
+    protected onRedirected(trigger: JQuery, title: string, url: string) {
+        // if trigger is a main tag with name starting by $ character or it has a parent with this conditions
+        // we need to edit a query string parameter as _{main tag name without $}={url pathname}
+        const mainTag = trigger.is("main[name^='$']") ? trigger : trigger.closest("main[name^='$']")
+        if (mainTag && mainTag.length) {
+            url = this.url.updateQuery(this.url.current(), mainTag.attr("name").replace("$", "_"), url);
+            history.pushState({}, title, url);
+
+            return;
+        }
         history.pushState({}, title, url);
     }
 
@@ -101,19 +110,19 @@ export default class AjaxRedirect implements IService {
 
 
                     const childaddress = document.URL.substring(documentUrl.indexOf("=") + 1);
-                    const childaddresswithouthttp = document.URL.substring(documentUrl.indexOf("=") + 1).replace("https://", "").replace("http://","");
+                    const childaddresswithouthttp = document.URL.substring(documentUrl.indexOf("=") + 1).replace("https://", "").replace("http://", "");
 
                     const firstindex = childaddresswithouthttp.indexOf("/");
-                    const secondindex = childaddresswithouthttp.indexOf("/", firstindex+1);
-                    const servicename = childaddresswithouthttp.substring(firstindex+1, secondindex);
+                    const secondindex = childaddresswithouthttp.indexOf("/", firstindex + 1);
+                    const servicename = childaddresswithouthttp.substring(firstindex + 1, secondindex);
 
-                    const extractedaddress = childaddress.replace("://hub", "://" + servicename).replace("/" + servicename+"/","/");
+                    const extractedaddress = childaddress.replace("://hub", "://" + servicename).replace("/" + servicename + "/", "/");
 
-                    if (newUrl.toLowerCase().contains(extractedaddress.substring(0, extractedaddress.indexOf("?")).toLowerCase())) {
+                    if (addToHistory && newUrl.toLowerCase().contains(extractedaddress.substring(0, extractedaddress.indexOf("?")).toLowerCase())) {
 
                         const modifiedaddress = newUrl.substring(0, newUrl.indexOf("://") + 3) + newUrl.replace("://" + servicename.toLowerCase(), "://hub").replace("https://", "").replace("http://", "").replace("/", "/" + servicename + "/");
                         const newaddress = document.URL.substring(0, documentUrl.indexOf("=") + 1) + modifiedaddress;
-                        window.history.pushState(null, title, newaddress);
+                        this.onRedirected(trigger, title, newaddress);
                     }
                 }
                 else if (!isBack) {
@@ -125,10 +134,10 @@ export default class AjaxRedirect implements IService {
 
                         let addressBar = trigger.attr("data-addressbar") || url;
                         try {
-                            this.onRedirected(title, addressBar);
+                            this.onRedirected(trigger, title, addressBar);
                         } catch (error) {
                             addressBar = this.url.makeAbsolute(this.url.baseContentUrl, "/##" + addressBar);
-                            history.pushState({}, title, addressBar);
+                            this.onRedirected(trigger, title, addressBar);
                         }
                     }
                 }

@@ -60,7 +60,7 @@ export default class Url implements IService {
 
     public current(): string { return window.location.href; }
 
-    public goBack(): void {
+    public goBack(target): void {
         if (this.current().indexOf(this.baseContentUrl + "/##") === 0) history.back();
         else {
             let returnUrl = this.getQuery("ReturnUrl");

@@ -14,7 +14,7 @@ export default class ResponseProcessor implements IService {
         if (ajaxTarget) {
             return;
         }
-
+        
         if (asElement.is("main")) {
             this.navigate(asElement, trigger, args);
             return;

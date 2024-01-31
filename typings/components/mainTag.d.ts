@@ -24,10 +24,11 @@ export default class MainTag {
     private urlService;
     private ajaxRedirect;
     private helper;
-    private url;
     private mainTagName;
+    private trigger;
     private element;
-    constructor(urlService: Url, ajaxRedirect: AjaxRedirect, helper: MainTagHelper, url: string, mainTagName: string);
+    private url;
+    constructor(urlService: Url, ajaxRedirect: AjaxRedirect, helper: MainTagHelper, baseUrl: string, mainTagName: string, trigger: JQuery);
     onComplete(success: Boolean): void;
     render(changeUrl?: boolean): void;
     protected isValidUrl(mainTagUrl: string): boolean;
