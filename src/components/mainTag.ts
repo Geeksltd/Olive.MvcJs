@@ -64,7 +64,7 @@ export class MainTagHelper implements IService {
 
     protected openWithUrl(mainTagName: string): void {
 
-        let mainTagUrl = this.url.getQuery("_" + mainTagName).toLowerCase();
+        let mainTagUrl = this.url.getQuery("_" + mainTagName);
         new MainTag(this.url, this.ajaxRedirect, this, mainTagUrl, mainTagName, undefined).render(false);
     }
 }
