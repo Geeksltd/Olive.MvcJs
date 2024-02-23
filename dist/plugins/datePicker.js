@@ -1,47 +1,26 @@
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 define(["require", "exports", "olive/config", "./dateTimePickerBase"], function (require, exports, config_1, dateTimePickerBase_1) {
+    "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.DatePickerFactory = void 0;
-    var DatePickerFactory = /** @class */ (function () {
-        function DatePickerFactory(modalHelper) {
+    class DatePickerFactory {
+        constructor(modalHelper) {
             this.modalHelper = modalHelper;
         }
-        DatePickerFactory.prototype.enable = function (selector) {
-            var _this = this;
-            selector.each(function (i, e) { return new DatePicker($(e), _this.modalHelper).show(); });
-        };
-        return DatePickerFactory;
-    }());
+        enable(selector) { selector.each((i, e) => new DatePicker($(e), this.modalHelper).show()); }
+    }
     exports.DatePickerFactory = DatePickerFactory;
-    var DatePicker = /** @class */ (function (_super) {
-        __extends(DatePicker, _super);
-        function DatePicker(targetInput, modalHelper) {
-            var _this = _super.call(this, targetInput, modalHelper) || this;
-            _this.controlType = "date-picker";
-            _this.format = config_1.default.DATE_FORMAT;
-            return _this;
+    class DatePicker extends dateTimePickerBase_1.default {
+        constructor(targetInput, modalHelper) {
+            super(targetInput, modalHelper);
+            this.controlType = "date-picker";
+            this.format = config_1.default.DATE_FORMAT;
         }
-        DatePicker.prototype.modifyOptions = function (options) {
+        modifyOptions(options) {
             $.extend(options, {
                 viewMode: this.input.attr("data-view-mode") || 'days',
             });
-        };
-        return DatePicker;
-    }(dateTimePickerBase_1.default));
+        }
+    }
     exports.default = DatePicker;
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZGF0ZVBpY2tlci5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9wbHVnaW5zL2RhdGVQaWNrZXIudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7O0lBSUE7UUFDSSwyQkFBb0IsV0FBd0I7WUFBeEIsZ0JBQVcsR0FBWCxXQUFXLENBQWE7UUFBSSxDQUFDO1FBRTFDLGtDQUFNLEdBQWIsVUFBYyxRQUFnQjtZQUE5QixpQkFBMkc7WUFBekUsUUFBUSxDQUFDLElBQUksQ0FBQyxVQUFDLENBQUMsRUFBRSxDQUFDLElBQUssT0FBQSxJQUFJLFVBQVUsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLEVBQUUsS0FBSSxDQUFDLFdBQVcsQ0FBQyxDQUFDLElBQUksRUFBRSxFQUE3QyxDQUE2QyxDQUFDLENBQUM7UUFBQyxDQUFDO1FBQy9HLHdCQUFDO0lBQUQsQ0FBQyxBQUpELElBSUM7SUFKWSw4Q0FBaUI7SUFNOUI7UUFBd0MsOEJBQWtCO1FBSXRELG9CQUFZLFdBQW1CLEVBQUUsV0FBd0I7WUFBekQsWUFDSSxrQkFBTSxXQUFXLEVBQUUsV0FBVyxDQUFDLFNBQ2xDO1lBTFMsaUJBQVcsR0FBRyxhQUFhLENBQUM7WUFDNUIsWUFBTSxHQUFHLGdCQUFNLENBQUMsV0FBVyxDQUFDOztRQUl0QyxDQUFDO1FBRVMsa0NBQWEsR0FBdkIsVUFBd0IsT0FBWTtZQUNoQyxDQUFDLENBQUMsTUFBTSxDQUFDLE9BQU8sRUFBRTtnQkFDZCxRQUFRLEVBQUUsSUFBSSxDQUFDLEtBQUssQ0FBQyxJQUFJLENBQUMsZ0JBQWdCLENBQUMsSUFBSSxNQUFNO2FBQ3hELENBQUMsQ0FBQztRQUNQLENBQUM7UUFDTCxpQkFBQztJQUFELENBQUMsQUFiRCxDQUF3Qyw0QkFBa0IsR0FhekQifQ==
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZGF0ZVBpY2tlci5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uL3NyYy9wbHVnaW5zL2RhdGVQaWNrZXIudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7OztJQUlBLE1BQWEsaUJBQWlCO1FBQzFCLFlBQW9CLFdBQXdCO1lBQXhCLGdCQUFXLEdBQVgsV0FBVyxDQUFhO1FBQUksQ0FBQztRQUUxQyxNQUFNLENBQUMsUUFBZ0IsSUFBSSxRQUFRLENBQUMsSUFBSSxDQUFDLENBQUMsQ0FBQyxFQUFFLENBQUMsRUFBRSxFQUFFLENBQUMsSUFBSSxVQUFVLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxFQUFFLElBQUksQ0FBQyxXQUFXLENBQUMsQ0FBQyxJQUFJLEVBQUUsQ0FBQyxDQUFDLENBQUMsQ0FBQztLQUM5RztJQUpELDhDQUlDO0lBRUQsTUFBcUIsVUFBVyxTQUFRLDRCQUFrQjtRQUl0RCxZQUFZLFdBQW1CLEVBQUUsV0FBd0I7WUFDckQsS0FBSyxDQUFDLFdBQVcsRUFBRSxXQUFXLENBQUMsQ0FBQztZQUoxQixnQkFBVyxHQUFHLGFBQWEsQ0FBQztZQUM1QixXQUFNLEdBQUcsZ0JBQU0sQ0FBQyxXQUFXLENBQUM7UUFJdEMsQ0FBQztRQUVTLGFBQWEsQ0FBQyxPQUFZO1lBQ2hDLENBQUMsQ0FBQyxNQUFNLENBQUMsT0FBTyxFQUFFO2dCQUNkLFFBQVEsRUFBRSxJQUFJLENBQUMsS0FBSyxDQUFDLElBQUksQ0FBQyxnQkFBZ0IsQ0FBQyxJQUFJLE1BQU07YUFDeEQsQ0FBQyxDQUFDO1FBQ1AsQ0FBQztLQUNKO0lBYkQsNkJBYUMifQ==

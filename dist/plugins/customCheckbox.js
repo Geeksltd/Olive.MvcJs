@@ -1,32 +1,30 @@
 define(["require", "exports"], function (require, exports) {
+    "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    var CustomCheckbox = /** @class */ (function () {
-        function CustomCheckbox(input) {
-            this.input = input;
-        }
-        CustomCheckbox.enable = function (selector) {
-            var _this = this;
-            selector.each(function (i, e) {
-                if (!$(e).hasClass(_this.handledClassName))
+    class CustomCheckbox {
+        static enable(selector) {
+            selector.each((i, e) => {
+                if (!$(e).hasClass(this.handledClassName))
                     new CustomCheckbox($(e)).enable();
             });
-        };
-        CustomCheckbox.prototype.enable = function () {
-            var _this = this;
-            var checkBox = $('<div class="checkbox-helper"/>');
-            var toggle = function () {
-                if (_this.input.attr('disabled'))
+        }
+        constructor(input) {
+            this.input = input;
+        }
+        enable() {
+            let checkBox = $('<div class="checkbox-helper"/>');
+            let toggle = () => {
+                if (this.input.attr('disabled'))
                     return;
-                _this.input.prop('checked', !_this.input.is(':checked')).focus();
-                _this.input.trigger('change');
+                this.input.prop('checked', !this.input.is(':checked')).focus();
+                this.input.trigger('change');
             };
             checkBox.click(toggle);
             this.input.after(checkBox);
             this.input.addClass(CustomCheckbox.handledClassName);
-        };
-        CustomCheckbox.handledClassName = 'handled';
-        return CustomCheckbox;
-    }());
+        }
+    }
+    CustomCheckbox.handledClassName = 'handled';
     exports.default = CustomCheckbox;
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY3VzdG9tQ2hlY2tib3guanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi9zcmMvcGx1Z2lucy9jdXN0b21DaGVja2JveC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztJQUFBO1FBVUksd0JBQW9CLEtBQWE7WUFBYixVQUFLLEdBQUwsS0FBSyxDQUFRO1FBQUksQ0FBQztRQVB4QixxQkFBTSxHQUFwQixVQUFxQixRQUFnQjtZQUFyQyxpQkFLQztZQUpHLFFBQVEsQ0FBQyxJQUFJLENBQUMsVUFBQyxDQUFDLEVBQUUsQ0FBQztnQkFDZixJQUFJLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLFFBQVEsQ0FBQyxLQUFJLENBQUMsZ0JBQWdCLENBQUM7b0JBQ3JDLElBQUksY0FBYyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLE1BQU0sRUFBRSxDQUFDO1lBQzFDLENBQUMsQ0FBQyxDQUFDO1FBQ1AsQ0FBQztRQUlPLCtCQUFNLEdBQWQ7WUFBQSxpQkFhQztZQVpHLElBQUksUUFBUSxHQUFHLENBQUMsQ0FBQyxnQ0FBZ0MsQ0FBQyxDQUFDO1lBRW5ELElBQUksTUFBTSxHQUFHO2dCQUNULElBQUksS0FBSSxDQUFDLEtBQUssQ0FBQyxJQUFJLENBQUMsVUFBVSxDQUFDO29CQUFFLE9BQU87Z0JBRXhDLEtBQUksQ0FBQyxLQUFLLENBQUMsSUFBSSxDQUFDLFNBQVMsRUFBRSxDQUFDLEtBQUksQ0FBQyxLQUFLLENBQUMsRUFBRSxDQUFDLFVBQVUsQ0FBQyxDQUFDLENBQUMsS0FBSyxFQUFFLENBQUM7Z0JBQy9ELEtBQUksQ0FBQyxLQUFLLENBQUMsT0FBTyxDQUFDLFFBQVEsQ0FBQyxDQUFDO1lBQ2pDLENBQUMsQ0FBQztZQUVGLFFBQVEsQ0FBQyxLQUFLLENBQUMsTUFBTSxDQUFDLENBQUM7WUFDdkIsSUFBSSxDQUFDLEtBQUssQ0FBQyxLQUFLLENBQUMsUUFBUSxDQUFDLENBQUM7WUFDM0IsSUFBSSxDQUFDLEtBQUssQ0FBQyxRQUFRLENBQUMsY0FBYyxDQUFDLGdCQUFnQixDQUFDLENBQUM7UUFDekQsQ0FBQztRQXhCYywrQkFBZ0IsR0FBRyxTQUFTLENBQUM7UUF5QmhELHFCQUFDO0tBQUEsQUExQkQsSUEwQkM7c0JBMUJvQixjQUFjIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiY3VzdG9tQ2hlY2tib3guanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyIuLi8uLi9zcmMvcGx1Z2lucy9jdXN0b21DaGVja2JveC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7SUFBQSxNQUFxQixjQUFjO1FBR3hCLE1BQU0sQ0FBQyxNQUFNLENBQUMsUUFBZ0I7WUFDakMsUUFBUSxDQUFDLElBQUksQ0FBQyxDQUFDLENBQUMsRUFBRSxDQUFDLEVBQUUsRUFBRTtnQkFDbkIsSUFBSSxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxRQUFRLENBQUMsSUFBSSxDQUFDLGdCQUFnQixDQUFDO29CQUNyQyxJQUFJLGNBQWMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxDQUFDLENBQUMsQ0FBQyxNQUFNLEVBQUUsQ0FBQztZQUMxQyxDQUFDLENBQUMsQ0FBQztRQUNQLENBQUM7UUFFRCxZQUFvQixLQUFhO1lBQWIsVUFBSyxHQUFMLEtBQUssQ0FBUTtRQUFJLENBQUM7UUFFOUIsTUFBTTtZQUNWLElBQUksUUFBUSxHQUFHLENBQUMsQ0FBQyxnQ0FBZ0MsQ0FBQyxDQUFDO1lBRW5ELElBQUksTUFBTSxHQUFHLEdBQUcsRUFBRTtnQkFDZCxJQUFJLElBQUksQ0FBQyxLQUFLLENBQUMsSUFBSSxDQUFDLFVBQVUsQ0FBQztvQkFBRSxPQUFPO2dCQUV4QyxJQUFJLENBQUMsS0FBSyxDQUFDLElBQUksQ0FBQyxTQUFTLEVBQUUsQ0FBQyxJQUFJLENBQUMsS0FBSyxDQUFDLEVBQUUsQ0FBQyxVQUFVLENBQUMsQ0FBQyxDQUFDLEtBQUssRUFBRSxDQUFDO2dCQUMvRCxJQUFJLENBQUMsS0FBSyxDQUFDLE9BQU8sQ0FBQyxRQUFRLENBQUMsQ0FBQztZQUNqQyxDQUFDLENBQUM7WUFFRixRQUFRLENBQUMsS0FBSyxDQUFDLE1BQU0sQ0FBQyxDQUFDO1lBQ3ZCLElBQUksQ0FBQyxLQUFLLENBQUMsS0FBSyxDQUFDLFFBQVEsQ0FBQyxDQUFDO1lBQzNCLElBQUksQ0FBQyxLQUFLLENBQUMsUUFBUSxDQUFDLGNBQWMsQ0FBQyxnQkFBZ0IsQ0FBQyxDQUFDO1FBQ3pELENBQUM7O0lBeEJjLCtCQUFnQixHQUFHLFNBQVMsQ0FBQztzQkFEM0IsY0FBYyJ9

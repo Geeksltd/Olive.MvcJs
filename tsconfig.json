@@ -7,11 +7,10 @@
       },
 
         "module": "amd",
-        "target": "es5",  
+        "target": "es6",  
         "outDir": "dist",
         "declaration": true,
         "declarationDir": "typings",
-        "noImplicitUseStrict": true,
         "inlineSourceMap": true,
         "noImplicitAny": false,
         "noEmitOnError": true,

@@ -1,22 +1,25 @@
 {
-    "compilerOptions": {
-        "baseUrl": ".",
-      "paths": {
-        "olive/*": [ "src/*" ],
-        "pako/dist/pako": [ "node_modules/pako/dist/pako" ]
-      },
-        "module": "amd",
-        "target": "es5",
-        "outFile": "dist/bundle.js",
-        "noImplicitUseStrict": true,
-        "inlineSourceMap": true,
-        "noImplicitAny": false,
-        "noEmitOnError": true,
-        "removeComments": false
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "olive/*": [
+        "src/*"
+      ],
+      "pako/dist/pako": [
+        "node_modules/pako/dist/pako"
+      ]
     },
-    "exclude": [
-        "typings",
-        "dist"
-    ],
-    "compileOnSave": true     
+    "module": "amd",
+    "target": "es6",
+    "outFile": "dist/bundle.js",
+    "inlineSourceMap": true,
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false
+  },
+  "exclude": [
+    "typings",
+    "dist"
+  ],
+  "compileOnSave": true
 }
