@@ -32,7 +32,7 @@ export default class AjaxRedirect implements IService {
         history.pushState({}, title, url);
     }
 
-    protected onRedirectionFailed(url: string, response: JQueryXHR) {
+    protected onRedirectionFailed(trigger: JQuery, url: string, response: JQueryXHR) {
         if (response.status === 401) {
             this.url.goToUrlAfterLogin(this.url.current());
         } else if (confirm("Request failed. Do you want to see the error details?")) {
@@ -158,7 +158,7 @@ export default class AjaxRedirect implements IService {
                     onComplete(false);
                 }
                 if (this.requestCounter === requestCounter) {
-                    this.onRedirectionFailed(url, response);
+                    this.onRedirectionFailed(trigger,url, response);
                 }
             },
             complete: (response) => this.waiting.hide(),
