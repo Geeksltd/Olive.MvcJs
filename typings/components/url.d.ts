@@ -2,6 +2,7 @@ export default class Url implements IService {
     effectiveUrlProvider: ((url: string, trigger: JQuery) => string);
     onAuthenticationFailed: (() => void);
     decodeGzipUrl(inputUrl: string): string;
+    encodeGzipUrl(inputValue: string): string;
     makeAbsolute(baseUrl: string, relativeUrl: string): string;
     makeRelative(url: string): string;
     isAbsolute(url: string): Boolean;

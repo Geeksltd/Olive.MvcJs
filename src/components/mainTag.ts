@@ -50,7 +50,7 @@ export class MainTagHelper implements IService {
             currentPath = currentPath.trimEnd("?");
         }
 
-        let mainTagUrl: string = this.url.addQuery(currentPath, "_" + mainTagName, encodeURIComponent(url));
+        let mainTagUrl: string = this.url.addQuery(currentPath, "_" + mainTagName, this.url.encodeGzipUrl(url));
 
         history.pushState({}, "", mainTagUrl);
     }
@@ -81,10 +81,10 @@ export default class MainTag {
         private mainTagName: string,
         private trigger: JQuery) {
 
+        baseUrl = this.urlService.decodeGzipUrl(baseUrl);
         if (this.isValidUrl(baseUrl)) {
             this.url = this.urlService.makeRelative(decodeURIComponent(baseUrl));
         }
-
         this.element = $("main[name='$" + this.mainTagName + "']");
     }
 
@@ -112,14 +112,17 @@ export default class MainTag {
 
         this.helper.data[this.mainTagName].url = this.url;
         this.helper.data[this.mainTagName].status = "loading";
-        
+
         this.ajaxRedirect.go(this.url,
             this.element,
             false,
             false,
-            changeUrl,
+            false,
             (success: Boolean) => {
                 this.onComplete(success);
+                if (changeUrl) {
+                    this.helper.changeUrl(this.url, this.mainTagName)
+                }
             });
     }
 

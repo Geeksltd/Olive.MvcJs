@@ -34,6 +34,15 @@ export default class Url implements IService {
         }
     }
 
+    public encodeGzipUrl(inputValue: string): string {
+        if (inputValue === undefined || inputValue === null) return "";
+
+        var compressed_uint8array = pako.gzip(inputValue);
+        var encodedUrl = btoa(String.fromCharCode.apply(null, compressed_uint8array));
+        encodedUrl = encodedUrl.replace(/\+/g, "~").replace(/\//g, "_").replace(/\=/g, "-");
+        return "..." + encodedUrl;
+    }
+
     public makeAbsolute(baseUrl: string, relativeUrl: string): string {
         baseUrl = baseUrl || window.location.origin;
         relativeUrl = relativeUrl || '';
