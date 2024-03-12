@@ -14,7 +14,7 @@ export default class ResponseProcessor implements IService {
         if (ajaxTarget) {
             return;
         }
-        
+
         if (asElement.is("main")) {
             this.navigate(asElement, trigger, args);
             return;
@@ -144,10 +144,11 @@ export default class ResponseProcessor implements IService {
 
     protected processWithTheContent(trigger: JQuery, newMain: JQuery, args: any, referencedScripts: JQuery) {
 
-        let width = $(window).width();
+        const width = $(window).width();
+        const mobileBreakpoint = 800;
 
         let oldMain = trigger.closest("main");
-        var targetMainName = trigger.attr("target");
+        let targetMainName = trigger.attr("target");
         if (targetMainName) {
             oldMain = $("main[name='" + targetMainName + "']");
             if (oldMain.length === 0) console.error("There is no <main> object with the name of '" + targetMainName + "'.");
@@ -155,12 +156,12 @@ export default class ResponseProcessor implements IService {
         else targetMainName = oldMain.attr("name");
 
         if (oldMain != undefined && oldMain != null && oldMain.length > 0) {
-            var mainName = oldMain[0].className;
+            const mainName = oldMain[0].className;
             if (mainName != undefined && mainName != null && mainName.length > 0) {
-                var validNode = false;
-                var SimilarNodes = document.getElementsByTagName("MAIN");
+                let validNode = false;
+                const SimilarNodes = document.getElementsByTagName("MAIN");
                 for (var i = 0; i < SimilarNodes.length; ++i) {
-                    var SimilarNode = SimilarNodes[i];
+                    const SimilarNode = SimilarNodes[i];
                     if (SimilarNode.className == mainName) {
                         validNode = true;
                         break;
@@ -174,37 +175,69 @@ export default class ResponseProcessor implements IService {
 
         if (targetMainName) newMain.attr("name", targetMainName);
 
-        let tooltips = $('body > .tooltip');
+        const tooltips = $('body > .tooltip');
 
         tooltips.each((index, elem) => {
             if ($('[aria-discribedby=' + elem.id + ']'))
                 elem.remove();
         });
 
-        if (width <= 800 && trigger.data("transition") == "slide") {
-            newMain.appendTo(oldMain.parent());
+        let enterClass: string | undefined = undefined;
+        let exitClass: string | undefined = undefined;
 
-            oldMain.css("position", "fixed");
+        let transition = trigger.data("transition");
 
-            if (args == "back") {
-                newMain.addClass("w3-animate-left");
-                oldMain.addClass("w3-animate-righter");
-            }
-            else {
-                newMain.addClass("w3-animate-right");
-                oldMain.addClass("w3-animate-lefter");
-            }
+        // backward compatibility
+        if (transition == "slide") transition = "slide-mobile";
 
-            setTimeout(() => {
-                oldMain.remove();
-                newMain.removeClass("w3-animate-left").removeClass("w3-animate-right");
-                this.updateUrl(referencedScripts, newMain, trigger);
-            }, 400);
+        const isValid = !!transition
+            && (!transition.endsWith("-mobile") || width <= mobileBreakpoint)
+            && (!transition.endsWith("-desktop") || width > mobileBreakpoint);
+
+        if (!isValid) {
+            this.replaceContent(referencedScripts, trigger, newMain, oldMain, enterClass, exitClass);
+            return
         }
-        else {
+
+        const back = args == "back";
+
+        transition = transition
+            .replace("-mobile", "")
+            .replace("-desktop", "")
+            .replace("-both", "");
+
+        switch (transition) {
+            case "slide":
+                enterClass = back ? "w3-animate-left" : "w3-animate-right";
+                exitClass = back ? "w3-animate-righter" : "w3-animate-lefter";
+                break;
+            default:
+                console.log(`transition '${transition}' not defined.`)
+                break;
+        }
+
+        this.replaceContent(referencedScripts, trigger, newMain, oldMain, enterClass, exitClass);
+    }
+
+    private replaceContent(referencedScripts: JQuery, trigger: JQuery, newMain: JQuery, oldMain: JQuery, enterClass: string | undefined, exitClass: string | undefined) {
+        if (!enterClass || !exitClass) {
             oldMain.replaceWith(newMain);
             this.updateUrl(referencedScripts, newMain, trigger);
+            return;
         }
+
+        newMain.appendTo(oldMain.parent());
+
+        oldMain.css("position", "fixed");
+
+        newMain.addClass(enterClass);
+        oldMain.addClass(exitClass);
+
+        setTimeout(() => {
+            oldMain.remove();
+            newMain.removeClass(enterClass);
+            this.updateUrl(referencedScripts, newMain, trigger);
+        }, 400);
     }
 
     protected updateUrl(referencedScripts: JQuery, element: JQuery, trigger: JQuery) {

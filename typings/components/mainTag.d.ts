@@ -28,6 +28,7 @@ export default class MainTag {
     private trigger;
     private element;
     private url;
+    private back;
     constructor(urlService: Url, ajaxRedirect: AjaxRedirect, helper: MainTagHelper, baseUrl: string, mainTagName: string, trigger: JQuery);
     onComplete(success: Boolean): void;
     render(changeUrl?: boolean): void;

@@ -34,7 +34,7 @@ export class MainTagHelper implements IService {
     }
 
     public tryOpenFromUrl() {
-        var reserved = ["_modal", "_nav", "_returnUrl"];
+        var reserved = ["_modal", "_nav"];
         new URLSearchParams(window.location.search).forEach((value, key) => {
             if (key.indexOf("_") === 0 && reserved.indexOf(key) === -1) {
                 this.openWithUrl(key.substring(1));
@@ -57,14 +57,14 @@ export class MainTagHelper implements IService {
 
     public render(event?: JQueryEventObject, url?: string) {
         const target = $(event.currentTarget);
-        let mainTagUrl = url ? url : target.attr("href");
-        let mainTagName = target.attr("target").replace("$", "");
+        const mainTagUrl = url ? url : target.attr("href");
+        const mainTagName = target.attr("target").replace("$", "");
         new MainTag(this.url, this.ajaxRedirect, this, mainTagUrl, mainTagName, target).render();
     }
 
     protected openWithUrl(mainTagName: string): void {
 
-        let mainTagUrl = this.url.getQuery("_" + mainTagName);
+        const mainTagUrl = this.url.getQuery("_" + mainTagName);
         new MainTag(this.url, this.ajaxRedirect, this, mainTagUrl, mainTagName, undefined).render(false);
     }
 }
@@ -72,6 +72,7 @@ export class MainTagHelper implements IService {
 export default class MainTag {
     private element: JQuery;
     private url: string;
+    private back : boolean;
 
     constructor(
         private urlService: Url,
@@ -86,6 +87,7 @@ export default class MainTag {
             this.url = this.urlService.makeRelative(decodeURIComponent(baseUrl));
         }
         this.element = $("main[name='$" + this.mainTagName + "']");
+        this.back = trigger?.attr("data-back") == "true";
     }
 
     public onComplete(success: Boolean) {
@@ -115,7 +117,7 @@ export default class MainTag {
 
         this.ajaxRedirect.go(this.url,
             this.element,
-            false,
+            this.back,
             false,
             false,
             (success: Boolean) => {

@@ -14,6 +14,7 @@ export default class ResponseProcessor implements IService {
     private getNewCss;
     private getCss;
     protected processWithTheContent(trigger: JQuery, newMain: JQuery, args: any, referencedScripts: JQuery): void;
+    private replaceContent;
     protected updateUrl(referencedScripts: JQuery, element: JQuery, trigger: JQuery): void;
     protected onProcessCompleted(): void;
 }
