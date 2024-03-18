@@ -28,15 +28,9 @@ export class MainTagHelper implements IService {
 
     public initialize() {
         this.responseProcessor.processCompleted.handle((e) => {
-            let result = false;
-
-            do {
-                result = this.tryOpenFromUrl();
-            } while (result);
-
-            do {
-                result = this.tryOpenDefaultUrl()
-            } while (result);
+            if (!this.tryOpenFromUrl()) {
+                this.tryOpenDefaultUrl();
+            }
         });
     }
 
