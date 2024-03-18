@@ -23,15 +23,20 @@ export default class AjaxRedirect implements IService {
     }
 
     protected onRedirected(trigger: JQuery, title: string, url: string) {
-        // if trigger is a main tag with name starting by $ character or it has a parent with this conditions
-        // we need to edit a query string parameter as _{main tag name without $}={url pathname}
-        const mainTag = trigger.is("main[name^='$']") ? trigger : trigger.closest("main[name^='$']")
-        if (mainTag && mainTag.length) {
-            (window.page as OlivePage).getService<MainTagHelper>(Services.MainTagHelper)
-                .changeUrl(url, mainTag.attr("name").replace("$", ""));
+        if (this.onMainTagRedirected(trigger, url)) {
             return;
         }
         history.pushState({}, title, url);
+    }
+
+    protected onMainTagRedirected(trigger: JQuery, url: string): boolean {
+        // if trigger is a main tag with name starting by $ character or it has a parent with this conditions
+        // we need to edit a query string parameter as _{main tag name without $}={url pathname}
+        const mainTag = trigger.is("main[name^='$']") ? trigger : trigger.closest("main[name^='$']")
+        if (!mainTag || !mainTag.length) return false;
+        (window.page as OlivePage).getService<MainTagHelper>(Services.MainTagHelper)
+            .changeUrl(url, mainTag.attr("name").replace("$", ""));
+        return true;
     }
 
     protected onRedirectionFailed(trigger: JQuery, url: string, response: JQueryXHR) {
@@ -143,6 +148,8 @@ export default class AjaxRedirect implements IService {
                             this.onRedirected(trigger, title, addressBar);
                         }
                     }
+                } else {
+                    this.onMainTagRedirected(trigger, url);
                 }
 
                 // this.serverInvoker.isAwaitingAjaxResponse = false;

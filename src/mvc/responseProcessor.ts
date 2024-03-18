@@ -217,6 +217,10 @@ export default class ResponseProcessor implements IService {
                 enterClass = back ? "w3-animate-left" : "w3-animate-right";
                 exitClass = back ? "w3-animate-righter" : "w3-animate-lefter";
                 break;
+            case "fade":
+                enterClass ="w3-fade-out";
+                exitClass = "w3-fade-in";
+                break;
             default:
                 console.error(`transition '${transition}' not defined.`)
                 break;
