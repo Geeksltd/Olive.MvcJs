@@ -1,6 +1,9 @@
 import Waiting from "olive/components/waiting";
 import Url from "olive/components/url";
 import ResponseProcessor from "olive/mvc/responseProcessor";
+import { MainTagHelper } from "olive/components/mainTag";
+import Services from "olive/di/services";
+import OlivePage from "olive/olivePage";
 
 export default class AjaxRedirect implements IService {
     private requestCounter = 0;
@@ -24,9 +27,8 @@ export default class AjaxRedirect implements IService {
         // we need to edit a query string parameter as _{main tag name without $}={url pathname}
         const mainTag = trigger.is("main[name^='$']") ? trigger : trigger.closest("main[name^='$']")
         if (mainTag && mainTag.length) {
-            url = this.url.updateQuery(this.url.current(), mainTag.attr("name").replace("$", "_"), this.url.encodeGzipUrl(url));
-            history.pushState({}, title, url);
-
+            (window.page as OlivePage).getService<MainTagHelper>(Services.MainTagHelper)
+                .changeUrl(url, mainTag.attr("name").replace("$", ""));
             return;
         }
         history.pushState({}, title, url);
@@ -73,6 +75,7 @@ export default class AjaxRedirect implements IService {
             return;
         }
 
+        isBack = isBack || trigger?.attr("data-back") === "true";
         let url = this.url.effectiveUrlProvider(inputUrl, trigger);
 
         if (url.indexOf(this.url.baseContentUrl + "/##") === 0) {
@@ -158,7 +161,7 @@ export default class AjaxRedirect implements IService {
                     onComplete(false);
                 }
                 if (this.requestCounter === requestCounter) {
-                    this.onRedirectionFailed(trigger,url, response);
+                    this.onRedirectionFailed(trigger, url, response);
                 }
             },
             complete: (response) => this.waiting.hide(),

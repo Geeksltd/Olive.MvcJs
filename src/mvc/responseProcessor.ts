@@ -177,15 +177,21 @@ export default class ResponseProcessor implements IService {
 
         const tooltips = $('body > .tooltip');
 
-        tooltips.each((index, elem) => {
+        tooltips.each((_index, elem) => {
             if ($('[aria-discribedby=' + elem.id + ']'))
                 elem.remove();
+        });
+
+        var attributes = oldMain.prop("attributes");
+        $.each(attributes, function () {
+            if (this.name.indexOf("data-") !== 0) return;
+            newMain.attr(this.name, this.value);
         });
 
         let enterClass: string | undefined = undefined;
         let exitClass: string | undefined = undefined;
 
-        let transition = trigger.data("transition");
+        let transition = oldMain.attr("data-transition");
 
         // backward compatibility
         if (transition == "slide") transition = "slide-mobile";
@@ -199,7 +205,7 @@ export default class ResponseProcessor implements IService {
             return
         }
 
-        const back = args == "back";
+        const back = args === "back";
 
         transition = transition
             .replace("-mobile", "")
@@ -212,7 +218,7 @@ export default class ResponseProcessor implements IService {
                 exitClass = back ? "w3-animate-righter" : "w3-animate-lefter";
                 break;
             default:
-                console.log(`transition '${transition}' not defined.`)
+                console.error(`transition '${transition}' not defined.`)
                 break;
         }
 
@@ -220,24 +226,12 @@ export default class ResponseProcessor implements IService {
     }
 
     private replaceContent(referencedScripts: JQuery, trigger: JQuery, newMain: JQuery, oldMain: JQuery, enterClass: string | undefined, exitClass: string | undefined) {
-        if (!enterClass || !exitClass) {
-            oldMain.replaceWith(newMain);
-            this.updateUrl(referencedScripts, newMain, trigger);
-            return;
-        }
-
-        newMain.appendTo(oldMain.parent());
-
-        oldMain.css("position", "fixed");
-
-        newMain.addClass(enterClass);
-        oldMain.addClass(exitClass);
-
-        setTimeout(() => {
-            oldMain.remove();
-            newMain.removeClass(enterClass);
-            this.updateUrl(referencedScripts, newMain, trigger);
-        }, 400);
+        if (exitClass)
+            oldMain.addClass(exitClass);
+        oldMain.replaceWith(newMain);
+        if (enterClass)
+            newMain.addClass(enterClass);
+        this.updateUrl(referencedScripts, newMain, trigger);
     }
 
     protected updateUrl(referencedScripts: JQuery, element: JQuery, trigger: JQuery) {

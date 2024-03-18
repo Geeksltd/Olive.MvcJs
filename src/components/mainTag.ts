@@ -4,11 +4,11 @@ import ResponseProcessor from "olive/mvc/responseProcessor";
 
 interface UrlData {
     url: string;
-    status: string
+    foundQs: string[]
 }
 
 export class MainTagHelper implements IService {
-    public data: { [key: string]: UrlData } = {};
+    public data: UrlData | undefined = undefined;
 
     constructor(
         private url: Url,
@@ -27,31 +27,71 @@ export class MainTagHelper implements IService {
     }
 
     public initialize() {
-        this.data = {};
         this.responseProcessor.processCompleted.handle((e) => {
+            if (this.data) {
+                if (this.data.url != window.location.pathname) {
+                    this.data = undefined;
+                } else {
+                    this.tryOpenDefaultUrl();
+                    return;
+                }
+            }
             this.tryOpenFromUrl();
         });
     }
 
     public tryOpenFromUrl() {
+        if (!this.data) {
+            this.data = { url: window.location.pathname, foundQs: [] }
+        }
+
         var reserved = ["_modal", "_nav"];
+
         new URLSearchParams(window.location.search).forEach((value, key) => {
             if (key.indexOf("_") === 0 && reserved.indexOf(key) === -1) {
-                this.openWithUrl(key.substring(1));
+                const mainTagName = key.substring(1);
+                if (this.data.foundQs.indexOf(mainTagName) !== -1)
+                    return;
+
+                if (this.openWithUrl(mainTagName))
+                    this.data.foundQs.push(mainTagName);
             }
         });
     }
 
-    public changeUrl(url: string, mainTagName: string) {
+    public tryOpenDefaultUrl() {
+        var tags = $("main[name^='$'][data-default-url]");
+        for (let i = 0; i < tags.length; i++) {
+            const main = $(tags[i]);
+            const mainTagName = main.attr("name").substring(1);
+            if (this.data.foundQs.indexOf(mainTagName) !== -1)
+                continue;
+            const url = main.attr("data-default-url");
+            main.attr("data-default-url", undefined);
+            if (url && this.openWithUrl(mainTagName, url))
+                this.data.foundQs.push(mainTagName);
+        }
+    }
 
+    public changeUrl(url: string, mainTagName: string) {
         let currentPath: string = this.url.removeQuery(this.url.current(), "_" + mainTagName);
+
+        var children = $("main[name='$" + mainTagName + "']").attr("data-children");
+        if (children) {
+            children.split(",").forEach(child => {
+                if (child.startsWith("$")) {
+                    child = child.substring(1);
+                }
+                currentPath = this.url.removeQuery(currentPath, "_" + child);
+                this.data.foundQs = this.data.foundQs.filter(item => item !== child)
+            })
+        }
 
         if (currentPath.endsWith("?")) {
             currentPath = currentPath.trimEnd("?");
         }
 
         let mainTagUrl: string = this.url.addQuery(currentPath, "_" + mainTagName, this.url.encodeGzipUrl(url));
-
         history.pushState({}, "", mainTagUrl);
     }
 
@@ -59,26 +99,30 @@ export class MainTagHelper implements IService {
         const target = $(event.currentTarget);
         const mainTagUrl = url ? url : target.attr("href");
         const mainTagName = target.attr("target").replace("$", "");
-        new MainTag(this.url, this.ajaxRedirect, this, mainTagUrl, mainTagName, target).render();
+        const element = $("main[name='$" + mainTagName + "']");
+        if (!mainTagUrl || !element || !element.length) return false;
+        this.data.foundQs = this.data.foundQs.filter(item => item !== mainTagName)
+        new MainTag(this.url, this.ajaxRedirect, this, mainTagUrl, element, mainTagName, target).render();
     }
 
-    protected openWithUrl(mainTagName: string): void {
-
-        const mainTagUrl = this.url.getQuery("_" + mainTagName);
-        new MainTag(this.url, this.ajaxRedirect, this, mainTagUrl, mainTagName, undefined).render(false);
+    protected openWithUrl(mainTagName: string, url?: string): boolean {
+        const mainTagUrl = url ? url : this.url.getQuery("_" + mainTagName);
+        const element = $("main[name='$" + mainTagName + "']");
+        if (!mainTagUrl || !element || !element.length) return false;
+        new MainTag(this.url, this.ajaxRedirect, this, mainTagUrl, element, mainTagName, undefined).render(false);
+        return true;
     }
 }
 
 export default class MainTag {
-    private element: JQuery;
     private url: string;
-    private back : boolean;
 
     constructor(
         private urlService: Url,
         private ajaxRedirect: AjaxRedirect,
         private helper: MainTagHelper,
         baseUrl: string,
+        private element: JQuery,
         private mainTagName: string,
         private trigger: JQuery) {
 
@@ -86,45 +130,28 @@ export default class MainTag {
         if (this.isValidUrl(baseUrl)) {
             this.url = this.urlService.makeRelative(decodeURIComponent(baseUrl));
         }
-        this.element = $("main[name='$" + this.mainTagName + "']");
-        this.back = trigger?.attr("data-back") == "true";
     }
 
     public onComplete(success: Boolean) {
-        this.helper.data[this.mainTagName].status = success ? "loaded" : "failed";
+        // if (success) {
+        //     this.helper.tryOpenFromUrl();
+        //     this.helper.tryOpenDefaultUrl();
+        // }
     }
 
     public render(changeUrl: boolean = true) {
-
-        if (!this.element || !this.element.length || !this.url) {
-            return;
-        }
-
-        const urlData = this.helper.data[this.mainTagName];
-        if (urlData) {
-            if (urlData.url === this.url &&
-                (urlData.status === "loading" ||
-                    urlData.status === "loaded")) {
-                if (urlData.status === "loaded") this.onComplete(true);
-                return;
-            }
-        } else {
-            this.helper.data[this.mainTagName] = {} as UrlData;
-        }
-
-        this.helper.data[this.mainTagName].url = this.url;
-        this.helper.data[this.mainTagName].status = "loading";
-
+        if (!this.url) return;
+        const back = this.trigger?.attr("data-back") === "true";
         this.ajaxRedirect.go(this.url,
             this.element,
-            this.back,
+            back,
             false,
             false,
             (success: Boolean) => {
-                this.onComplete(success);
                 if (changeUrl) {
                     this.helper.changeUrl(this.url, this.mainTagName)
                 }
+                this.onComplete(success);
             });
     }
 
