@@ -37,7 +37,10 @@ export class MainTagHelper implements IService {
     public tryOpenFromUrl(): boolean {
         this.validateState()
         var reserved = ["_modal", "_nav"];
+
+        // at least one content loaded
         let result = false;
+
         new URLSearchParams(window.location.search).forEach((value, key) => {
             if (key.indexOf("_") === 0 && reserved.indexOf(key) === -1) {
                 const mainTagName = key.substring(1);
@@ -56,7 +59,10 @@ export class MainTagHelper implements IService {
     public tryOpenDefaultUrl(): boolean {
         this.validateState()
         var tags = $("main[name^='$'][data-default-url]");
+
+        // at least one content loaded
         let result = false;
+
         for (let i = 0; i < tags.length; i++) {
             const main = $(tags[i]);
             const mainTagName = main.attr("name").substring(1);
@@ -73,6 +79,7 @@ export class MainTagHelper implements IService {
     }
 
     public changeUrl(url: string, mainTagName: string) {
+        this.validateState()
         let currentPath: string = this.url.removeQuery(this.url.current(), "_" + mainTagName);
 
         var children = $("main[name='$" + mainTagName + "']").attr("data-children");
@@ -95,12 +102,14 @@ export class MainTagHelper implements IService {
     }
 
     public render(event?: JQueryEventObject, url?: string) {
+        this.validateState()
         const target = $(event.currentTarget);
         const mainTagUrl = url ? url : target.attr("href");
         const mainTagName = target.attr("target").replace("$", "");
         const element = $("main[name='$" + mainTagName + "']");
         if (!mainTagUrl || !element || !element.length) return false;
-        this.state.foundQs = this.state.foundQs.filter(item => item !== mainTagName)
+        if (this.state.foundQs.indexOf(mainTagName) === -1)
+            this.state.foundQs.push(mainTagName);
         new MainTag(this.url, this.ajaxRedirect, this, mainTagUrl, element, mainTagName, target).render();
     }
 
@@ -138,9 +147,6 @@ export default class MainTag {
         }
     }
 
-    public onComplete(success: Boolean) {
-    }
-
     public render(changeUrl: boolean = true) {
         if (!this.url) return;
         const back = this.trigger?.attr("data-back") === "true";
@@ -150,10 +156,9 @@ export default class MainTag {
             false,
             false,
             (success: Boolean) => {
-                if (changeUrl) {
+                if (success && changeUrl) {
                     this.helper.changeUrl(this.url, this.mainTagName)
                 }
-                this.onComplete(success);
             });
     }
 
