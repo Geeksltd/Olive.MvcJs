@@ -1,7 +1,7 @@
 import Url from "olive/components/url";
 import AjaxRedirect from "olive/mvc/ajaxRedirect";
 import ResponseProcessor from "olive/mvc/responseProcessor";
-interface UrlData {
+interface StateData {
     url: string;
     foundQs: string[];
 }
@@ -9,15 +9,16 @@ export declare class MainTagHelper implements IService {
     private url;
     private ajaxRedirect;
     private responseProcessor;
-    data: UrlData | undefined;
+    state?: StateData | undefined;
     constructor(url: Url, ajaxRedirect: AjaxRedirect, responseProcessor: ResponseProcessor);
     enableLink(selector: JQuery): void;
     initialize(): void;
-    tryOpenFromUrl(): void;
-    tryOpenDefaultUrl(): void;
+    tryOpenFromUrl(): boolean;
+    tryOpenDefaultUrl(): boolean;
     changeUrl(url: string, mainTagName: string): void;
     render(event?: JQueryEventObject, url?: string): boolean;
     protected openWithUrl(mainTagName: string, url?: string): boolean;
+    private validateState;
 }
 export default class MainTag {
     private urlService;
