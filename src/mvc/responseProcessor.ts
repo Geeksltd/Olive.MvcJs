@@ -218,8 +218,8 @@ export default class ResponseProcessor implements IService {
                 exitClass = back ? "w3-animate-righter" : "w3-animate-lefter";
                 break;
             case "fade":
-                enterClass ="w3-fade-out";
-                exitClass = "w3-fade-in";
+                enterClass = "w3-fade-in";
+                exitClass = "w3-fade-out";
                 break;
             default:
                 console.error(`transition '${transition}' not defined.`)
@@ -232,6 +232,9 @@ export default class ResponseProcessor implements IService {
     private replaceContent(referencedScripts: JQuery, trigger: JQuery, newMain: JQuery, oldMain: JQuery, enterClass: string | undefined, exitClass: string | undefined) {
         if (exitClass)
             oldMain.addClass(exitClass);
+
+        // setTimeout has issue with concurrent requests
+
         oldMain.replaceWith(newMain);
         if (enterClass)
             newMain.addClass(enterClass);

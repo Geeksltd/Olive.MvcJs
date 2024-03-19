@@ -151,8 +151,6 @@ export default class MainTag {
     public render(changeUrl: boolean = true) {
         if (!this.url) return;
         const back = this.trigger?.attr("data-back") === "true";
-        this.element.removeClass("w3-semi-fade-in");
-        this.element.addClass("w3-semi-fade-out");
         this.ajaxRedirect.go(this.url,
             this.element,
             back,
@@ -162,8 +160,6 @@ export default class MainTag {
                 if (success && changeUrl) {
                     this.helper.changeUrl(this.url, this.mainTagName)
                 }
-                this.element.removeClass("w3-semi-fade-out");
-                this.element.addClass("w3-semi-fade-in");
             });
     }
 
