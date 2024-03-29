@@ -23,19 +23,19 @@ export default class AjaxRedirect implements IService {
     }
 
     protected onRedirected(trigger: JQuery, title: string, url: string) {
-        if (this.onMainTagRedirected(trigger, url)) {
+        if (this.onMainTagRedirected(trigger, title, url)) {
             return;
         }
         history.pushState({}, title, url);
     }
 
-    protected onMainTagRedirected(trigger: JQuery, url: string): boolean {
+    protected onMainTagRedirected(trigger: JQuery, title: string, url: string): boolean {
         // if trigger is a main tag with name starting by $ character or it has a parent with this conditions
         // we need to edit a query string parameter as _{main tag name without $}={url pathname}
         const mainTag = this.finalTargetAsMainTag(trigger)
         if (!mainTag) return false;
         (window.page as OlivePage).getService<MainTagHelper>(Services.MainTagHelper)
-            .changeUrl(url, mainTag.attr("name").replace("$", ""));
+            .changeUrl(url, mainTag.attr("name").replace("$", ""), title);
         return true;
     }
 
@@ -120,12 +120,14 @@ export default class AjaxRedirect implements IService {
             type: "GET",
             xhrFields: { withCredentials: true },
             success: (response) => {
+
+                var title = $(response).find("#page_meta_title").val();
+                if (title == undefined || title == null)
+                    title = $("#page_meta_title").val();
+
                 if ((ajaxTarget || document.URL.contains("?$")) && (ajaxhref == undefined)) {
                     const documentUrl = document.URL;
                     const newUrl = trigger.attr("data-addressbar") || url;
-                    var title = $(response).find("#page_meta_title").val();
-                    if (title == undefined || title == null)
-                        title = $("#page_meta_title").val();
 
 
                     const childaddress = document.URL.substring(documentUrl.indexOf("=") + 1);
@@ -147,9 +149,6 @@ export default class AjaxRedirect implements IService {
                 else if (!isBack) {
                     this.ajaxChangedUrl++;
                     if (addToHistory && !window.isModal()) {
-                        var title = $(response).find("#page_meta_title").val();
-                        if (title == undefined || title == null)
-                            title = $("#page_meta_title").val();
 
                         let addressBar = trigger.attr("data-addressbar") || url;
                         try {
@@ -160,7 +159,7 @@ export default class AjaxRedirect implements IService {
                         }
                     }
                 } else {
-                    this.onMainTagRedirected(trigger, url);
+                    this.onMainTagRedirected(trigger, title, url);
                 }
 
                 // this.serverInvoker.isAwaitingAjaxResponse = false;

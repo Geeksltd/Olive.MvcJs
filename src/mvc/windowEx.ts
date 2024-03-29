@@ -10,20 +10,23 @@ export default class WindowEx implements IService {
     }
 
     private back(event: JQueryEventObject) {
-        if (this.modalHelper.isOrGoingToBeModal())
-            window.location.reload();
-        else {
-            if (this.ajaxRedirect.ajaxChangedUrl == 0) return;
-            this.ajaxRedirect.ajaxChangedUrl--;
-            const link = $(event.currentTarget);
-            if (link != undefined && link != null) {
-                let ajaxTarget = link.attr("ajax-target");
-                let ajaxhref = link.attr("href");
-                this.ajaxRedirect.go(location.href, null, false, false, true, undefined, ajaxTarget, ajaxhref);
-            }
-            else {
-                this.ajaxRedirect.go(location.href, null, true, false, false);
-            }
+        if (this.modalHelper.isOrGoingToBeModal()) {
+            this.modalHelper.close();
+            return;
         }
+
+        if (this.ajaxRedirect.ajaxChangedUrl == 0) return;
+
+        this.ajaxRedirect.ajaxChangedUrl--;
+        const link = $(event.currentTarget);
+
+        if (link && link.length && link.prop("tagName") == "A") {
+            let ajaxTarget = link.attr("ajax-target");
+            let ajaxhref = link.attr("href");
+            this.ajaxRedirect.go(location.href, null, true, false, false, undefined, ajaxTarget, ajaxhref);
+            return;
+        }
+
+        this.ajaxRedirect.go(location.href, null, true, false, false, undefined, undefined, undefined);
     }
 }

@@ -15,9 +15,9 @@ export declare class MainTagHelper implements IService {
     initialize(): void;
     tryOpenFromUrl(): boolean;
     tryOpenDefaultUrl(): boolean;
-    changeUrl(url: string, mainTagName: string): void;
+    changeUrl(url: string, mainTagName: string, title?: string): void;
     render(event?: JQueryEventObject, url?: string): boolean;
-    protected openWithUrl(mainTagName: string, url?: string): boolean;
+    openWithUrl(mainTagName: string, url?: string): boolean;
     private validateState;
 }
 export default class MainTag {

@@ -78,7 +78,7 @@ export class MainTagHelper implements IService {
         return result;
     }
 
-    public changeUrl(url: string, mainTagName: string) {
+    public changeUrl(url: string, mainTagName: string, title?: string) {
         this.validateState()
 
         let currentPath: string = this.url.removeQuery(this.url.current(), "_" + mainTagName);
@@ -99,7 +99,7 @@ export class MainTagHelper implements IService {
         }
 
         let mainTagUrl: string = this.url.addQuery(currentPath, "_" + mainTagName, this.url.encodeGzipUrl(url));
-        history.pushState({}, "", mainTagUrl);
+        history.pushState({}, title, mainTagUrl);
     }
 
     public render(event?: JQueryEventObject, url?: string) {
@@ -114,7 +114,7 @@ export class MainTagHelper implements IService {
         new MainTag(this.url, this.ajaxRedirect, this, mainTagUrl, element, mainTagName, target).render();
     }
 
-    protected openWithUrl(mainTagName: string, url?: string): boolean {
+    public openWithUrl(mainTagName: string, url?: string): boolean {
         this.validateState()
         const mainTagUrl = url ? url : this.url.getQuery("_" + mainTagName);
         const element = $("main[name='$" + mainTagName + "']");
@@ -151,14 +151,19 @@ export default class MainTag {
     public render(changeUrl: boolean = true) {
         if (!this.url) return;
         const back = this.trigger?.attr("data-back") === "true";
+        const skipUrlParameter = this.element.attr("data-change-url") === "false";
         this.ajaxRedirect.go(this.url,
             this.element,
             back,
             false,
             false,
             (success: Boolean) => {
-                if (success && changeUrl) {
-                    this.helper.changeUrl(this.url, this.mainTagName)
+                if (success && changeUrl && !skipUrlParameter) {
+                    var title = this.element.find("#page_meta_title").val();
+                    if (title == undefined || title == null)
+                        title = $("#page_meta_title").val();
+
+                    this.helper.changeUrl(this.url, this.mainTagName, title)
                 }
             });
     }

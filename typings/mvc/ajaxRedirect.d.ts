@@ -11,7 +11,7 @@ export default class AjaxRedirect implements IService {
     constructor(url: Url, responseProcessor: ResponseProcessor, waiting: Waiting);
     enableRedirect(selector: JQuery): void;
     protected onRedirected(trigger: JQuery, title: string, url: string): void;
-    protected onMainTagRedirected(trigger: JQuery, url: string): boolean;
+    protected onMainTagRedirected(trigger: JQuery, title: string, url: string): boolean;
     protected finalTargetAsMainTag(trigger: JQuery): JQuery | undefined;
     protected onRedirectionFailed(trigger: JQuery, url: string, response: JQueryXHR): void;
     private redirect;
