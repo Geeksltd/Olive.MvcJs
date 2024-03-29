@@ -81,6 +81,7 @@ export class MainTagHelper implements IService {
     public changeUrl(url: string, mainTagName: string, title?: string) {
         this.validateState()
 
+        mainTagName = mainTagName.replace("$", "");
         let currentPath: string = this.url.removeQuery(this.url.current(), "_" + mainTagName);
 
         var children = $("main[name='$" + mainTagName + "']").attr("data-children");
@@ -116,6 +117,7 @@ export class MainTagHelper implements IService {
 
     public openWithUrl(mainTagName: string, url?: string): boolean {
         this.validateState()
+        mainTagName = mainTagName.replace("$", "");
         const mainTagUrl = url ? url : this.url.getQuery("_" + mainTagName);
         const element = $("main[name='$" + mainTagName + "']");
         if (!mainTagUrl || !element || !element.length) return false;
@@ -158,12 +160,16 @@ export default class MainTag {
             false,
             false,
             (success: Boolean) => {
-                if (success && changeUrl && !skipUrlParameter) {
-                    var title = this.element.find("#page_meta_title").val();
-                    if (title == undefined || title == null)
-                        title = $("#page_meta_title").val();
+                if (!success) return;
 
+                var title = this.element.find("#page_meta_title").val();
+                if (title == undefined || title == null)
+                    title = $("#page_meta_title").val();
+
+                if (changeUrl && !skipUrlParameter) {
                     this.helper.changeUrl(this.url, this.mainTagName, title)
+                } else {
+                    document.title = title;
                 }
             });
     }
