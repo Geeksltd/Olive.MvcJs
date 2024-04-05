@@ -166,8 +166,10 @@ export default class OlivePage implements IServiceLocator {
         }
 
         if (services.tryAddSingleton(Services.WindowEx,
-            (modalHelper: ModalHelper, ajaxRedirect: AjaxRedirect) => new WindowEx(modalHelper, ajaxRedirect), out)) {
-            out.value.withDependencies(Services.ModalHelper, Services.AjaxRedirect);
+            (modalHelper: ModalHelper, mainTagHelper: MainTagHelper, ajaxRedirect: AjaxRedirect) =>
+                new WindowEx(modalHelper, mainTagHelper, ajaxRedirect), out)
+        ) {
+            out.value.withDependencies(Services.ModalHelper, Services.MainTagHelper, Services.AjaxRedirect);
         }
 
         if (services.tryAddSingleton(Services.AutoCompleteFactory,

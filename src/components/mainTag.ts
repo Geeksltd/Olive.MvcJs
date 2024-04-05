@@ -8,7 +8,7 @@ interface StateData {
 }
 
 export class MainTagHelper implements IService {
-    public state?: StateData | undefined = undefined;
+    private state?: StateData | undefined = undefined;
 
     constructor(
         private url: Url,
@@ -28,13 +28,21 @@ export class MainTagHelper implements IService {
 
     public initialize() {
         this.responseProcessor.processCompleted.handle((e) => {
-            if (!this.tryOpenFromUrl()) {
-                this.tryOpenDefaultUrl();
-            }
+            this.tryOpenFromUrl();
         });
     }
 
-    public tryOpenFromUrl(): boolean {
+    public resetState(): void {
+        this.state = undefined;
+    }
+
+    public tryOpenFromUrl(): void {
+        if (!this.tryOpenFromUrlInternal()) {
+            this.tryOpenDefaultUrl();
+        }
+    }
+
+    private tryOpenFromUrlInternal(): boolean {
         this.validateState()
         var reserved = ["_modal", "_nav"];
 
@@ -56,7 +64,7 @@ export class MainTagHelper implements IService {
         return result;
     }
 
-    public tryOpenDefaultUrl(): boolean {
+    private tryOpenDefaultUrl(): boolean {
         this.validateState()
         var tags = $("main[name^='$'][data-default-url]");
 

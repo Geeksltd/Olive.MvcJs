@@ -1,8 +1,11 @@
 import { ModalHelper } from "olive/components/modal";
 import AjaxRedirect from "./ajaxRedirect";
+import { MainTagHelper } from "olive/components/mainTag";
 
 export default class WindowEx implements IService {
-    constructor(private modalHelper: ModalHelper,
+    constructor(
+        private modalHelper: ModalHelper,
+        private mainTagHelper: MainTagHelper,
         private ajaxRedirect: AjaxRedirect) { }
 
     public enableBack(selector: JQuery) {
@@ -20,13 +23,22 @@ export default class WindowEx implements IService {
         this.ajaxRedirect.ajaxChangedUrl--;
         const link = $(event.currentTarget);
 
+        const thatModalHelper = this.modalHelper;
+        const thatMainTagHelper = this.mainTagHelper;
+
+        const onSuccess = success => {
+            thatModalHelper.tryOpenFromUrl();
+            thatMainTagHelper.resetState();
+            thatMainTagHelper.tryOpenFromUrl();
+        }
+
         if (link && link.length && link.prop("tagName") == "A") {
             let ajaxTarget = link.attr("ajax-target");
             let ajaxhref = link.attr("href");
-            this.ajaxRedirect.go(location.href, null, true, false, false, undefined, ajaxTarget, ajaxhref);
-            return;
+            this.ajaxRedirect.go(location.href, null, true, false, false, onSuccess, ajaxTarget, ajaxhref);
         }
-
-        this.ajaxRedirect.go(location.href, null, true, false, false, undefined, undefined, undefined);
+        else {
+            this.ajaxRedirect.go(location.href, null, true, false, false, onSuccess, undefined, undefined);
+        }
     }
 }
