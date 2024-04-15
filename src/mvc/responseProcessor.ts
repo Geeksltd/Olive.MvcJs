@@ -214,6 +214,7 @@ export default class ResponseProcessor implements IService {
         let exitClass: string | undefined = undefined;
 
         let transition = oldMain.attr("data-transition");
+        transition = trigger.attr("data-transition") || transition;
 
         // backward compatibility
         // if (transition == "slide") transition = "slide-mobile";
