@@ -352,9 +352,17 @@ export default class OlivePage implements IServiceLocator {
             .enableEnhance($("select:not([data-control='collapsible-checkboxes'])"));
         form.enableDefaultButtonKeyPress($("form input, form select"));
         UserHelp.enable($("[data-user-help]"));
-        this.getService<ModalHelper>(Services.ModalHelper).enableLink($("[target='$modal'][href]"));
+        this.getService<ModalHelper>(Services.ModalHelper).enableLink(
+            $("[target='$modal'][href]")
+            .not('[href="#"]')
+            .not('[href=""]')
+            .not('[href^="javascript:"]'));
 
-        this.getService<MainTagHelper>(Services.MainTagHelper).enableLink($("[target^='$']:not([target = '$modal'])[href]"));
+        this.getService<MainTagHelper>(Services.MainTagHelper).enableLink(
+            $("[target^='$']:not([target = '$modal'])[href]")
+            .not('[href="#"]')
+            .not('[href=""]')
+            .not('[href^="javascript:"]'));
 
         this.getService<GroupingFactory>(Services.GroupingFactory).enable($(".form-group #GroupBy"));
 
