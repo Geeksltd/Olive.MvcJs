@@ -124,7 +124,8 @@ export default class Url implements IService {
     }
 
     public goToUrlAfterLogin(url: string) {
-        window.location.href = "/login?returnUrl=/" + encodeURIComponent(this.makeRelative(url).trimStart("/"));
+        const returnUrl = this.encodeGzipUrl("/" + this.makeRelative(url).trimStart("/"));
+        window.location.href = "/login?returnUrl=" + returnUrl;
     }
 
     private goToLoginPage() {
