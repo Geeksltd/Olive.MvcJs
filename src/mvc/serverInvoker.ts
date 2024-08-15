@@ -43,6 +43,29 @@ export default class ServerInvoker implements IService {
         return false;
     }
 
+    private processActionUrl(actionUrl: string) {
+        try {            
+            var returnurlKey = "returnurl";
+
+            var url = new URL(actionUrl.toLowerCase());
+            var params = new URLSearchParams(url.search);
+
+            if (params.has(returnurlKey)) {
+                var returnurl = params.get(returnurlKey);
+                returnurl = returnurl.replace(/&/g, "%26");
+                params.set(returnurlKey, returnurl);
+            }
+
+            url.search = params.toString();
+
+            return url.toString();
+
+        } catch (e) {
+            console.log(e);
+            return actionUrl;
+        }       
+    }
+
     public invokeWithAjax(event: JQueryEventObject, actionUrl: string, syncCall = false) {
 
         let trigger = $(event.currentTarget);
@@ -76,11 +99,8 @@ export default class ServerInvoker implements IService {
 
         this.onInvocation(event, context);
 
-        if (actionUrl != undefined && actionUrl != null && actionUrl.toLowerCase().contains("returnurl=") && !actionUrl.toLowerCase().contains("returnurl=...")) {
-            var baseurl = actionUrl.substring(0, actionUrl.toLowerCase().indexOf("returnurl="));
-            var returnurl = actionUrl.substring(actionUrl.toLowerCase().indexOf("returnurl="));
-            returnurl = returnurl.replace(new RegExp("&", 'g'), "%26");
-            actionUrl = baseurl + returnurl;
+        if (actionUrl != undefined && actionUrl != null && actionUrl.toLowerCase().contains("returnurl=") && !actionUrl.toLowerCase().contains("returnurl=...")) {            
+            actionUrl = this.processActionUrl(actionUrl);
         }
 
         $.ajax({
@@ -89,11 +109,11 @@ export default class ServerInvoker implements IService {
             xhrFields: { withCredentials: true },
             async: !syncCall,
             data: data_before_disable,
-            success: (result) => { 
-                $(".tooltip").remove(); 
-                this.waiting.hide(); 
-                this.removeWaitingBar(); 
-                this.responseProcessor.processAjaxResponse(result, containerModule, trigger, null, null, null); 
+            success: (result) => {
+                $(".tooltip").remove();
+                this.waiting.hide();
+                this.removeWaitingBar();
+                this.responseProcessor.processAjaxResponse(result, containerModule, trigger, null, null, null);
             },
             error: this.onAjaxResponseError,
             statusCode: {
@@ -111,7 +131,7 @@ export default class ServerInvoker implements IService {
                 trigger.removeClass('loading-action-result');
                 if (disableToo) trigger.removeAttr('disabled');
 
-                
+
 
 
                 let triggerTabIndex: number = $(":focusable").not("[tabindex='-1']").index($(triggerUniqueSelector));
@@ -166,7 +186,7 @@ export default class ServerInvoker implements IService {
     protected showWaitingBar = () => {
         let body = $("body");
 
-            let waitingBar = $(`<div id="waiting-bar" style="position:fixed; 
+        let waitingBar = $(`<div id="waiting-bar" style="position:fixed; 
                                                             top:0; 
                                                             left:0;
                                                             width:100vw;
@@ -177,9 +197,9 @@ export default class ServerInvoker implements IService {
                                                             display:flex; 
                                                             justify-content:center; 
                                                             align-items:center;">`)
-                .append($(`<div style="width:300px; height:30px;">`)
-                    .append($(`<div class="progress" style="height: 100%;">`)
-                        .append($(`<div class="progress-bar progress-bar-striped progress-bar-animated"
+            .append($(`<div style="width:300px; height:30px;">`)
+                .append($(`<div class="progress" style="height: 100%;">`)
+                    .append($(`<div class="progress-bar progress-bar-striped progress-bar-animated"
                                         role="progressbar" 
                                         aria-valuenow="100" 
                                         aria-valuemin="0" 
@@ -187,12 +207,12 @@ export default class ServerInvoker implements IService {
                                         style="width: 100%;
                                               animation: 1s linear infinite progress-bar-stripes;">`))));
 
-            body.append(waitingBar);
+        body.append(waitingBar);
 
     }
 
     protected removeWaitingBar = () => {
-               
+
         let waitingBar = $("#waiting-bar");
 
         if (waitingBar.length > 0) {
