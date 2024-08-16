@@ -14,6 +14,7 @@ export default class ServerInvoker implements IService {
     enableInvokeWithAjax(selector: JQuery, event: string, attrName: string): void;
     enableinvokeWithPost(selector: JQuery): void;
     private invokeWithPost;
+    private processActionUrl;
     invokeWithAjax(event: JQueryEventObject, actionUrl: string, syncCall?: boolean): boolean;
     protected onInvocation(event: JQueryEventObject, context: IInvocationContext): void;
     protected onInvocationProcessed(event: JQueryEventObject, context: IInvocationContext): void;
