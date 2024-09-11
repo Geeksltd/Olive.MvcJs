@@ -1,6 +1,5 @@
 import Url from "olive/components/url";
 import "jquery-sortable";
-import "jquery-ui-touch-punch";
 import ServerInvoker from "olive/mvc/serverInvoker";
 export default class Sorting implements IService {
     private url;
