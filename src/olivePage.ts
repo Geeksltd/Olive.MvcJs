@@ -273,6 +273,7 @@ export default class OlivePage implements IServiceLocator {
                 Services.ResponseProcessor,
                 Services.Select,
                 Services.ModalHelper,
+                Services.MainTagHelper,
                 Services.ServiceLocator);
         }
 
