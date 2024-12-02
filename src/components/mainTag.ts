@@ -111,6 +111,21 @@ export class MainTagHelper implements IService {
         history.pushState({}, title, mainTagUrl);
     }
 
+    public invalidateChildren(mainTagElement: JQuery) {
+        const childrenStr = mainTagElement.attr("data-children");
+        if (!childrenStr || !childrenStr.length) return;
+
+        const children = childrenStr.split(",").filter(a => a && a.length);
+        if (!children || !children.length) return;
+
+        children.forEach(child => {
+            if (child.startsWith("$")) {
+                child = child.substring(1);
+            }
+            this.state.foundQs = this.state.foundQs.filter(item => item !== child)
+        })
+    }
+
     public render(event?: JQueryEventObject, url?: string) {
         this.validateState()
         const target = $(event.currentTarget);
@@ -156,6 +171,8 @@ export default class MainTag {
         if (this.isValidUrl(baseUrl)) {
             this.url = this.urlService.makeRelative(decodeURIComponent(baseUrl));
         }
+
+        helper.invalidateChildren(element)
     }
 
     public render(changeUrl: boolean = true) {

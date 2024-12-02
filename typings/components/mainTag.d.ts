@@ -14,6 +14,7 @@ export declare class MainTagHelper implements IService {
     private tryOpenFromUrlInternal;
     private tryOpenDefaultUrl;
     changeUrl(url: string, mainTagName: string, title?: string): void;
+    invalidateChildren(mainTagElement: JQuery): void;
     render(event?: JQueryEventObject, url?: string): boolean;
     openWithUrl(mainTagName: string, url?: string): boolean;
     private validateState;
