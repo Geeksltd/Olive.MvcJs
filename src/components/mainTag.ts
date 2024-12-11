@@ -122,7 +122,7 @@ export class MainTagHelper implements IService {
             if (child.startsWith("$")) {
                 child = child.substring(1);
             }
-            this.state.foundQs = this.state.foundQs.filter(item => item !== child)
+            this.state.foundQs = this.state.foundQs.filter(item => item !== child);
         })
     }
 
@@ -172,7 +172,8 @@ export default class MainTag {
             this.url = this.urlService.makeRelative(decodeURIComponent(baseUrl));
         }
 
-        helper.invalidateChildren(element)
+        helper.invalidateChildren(element);
+        element.html('');
     }
 
     public render(changeUrl: boolean = true) {
