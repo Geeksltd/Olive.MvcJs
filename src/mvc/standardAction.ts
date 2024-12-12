@@ -117,7 +117,10 @@ export default class StandardAction implements IService {
             action.Redirect = '/' + action.Redirect;
         if (action.OutOfModal && window.isModal()) parent.window.location.href = action.Redirect;
         else if (action.Target == '$modal') this.openModal({ currentTarget: trigger }, action.Redirect, null);
-        else if (action.Target && action.Target.indexOf('$') === 0) this.renderMainTag({ currentTarget: trigger }, action.redirect);
+        else if (action.Target && action.Target.indexOf('$') === 0) {
+            trigger.attr('target', action.Target)
+            this.renderMainTag({ currentTarget: trigger }, action.Redirect);
+        }
         else if (action.Target && action.Target != '') window.open(action.Redirect, action.Target);
         else if (action.WithAjax === false) location.replace(action.Redirect);
         else if ((trigger && trigger.is("[data-redirect=ajax]")) || action.WithAjax == true) {
