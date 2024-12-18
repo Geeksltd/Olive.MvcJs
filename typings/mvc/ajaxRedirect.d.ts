@@ -1,6 +1,7 @@
 import Waiting from "olive/components/waiting";
 import Url from "olive/components/url";
 import ResponseProcessor from "olive/mvc/responseProcessor";
+import LiteEvent from "olive/components/liteEvent";
 export default class AjaxRedirect implements IService {
     protected url: Url;
     private responseProcessor;
@@ -8,6 +9,7 @@ export default class AjaxRedirect implements IService {
     private requestCounter;
     ajaxChangedUrl: number;
     isAjaxRedirecting: boolean;
+    beforeRedirect: LiteEvent<IEventArgs>;
     constructor(url: Url, responseProcessor: ResponseProcessor, waiting: Waiting);
     enableRedirect(selector: JQuery): void;
     protected onRedirected(trigger: JQuery, title: string, url: string): void;

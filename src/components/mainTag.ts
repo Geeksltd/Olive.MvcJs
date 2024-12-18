@@ -27,6 +27,9 @@ export class MainTagHelper implements IService {
     }
 
     public initialize() {
+        this.ajaxRedirect.beforeRedirect.handle((e) => {
+            this.resetState();
+        })
         this.responseProcessor.processCompleted.handle((e) => {
             this.tryOpenFromUrl();
         });
@@ -37,13 +40,12 @@ export class MainTagHelper implements IService {
     }
 
     public tryOpenFromUrl(): void {
-        if (!this.tryOpenFromUrlInternal()) {
-            this.tryOpenDefaultUrl();
-        }
+        this.validateState()
+        this.tryOpenFromUrlInternal();
+        this.tryOpenDefaultUrl();
     }
 
     private tryOpenFromUrlInternal(): boolean {
-        this.validateState()
         var reserved = ["_modal", "_nav"];
 
         // at least one content loaded
@@ -65,7 +67,6 @@ export class MainTagHelper implements IService {
     }
 
     private tryOpenDefaultUrl(): boolean {
-        this.validateState()
         var tags = $("main[name^='$'][data-default-url]");
 
         // at least one content loaded

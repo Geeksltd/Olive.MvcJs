@@ -4,6 +4,7 @@ import ResponseProcessor from "olive/mvc/responseProcessor";
 import { MainTagHelper } from "olive/components/mainTag";
 import Services from "olive/di/services";
 import OlivePage from "olive/olivePage";
+import LiteEvent from "olive/components/liteEvent";
 
 export default class AjaxRedirect implements IService {
     private requestCounter = 0;
@@ -11,6 +12,8 @@ export default class AjaxRedirect implements IService {
     public isAjaxRedirecting = false;
     // public onRedirected: ((title: string, url: string) => void) = this.defaultOnRedirected;
     // public onRedirectionFailed: ((url: string, response: JQueryXHR) => void) = this.defaultOnRedirectionFailed;
+
+    public beforeRedirect = new LiteEvent<IEventArgs>();
 
     constructor(
         protected url: Url,
@@ -54,6 +57,7 @@ export default class AjaxRedirect implements IService {
 
     private redirect(event: JQueryEventObject) {
         if (event.ctrlKey || event.button === 1) { return true; }
+        this.beforeRedirect.raise({})
         const link = $(event.currentTarget);
         let url = link.attr("href");
 
