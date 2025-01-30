@@ -207,7 +207,7 @@ export default class GlobalSearch implements IService {
                 .replace("\"", "")
                 .toUpperCase();
 
-        const id = ((groupTitle || 'group').replace(/ /g, "-")) + "-" + groupIndex;
+        const id = this.safeId(groupTitle || 'group') + "-" + groupIndex;
         const active = this.groupsPanel.children().length == 0 ? "active" : "";
 
         const searchTitle = $(`<li class='nav-item'><a class='nav-link ${active}' href='#${id}' role='tab' data-toggle='tab'><i class='${sender.icon}'></i> ${groupTitle || "Global"} <span class='badge badge-secondary'>${items.length}</span></a></li>`)
@@ -238,6 +238,10 @@ export default class GlobalSearch implements IService {
         this.modalHelper.enableLink($(childrenItems).find("[target='$modal'][href]"));
 
         this.resultsPanel.append(childrenItems);
+    }
+
+    safeId(title: string) {
+        return title.replace(/[^a-zA-Z0-9]/g, '_')
     }
 
     protected createItem(item: IResultItemDto, context: ISearchContext) {
