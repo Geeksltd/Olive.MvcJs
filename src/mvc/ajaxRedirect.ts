@@ -36,15 +36,25 @@ export default class AjaxRedirect implements IService {
         // if trigger is a main tag with name starting by $ character or it has a parent with this conditions
         // we need to edit a query string parameter as _{main tag name without $}={url pathname}
         const mainTag = this.finalTargetAsMainTag(trigger)
-        if (!mainTag) return false;
+        if (!this.isInternalMainTag(mainTag)) return false;
         (window.page as OlivePage).getService<MainTagHelper>(Services.MainTagHelper)
             .changeUrl(url, mainTag.attr("name").replace("$", ""), title);
         return true;
     }
 
+    protected isInternalMainTag(mainTag: JQuery) {
+        if (!mainTag || !mainTag.length) return false;
+        const name = mainTag.attr('name');
+        if (!name || name.length < 1) return false;
+        return name[0] == "$";
+    }
+
     protected finalTargetAsMainTag(trigger: JQuery): JQuery | undefined {
-        const mainTag = trigger.is("main[name^='$']") ? trigger : trigger.closest("main[name^='$']");
-        return !!mainTag && !!mainTag.length ? mainTag : undefined;
+        let mainTag = trigger.is("main") ? trigger : trigger.closest("main");
+        if (!!mainTag && !!mainTag.length) return mainTag;
+        mainTag = $("main:first");
+        if (!!mainTag && !!mainTag.length) return mainTag;
+        return undefined;
     }
 
     protected onRedirectionFailed(trigger: JQuery, url: string, response: JQueryXHR) {
@@ -81,7 +91,7 @@ export default class AjaxRedirect implements IService {
         ajaxhref?: string
     ): boolean {
 
-        if (!trigger) { trigger = $(window); }
+        if (!trigger) trigger = $(window);
 
         var activebutton = trigger.children(".board-header").first().children(".col-md-10").first().children(".board-links").first().children(".active");
 
@@ -114,9 +124,13 @@ export default class AjaxRedirect implements IService {
         this.waiting.show(false, false);
 
         const mainTag = this.finalTargetAsMainTag(trigger);
+        let version = undefined;
         if (mainTag) {
             mainTag.removeClass("w3-semi-fade-in");
             mainTag.addClass("w3-semi-fade-out");
+
+            version = this.uuidv4();
+            mainTag.attr("data-version", version)
         }
 
         $.ajax({
@@ -124,6 +138,10 @@ export default class AjaxRedirect implements IService {
             type: "GET",
             xhrFields: { withCredentials: true },
             success: (response) => {
+                if (version && mainTag) {
+                    const currentVersion = mainTag.attr("data-version")
+                    if (version != currentVersion) return;
+                }
 
                 var title = $(response).find("#page_meta_title").val();
                 if (title == undefined || title == null)
@@ -194,5 +212,15 @@ export default class AjaxRedirect implements IService {
             }
         });
         return false;
+    }
+
+    private uuidv4 = () => {
+        return "xxxxxxxx-xxxx-xxxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+            // tslint:disable-next-line: no-bitwise
+            const r = Math.random() * 16 | 0;
+            // tslint:disable-next-line: no-bitwise
+            const v = c === "x" ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
     }
 }

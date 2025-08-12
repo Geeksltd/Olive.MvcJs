@@ -3,9 +3,6 @@ import LiteEvent from "olive/components/liteEvent";
 export default class ResponseProcessor implements IService {
     private dynamicallyLoadedScriptFiles = [];
 
-    private contentProcessorLock = false;
-    private contentProcessorQueue = [];
-
     public subformChanged = new LiteEvent<IResponseProcessorEventArgs>();
     public viewChanged = new LiteEvent<IViewUpdatedEventArgs>();
     public processCompleted = new LiteEvent<IEventArgs>();
@@ -146,28 +143,16 @@ export default class ResponseProcessor implements IService {
     }
 
     protected processWithTheContent(trigger: JQuery, newMain: JQuery, args: any, referencedScripts: JQuery) {
-        this.contentProcessorQueue.push({
-            trigger: trigger, newMain: newMain, args: args, referencedScripts: referencedScripts
-        });
-        this.processWithTheContentQueue();
-    }
-
-    private processWithTheContentQueue() {
-        if (this.contentProcessorLock || !this.contentProcessorQueue.length) return;
-
-        var item = this.contentProcessorQueue.shift();
-
-        let targetMainName = item.trigger.attr("target");
+        
+        let targetMainName = trigger.attr("target");
         if (!targetMainName) {
-            targetMainName = item.trigger.closest("main").attr("name");
+            targetMainName = trigger.closest("main").attr("name");
         }
 
-        this.processWithTheContentInternal(targetMainName, item.trigger, item.newMain, item.args, item.referencedScripts)
+        this.processWithTheContentInternal(targetMainName, trigger, newMain, args, referencedScripts)
     }
 
     private processWithTheContentInternal(targetMainName: string, trigger: JQuery, newMain: JQuery, args: any, referencedScripts: JQuery) {
-        this.contentProcessorLock = true;
-
         const width = $(window).width();
         const mobileBreakpoint = 800;
 
@@ -259,10 +244,6 @@ export default class ResponseProcessor implements IService {
             if (enterClass)
                 newMain.addClass(enterClass);
             this.updateUrl(referencedScripts, newMain, trigger);
-            setTimeout(() => {
-                this.contentProcessorLock = false;
-                this.processWithTheContentQueue();
-            }, 200);
         }
 
         if (exitClass) {

@@ -1,8 +1,6 @@
 import LiteEvent from "olive/components/liteEvent";
 export default class ResponseProcessor implements IService {
     private dynamicallyLoadedScriptFiles;
-    private contentProcessorLock;
-    private contentProcessorQueue;
     subformChanged: LiteEvent<IResponseProcessorEventArgs>;
     viewChanged: LiteEvent<IViewUpdatedEventArgs>;
     processCompleted: LiteEvent<IEventArgs>;
@@ -16,7 +14,6 @@ export default class ResponseProcessor implements IService {
     private getNewCss;
     private getCss;
     protected processWithTheContent(trigger: JQuery, newMain: JQuery, args: any, referencedScripts: JQuery): void;
-    private processWithTheContentQueue;
     private processWithTheContentInternal;
     private replaceContent;
     protected updateUrl(referencedScripts: JQuery, element: JQuery, trigger: JQuery): void;
