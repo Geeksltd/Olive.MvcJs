@@ -32,6 +32,6 @@ export default class TimeControl {
 
         input.datetimepicker(options).data("DateTimePicker").keyBinds().clear = null;
 
-        input.parent().find(".fa-clock-o").parent(".input-group-addon").click(() => { input.focus(); });
+        input.parent().find(".fa-clock-o").parent(".input-group-addon").on('click', () => { input.focus(); });
     }
 }

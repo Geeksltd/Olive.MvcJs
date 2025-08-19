@@ -56,7 +56,7 @@ export default class FileUpload {
         this.filenameInput = this.container.find(".Filename");
         this.validationInput = this.container.find(".validation");
 
-        this.deleteButton = this.container.find(".delete-file").click((e) => this.onDeleteButtonClicked());
+        this.deleteButton = this.container.find(".delete-file").on('click', (e) => this.onDeleteButtonClicked());
     }
 
     public enable() {
@@ -137,7 +137,7 @@ export default class FileUpload {
             .removeAttr("disabled")
             .addClass("file-target")
             .attr("readonly", "readonly")
-            .click(() => this.currentFileLink[0].click());
+            .on('click', () => this.currentFileLink[0].click());
 
         this.setValidationValue("value");
     }

@@ -20,7 +20,7 @@ export default class CustomCheckbox {
             this.input.trigger('change');
         };
 
-        checkBox.click(toggle);
+        checkBox.on('click', toggle);
         this.input.after(checkBox);
         this.input.addClass(CustomCheckbox.handledClassName);
     }
