@@ -26,8 +26,8 @@ export default class Grid implements IService {
 
     private enableSelectColumns(container) {
         let columns = container.find("div.select-cols");
-        container.find("a.select-cols").click(() => { columns.show(); return false; });
-        columns.find('.cancel').click(() => columns.hide());
+        container.find("a.select-cols").on('click', () => { columns.show(); return false; });
+        columns.find('.cancel').on('click', () => columns.hide());
     }
 
     private enableSelectAllToggle(event) {
