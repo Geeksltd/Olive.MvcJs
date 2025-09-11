@@ -60,7 +60,7 @@ export default abstract class dateTimePickerBase {
             this.input.datetimepicker(options);
 
             // Now make calendar icon clickable as well             
-            this.input.parent().find(".fa-calendar").parent(".input-group-addon").click(() => this.input.focus());
+            this.input.parent().find(".fa-calendar").parent(".input-group-addon").on('click', () => this.input.focus());
 
 
         }

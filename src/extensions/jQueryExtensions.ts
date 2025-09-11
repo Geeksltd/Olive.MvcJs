@@ -19,22 +19,26 @@ export function screenOffset() {
 // same as you'd pass it to bind()
 // [fn] is the handler function
 export function bindFirst(name, fn) {
-    // bind as you normally would
-    // don't want to miss out on any jQuery magic
-    this.bind(name, fn);
+    // Use .on() instead of deprecated .bind()
+    this.on(name, fn);
 
     // Thanks to a comment by @Martin, adding support for
     // namespaced events too.
     var jq: any = $;
 
-    var eventsData = jq._data(this.get(0), "events");
-    if (eventsData) {
-
-        var handlers = eventsData[name.split('.')[0]];
-        // take out the handler we just inserted from the end
-        var handler = handlers.pop();
-        // move it at the beginning
-        handlers.splice(0, 0, handler);
+    // Use $._data() with jQuery 3.x compatible approach
+    var element = this.get(0);
+    if (element) {
+        var eventsData = jq._data ? jq._data(element, "events") : $(element).data("events");
+        if (eventsData) {
+            var handlers = eventsData[name.split('.')[0]];
+            if (handlers && handlers.length > 0) {
+                // take out the handler we just inserted from the end
+                var handler = handlers.pop();
+                // move it at the beginning
+                handlers.splice(0, 0, handler);
+            }
+        }
     }
 
     return this;

@@ -10,4 +10,10 @@ export default class Config {
     static DEFAULT_MODAL_BACKDROP: string;
     static DEFAULT_HTML_EDITOR_MODE: string;
     static CK_EDITOR_BASE_PATH: string;
+    static CK_EDITOR_VERSION: string;
+    static CK_EDITOR_5_BUNDLE: string;
+    static CK_EDITOR_5_CONFIG: {
+        language: string;
+        placeholder: string;
+    };
 }

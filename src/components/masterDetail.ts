@@ -25,7 +25,12 @@ export default class MasterDetail implements IService {
         // Hide add buttons
         $("[data-subform-max]").each((i, e) => {
             const show = countItems(e) < parseInt($(e).attr("data-subform-max"), 10);
-            $(e).closest("[data-module]").find("[data-add-subform=" + $(e).attr("data-subform") + "]").toggle(show);
+            const targetElement = $(e).closest("[data-module]").find("[data-add-subform=" + $(e).attr("data-subform") + "]");
+            if (show) {
+                targetElement.show();
+            } else {
+                targetElement.hide();
+            }
         });
         // Hide delete buttons
         $("[data-subform-min]").each((i, e) => {

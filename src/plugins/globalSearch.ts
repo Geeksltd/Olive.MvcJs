@@ -65,7 +65,7 @@ export default class GlobalSearch implements IService {
         this.resultsPanel = $("#global-search-modal .global-search-results")
 
         let timeout = null;
-        this.input.keyup((e) => {
+        this.input.on('keyup', (e) => {
 
             if (e.keyCode === 27) {
                 return;
@@ -232,7 +232,7 @@ export default class GlobalSearch implements IService {
             childrenItems.css("color", items[0].Colour);
         }
 
-        $(childrenItems).find("[target='$modal'][href]").off("click").click(function () {
+        $(childrenItems).find("[target='$modal'][href]").off("click").on("click", function () {
             $('#global-search-modal').modal('hide')
         });
         this.modalHelper.enableLink($(childrenItems).find("[target='$modal'][href]"));

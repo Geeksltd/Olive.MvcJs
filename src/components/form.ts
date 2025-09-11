@@ -106,7 +106,7 @@ export default class Form implements IService {
             const target = $(event.currentTarget);
             let button = target.closest("[data-module]").find("[default-button]:first"); // Same module
             if (button.length === 0) { button = $("[default-button]:first"); } // anywhere
-            button.click();
+            button.trigger('click');
             return false;
         } else { return true; }
     }

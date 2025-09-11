@@ -7,7 +7,16 @@ interface JQuery {
     getUniqueSelector(): string;
 }
 
-declare var CKEDITOR;
+// CKEditor 4 declarations
+declare var CKEDITOR: any;
+
+// CKEditor 5 declarations
+declare var ClassicEditor: any;
+declare var DecoupledEditor: any;
+declare var InlineEditor: any;
+declare var BalloonEditor: any;
+declare var BalloonBlockEditor: any;
+
 declare var Globalize;
 
 

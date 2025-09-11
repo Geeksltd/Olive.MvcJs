@@ -4,7 +4,7 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.3
 
-import * as Popper from "typings-lib/bootstrap/popper";
+import * as Popper from "./popper";
 
 export as namespace Bootstrap;
 

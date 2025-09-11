@@ -9,4 +9,8 @@ export default class CKEditorFileManager {
     private url;
     constructor(item: JQuery, url: Url);
     enable(): void;
+    protected handleFileSelection(uri: string): void;
+    protected isCKEditor5(): boolean;
+    protected handleCKEditor5FileSelection(uri: string): void;
+    protected handleCKEditor4FileSelection(uri: string): void;
 }

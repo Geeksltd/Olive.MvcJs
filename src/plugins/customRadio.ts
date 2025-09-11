@@ -20,7 +20,7 @@ export default class CustomRadio {
             this.input.trigger('change');
         }
 
-        radio.click(check);
+        radio.on('click', check);
         this.input.after(radio);
         this.input.addClass(CustomRadio.handledClassName);
     }

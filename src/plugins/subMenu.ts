@@ -6,7 +6,7 @@ export default class SubMenu {
     public static enable(selector: JQuery) { selector.each((i, e) => new SubMenu($(e))); }
 
     public static createAccordion(selector: JQuery) {
-        selector.find('[data-toggle]').click((event) => {
+        selector.find('[data-toggle]').on('click', (event) => {
             $($(event.target).parent('li').siblings().children('[data-toggle][aria-expanded=true]')).trigger('click');
         });
     }
