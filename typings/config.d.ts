@@ -12,6 +12,7 @@ export default class Config {
     static CK_EDITOR_BASE_PATH: string;
     static CK_EDITOR_VERSION: string;
     static CK_EDITOR_5_BUNDLE: string;
+    static CK_EDITOR_5_USE_CDN: boolean;
     static CK_EDITOR_5_CONFIG: {
         language: string;
         placeholder: string;

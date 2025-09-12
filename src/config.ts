@@ -20,6 +20,7 @@
     public static CK_EDITOR_BASE_PATH = '/lib/ckeditor/';
     public static CK_EDITOR_VERSION = 'auto'; // 'auto', '4', or '5'
     public static CK_EDITOR_5_BUNDLE = 'classic'; // 'classic', 'decoupled', 'inline', 'balloon', 'balloon-block'
+    public static CK_EDITOR_5_USE_CDN = true; // Use local build via RequireJS compatibility
     
     // CKEditor 5 specific settings
     public static CK_EDITOR_5_CONFIG = {

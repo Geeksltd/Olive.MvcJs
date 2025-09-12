@@ -13,12 +13,15 @@ export default class HtmlEditor {
     protected isCKEditor5(): boolean;
     protected enableCKEditor5(): void;
     protected enableCKEditor4(): void;
+    protected loadCKEditor5ViaRequireJS(): void;
     protected onCKEditor5ScriptReady(): void;
+    protected initializeCKEditor5(EditorClass: any): void;
     protected onCKEditor4ScriptReady(): void;
     protected setupCKEditor5Events(editor: any): void;
     protected getCKEditor5Settings(): {
         toolbar: any;
         placeholder: string;
+        licenseKey: string;
     };
     protected getCKEditor4Settings(): {
         toolbar: string;

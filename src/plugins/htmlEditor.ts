@@ -24,21 +24,48 @@ export default class HtmlEditor {
     }
 
     protected isCKEditor5(): boolean {
-        // Check if CKEditor 5 is available
+        // Check if CKEditor 5 is available (via RequireJS or global)
         return typeof window["ClassicEditor"] !== "undefined" || 
                typeof window["DecoupledEditor"] !== "undefined" ||
-               typeof window["InlineEditor"] !== "undefined";
+               typeof window["InlineEditor"] !== "undefined" ||
+               Config.CK_EDITOR_5_USE_CDN;
     }
 
     protected enableCKEditor5() {
-        // Load CKEditor 5 dynamically
-        this.onDemandScript(Config.CK_EDITOR_BASE_PATH + "ckeditor.js", () => this.onCKEditor5ScriptReady());
+        if (Config.CK_EDITOR_5_USE_CDN) {
+            // Use RequireJS to load CKEditor 5 from CDN
+            this.loadCKEditor5ViaRequireJS();
+        } else {
+            // Load CKEditor 5 dynamically from local files
+            this.onDemandScript(Config.CK_EDITOR_BASE_PATH + "ckeditor.js", () => this.onCKEditor5ScriptReady());
+        }
     }
 
     protected enableCKEditor4() {
         // Legacy CKEditor 4 support
         window["CKEDITOR_BASEPATH"] = Config.CK_EDITOR_BASE_PATH;
         this.onDemandScript(Config.CK_EDITOR_BASE_PATH + "ckeditor.js", () => this.onCKEditor4ScriptReady());
+    }
+
+    protected loadCKEditor5ViaRequireJS() {
+        // Use RequireJS to load CKEditor 5 from CDN UMD build
+        if (typeof window["require"] !== "undefined") {
+            const self = this;
+            // Use bracket notation to bypass TypeScript strict typing for RequireJS
+            (window as any)["require"](["ckeditor5"], function(ClassicEditor: any) {
+                if (ClassicEditor && typeof ClassicEditor.create === 'function') {
+                    self.initializeCKEditor5(ClassicEditor);
+                } else if (typeof window["ClassicEditor"] !== "undefined") {
+                    self.initializeCKEditor5(window["ClassicEditor"]);
+                } else {
+                    console.error("CKEditor 5 ClassicEditor not found via RequireJS. Falling back to CKEditor 4.");
+                    self.enableCKEditor4();
+                }
+            });
+        } else {
+            console.error("RequireJS not available. Falling back to CKEditor 4.");
+            this.enableCKEditor4();
+        }
     }
 
     protected onCKEditor5ScriptReady() {
@@ -50,15 +77,20 @@ export default class HtmlEditor {
             return;
         }
 
+        this.initializeCKEditor5(EditorClass);
+    }
+
+    protected initializeCKEditor5(EditorClass: any) {
         const element = this.input[0];
         const config = this.getCKEditor5Settings();
 
         EditorClass.create(element, config)
-            .then(editor => {
+            .then((editor: any) => {
                 this.setupCKEditor5Events(editor);
                 this.modalHelper.adjustHeight();
+                console.log("CKEditor 5 initialized successfully");
             })
-            .catch(error => {
+            .catch((error: any) => {
                 console.error("Error initializing CKEditor 5:", error);
                 // Fallback to CKEditor 4
                 this.enableCKEditor4();
@@ -89,6 +121,7 @@ export default class HtmlEditor {
             toolbar: this.getCKEditor5Toolbar(toolbar),
             // Add other CKEditor 5 specific configurations
             placeholder: this.input.attr('placeholder') || 'Enter your content...',
+            licenseKey: "GPL"
             // Plugin configurations can be added here
         };
     }
