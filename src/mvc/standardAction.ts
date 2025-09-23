@@ -107,6 +107,10 @@ export default class StandardAction implements IService {
     }
 
     private notify(action: any, trigger: any) {
+        if(action.AsModal) {
+            this.openModalHtmlContent({ currentTarget: trigger }, null, action.Title, action.Notify);
+            return;
+        }
         if (action.Obstruct == false)
             this.alert.alertUnobtrusively(action.Notify, action.Style);
         else this.alert.alert(action.Notify, action.Style);
@@ -140,6 +144,11 @@ export default class StandardAction implements IService {
     private openModal(event, url?, options?): any {
         this.modalHelper.close();
         setTimeout(() => this.modalHelper.open(event, url, options), 0);
+    }
+
+    private openModalHtmlContent(event,modalTitle?, htmlContent?, options?): any {
+        this.modalHelper.close();
+        setTimeout(() => this.modalHelper.openHtmlContent(event,modalTitle, htmlContent, options), 0);
     }
 
     private renderMainTag(event, url?): any {

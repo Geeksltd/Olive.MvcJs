@@ -213,6 +213,10 @@ export class ModalHelper implements IService {
         new Modal(this.url, this.ajaxRedirect, this, event, url, options).openiFrame();
     }
 
+    public openHtmlContent(event?: JQueryEventObject, modalTitle?: string,htmlContent?: string, options?: any) {
+        new Modal(this.url, this.ajaxRedirect, this, event, undefined, options).openHtmlContent(modalTitle, htmlContent);
+    }
+
     protected openWithUrl(): void {
 
         // Prevent XSS
@@ -321,9 +325,9 @@ export default class Modal {
         this.helper.currentModal = this;
         this.scrollPosition = $(window).scrollTop();
 
-        if (true /* TODO: Change to if Internet Explorer only */) {
-            this.helper.current.removeClass("fade");
-        }
+        // if (true /* TODO: Change to if Internet Explorer only */) {
+        //     this.helper.current.removeClass("fade");
+        // }
 
         const frame = this.helper.current.find("iframe");
 
@@ -336,6 +340,34 @@ export default class Modal {
             }
             this.helper.current.find(".modal-body .text-center").remove();
         });
+
+        $("body").append(this.helper.current);
+        this.helper.current.modal("show");
+        this.helper.current.on("hidden.bs.modal", () => {
+            CrossDomainEvent.raise(window.self, "close-modal");
+        });
+    }
+
+    public openHtmlContent(modalTitle:string, htmlContent:string) {
+        this.isOpening = true;
+        this.helper.isAjaxModal = false;
+        if (this.helper.current) {
+            if (this.helper.close() === false) { return false; }
+        }
+
+        this.helper.current = $(this.getModalTemplateForHtmlContent(this.modalOptions));
+        this.helper.currentModal = this;
+        this.scrollPosition = $(window).scrollTop();
+
+        if(modalTitle){
+            const title = this.helper.current.find(".modal-title");
+            title.html(modalTitle);
+        }
+
+        const container = this.helper.current.find(".modal-body");
+        container.html(htmlContent);
+
+        this.isOpening = false;
 
         $("body").append(this.helper.current);
         this.helper.current.modal("show");
@@ -446,6 +478,36 @@ export default class Modal {
             <div class='modal-body'>\
                 <div class='row text-center'><i class='fa fa-spinner fa-spin fa-2x'></i></div>\
                 <iframe style='" + iframeStyle + "' " + iframeAttributes + "></iframe>\
+            </div>\
+        </div></div></div>";
+    }
+
+    protected getModalTemplateForHtmlContent(options: any) {
+
+        let modalDialogStyle = "";
+        let containerStyle = "width:100%; border:0;";
+        if (options) {
+            if (options.width) {
+                modalDialogStyle += "width:" + options.width + ";";
+            }
+
+            if (options.height) {
+                modalDialogStyle += "height:" + options.height + ";";
+                containerStyle += "height:" + options.height + ";";
+            }
+        }
+
+        return "<div class='modal fade' id='myModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel'\
+         aria-hidden='true'>\
+                    <div class='modal-dialog' style='" + modalDialogStyle + "'>\
+            <div class='modal-content'>\
+            <div class='modal-header'>\
+                <h5 class='modal-title'></h5>\
+                <button type='button' class='close' data-dismiss='modal' aria-label='Close'>\
+                    <i class='fa fa-times-circle'></i>\
+                </button>\
+            </div>\
+            <div class='modal-body' style='" + containerStyle + "'>\
             </div>\
         </div></div></div>";
     }
