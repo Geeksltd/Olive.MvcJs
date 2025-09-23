@@ -3,7 +3,7 @@
   "description": "Used js files in the Olive MVC projects.",
   "main": "./src/olivePage.ts",
   "types": "./typings/olivePage.d.ts",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "authors": [
     "Geeks Ltd <https://www.geeks.ltd.uk/>"
   ],

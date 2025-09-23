@@ -1,5 +1,5 @@
 import Alert from "olive/components/alert";
-import { TooltipOption } from "../../typings-lib/bootstrap/index";
+import { TooltipOption } from "typings-lib/bootstrap/index";
 import ResponseProcessor from "olive/mvc/responseProcessor";
 export default class Validate implements IService {
     private alert;
