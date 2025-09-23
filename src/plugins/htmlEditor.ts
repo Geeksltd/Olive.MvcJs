@@ -24,6 +24,7 @@ export default class HtmlEditor {
     }
 
     protected isCKEditor5(): boolean {
+        if (Config.CK_EDITOR_VERSION === '4') return false;
         // Check if CKEditor 5 is available (via RequireJS or global)
         return typeof window["ClassicEditor"] !== "undefined" || 
                typeof window["DecoupledEditor"] !== "undefined" ||
@@ -148,6 +149,11 @@ export default class HtmlEditor {
     protected onDemandScript(url: string, callback: () => void) {
         callback = (typeof callback !== "undefined") ? callback : () => {};
 
+        if (typeof window["require"] !== "undefined") {
+            (window as any)["require"]([url], callback);
+            return;
+        } 
+        
         $.ajax({
             type: "GET",
             url: url,

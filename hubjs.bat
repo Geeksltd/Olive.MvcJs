@@ -7,6 +7,7 @@ set HUBJS=%ROOT%\Olive.Microservices.HubJs
 set HUBJSLIB=%HUBJS%\lib\olive.mvc
 set HUBJSBUNDLING=%HUBJS%\src\bundling
 set HUBJSDIST=%HUBJS%\dist
+set HUBJSTYPINGS=%HUBJSDIST%\types\olive.mvc
 
 set HUBLIB=%ROOT%\hub\Website\wwwroot\lib\olive.microservices.hubjs\dist
 
@@ -17,6 +18,8 @@ call tsc --project bundle-tsconfig.json
 
 @REM Copy mvcjs to hubjs project
 xcopy "%MVCJS%" "%HUBJSLIB%" /E /I /H /Y >nul
+xcopy "%MVCJS%\typings" "%HUBJSTYPINGS%\typings" /E /I /H /Y >nul
+xcopy "%MVCJS%\typings-lib" "%HUBJSTYPINGS%\typings-lib" /E /I /H /Y >nul
 cd "%HUBJS%"
 call tsc
 cd %HUBJSBUNDLING%
