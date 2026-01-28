@@ -2,3 +2,5 @@
 .vscode
 .vs/
 localTest.Matt.bat
+CLAUDE.md
+*package-lock.json

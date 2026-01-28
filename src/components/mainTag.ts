@@ -87,6 +87,19 @@ export class MainTagHelper implements IService {
         return result;
     }
 
+    public removeFromUrl(mainTagName: string) {
+        mainTagName = mainTagName.replace("$", "");
+        let currentPath: string = this.url.removeQuery(this.url.current(), "_" + mainTagName);
+
+        if (currentPath.endsWith("?")) {
+            currentPath = currentPath.trimEnd("?");
+        }
+
+        if (currentPath !== this.url.current()) {
+            history.replaceState({}, document.title, currentPath);
+        }
+    }
+
     public changeUrl(url: string, mainTagName: string, title?: string) {
         this.validateState()
 
@@ -196,6 +209,9 @@ export default class MainTag {
                 if (changeUrl && !skipUrlParameter) {
                     this.helper.changeUrl(this.url, this.mainTagName, title)
                 } else {
+                    if (skipUrlParameter) {
+                        this.helper.removeFromUrl(this.mainTagName);
+                    }
                     document.title = title;
                 }
             });

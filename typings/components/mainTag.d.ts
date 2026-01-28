@@ -13,6 +13,7 @@ export declare class MainTagHelper implements IService {
     tryOpenFromUrl(): void;
     private tryOpenFromUrlInternal;
     private tryOpenDefaultUrl;
+    removeFromUrl(mainTagName: string): void;
     changeUrl(url: string, mainTagName: string, title?: string): void;
     invalidateChildren(mainTagElement: JQuery): void;
     render(event?: JQueryEventObject, url?: string): boolean;
