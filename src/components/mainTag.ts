@@ -104,9 +104,17 @@ export class MainTagHelper implements IService {
         this.validateState()
 
         mainTagName = mainTagName.replace("$", "");
+        const element = $("main[name='$" + mainTagName + "']");
+
+        const skipUrlParameter = element.attr("data-change-url") === "false";
+        if (skipUrlParameter) {
+            this.removeFromUrl(mainTagName);
+            return;
+        }
+
         let currentPath: string = this.url.removeQuery(this.url.current(), "_" + mainTagName);
 
-        var children = $("main[name='$" + mainTagName + "']").attr("data-children");
+        var children = element.attr("data-children");
         if (children) {
             children.split(",").forEach(child => {
                 if (child.startsWith("$")) {
