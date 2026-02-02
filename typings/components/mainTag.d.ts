@@ -18,6 +18,7 @@ export declare class MainTagHelper implements IService {
     invalidateChildren(mainTagElement: JQuery): void;
     render(event?: JQueryEventObject, url?: string): boolean;
     openWithUrl(mainTagName: string, url?: string): boolean;
+    reload(mainTagName: string): boolean;
     private validateState;
 }
 export default class MainTag {
