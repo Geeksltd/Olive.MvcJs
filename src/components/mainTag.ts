@@ -1,14 +1,23 @@
 import Url from "olive/components/url";
 import AjaxRedirect from "olive/mvc/ajaxRedirect";
 import ResponseProcessor from "olive/mvc/responseProcessor";
+import LiteEvent from "olive/components/liteEvent";
 
 interface StateData {
     url: string;
     foundQs: string[]
 }
 
+export interface IMainTagUrlChangedEventArgs {
+    mainTagName: string;
+    url: string;
+    encodedUrl: string;
+    addedToUrl: boolean;
+}
+
 export class MainTagHelper implements IService {
     private state?: StateData | undefined = undefined;
+    public onUrlChanged = new LiteEvent<IMainTagUrlChangedEventArgs>();
 
     constructor(
         private url: Url,
@@ -106,9 +115,11 @@ export class MainTagHelper implements IService {
         const element = $("main[name='$" + mainTagName + "']");
         element.attr('data-current-url', url);
 
+        const encodedUrl = this.url.encodeGzipUrl(url);
         const skipUrlParameter = element.attr("data-change-url") === "false";
         if (skipUrlParameter) {
             this.removeFromUrl(mainTagName);
+            this.onUrlChanged.raise({ mainTagName, url, encodedUrl, addedToUrl: false });
             return;
         }
 
@@ -129,8 +140,9 @@ export class MainTagHelper implements IService {
             currentPath = currentPath.trimEnd("?");
         }
 
-        let mainTagUrl: string = this.url.addQuery(currentPath, "_" + mainTagName, this.url.encodeGzipUrl(url));
+        let mainTagUrl: string = this.url.addQuery(currentPath, "_" + mainTagName, encodedUrl);
         history.pushState({}, title, mainTagUrl);
+        this.onUrlChanged.raise({ mainTagName, url, encodedUrl, addedToUrl: true });
     }
 
     public invalidateChildren(mainTagElement: JQuery) {
