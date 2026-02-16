@@ -141,6 +141,7 @@ export default class AjaxRedirect implements IService {
                 if (version && mainTag) {
                     const currentVersion = mainTag.attr("data-version")
                     if (version != currentVersion) return;
+                    if (!document.contains(mainTag[0])) return;
                 }
 
                 var title = $(response).find("#page_meta_title").val();
