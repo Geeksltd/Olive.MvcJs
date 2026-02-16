@@ -22,6 +22,7 @@ export default class GlobalSearch implements IService {
     private isTyping: boolean = false;
     private searchedText: string = null;
     private modalHelper: ModalHelper
+    private currentAjaxRequests: JQueryXHR[] = [];
 
     protected boldSearch(str: string, searchText: string) {
         if (!str) return "";
@@ -66,10 +67,7 @@ export default class GlobalSearch implements IService {
 
         let timeout = null;
         this.input.on('keyup', (e) => {
-
-            if (e.keyCode === 27) {
-                return;
-            }
+            if (e.keyCode === 27) return;
 
             this.isTyping = true;
             clearTimeout(timeout);
@@ -84,6 +82,11 @@ export default class GlobalSearch implements IService {
 
     protected createSearchComponent(urls: string[]) {
         this.searchedText = this.input.val().trim();
+
+        for (const req of this.currentAjaxRequests) {
+            req.abort();
+        }
+        this.currentAjaxRequests = [];
 
         this.groupsPanel.empty();
         this.resultsPanel.empty();
@@ -114,8 +117,16 @@ export default class GlobalSearch implements IService {
             searchedText: this.searchedText,
         };
 
-        if (context.ajaxList.length)
-            this.waiting.show();
+        if (!context.ajaxList.length) {
+            this.resultsPanel.html(
+                `<div class='global-search-no-results'>` +
+                `<p>No results found for "<strong>${this.boldSearchAll(context.searchedText, context.searchedText)}</strong>"</p>` +
+                `</div>`
+            );
+            return;
+        }
+
+        this.resultsPanel.html("<div class='global-search-loading'>Searching...</div>");
 
         for (const ajaxObject of context.ajaxList) {
             ajaxObject.ajx = $
@@ -129,18 +140,24 @@ export default class GlobalSearch implements IService {
                     complete: (jqXhr) => this.onComplete(context, jqXhr),
                     error: (jqXhr) => this.onError(ajaxObject, jqXhr),
                 });
+            this.currentAjaxRequests.push(ajaxObject.ajx);
         }
     }
 
     protected onSuccess(sender: IAjaxObject, context: ISearchContext, result: IResultItemDto[]) {
-        if (this.isTyping) {
+        sender.result = result;
+
+        if (!result?.length) {
+            sender.state = AjaxState.failed;
+            console.error("ajax success but failed to decode the response -> wellform expcted response is like this: [{Title:'',Description:'',IconUrl:'',Url:''}] ");
             return;
         }
 
-        sender.result = result;
-        if (result?.length) {
+        sender.state = AjaxState.success;
 
-            sender.state = AjaxState.success;
+        if (this.isTyping) {
+            return;
+        }
 
             // Results from GlobalSearch MS have the GroupTitle in their description field separated with $$$
             var resultWithType = result.map(x => {
@@ -167,11 +184,6 @@ export default class GlobalSearch implements IService {
                     context.beginSearchStarted = false;
                 }
             }
-
-        } else {
-            sender.state = AjaxState.failed;
-            console.error("ajax success but failed to decode the response -> wellform expcted response is like this: [{Title:'',Description:'',IconUrl:'',Url:''}] ");
-        }
     }
 
     protected isValidResult(item: IResultItemDto, context: ISearchContext) {
@@ -271,9 +283,13 @@ export default class GlobalSearch implements IService {
 
     protected onComplete(context: ISearchContext, jqXHR: JQueryXHR) {
         if (context.ajaxList.filter((p) => p.state === 0).length === 0) {
-            this.waiting.hide();
+            context.resultsPanel.find('.global-search-loading').remove();
             if (context.resultCount === 0) {
-                context.resultsPanel.html("Nothing found");
+                context.resultsPanel.html(
+                    `<div class='global-search-no-results'>` +
+                    `<p>No results found for "<strong>${this.boldSearchAll(context.searchedText, context.searchedText)}</strong>"</p>` +
+                    `</div>`
+                );
             }
         }
     }

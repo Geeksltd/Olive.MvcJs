@@ -18,6 +18,7 @@ export default class GlobalSearch implements IService {
     private isTyping;
     private searchedText;
     private modalHelper;
+    private currentAjaxRequests;
     protected boldSearch(str: string, searchText: string): string;
     protected boldSearchAll(str: string, searchText: string): string;
     constructor(input: JQuery, waiting: Waiting, modalHelper: ModalHelper);
