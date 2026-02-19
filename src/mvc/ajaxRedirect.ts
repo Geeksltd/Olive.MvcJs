@@ -139,9 +139,20 @@ export default class AjaxRedirect implements IService {
             xhrFields: { withCredentials: true },
             success: (response) => {
                 if (version && mainTag) {
-                    const currentVersion = mainTag.attr("data-version")
-                    if (version != currentVersion) return;
-                    if (!document.contains(mainTag[0])) return;
+                    const name = mainTag.attr("name");
+                    if (name && name.startsWith("$")) {
+                        const currentVersion = mainTag.attr("data-version")
+                        if (version != currentVersion) {
+                            console.log("Version mismatch, aborting. MainTag: " + name);
+                            return;
+                        }
+                        if (!document.contains(mainTag[0])) {
+                            if (!$(`main[name='${name}']`).length) {
+                                console.log("Main tag no longer in document, aborting. MainTag: " + name);
+                                return;
+                            }
+                        }
+                    }
                 }
 
                 var title = $(response).find("#page_meta_title").val();
