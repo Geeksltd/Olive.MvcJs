@@ -1,4 +1,4 @@
-﻿import Config from "olive/config";
+import Config from "olive/config";
 import Alert from "olive/components/alert";
 import { TooltipOption } from "typings-lib/bootstrap/index";
 import ResponseProcessor from "olive/mvc/responseProcessor";
@@ -9,7 +9,47 @@ export default class Validate implements IService {
 
     constructor(private alert: Alert, private responseProcessor: ResponseProcessor) { }
 
+    private static cssInjected = false;
+
+    private injectCss() {
+        if (Validate.cssInjected) return;
+        Validate.cssInjected = true;
+
+        const style = document.createElement("style");
+        style.textContent = `
+            .validation-icon-wrapper { position: relative; display: inline-block; width: 100%; }
+            .validation-error-icon {
+                position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+                color: #dc3545; font-size: 16px; cursor: pointer; z-index: 2;
+            }
+            .validation-error-bubble {
+                position: absolute; right: 0; top: 100%;
+                margin-top: 4px; padding: 6px 10px;
+                background: #fff; color: #dc3545; border: 1px solid #dc3545;
+                border-radius: 4px; font-size: 13px; z-index: 1000; white-space: nowrap;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+                opacity: 0; pointer-events: none;
+                transition: opacity 0.15s;
+            }
+            .validation-error-bubble.visible {
+                opacity: 1; pointer-events: auto;
+            }
+            .validation-error-bubble::before {
+                content: ''; position: absolute; top: -6px; right: 10px;
+                border-left: 6px solid transparent; border-right: 6px solid transparent;
+                border-bottom: 6px solid #dc3545;
+            }
+            .validation-error-bubble::after {
+                content: ''; position: absolute; top: -5px; right: 11px;
+                border-left: 5px solid transparent; border-right: 5px solid transparent;
+                border-bottom: 5px solid #fff;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
     public configure() {
+        this.injectCss();
 
         const methods: any = $.validator.methods;
 
@@ -98,9 +138,60 @@ export default class Validate implements IService {
         return form.validate();
     }
 
+    private ensureWrapper(element: JQuery): JQuery {
+        if (element.parent().hasClass("validation-icon-wrapper")) {
+            return element.parent();
+        }
+        const wrapper = $("<div class='validation-icon-wrapper'></div>");
+        element.before(wrapper);
+        wrapper.append(element);
+        return wrapper;
+    }
+
+    private showBubble(wrapper: JQuery) {
+        wrapper.find(".validation-error-bubble").addClass("visible");
+    }
+
+    private hideBubble(wrapper: JQuery) {
+        wrapper.find(".validation-error-bubble").removeClass("visible");
+    }
+
     protected extendValidatorSettings(validator: Validator, trigger: JQuery) {
         $.extend(validator.settings, {
-            tooltip_options: { _all_: this.tooltipOptions },
+            errorElement: "div",
+            errorClass: "validation-error-bubble",
+            errorPlacement: (error: JQuery, element: JQuery) => {
+                const wrapper = this.ensureWrapper(element);
+
+                if (!wrapper.find(".validation-error-icon").length) {
+                    const icon = $('<i class="validation-error-icon fa fa-exclamation-circle"></i>');
+                    wrapper.append(icon);
+
+                    icon.on("mouseenter", () => this.showBubble(wrapper));
+                    icon.on("mouseleave", () => {
+                        if (!element.is(":focus")) this.hideBubble(wrapper);
+                    });
+
+                    element.on("focus.validation", () => this.showBubble(wrapper));
+                    element.on("blur.validation", () => this.hideBubble(wrapper));
+                }
+
+                wrapper.append(error);
+            },
+            highlight: (element: HTMLElement, errorClass: string, validClass: string) => {
+                $(element).addClass("error").removeClass(validClass);
+            },
+            unhighlight: (element: HTMLElement, errorClass: string, validClass: string) => {
+                const $el = $(element);
+                $el.removeClass("error").addClass(validClass);
+
+                const wrapper = $el.parent(".validation-icon-wrapper");
+                if (wrapper.length) {
+                    wrapper.find(".validation-error-icon").remove();
+                    wrapper.find(".validation-error-bubble").remove();
+                    $el.off("focus.validation blur.validation");
+                }
+            },
         });
     }
 
@@ -108,18 +199,7 @@ export default class Validate implements IService {
         validator.focusInvalid();
     }
 
-    protected showAdditionalErrors(validator: Validator) {
-        let errorMessage: string = "";
-
-        $.each(validator.errorList, (_, item) => {
-            if (!$(".tooltip:contains('" + item.message + "')")) {
-                errorMessage += item.message + "<br/>";
-            }
-        });
-
-        if (errorMessage.length > 0) {
-            this.alert.alert(errorMessage, "error");
-        }
+    protected showAdditionalErrors(_validator: Validator) {
     }
 
     protected handleMessageBoxStyle(validator: Validator, form: JQuery, trigger: JQuery) {
