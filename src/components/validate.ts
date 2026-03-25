@@ -19,7 +19,7 @@ export default class Validate implements IService {
         style.textContent = `
             .validation-icon-wrapper { position: relative; display: inline-block; width: 100%; }
             .validation-error-icon {
-                position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+                position: absolute; right: -8px; top: 50%; transform: translateY(-50%);
                 color: #dc3545; font-size: 16px; cursor: pointer; z-index: 2;
             }
             .validation-error-bubble {
@@ -139,13 +139,17 @@ export default class Validate implements IService {
     }
 
     private ensureWrapper(element: JQuery): JQuery {
-        const parent = element.parent();
-        if (parent.hasClass("validation-icon-wrapper")) {
-            return parent;
-        }
-        if (parent.hasClass("form-control")) {
-            parent.addClass("validation-icon-wrapper");
-            return parent;
+        let ancestor = element.parent();
+        for (let i = 0; i < 4; i++) {
+            if (!ancestor.length) break;
+            if (ancestor.hasClass("validation-icon-wrapper")) {
+                return ancestor;
+            }
+            if (ancestor.hasClass("group-control")) {
+                ancestor.addClass("validation-icon-wrapper");
+                return ancestor;
+            }
+            ancestor = ancestor.parent();
         }
         const wrapper = $("<div class='validation-icon-wrapper'></div>");
         element.before(wrapper);
@@ -197,12 +201,12 @@ export default class Validate implements IService {
                 const $el = $(element);
                 $el.removeClass("error").addClass(validClass);
 
-                const wrapper = $el.parent(".validation-icon-wrapper");
+                const wrapper = $el.closest(".validation-icon-wrapper");
                 if (wrapper.length) {
                     wrapper.find(".validation-error-icon").remove();
                     wrapper.find(".validation-error-bubble").remove();
                     $el.off("focus.validation blur.validation change.validation");
-                    if (wrapper.hasClass("form-control")) {
+                    if (wrapper.hasClass("group-control")) {
                         wrapper.removeClass("validation-icon-wrapper");
                     }
                 }
