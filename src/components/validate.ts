@@ -139,8 +139,13 @@ export default class Validate implements IService {
     }
 
     private ensureWrapper(element: JQuery): JQuery {
-        if (element.parent().hasClass("validation-icon-wrapper")) {
-            return element.parent();
+        const parent = element.parent();
+        if (parent.hasClass("validation-icon-wrapper")) {
+            return parent;
+        }
+        if (parent.hasClass("form-control")) {
+            parent.addClass("validation-icon-wrapper");
+            return parent;
         }
         const wrapper = $("<div class='validation-icon-wrapper'></div>");
         element.before(wrapper);
@@ -174,6 +179,13 @@ export default class Validate implements IService {
 
                     element.on("focus.validation", () => this.showBubble(wrapper));
                     element.on("blur.validation", () => this.hideBubble(wrapper));
+
+                    if (element.is("select")) {
+                        element.on("change.validation", () => {
+                            const form = element.closest("form");
+                            if (form.length) form.validate().element(element);
+                        });
+                    }
                 }
 
                 wrapper.append(error);
@@ -189,7 +201,10 @@ export default class Validate implements IService {
                 if (wrapper.length) {
                     wrapper.find(".validation-error-icon").remove();
                     wrapper.find(".validation-error-bubble").remove();
-                    $el.off("focus.validation blur.validation");
+                    $el.off("focus.validation blur.validation change.validation");
+                    if (wrapper.hasClass("form-control")) {
+                        wrapper.removeClass("validation-icon-wrapper");
+                    }
                 }
             },
         });
