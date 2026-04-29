@@ -86,7 +86,7 @@ export class MainTagHelper implements IService {
 
             // try read from data-current-url, if unavailable read from data-default-url
             const url = main.attr("data-current-url") || main.attr("data-default-url");
-            main.attr("data-default-url", undefined);
+            main.removeAttr("data-default-url")
             if (url && this.openWithUrl(mainTagName, url)) {
                 this.state.foundQs.push(mainTagName);
                 result = true;
@@ -205,8 +205,18 @@ export class MainTagHelper implements IService {
 
     private validateState = () => {
         if (!this.state || this.state.url != window.location.pathname) {
-            this.state = { url: window.location.pathname, foundQs: [] }
+            this.state = { url: window.location.pathname, foundQs: [] };
+            return;
         }
+
+        this.state.foundQs = this.state.foundQs.filter(name => {
+            const el = document.querySelector(`main[name='$${name}']`);
+            if (!el) return false;
+            if (el.getAttribute("data-default-url") == null) return true;
+            if (el.innerHTML.trim() === "") return false;
+            el.removeAttribute("data-default-url");
+            return true;
+        });
     }
 }
 
