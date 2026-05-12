@@ -1,8 +1,8 @@
-name: Publish Olive MvcJs Package
+name: Publish Olive MvcJs Package (excyte)
 
 on:
   push:
-    branches: [ master ]
+    branches: [ excyte ]
 
 jobs:
   build:
