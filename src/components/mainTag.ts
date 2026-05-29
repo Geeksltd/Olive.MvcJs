@@ -86,7 +86,10 @@ export class MainTagHelper implements IService {
 
             // try read from data-current-url, if unavailable read from data-default-url
             const url = main.attr("data-current-url") || main.attr("data-default-url");
-            main.removeAttr("data-default-url")
+            // tags that don't track their url in the query string rely on data-default-url
+            // as their only durable reload source, so keep it for them
+            if (main.attr("data-change-url") !== "false")
+                main.removeAttr("data-default-url")
             if (url && this.openWithUrl(mainTagName, url)) {
                 this.state.foundQs.push(mainTagName);
                 result = true;
@@ -213,6 +216,8 @@ export class MainTagHelper implements IService {
             const el = document.querySelector(`main[name='$${name}']`);
             if (!el) return false;
             if (el.getAttribute("data-default-url") == null) return true;
+            // keep data-default-url for tags that don't track their url in the query string
+            if (el.getAttribute("data-change-url") === "false") return true;
             if (el.innerHTML.trim() === "") return false;
             el.removeAttribute("data-default-url");
             return true;
@@ -235,6 +240,9 @@ export default class MainTag {
         baseUrl = this.urlService.decodeGzipUrl(baseUrl);
         if (this.isValidUrl(baseUrl)) {
             this.url = this.urlService.makeRelative(decodeURIComponent(baseUrl));
+            // persist the reload source synchronously, so reload() can always find it
+            // even if the async render callback never runs (version mismatch / abort)
+            element.attr('data-current-url', this.url);
         }
 
         helper.invalidateChildren(element);
