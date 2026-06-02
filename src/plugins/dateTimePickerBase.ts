@@ -1,5 +1,6 @@
 import { ModalHelper } from "olive/components/modal"
 import Config from "olive/config"
+import DateTimePickerAdapter from "olive/adapters/dateTimePickerAdapter"
 
 export default abstract class dateTimePickerBase {
     //https://getdatepicker.com/4/Options/
@@ -57,7 +58,7 @@ export default abstract class dateTimePickerBase {
 
             this.modifyOptions(options);
 
-            this.input.datetimepicker(options);
+            DateTimePickerAdapter.initialize(this.input, options);
 
             // Now make calendar icon clickable as well             
             this.input.parent().find(".fa-calendar").parent(".input-group-addon").on('click', () => this.input.focus());

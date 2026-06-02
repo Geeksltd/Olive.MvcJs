@@ -1,5 +1,6 @@
 git pull
-call tsc
+call build.bat
+call bundle-build.bat
 git add .
 git commit -m=
 git push

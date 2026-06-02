@@ -13,8 +13,10 @@ set HUBLIB=%ROOT%\hub\Website\wwwroot\lib\olive.microservices.hubjs\dist
 
 @REM Build mvcjs project
 cd "%MVCJS%"
-call tsc
-call tsc --project bundle-tsconfig.json
+call yarn install --frozen-lockfile
+if ERRORLEVEL 1 call yarn install
+call yarn build
+call yarn build:bundle
 
 @REM Copy mvcjs to hubjs project
 xcopy "%MVCJS%" "%HUBJSLIB%" /E /I /H /Y >nul

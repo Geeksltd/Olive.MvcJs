@@ -1,6 +1,7 @@
 import Modal from "olive/components/modal"
 import Config from "olive/config";
 import { ModalHelper } from "olive/components/modal";
+import DateTimePickerAdapter from "olive/adapters/dateTimePickerAdapter";
 
 export class TimeControlFactory implements IService {
     constructor(private modalHelper: ModalHelper) { }
@@ -30,7 +31,11 @@ export default class TimeControl {
             }
         };
 
-        input.datetimepicker(options).data("DateTimePicker").keyBinds().clear = null;
+        DateTimePickerAdapter.initialize(input, options);
+        const legacyPicker = input.data("DateTimePicker");
+        if (legacyPicker?.keyBinds) {
+            legacyPicker.keyBinds().clear = null;
+        }
 
         input.parent().find(".fa-clock-o").parent(".input-group-addon").on('click', () => { input.focus(); });
     }

@@ -1,3 +1,5 @@
+import AlertifyAdapter from "olive/adapters/alertifyAdapter";
+import BootstrapAdapter from "olive/adapters/bootstrap";
 import Config from "olive/config";
 import CrossDomainEvent from "olive/components/crossDomainEvent";
 
@@ -295,8 +297,8 @@ export default class OlivePage implements IServiceLocator {
     }
 
     private fixAlertIssues() {
-        if (!$.fn.tooltip.Constructor) { $.fn.tooltip.Constructor = {}; }
-        window.alertify = (window.require("alertify")() as alertify.IAlertifyStatic);
+        BootstrapAdapter.ensureTooltipCompatibility();
+        window.alertify = AlertifyAdapter.resolve();
     }
 
     protected initializeActions = [];
@@ -347,7 +349,7 @@ export default class OlivePage implements IServiceLocator {
         sorting.setSortHeaderClass($("th[data-sort]"));
         const form = this.getService<Form>(Services.Form);
         this.enablecleanUpNumberField(form);
-        this.modal.enableEnsureHeight($("[data-toggle=tab]"));
+        this.modal.enableEnsureHeight($("[data-bs-toggle=tab], [data-toggle=tab]"));
         //this.getService<MultiSelect>(Services.MultiSelect).enableEnhance($("select[data-control='collapsible-checkboxes']"));
         this.getService<Select>(Services.Select)
             .enableEnhance($("select:not([data-control='collapsible-checkboxes'])"));

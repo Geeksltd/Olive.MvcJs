@@ -2,15 +2,15 @@
 
 ECHO Use Visual Studio Code to edit this project.
 
-ECHO Checking tsc node module is installed globally...
-
-where tsc > nul
-if ERRORLEVEL 1 (	
-	npm install typescript -g
+where yarn > nul
+if ERRORLEVEL 1 (
+    echo yarn is required. Install from https://classic.yarnpkg.com/
+    exit /b 1
 )
 
-call tsc --project bundle-tsconfig.json
+call yarn install --frozen-lockfile
+if ERRORLEVEL 1 call yarn install
 
-node ./bundling-helper/fix-bundle-modules
+call yarn build:bundle
 
 pause

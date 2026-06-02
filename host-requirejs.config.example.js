@@ -1,3 +1,7 @@
+/**
+ * Example RequireJS configuration for host Olive MVC applications.
+ * Copy relevant sections into your site's require.config.js.
+ */
 require.config({
     paths: {
         "jquery": "jquery/dist/jquery.min",

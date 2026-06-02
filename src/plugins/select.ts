@@ -1,4 +1,5 @@
 ﻿import 'bootstrap-select'
+import SelectAdapter from "olive/adapters/selectAdapter"
 
 export default class Select implements IService {
     //https://developer.snapappointments.com/bootstrap-select/
@@ -6,7 +7,7 @@ export default class Select implements IService {
     public enableEnhance(selector: JQuery) { selector.each((i, e) => this.enhance($(e))); }
 
     private enhance(selectControl: JQuery) {
-        selectControl.selectpicker();
+        SelectAdapter.initialize(selectControl);
     }
 
     public replaceSource(controlId: string, items) {

@@ -16,7 +16,7 @@ export default class Validate implements IService {
     removeTooltipsRelatedTo(parent: JQuery): void;
     protected needsValidation(trigger: JQuery): boolean;
     protected getForm(trigger: JQuery): JQuery;
-    protected getValidator(trigger: JQuery, form: JQuery): Validator;
+    protected getValidator(trigger: JQuery, form: JQuery): any;
     private ensureWrapper;
     private showBubble;
     private hideBubble;

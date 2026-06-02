@@ -10,16 +10,25 @@
       ]
     },
     "module": "amd",
-    "target": "es6",
+    "target": "ES2018",
     "outFile": "dist/bundle.js",
     "inlineSourceMap": true,
     "noImplicitAny": false,
     "noEmitOnError": true,
-    "removeComments": false
+    "removeComments": false,
+    "skipLibCheck": true,
+    "strict": false,
+    "lib": [ "ES2019", "DOM" ],
+    "types": []
   },
+  "include": [
+    "src/**/*.ts",
+    "typings-lib/index.d.ts"
+  ],
   "exclude": [
     "typings",
-    "dist"
+    "dist",
+    "node_modules"
   ],
   "compileOnSave": true
 }

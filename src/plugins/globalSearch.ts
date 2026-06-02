@@ -1,5 +1,6 @@
 ﻿import Waiting from "olive/components/waiting";
 import { ModalHelper } from 'olive/components/modal'
+import BootstrapAdapter from "olive/adapters/bootstrap";
 
 export class GlobalSearchFactory implements IService {
     constructor(private waiting: Waiting, private modalHelper: ModalHelper) {
@@ -222,7 +223,7 @@ export default class GlobalSearch implements IService {
         const id = this.safeId(groupTitle || 'group') + "-" + groupIndex;
         const active = this.groupsPanel.children().length == 0 ? "active" : "";
 
-        const searchTitle = $(`<li class='nav-item'><a class='nav-link ${active}' href='#${id}' role='tab' data-toggle='tab'><i class='${sender.icon}'></i> ${groupTitle || "Global"} <span class='badge badge-secondary'>${items.length}</span></a></li>`)
+        const searchTitle = $(`<li class='nav-item'><a class='nav-link ${active}' href='#${id}' role='tab' data-bs-toggle='tab'><i class='${sender.icon}'></i> ${groupTitle || "Global"} <span class='badge bg-secondary'>${items.length}</span></a></li>`)
 
         // we may need to use the search title to implement show more.
         // but we may only need to add li (show more) at the end of list and after it is clicked,
@@ -245,7 +246,7 @@ export default class GlobalSearch implements IService {
         }
 
         $(childrenItems).find("[target='$modal'][href]").off("click").on("click", function () {
-            $('#global-search-modal').modal('hide')
+            BootstrapAdapter.hideModal($('#global-search-modal'))
         });
         this.modalHelper.enableLink($(childrenItems).find("[target='$modal'][href]"));
 
