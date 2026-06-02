@@ -1,24 +1,32 @@
 {
     "compilerOptions": {
         "baseUrl": ".",
-      "paths": {
-        "olive/*": [ "src/*" ],
-        "pako/dist/pako": [ "node_modules/pako/dist/pako" ]
-      },
-
+        "paths": {
+            "olive/*": [ "src/*" ],
+            "pako/dist/pako": [ "node_modules/pako/dist/pako" ]
+        },
         "module": "amd",
-        "target": "ES2018",  
+        "target": "ES2018",
+        "lib": [ "ES2019", "DOM" ],
         "outDir": "dist",
         "declaration": true,
         "declarationDir": "typings",
         "inlineSourceMap": true,
         "noImplicitAny": false,
+        "strict": false,
         "noEmitOnError": true,
-        "removeComments": false
+        "removeComments": false,
+        "skipLibCheck": true,
+        "types": []
     },
+    "include": [
+        "src/**/*.ts",
+        "typings-lib/index.d.ts"
+    ],
     "exclude": [
         "typings",
-        "dist"
+        "dist",
+        "node_modules"
     ],
-    "compileOnSave": true     
+    "compileOnSave": true
 }

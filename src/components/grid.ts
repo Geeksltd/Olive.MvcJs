@@ -100,7 +100,7 @@ export default class Grid implements IService {
                 current.html(current.html() + mergedContent);
             else {
                 let dropDownList: string = `<div class="dropdown">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                   Select action
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">`;

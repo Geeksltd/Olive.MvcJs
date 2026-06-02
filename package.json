@@ -3,7 +3,7 @@
   "description": "Used js files in the Olive MVC projects.",
   "main": "./src/olivePage.ts",
   "types": "./typings/olivePage.d.ts",
-  "version": "3.0.3-excyte",
+  "version": "4.0.0",
   "authors": [
     "Geeks Ltd <https://www.geeks.ltd.uk/>"
   ],
@@ -12,12 +12,25 @@
     "url": "git://github.com/Geeksltd/Olive.MvcJs.git"
   },
   "engines": {
+    "node": ">=20.0.0",
     "yarn": ">= 1.0.0"
   },
   "license": "GPL",
   "private": false,
   "homepage": "https://github.com/Geeksltd/Olive.MvcJs",
+  "scripts": {
+    "build": "tsc",
+    "build:bundle": "tsc --project bundle-tsconfig.json && node ./bundling-helper/fix-bundle-modules.js",
+    "lint": "eslint src --ext .ts",
+    "pack": "yarn pack --filename=package.tgz"
+  },
   "dependencies": {
     "pako": "^2.1.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "eslint": "^8.57.1",
+    "typescript": "~5.4.5"
   }
 }

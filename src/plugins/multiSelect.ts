@@ -1,6 +1,7 @@
 import 'bootstrap-select'
 import { ModalHelper } from "olive/components/modal"
 import Config from "olive/config"
+import SelectAdapter from "olive/adapters/selectAdapter"
 
 export class MultiSelectFactory implements IService {
     constructor(private modalHelper: ModalHelper) { }
@@ -13,8 +14,6 @@ export default class MultiSelect implements IService {
 
 
     constructor(protected selectControl: JQuery, private modalHelper: ModalHelper) {
-        if ($.fn.selectpicker)
-            $.fn.selectpicker.Constructor.BootstrapVersion = "4";
     }
 
     public show() {
@@ -113,7 +112,7 @@ export default class MultiSelect implements IService {
             windowPadding: windowPadding,
             sanitize: sanitize
         };
-        this.selectControl.selectpicker(options);
+        SelectAdapter.initialize(this.selectControl, options);
 
         this.MoveActionButtons();
     }

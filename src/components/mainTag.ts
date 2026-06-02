@@ -1,14 +1,23 @@
 import Url from "olive/components/url";
 import AjaxRedirect from "olive/mvc/ajaxRedirect";
 import ResponseProcessor from "olive/mvc/responseProcessor";
+import LiteEvent from "olive/components/liteEvent";
 
 interface StateData {
     url: string;
     foundQs: string[]
 }
 
+export interface IMainTagUrlChangedEventArgs {
+    mainTagName: string;
+    url: string;
+    encodedUrl: string;
+    addedToUrl: boolean;
+}
+
 export class MainTagHelper implements IService {
     private state?: StateData | undefined = undefined;
+    public onUrlChanged = new LiteEvent<IMainTagUrlChangedEventArgs>();
 
     constructor(
         private url: Url,
@@ -27,9 +36,6 @@ export class MainTagHelper implements IService {
     }
 
     public initialize() {
-        this.ajaxRedirect.beforeRedirect.handle((e) => {
-            this.resetState();
-        })
         this.responseProcessor.processCompleted.handle((e) => {
             this.tryOpenFromUrl();
         });
@@ -67,7 +73,7 @@ export class MainTagHelper implements IService {
     }
 
     private tryOpenDefaultUrl(): boolean {
-        var tags = $("main[name^='$'][data-default-url]");
+        var tags = $("main[name^='$'][data-default-url], main[name^='$'][data-current-url]");
 
         // at least one content loaded
         let result = false;
@@ -77,8 +83,10 @@ export class MainTagHelper implements IService {
             const mainTagName = main.attr("name").substring(1);
             if (this.state.foundQs.indexOf(mainTagName) !== -1)
                 continue;
-            const url = main.attr("data-default-url");
-            main.attr("data-default-url", undefined);
+
+            // try read from data-current-url, if unavailable read from data-default-url
+            const url = main.attr("data-current-url") || main.attr("data-default-url");
+            main.removeAttr("data-default-url")
             if (url && this.openWithUrl(mainTagName, url)) {
                 this.state.foundQs.push(mainTagName);
                 result = true;
@@ -87,13 +95,37 @@ export class MainTagHelper implements IService {
         return result;
     }
 
+    public removeFromUrl(mainTagName: string) {
+        mainTagName = mainTagName.replace("$", "");
+        let currentPath: string = this.url.removeQuery(this.url.current(), "_" + mainTagName);
+
+        if (currentPath.endsWith("?")) {
+            currentPath = currentPath.trimEnd("?");
+        }
+
+        if (currentPath !== this.url.current()) {
+            history.replaceState({}, document.title, currentPath);
+        }
+    }
+
     public changeUrl(url: string, mainTagName: string, title?: string) {
         this.validateState()
 
         mainTagName = mainTagName.replace("$", "");
+        const element = $("main[name='$" + mainTagName + "']");
+        element.attr('data-current-url', url);
+
+        const encodedUrl = this.url.encodeGzipUrl(url);
+        const skipUrlParameter = element.attr("data-change-url") === "false";
+        if (skipUrlParameter) {
+            this.removeFromUrl(mainTagName);
+            this.onUrlChanged.raise({ mainTagName, url, encodedUrl, addedToUrl: false });
+            return;
+        }
+
         let currentPath: string = this.url.removeQuery(this.url.current(), "_" + mainTagName);
 
-        var children = $("main[name='$" + mainTagName + "']").attr("data-children");
+        var children = element.attr("data-children");
         if (children) {
             children.split(",").forEach(child => {
                 if (child.startsWith("$")) {
@@ -108,8 +140,9 @@ export class MainTagHelper implements IService {
             currentPath = currentPath.trimEnd("?");
         }
 
-        let mainTagUrl: string = this.url.addQuery(currentPath, "_" + mainTagName, this.url.encodeGzipUrl(url));
+        let mainTagUrl: string = this.url.addQuery(currentPath, "_" + mainTagName, encodedUrl);
         history.pushState({}, title, mainTagUrl);
+        this.onUrlChanged.raise({ mainTagName, url, encodedUrl, addedToUrl: true });
     }
 
     public invalidateChildren(mainTagElement: JQuery) {
@@ -149,10 +182,41 @@ export class MainTagHelper implements IService {
         return true;
     }
 
+    public reload(mainTagName: string): boolean {
+        this.validateState();
+        mainTagName = mainTagName.replace("$", "");
+        const element = $("main[name='$" + mainTagName + "']");
+        if (!element || !element.length) return false;
+
+        // Priority: 1. query string (gzipped), 2. data-current-url, 3. data-default-url
+        const qsUrlEncoded = this.url.getQuery("_" + mainTagName);
+        const qsUrl = qsUrlEncoded ? this.url.decodeGzipUrl(qsUrlEncoded) : null;
+        const currentUrl = element.attr("data-current-url");
+        const defaultUrl = element.attr("data-default-url");
+        const mainTagUrl = qsUrl || currentUrl || defaultUrl;
+
+        if (!mainTagUrl) return false;
+
+        this.state.foundQs = this.state.foundQs.filter(item => item !== mainTagName);
+        new MainTag(this.url, this.ajaxRedirect, this, mainTagUrl, element, mainTagName, undefined).render(false);
+        this.state.foundQs.push(mainTagName);
+        return true;
+    }
+
     private validateState = () => {
         if (!this.state || this.state.url != window.location.pathname) {
-            this.state = { url: window.location.pathname, foundQs: [] }
+            this.state = { url: window.location.pathname, foundQs: [] };
+            return;
         }
+
+        this.state.foundQs = this.state.foundQs.filter(name => {
+            const el = document.querySelector(`main[name='$${name}']`);
+            if (!el) return false;
+            if (el.getAttribute("data-default-url") == null) return true;
+            if (el.innerHTML.trim() === "") return false;
+            el.removeAttribute("data-default-url");
+            return true;
+        });
     }
 }
 
@@ -189,6 +253,9 @@ export default class MainTag {
             (success: Boolean) => {
                 if (!success) return;
 
+                // Always update data-current-url with the loaded URL
+                this.element.attr('data-current-url', this.url);
+
                 var title = this.element.find("#page_meta_title").val();
                 if (title == undefined || title == null)
                     title = $("#page_meta_title").val();
@@ -196,6 +263,9 @@ export default class MainTag {
                 if (changeUrl && !skipUrlParameter) {
                     this.helper.changeUrl(this.url, this.mainTagName, title)
                 } else {
+                    if (skipUrlParameter) {
+                        this.helper.removeFromUrl(this.mainTagName);
+                    }
                     document.title = title;
                 }
             });

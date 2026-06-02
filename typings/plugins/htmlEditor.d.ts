@@ -20,12 +20,12 @@ export default class HtmlEditor {
     protected setupCKEditor5Events(editor: any): void;
     protected getCKEditor5Settings(): {
         toolbar: any;
-        placeholder: string;
+        placeholder: any;
         licenseKey: string;
     };
     protected getCKEditor4Settings(): {
-        toolbar: string;
-        customConfig: string;
+        toolbar: any;
+        customConfig: any;
     };
     protected getCKEditor5Toolbar(toolbarMode: string): any;
     protected onDemandScript(url: string, callback: () => void): void;

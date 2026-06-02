@@ -1,11 +1,19 @@
 import Url from "olive/components/url";
 import AjaxRedirect from "olive/mvc/ajaxRedirect";
 import ResponseProcessor from "olive/mvc/responseProcessor";
+import LiteEvent from "olive/components/liteEvent";
+export interface IMainTagUrlChangedEventArgs {
+    mainTagName: string;
+    url: string;
+    encodedUrl: string;
+    addedToUrl: boolean;
+}
 export declare class MainTagHelper implements IService {
     private url;
     private ajaxRedirect;
     private responseProcessor;
     private state?;
+    onUrlChanged: LiteEvent<IMainTagUrlChangedEventArgs>;
     constructor(url: Url, ajaxRedirect: AjaxRedirect, responseProcessor: ResponseProcessor);
     enableLink(selector: JQuery): void;
     initialize(): void;
@@ -13,10 +21,12 @@ export declare class MainTagHelper implements IService {
     tryOpenFromUrl(): void;
     private tryOpenFromUrlInternal;
     private tryOpenDefaultUrl;
+    removeFromUrl(mainTagName: string): void;
     changeUrl(url: string, mainTagName: string, title?: string): void;
     invalidateChildren(mainTagElement: JQuery): void;
     render(event?: JQueryEventObject, url?: string): boolean;
     openWithUrl(mainTagName: string, url?: string): boolean;
+    reload(mainTagName: string): boolean;
     private validateState;
 }
 export default class MainTag {

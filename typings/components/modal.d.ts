@@ -25,6 +25,7 @@ export declare class ModalHelper implements IService {
     isOrGoingToBeModal(): boolean;
     open(event?: JQueryEventObject, url?: string, options?: any): void;
     openiFrame(event?: JQueryEventObject, url?: string, options?: any): void;
+    openHtmlContent(event?: JQueryEventObject, modalTitle?: string, htmlContent?: string, options?: any): void;
     protected openWithUrl(): void;
 }
 export default class Modal {
@@ -42,7 +43,9 @@ export default class Modal {
     onClose(): void;
     open(changeUrl?: boolean): boolean;
     openiFrame(changeUrl?: boolean): boolean;
+    openHtmlContent(modalTitle: string, htmlContent: string): boolean;
     shouldKeepScroll(): boolean;
     protected getModalTemplateForAjax(options: any): string;
     protected getModalTemplateForiFrame(options: any): string;
+    protected getModalTemplateForHtmlContent(options: any): string;
 }

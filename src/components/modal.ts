@@ -2,6 +2,7 @@ import Url from "olive/components/url";
 import CrossDomainEvent from "olive/components/crossDomainEvent";
 import AjaxRedirect from "olive/mvc/ajaxRedirect";
 import ResponseProcessor from "olive/mvc/responseProcessor";
+import BootstrapAdapter from "olive/adapters/bootstrap";
 
 export class ModalHelper implements IService {
     public current: any = null;
@@ -73,7 +74,7 @@ export class ModalHelper implements IService {
             const onClosingEvent = new CustomEvent("onClosingEvent");
             this.current[0].dispatchEvent(onClosingEvent);
 
-            this.current.modal("hide");
+            BootstrapAdapter.hideModal(this.current);
             if (this.currentModal.onClose == null && this.currentModal.onClose == undefined) {
                 this.current.remove();
                 this.current = null;
@@ -145,7 +146,7 @@ export class ModalHelper implements IService {
     }
 
     public expandToFitPicker(target: any) {
-        const datepicker = $(target.currentTarget).siblings(".bootstrap-datetimepicker-widget");
+        const datepicker = $(target.currentTarget).siblings(BootstrapAdapter.getDateTimePickerWidgetSelector());
 
         if (datepicker.length === 0) {
             this.adjustHeight();
@@ -213,6 +214,10 @@ export class ModalHelper implements IService {
         new Modal(this.url, this.ajaxRedirect, this, event, url, options).openiFrame();
     }
 
+    public openHtmlContent(event?: JQueryEventObject, modalTitle?: string,htmlContent?: string, options?: any) {
+        new Modal(this.url, this.ajaxRedirect, this, event, undefined, options).openHtmlContent(modalTitle, htmlContent);
+    }
+
     protected openWithUrl(): void {
 
         // Prevent XSS
@@ -272,7 +277,7 @@ export default class Modal {
     }
     public onClose() {
         this.onClose = null;
-        $(this.helper.current).modal('hide');
+        BootstrapAdapter.hideModal($(this.helper.current));
     }
     public open(changeUrl: boolean = true): boolean {
         this.isOpening = true;
@@ -298,7 +303,7 @@ export default class Modal {
 
         $("body").append(this.helper.current);
 
-        this.helper.current.modal("show");
+        BootstrapAdapter.showModal(this.helper.current);
 
         this.helper.current.on("hide.bs.modal", () => {
             if (this.onClose != null && this.onClose != undefined) {
@@ -321,9 +326,9 @@ export default class Modal {
         this.helper.currentModal = this;
         this.scrollPosition = $(window).scrollTop();
 
-        if (true /* TODO: Change to if Internet Explorer only */) {
-            this.helper.current.removeClass("fade");
-        }
+        // if (true /* TODO: Change to if Internet Explorer only */) {
+        //     this.helper.current.removeClass("fade");
+        // }
 
         const frame = this.helper.current.find("iframe");
 
@@ -338,7 +343,35 @@ export default class Modal {
         });
 
         $("body").append(this.helper.current);
-        this.helper.current.modal("show");
+        BootstrapAdapter.showModal(this.helper.current);
+        this.helper.current.on("hidden.bs.modal", () => {
+            CrossDomainEvent.raise(window.self, "close-modal");
+        });
+    }
+
+    public openHtmlContent(modalTitle:string, htmlContent:string) {
+        this.isOpening = true;
+        this.helper.isAjaxModal = false;
+        if (this.helper.current) {
+            if (this.helper.close() === false) { return false; }
+        }
+
+        this.helper.current = $(this.getModalTemplateForHtmlContent(this.modalOptions));
+        this.helper.currentModal = this;
+        this.scrollPosition = $(window).scrollTop();
+
+        if(modalTitle){
+            const title = this.helper.current.find(".modal-title");
+            title.html(modalTitle);
+        }
+
+        const container = this.helper.current.find(".modal-body");
+        container.html(htmlContent);
+
+        this.isOpening = false;
+
+        $("body").append(this.helper.current);
+        BootstrapAdapter.showModal(this.helper.current);
         this.helper.current.on("hidden.bs.modal", () => {
             CrossDomainEvent.raise(window.self, "close-modal");
         });
@@ -406,9 +439,7 @@ export default class Modal {
                      <div class='modal-dialog' style='${modalDialogStyle}'>\
                      <div class='modal-content' >\
                      <div class='modal-header'>\
-                     <button type='button' class='close' data-dismiss='modal' aria-label='Close'>\
-                     <i class='fa fa-times-circle'></i>\
-                     </button>\
+                     <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>\
                      </div>\
                      <div class='modal-body'>\
                      <main></main>\
@@ -439,13 +470,39 @@ export default class Modal {
                     <div class='modal-dialog' style='" + modalDialogStyle + "'>\
             <div class='modal-content'>\
             <div class='modal-header'>\
-                <button type='button' class='close' data-dismiss='modal' aria-label='Close'>\
-                    <i class='fa fa-times-circle'></i>\
-                </button>\
+                <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>\
             </div>\
             <div class='modal-body'>\
                 <div class='row text-center'><i class='fa fa-spinner fa-spin fa-2x'></i></div>\
                 <iframe style='" + iframeStyle + "' " + iframeAttributes + "></iframe>\
+            </div>\
+        </div></div></div>";
+    }
+
+    protected getModalTemplateForHtmlContent(options: any) {
+
+        let modalDialogStyle = "";
+        let containerStyle = "width:100%; border:0;";
+        if (options) {
+            if (options.width) {
+                modalDialogStyle += "width:" + options.width + ";";
+            }
+
+            if (options.height) {
+                modalDialogStyle += "height:" + options.height + ";";
+                containerStyle += "height:" + options.height + ";";
+            }
+        }
+
+        return "<div class='modal fade' id='myModal' tabindex='-1' role='dialog' aria-labelledby='myModalLabel'\
+         aria-hidden='true'>\
+                    <div class='modal-dialog' style='" + modalDialogStyle + "'>\
+            <div class='modal-content'>\
+            <div class='modal-header'>\
+                <h5 class='modal-title'></h5>\
+                <button type='button' class='btn-close' data-bs-dismiss='modal' aria-label='Close'></button>\
+            </div>\
+            <div class='modal-body' style='" + containerStyle + "'>\
             </div>\
         </div></div></div>";
     }

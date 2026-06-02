@@ -24,6 +24,7 @@ export default class StandardAction implements IService {
     private notify;
     protected redirect(action: any, trigger: any): void;
     private openModal;
+    private openModalHtmlContent;
     private renderMainTag;
     private loadServiceAfterConfiguration;
     private loadService;

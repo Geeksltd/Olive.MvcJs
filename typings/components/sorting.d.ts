@@ -1,3 +1,4 @@
+/// <reference types="typings-lib/index" />
 import Url from "olive/components/url";
 import "jquery-sortable";
 import ServerInvoker from "olive/mvc/serverInvoker";
