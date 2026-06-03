@@ -84,12 +84,18 @@ export class MainTagHelper implements IService {
             if (this.state.foundQs.indexOf(mainTagName) !== -1)
                 continue;
 
-            // try read from data-current-url, if unavailable read from data-default-url
+            // Already rendered (server pre-rendered its content, or a previous load filled it):
+            // do NOT re-fetch it - that causes duplicate/triple AJAX of the same url. Just track
+            // it as found so subsequent passes skip it too.
+            if (main.html().trim() !== "") {
+                this.state.foundQs.push(mainTagName);
+                continue;
+            }
+
+            // Empty tag: load its content. data-default-url is an immutable, server-rendered
+            // fallback and is never removed; data-current-url (set synchronously in the MainTag
+            // constructor and preserved across content swaps) takes priority when present.
             const url = main.attr("data-current-url") || main.attr("data-default-url");
-            // tags that don't track their url in the query string rely on data-default-url
-            // as their only durable reload source, so keep it for them
-            if (main.attr("data-change-url") !== "false")
-                main.removeAttr("data-default-url")
             if (url && this.openWithUrl(mainTagName, url)) {
                 this.state.foundQs.push(mainTagName);
                 result = true;
@@ -136,6 +142,14 @@ export class MainTagHelper implements IService {
                 }
                 currentPath = this.url.removeQuery(currentPath, "_" + child);
                 this.state.foundQs = this.state.foundQs.filter(item => item !== child)
+                // Clear stale child content so tryOpenDefaultUrl re-fetches it (it skips tags
+                // that still have content). Required for the data-redirect=ajax navigation path,
+                // where no MainTag is constructed so invalidateChildren() never runs - changeUrl
+                // is the only children hook there, and it runs before processCompleted so this
+                // produces exactly one reload. Only clear when the child has a reload source.
+                const childEl = $("main[name='$" + child + "']");
+                if (childEl.attr("data-current-url") || childEl.attr("data-default-url"))
+                    childEl.html('');
             })
         }
 
@@ -160,6 +174,12 @@ export class MainTagHelper implements IService {
                 child = child.substring(1);
             }
             this.state.foundQs = this.state.foundQs.filter(item => item !== child);
+            // Clear the child's stale content so tryOpenDefaultUrl re-fetches it (it skips tags
+            // that still have content). Only clear when the child has a reload source, otherwise
+            // an empty tag with no data-current-url/data-default-url could never be reloaded.
+            const childEl = $("main[name='$" + child + "']");
+            if (childEl.attr("data-current-url") || childEl.attr("data-default-url"))
+                childEl.html('');
         })
     }
 
@@ -212,15 +232,18 @@ export class MainTagHelper implements IService {
             return;
         }
 
+        // Uniform rule for static and normal tags. Keep a tag if it has content, OR if it has
+        // a data-current-url (it has already been loaded, or a load is in flight - the
+        // constructor sets data-current-url synchronously). Only drop a genuinely fresh, empty
+        // tag (e.g. one that just arrived from a full-page ajax reload, which carries no
+        // data-current-url) so tryOpenDefaultUrl can re-seed it from data-default-url.
+        // Keeping in-flight tags here prevents duplicate concurrent loads of the same url.
         this.state.foundQs = this.state.foundQs.filter(name => {
             const el = document.querySelector(`main[name='$${name}']`);
-            if (!el) return false;
-            if (el.getAttribute("data-default-url") == null) return true;
-            // keep data-default-url for tags that don't track their url in the query string
-            if (el.getAttribute("data-change-url") === "false") return true;
-            if (el.innerHTML.trim() === "") return false;
-            el.removeAttribute("data-default-url");
-            return true;
+            if (!el) return false;                          // gone from DOM -> drop
+            if (el.innerHTML.trim() !== "") return true;    // has content -> keep
+            if (el.getAttribute("data-current-url")) return true; // loaded / in-flight -> keep
+            return false;                                   // fresh & empty -> drop so it can re-seed
         });
     }
 }
@@ -246,7 +269,9 @@ export default class MainTag {
         }
 
         helper.invalidateChildren(element);
-        element.html('');
+        // Don't clear content eagerly: the swap happens atomically in responseProcessor via
+        // oldMain.replaceWith(newMain) on success. Clearing here would leave the tag blank if
+        // the request is later aborted (version mismatch / tag left document).
     }
 
     public render(changeUrl: boolean = true) {
