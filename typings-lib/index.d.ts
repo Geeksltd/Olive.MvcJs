@@ -151,7 +151,7 @@ declare namespace alertify {
         alert(message: string, callback?: Function, style?: string): IAlertifyStatic;
         confirm(message: string, callback?: Function, style?: string): IAlertifyStatic;
         log(message: string, style?: string): IAlertifyStatic;
-        set(options: any): IAlertifyStatic;
+        set(options: any, key?: any, value?: any): IAlertifyStatic;
         success(message: string): IAlertifyStatic;
         error(message: string): IAlertifyStatic;
         warning(message: string): IAlertifyStatic;
