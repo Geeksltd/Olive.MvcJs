@@ -56,10 +56,11 @@ export default class AlertifyAdapter {
                 return adapter;
             },
             log: (message: string, style?: string) => {
+                const type = AlertifyAdapter.mapNotifyType(style);
                 if (source.notify) {
-                    source.notify(message, style);
+                    source.notify(message, type);
                 } else if (source.log) {
-                    source.log(message, style);
+                    source.log(message, type);
                 }
                 return adapter;
             },
@@ -101,5 +102,14 @@ export default class AlertifyAdapter {
         (adapter as any).__oliveAdapterApplied = true;
         (window as any).alertify = adapter;
         return adapter;
+    }
+
+    private static mapNotifyType(style?: string): string {
+        if (!style) return "success";
+        const normalized = style.toLowerCase();
+        if (normalized === "error" || normalized === "danger") return "error";
+        if (normalized === "warning") return "warning";
+        if (normalized === "success") return "success";
+        return normalized;
     }
 }

@@ -5,4 +5,5 @@ export default class AlertifyAdapter {
     static resolve(): alertify.IAlertifyStatic;
     private static loadAlertify;
     private static wrap;
+    private static mapNotifyType;
 }
