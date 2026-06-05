@@ -63,8 +63,25 @@ export default class AlertifyAdapter {
                 }
                 return adapter;
             },
-            set: (options: any) => {
-                source.set?.(options);
+            set: (options: any, key?: any, value?: any) => {
+                // Legacy alertify 0.3: set({ labels: { ok, cancel } })
+                if (options && typeof options === "object" && key === undefined) {
+                    if (options.labels) {
+                        const labels = options.labels;
+                        if (labels.ok !== undefined && source.defaults?.glossary) {
+                            source.defaults.glossary.ok = labels.ok;
+                        }
+                        if (labels.cancel !== undefined && source.defaults?.glossary) {
+                            source.defaults.glossary.cancel = labels.cancel;
+                        }
+                        source.set?.("confirm", "labels", labels);
+                    }
+                    return adapter;
+                }
+                // alertifyjs 1.x native: set(name, key, value)
+                if (typeof options === "string") {
+                    source.set?.(options, key, value);
+                }
                 return adapter;
             },
             success: (message: string) => {
