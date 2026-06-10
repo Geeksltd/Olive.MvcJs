@@ -15,6 +15,7 @@ export default class Form implements IService {
     private getCleanFormData;
     protected ignoreFormDataInput(inputName: string, values: string[]): boolean;
     cleanJson(str: any): string;
+    appendAncestorVerificationTokens(module: JQuery, data: JQuerySerializeArrayElement[]): void;
     getPostData(trigger: JQuery): JQuerySerializeArrayElement[];
     private DefaultButtonKeyPress;
     private cleanUpNumberField;

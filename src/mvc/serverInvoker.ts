@@ -28,12 +28,19 @@ export default class ServerInvoker implements IService {
 
     public enableinvokeWithPost(selector: JQuery) { selector.off("click.formaction").on("click.formaction", (e) => this.invokeWithPost(e)); }
 
+    private getInvocationPostData(trigger: JQuery): JQuerySerializeArrayElement[] {
+        const containerModule = trigger.closest("[data-module]");
+        const data = this.form.getPostData(trigger);
+        this.form.appendAncestorVerificationTokens(containerModule, data);
+        return data;
+    }
+
     private invokeWithPost(event) {
         let trigger = $(event.currentTarget);
         let containerModule = trigger.closest("[data-module]");
         if (containerModule.is("form") && this.validate.validateForm(trigger) == false) return false;
 
-        let data = this.form.getPostData(trigger);
+        let data = this.getInvocationPostData(trigger);
         let url = this.url.effectiveUrlProvider(trigger.attr("formaction"), trigger);
         let form = $("<form method='post' />").hide().appendTo($("body"));
 
@@ -73,7 +80,7 @@ export default class ServerInvoker implements IService {
         let containerModule = trigger.closest("[data-module]");
 
         if (this.validate.validateForm(trigger) == false) { this.waiting.hide(); return false; }
-        let data_before_disable = this.form.getPostData(trigger);
+        let data_before_disable = this.getInvocationPostData(trigger);
         let disableToo = Config.DISABLE_BUTTONS_DURING_AJAX && !trigger.is(":disabled");
         if (disableToo) trigger.attr('disabled', 'disabled');
         trigger.addClass('loading-action-result');
