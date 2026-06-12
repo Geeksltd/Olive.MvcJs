@@ -81,12 +81,34 @@ export default class Form implements IService {
 
     public cleanJson(str): string {
         return str.replace(/(\s*?{\s*?|\s*?,\s*?)(['"])?([a-zA-Z0-9]+)(['"])?:/g, '$1"$3":');
+    }    
+
+    public appendAncestorVerificationTokens(module: JQuery, data: JQuerySerializeArrayElement[]): void {
+        const tokenName = "__RequestVerificationToken";
+
+        if (data.some(x => x.name === tokenName)) {
+            return;
+        }
+
+        const token = module
+            .closest("form")
+            .find(`input[name="${tokenName}"]`)
+            .first();
+
+        if (token.length) {
+            data.push({
+                name: tokenName,
+                value: String(token.val())
+            });
+        }
     }
 
     public getPostData(trigger: JQuery): JQuerySerializeArrayElement[] {
-        let form = trigger.closest("[data-module]");
+        const module = trigger.closest("[data-module]");
+        let form = module;
         if (!form.is("form")) { form = $("<form />").append(form.clone(true)); }
         const data = this.getCleanFormData(form);
+        this.appendAncestorVerificationTokens(module, data);
         // If it's master-details, then we need the index.
         const subFormContainer = trigger.closest(".subform-item");
         if (subFormContainer) {
