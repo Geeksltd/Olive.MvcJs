@@ -13,6 +13,7 @@ export default class ServerInvoker implements IService {
     constructor(url: Url, validate: Validate, waiting: Waiting, form: Form, responseProcessor: ResponseProcessor);
     enableInvokeWithAjax(selector: JQuery, event: string, attrName: string): void;
     enableinvokeWithPost(selector: JQuery): void;
+    private getInvocationPostData;
     private invokeWithPost;
     private processActionUrl;
     invokeWithAjax(event: JQueryEventObject, actionUrl: string, syncCall?: boolean): boolean;
