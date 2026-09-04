@@ -80,7 +80,8 @@ export default class SystemExtensions {
     }
 
     private static download(url) {
-        $("<iframe style='visibility:hidden; width:1px; height:1px;'></iframe>").attr("src", url).appendTo("body");
+        // Kept out of the document flow: inline it adds a line box, which can bring on a scrollbar.
+        $("<iframe style='position:absolute; width:0; height:0; border:0; visibility:hidden;'></iframe>").attr("src", url).appendTo("body");
     }
 
     private static groupBy<T>(array: Array<T>, groupFunction: (item: T) => string | number): Dictionary<T> {
