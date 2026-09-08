@@ -7,6 +7,8 @@ export default class AjaxRedirect implements IService {
     private responseProcessor;
     private waiting;
     private requestCounter;
+    private targetKeySeed;
+    private inFlight;
     ajaxChangedUrl: number;
     isAjaxRedirecting: boolean;
     beforeRedirect: LiteEvent<IEventArgs>;
@@ -16,6 +18,12 @@ export default class AjaxRedirect implements IService {
     protected onMainTagRedirected(trigger: JQuery, title: string, url: string): boolean;
     protected isInternalMainTag(mainTag: JQuery): boolean;
     protected finalTargetAsMainTag(trigger: JQuery): JQuery | undefined;
+    private targetKeyFor;
+    private targetStillPresent;
+    private isCurrent;
+    private abortPending;
+    private abortContainedBy;
+    cancelPending(trigger?: JQuery): void;
     protected onRedirectionFailed(trigger: JQuery, url: string, response: JQueryXHR): void;
     private redirect;
     go(inputUrl: string, trigger?: JQuery, isBack?: boolean, keepScroll?: boolean, addToHistory?: boolean, onComplete?: (successful: boolean) => void, ajaxTarget?: string, ajaxhref?: string): boolean;
