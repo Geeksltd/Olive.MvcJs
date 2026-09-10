@@ -296,12 +296,16 @@ export default class AjaxRedirect implements IService {
                                 this.onRedirected(trigger, title, addressBar);
                             }
                         }
-                        else {
+                        else if (!ajaxTarget && !this.isInternalMainTag(targetMain)) {
                             // The address bar already names this page: this is the ajax load that fills
                             // a page in with its own content, not a move to somewhere else. Nothing is
                             // pushed, but the title still has to be taken from the response, or the page
                             // keeps whatever the surrounding shell was rendered with until the next
                             // navigation replaces it.
+                            // A named main tag is a region of the page rather than the page itself,
+                            // and its content carries a title naming that region alone. Several of
+                            // them can sit on one page, so those titles are left to the region and
+                            // the window keeps the name of the page holding it.
                             this.onTitleChanged(title, url);
                         }
                     }
