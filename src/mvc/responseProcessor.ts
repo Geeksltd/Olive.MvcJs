@@ -279,18 +279,21 @@ export default class ResponseProcessor implements IService {
         }
         else this.onViewChanged(element, trigger, true);
 
-        let modalTitleAttribute = $(".modal-dialog #page_meta_title").attr("value");
-        let pageTitleAttribute = $("#page_meta_title").attr("value");
+        // A view that declares no title of its own still replaced the one before it, so its empty
+        // title is passed on rather than dropped. Keeping the previous one would leave the window
+        // named after a page that is no longer on screen.
+        const modalTitle = $(".modal-dialog #page_meta_title");
+        const titleHolder = modalTitle.length ? modalTitle : $("#page_meta_title");
 
-        const title = modalTitleAttribute ?? pageTitleAttribute;
-        if (title !== undefined) this.setWindowTitle(title);
+        if (titleHolder.length) this.setWindowTitle(titleHolder.attr("value") ?? "");
 
         this.onProcessCompleted();
     }
 
-    // The title the page just rendered with. An app that names its windows for more than the
-    // page alone - a shell showing which of several services a page belongs to - overrides this,
-    // so a view change does not undo the name the navigation gave the window.
+    // The title the page just rendered with, empty when it declared none. An app that names its
+    // windows for more than the page alone - a shell showing which of several services a page
+    // belongs to - overrides this, so a view change does not undo the name the navigation gave
+    // the window, and so it can decide what an empty title leaves the window called.
     protected setWindowTitle(title: string) {
         document.title = title;
     }
