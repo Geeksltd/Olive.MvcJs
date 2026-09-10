@@ -48,6 +48,13 @@ export default class AjaxRedirect implements IService {
         history.pushState({}, title, url);
     }
 
+    // The window title alone, for a navigation that leaves the address bar where it is.
+    // onRedirected sets the title as part of pushing the new address, so this is only for the
+    // case where there is no address to push and the title would otherwise be dropped.
+    protected onTitleChanged(title: string, url: string) {
+        if (title) document.title = title;
+    }
+
     protected onMainTagRedirected(trigger: JQuery, title: string, url: string): boolean {
         // if trigger is a main tag with name starting by $ character or it has a parent with this conditions
         // we need to edit a query string parameter as _{main tag name without $}={url pathname}
@@ -279,14 +286,23 @@ export default class AjaxRedirect implements IService {
                 }
                 else if (!isBack) {
                     this.ajaxChangedUrl++;
-                    if (addToHistory && !window.isModal()) {
-
-                        let addressBar = trigger.attr("data-addressbar") || url;
-                        try {
-                            this.onRedirected(trigger, title, addressBar);
-                        } catch (error) {
-                            addressBar = this.url.makeAbsolute(this.url.baseContentUrl, "/##" + addressBar);
-                            this.onRedirected(trigger, title, addressBar);
+                    if (!window.isModal()) {
+                        if (addToHistory) {
+                            let addressBar = trigger.attr("data-addressbar") || url;
+                            try {
+                                this.onRedirected(trigger, title, addressBar);
+                            } catch (error) {
+                                addressBar = this.url.makeAbsolute(this.url.baseContentUrl, "/##" + addressBar);
+                                this.onRedirected(trigger, title, addressBar);
+                            }
+                        }
+                        else {
+                            // The address bar already names this page: this is the ajax load that fills
+                            // a page in with its own content, not a move to somewhere else. Nothing is
+                            // pushed, but the title still has to be taken from the response, or the page
+                            // keeps whatever the surrounding shell was rendered with until the next
+                            // navigation replaces it.
+                            this.onTitleChanged(title, url);
                         }
                     }
                 } else {

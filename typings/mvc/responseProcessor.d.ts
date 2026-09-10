@@ -17,5 +17,6 @@ export default class ResponseProcessor implements IService {
     private processWithTheContentInternal;
     private replaceContent;
     protected updateUrl(referencedScripts: JQuery, element: JQuery, trigger: JQuery): void;
+    protected setWindowTitle(title: string): void;
     protected onProcessCompleted(): void;
 }

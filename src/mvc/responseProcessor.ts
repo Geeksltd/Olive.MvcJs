@@ -282,10 +282,17 @@ export default class ResponseProcessor implements IService {
         let modalTitleAttribute = $(".modal-dialog #page_meta_title").attr("value");
         let pageTitleAttribute = $("#page_meta_title").attr("value");
 
-        if (modalTitleAttribute !== undefined || modalTitleAttribute !== undefined)
-            document.title = modalTitleAttribute ?? pageTitleAttribute;
+        const title = modalTitleAttribute ?? pageTitleAttribute;
+        if (title !== undefined) this.setWindowTitle(title);
 
         this.onProcessCompleted();
+    }
+
+    // The title the page just rendered with. An app that names its windows for more than the
+    // page alone - a shell showing which of several services a page belongs to - overrides this,
+    // so a view change does not undo the name the navigation gave the window.
+    protected setWindowTitle(title: string) {
+        document.title = title;
     }
 
     protected onProcessCompleted() {
