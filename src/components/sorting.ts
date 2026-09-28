@@ -58,6 +58,7 @@ export default class Sorting implements IService {
     private DragSort(container) {
 
         const itemsSelector = "> li";
+        let scrollParent: JQuery = null;
 
         const config = {
             handle: "[data-sort-item]",
@@ -71,7 +72,23 @@ export default class Sorting implements IService {
                 ui.children().each((i, c) => $(c).width($(c).width()));
                 return ui;
             },
+            start: (e, ui) => {
+                // jQuery UI keeps the containment box and the item positions from the drag start.
+                // When a scrollable container (not the window) scrolls during the drag, they are
+                // out of date: the dragged item gets stuck and drops in the wrong place.
+                // Use the placeholder, like jQuery UI does: the dragged item is absolutely
+                // positioned, so its own scrollParent() skips a static scrolling container.
+                const sortable = container.sortable("instance");
+                scrollParent = ui.placeholder.scrollParent();
+                scrollParent.on("scroll.olive-drag-sort", () => {
+                    sortable.refreshPositions();
+                    sortable._setContainment();
+                });
+            },
             stop: (e, ui) => {
+
+                scrollParent?.off("scroll.olive-drag-sort");
+                scrollParent = null;
 
                 $(ui).children().removeAttr("style");
                 container.find(itemsSelector).children().removeAttr("style");
