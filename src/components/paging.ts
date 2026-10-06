@@ -16,8 +16,15 @@ export default class Paging implements IService {
     }
 
     private onSizeChanged(event: JQueryEventObject) {
-        let form = $(event.currentTarget).closest("form");
+        let select = $(event.currentTarget);
+        let form = select.closest("form");
         if (form.length === 0) return;
+
+        // When the list has more than one page-size selector (e.g. top and bottom), keep them in sync
+        // so that the posted value is the one the user picked.
+        let name = select.attr("name");
+        form.find(".pagination-size select").filter((_, e) => $(e).attr("name") === name).not(select).val(select.val());
+
         if (form.attr("method") == "get") form.submit();
         else {
             let actionUrl = this.url.effectiveUrlProvider(form.attr("action"), $(event.currentTarget));
