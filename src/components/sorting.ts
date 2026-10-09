@@ -30,9 +30,14 @@ export default class Sorting implements IService {
             sort = sort.split("=")[1];
         }
 
-        const input = $("[name='" + key + "']");
+        // Only this list's field: another list on the page may use the same name.
+        const input = button.closest("[data-module]").find("[name='" + key + "']");
         if (input.val() === sort) { sort += ".DESC"; }
         input.val(sort);
+
+        // A new order starts on the first page, keeping the page size. A page size selector already posts the first page.
+        const paging = button.closest("[data-module]").find("input[name='" + key.replace(/s$/, "p") + "']");
+        paging.val((paging.val() || "").replace(/^\d+/, "1"));
     }
 
     public setSortHeaderClass(thead: JQuery) {

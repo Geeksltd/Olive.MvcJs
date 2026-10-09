@@ -39,7 +39,8 @@ export default class Paging implements IService {
 
         if (page.split('=').length > 1) { key = page.split('=')[0]; page = page.split('=')[1]; }
 
-        let input = $("[name='" + key + "']");
+        // Only this list's field: another list on the page may use the same name.
+        let input = button.closest("[data-module]").find("[name='" + key + "']");
         input.val(page);
         if (input.val() != page) {
             // Drop down list case

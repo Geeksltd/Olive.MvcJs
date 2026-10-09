@@ -20,6 +20,14 @@ export default class ServerInvoker implements IService {
         selector.off(event).on(event,
             (e) => {
                 let trigger = $(e.currentTarget);
+
+                // A filter of a GET list searches like its search button, so the URL shows the new criteria and the first page.
+                let module = trigger.closest("[data-module]");
+                if (trigger.is("[data-change-submit]") && module.is("form[method=get]")) {
+                    module.submit();
+                    return false;
+                }
+
                 let url = this.url.effectiveUrlProvider(trigger.attr(attrName), trigger);
                 this.invokeWithAjax(e, url, false);
                 return false;
